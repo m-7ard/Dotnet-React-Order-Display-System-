@@ -1,0 +1,60 @@
+@layer components {
+  .mixin-button-like {
+    @apply flex items-center box-border transition-colors cursor-pointer select-none;
+  }
+  .mixin-button-sm {
+    @apply gap-0.5 px-2 py-1 text-sm leading-none;
+  }
+  .mixin-button-base {
+    @apply gap-2 px-4 py-1 text-base;
+  }
+  .mixin-char-input-like {
+    @apply after:content-["."] relative;
+  }
+  .mixin-char-input-like > input {
+    @apply absolute inset-0 transition-colors;
+  }
+  .mixin-char-input-sm {
+    @apply mixin-button-sm;
+  }
+  .mixin-char-input-sm > input {
+    @apply mixin-button-sm absolute inset-0 transition-colors;
+  }
+  .mixin-char-input-base {
+    @apply mixin-button-base;
+    @apply px-2;
+  }
+  .mixin-char-input-base > input {
+    @apply mixin-button-base absolute inset-0 transition-colors;
+    @apply px-2;
+  }
+  .mixin-page-like {
+    @apply flex flex-col grow overflow-auto;
+  }
+  .mixin-page-base {
+    @apply px-4 py-4 gap-y-4;
+  }
+  .mixin-checkbox-like {
+    @apply after:content-["."] 
+            after:flex 
+            after:opacity-0
+            after:aspect-square
+            after:h-full
+            after:w-full
+            after:pointer-events-none
+            transition-colors 
+            relative;
+  }
+  .mixin-checkbox-like > input {
+    @apply absolute 
+                inset-0 
+                opacity-0 
+                cursor-pointer;
+  }
+  .mixin-checkbox-sm {
+    @apply p-2 text-sm leading-none;
+  }
+  .mixin-checkbox-sm > input {
+    @apply p-2 text-sm leading-none absolute inset-0 transition-colors;
+  }
+}/*# sourceMappingURL=mixins.css.map */

@@ -1,6 +1,8 @@
 @Api_HostAddress = http://localhost:5102
 
-GET {{Api_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{Api_HostAddress}}/api/products/create
+Content-Type: application/json
 
-###
+{
+    "tableNumber": 1
+}

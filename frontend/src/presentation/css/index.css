@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer components {
+  .mixin-button-like {
+    @apply flex items-center box-border transition-colors cursor-pointer select-none;
+  }
+  .mixin-button-sm {
+    @apply gap-0.5 px-2 py-1 text-sm leading-none;
+  }
+  .mixin-button-base {
+    @apply gap-2 px-4 py-1 text-base;
+  }
+  .mixin-char-input-like {
+    @apply after:content-["."] relative;
+  }
+  .mixin-char-input-like > input {
+    @apply absolute inset-0 transition-colors;
+  }
+  .mixin-char-input-sm {
+    @apply mixin-button-sm;
+  }
+  .mixin-char-input-sm > input {
+    @apply mixin-button-sm absolute inset-0 transition-colors;
+  }
+  .mixin-char-input-base {
+    @apply mixin-button-base;
+    @apply px-2;
+  }
+  .mixin-char-input-base > input {
+    @apply mixin-button-base absolute inset-0 transition-colors;
+    @apply px-2;
+  }
+  .mixin-page-like {
+    @apply flex flex-col grow overflow-auto;
+  }
+  .mixin-page-base {
+    @apply px-4 py-4 gap-y-4;
+  }
+  .mixin-checkbox-like {
+    @apply after:content-["."] 
+            after:flex 
+            after:opacity-0
+            after:aspect-square
+            after:h-full
+            after:w-full
+            after:pointer-events-none
+            transition-colors 
+            relative;
+  }
+  .mixin-checkbox-like > input {
+    @apply absolute 
+                inset-0 
+                opacity-0 
+                cursor-pointer;
+  }
+  .mixin-checkbox-sm {
+    @apply p-2 text-sm leading-none;
+  }
+  .mixin-checkbox-sm > input {
+    @apply p-2 text-sm leading-none absolute inset-0 transition-colors;
+  }
+}
+@layer components {
+  .theme-input-generic-white {
+    @apply border border-gray-900 flex flex-grow;
+  }
+  .theme-input-generic-white > input {
+    @apply text-gray-900 bg-gray-100 focus:bg-gray-200;
+  }
+  .theme-button-generic-white {
+    @apply border border-gray-900 text-gray-900;
+  }
+  .theme-button-generic-white:not(.theme-button-generic-white--active) {
+    @apply bg-gray-100 hover:bg-gray-200;
+  }
+  .theme-button-generic-white--active {
+    @apply bg-gray-200;
+  }
+  .theme-button-generic-yellow {
+    @apply border border-gray-900 text-gray-900;
+  }
+  .theme-button-generic-yellow:not(.theme-button-generic-yellow--active) {
+    @apply bg-yellow-300 hover:bg-yellow-400;
+  }
+  .theme-button-generic-yellow--active {
+    @apply bg-yellow-400;
+  }
+  .theme-button-generic-green {
+    @apply border border-gray-900 text-gray-900;
+  }
+  .theme-button-generic-green:not(.theme-button-generic-green--active) {
+    @apply bg-green-300 hover:bg-green-400;
+  }
+  .theme-button-generic-green--active {
+    @apply bg-green-400;
+  }
+  .theme-checkbox-generic-white {
+    @apply border border-gray-900 bg-gray-100 hover:bg-gray-200;
+  }
+  .theme-checkbox-generic-white--active, .theme-checkbox-generic-white:has(:checked) {
+    @apply bg-blue-400;
+  }
+}
+html {
+  font-family: "Roboto", sans-serif;
+  height: 100%;
+}
+
+body,
+#root {
+  height: 100%;
+}
+
+button:focus {
+  outline: none;
+}/*# sourceMappingURL=index.css.map */
