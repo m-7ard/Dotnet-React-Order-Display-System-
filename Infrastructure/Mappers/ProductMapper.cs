@@ -10,7 +10,9 @@ public static class ProductMapper
         return new ProductDbEntity(
             id: domain.Id, 
             dateCreated: domain.DateCreated, 
-            name: domain.Name
+            name: domain.Name,
+            description: domain.Description,
+            price: domain.Price
         );
     }
 
@@ -18,8 +20,11 @@ public static class ProductMapper
     {
         return new Product(
             id: dbEntity.Id, 
-            dateCreated: dbEntity.DateCreated, 
-            name: dbEntity.Name
+            name: dbEntity.Name,
+            price: dbEntity.Price,
+            description: dbEntity.Description,
+            dateCreated: dbEntity.DateCreated,
+            images: dbEntity.Images.Select(ProductImageMapper.ToDomain).ToList()
         );
     }
 }

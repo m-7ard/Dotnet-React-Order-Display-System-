@@ -59,6 +59,10 @@
               "target": "Package",
               "version": "[12.4.0, )"
             },
+            "Microsoft.AspNetCore.Http": {
+              "target": "Package",
+              "version": "[2.2.2, )"
+            },
             "OneOf": {
               "target": "Package",
               "version": "[3.0.271, )"

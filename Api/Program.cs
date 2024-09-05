@@ -15,6 +15,8 @@ using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 ///
 ///
 /// Env
@@ -97,6 +99,11 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Creat
 
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+builder.Services.AddScoped<IProductHistoryRepository, ProductHistoryRespository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddScoped<IPlainErrorHandlingService, PlainApiErrorHandlingService>();
 
 // builder.Services.AddSingleton<INewErrorHandlingService<ApiError>, ApiErrorHandlingService>();

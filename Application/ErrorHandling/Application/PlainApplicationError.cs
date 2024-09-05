@@ -1,3 +1,5 @@
+using Application.ErrorHandling.Other;
+
 namespace Application.ErrorHandling.Application;
 
 public class PlainApplicationError
@@ -11,14 +13,5 @@ public class PlainApplicationError
         Message = message;
         Path = path;
         Code = code;
-    }
-
-    public Dictionary<string, object> ToDictionary()
-    {
-        return new Dictionary<string, object>()
-        {
-            { "message", Message },
-            { "path", Path }
-        };
     }
 }
