@@ -15,15 +15,15 @@ export default class UploadProductImagesCommandHandler implements ICommandHandle
 
     async handle(request: IListProductsCommand): Promise<IUploadProductImagesResult> {
         try {
-            const result = await this._productDataAccess.({
-              
+            const result = await this._productDataAccess.uploadImages({
+                files: request.files
             });
 
             if (result.isErr()) {
                 return err({ type: "API", data: result.error });
             }
 
-            return ok({ products: result.value.products });
+            return ok({ images: result.value });
         } catch (error: unknown) {
             return err({ type: "Exception", data: error });
         }

@@ -1,4 +1,6 @@
-type IStatelsssCharFieldProps = {
+import { HTMLProps } from "react";
+
+interface IStatelsssCharFieldProps extends Omit<HTMLProps<HTMLInputElement>, "value" | "onChange"> {
     value: string;
     options: {
         size: "mixin-char-input-sm" | "mixin-char-input-base";

@@ -2,10 +2,10 @@ namespace Application.Api.Products.UploadImages.DTOs;
 
 public class UploadProductImagesResponseDTO
 {
-    public UploadProductImagesResponseDTO(List<string> fileNames)
+    public UploadProductImagesResponseDTO(List<string> images)
     {
-        FileNames = fileNames;
+        Images = images;
     }
 
-    public List<string> FileNames { get; set; }
+    public List<string> Images { get; set; }
 }

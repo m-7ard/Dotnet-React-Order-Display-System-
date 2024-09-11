@@ -8,7 +8,7 @@ public class CreateProductValidator : AbstractValidator<CreateProductRequestDTO>
     public CreateProductValidator()
     {
         RuleFor(x => x)
-            .NotEmpty()
+            .NotNull()
             .WithMessage("Invalid data format");
 
         RuleFor(x => x.Name)
@@ -16,10 +16,6 @@ public class CreateProductValidator : AbstractValidator<CreateProductRequestDTO>
             .MinimumLength(1)
             .MaximumLength(1028);
         
-        RuleFor(x => x.Images)
-            .Must(images => images.Count <= 8)
-            .WithMessage("Only up to 8 images are allowed.");
-
         RuleFor(x => x.Price)
             .GreaterThan(0);
             

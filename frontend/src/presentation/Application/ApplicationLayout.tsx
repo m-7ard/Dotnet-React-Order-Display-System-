@@ -16,12 +16,12 @@ function ApplicationExceptionNotice() {
     const { exception, dismissException } = useApplicationExceptionContext();
     if (exception == null) return null;
     return (
-        <div className="fixed top-4 left-4 right-4 flex flex-col bg-red-400 border-gray-900 p-4 gap-4 color-gray-100">
+        <div className="fixed mx-auto top-4 left-4 right-4 flex flex-col bg-red-400 border border-gray-400 shadow p-4 gap-4 text-gray-100 max-w-96" style={{ zIndex: 1000000 }}>
             <div className="flex flex-row gap-4 justify-between items-center">
                 <div className="text-sm">
                     {exception.message}
                 </div>
-                <div onClick={dismissException}>
+                <div className="mixin-button-like" onClick={dismissException}>
                     ✖
                 </div>
             </div>
@@ -46,6 +46,7 @@ export default function ApplicationLayout() {
                     border-gray-400
                     text-gray-900"
             >
+                <ApplicationExceptionNotice />
                 <ApplicationHeader />
                 <Outlet />
             </main>

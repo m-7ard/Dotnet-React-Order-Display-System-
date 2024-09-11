@@ -2,6 +2,8 @@ using Application.Common;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
 using Domain.Models;
+using Domain.ValueObjects.Order;
+using Domain.ValueObjects.OrderItem;
 using Infrastructure;
 using Infrastructure.Persistence;
 
@@ -13,6 +15,8 @@ public class Mixins
     private readonly IProductRepository _productRepository;
     private readonly IProductImageRepository _productImageRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
+    private readonly IOrderRepository _orderRespository;
+    private readonly IOrderItemRepository _orderItemRespository;
 
     public Mixins(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext)
     {
@@ -20,6 +24,8 @@ public class Mixins
         _productRepository = new ProductRepository(_simpleProductOrderServiceDbContexts);
         _productImageRepository = new ProductImageRepository(_simpleProductOrderServiceDbContexts);
         _productHistoryRepository = new ProductHistoryRespository(_simpleProductOrderServiceDbContexts);
+        _orderRespository = new OrderRepository(_simpleProductOrderServiceDbContexts);
+        _orderItemRespository = new OrderItemRepository(_simpleProductOrderServiceDbContexts);
     }
 
     public async Task<Product> CreateProduct(int number, List<ProductImage> images)
@@ -61,5 +67,39 @@ public class Mixins
         );
         
         return menuItemImage;
+    }
+
+    public async Task<Order> CreateOrder(List<Product> products, int number, OrderStatus orderStatus, OrderItemStatus orderItemStatus) {
+        var productItemHistories = new List<ProductHistory>();
+        foreach (var product in products)
+        {
+            var productHistory = await _productHistoryRepository.GetLatestByProductIdAsync(product.Id);
+            if (productHistory is null)
+            {
+                throw new Exception("A Product's ProductHistory cannot be null when creating an Order because an Order's OrderItems need to point at it.");
+            }
+            
+            productItemHistories.Add(productHistory);
+        }
+
+        var order = await _orderRespository.CreateAsync(OrderFactory.BuildNewOrder(
+            total: products.Sum(d => d.Price * number),
+            orderItems: [],
+            status: orderStatus
+        ));
+
+        foreach (var productHistory in productItemHistories)
+        {
+            var orderItem = await _orderItemRespository.CreateAsync(OrderItemFactory.BuildNewOrderItem(
+                quantity: number,
+                status: orderItemStatus,
+                orderId: order.Id,
+                productHistory: productHistory
+            ));
+            
+            order.OrderItems.Add(orderItem);
+        }
+
+        return order;
     }
 }

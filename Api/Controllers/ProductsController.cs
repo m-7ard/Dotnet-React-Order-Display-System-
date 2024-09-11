@@ -35,13 +35,27 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult<CreateProductResponseDTO>> Create(CreateProductRequestDTO request)
     {
         var validation = _createProductValidator.Validate(request);
+        var validationErrors = new List<PlainApiError>();
         if (!validation.IsValid)
         {
             var fluentErrors = _errorHandlingService.FluentToApiErrors(
                 validationFailures: validation.Errors,
                 path: []
             );
-            return BadRequest(fluentErrors);
+            validationErrors.AddRange(fluentErrors);
+
+        }
+
+        if (request.Images.Count > 8) {
+            validationErrors.Add(_errorHandlingService.CreateError(
+                path: ["images", "_"],
+                message: "Only up to 8 images are allowed.",
+                fieldName: "images"
+            ));
+        }
+
+        if (validationErrors.Count > 0) {
+            return BadRequest(validationErrors);
         }
 
         var command = new CreateProductCommand
@@ -138,12 +152,12 @@ public class ProductsController : ControllerBase
             return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         }
 
-        var response = new UploadProductImagesResponseDTO(fileNames: value.ProductImages.Select(file => file.FileName).ToList());
+        var response = new UploadProductImagesResponseDTO(images: value.ProductImages.Select(file => file.FileName).ToList());
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
     [HttpGet("list")]
-    public async Task<IActionResult> List(
+    public async Task<ActionResult<ListProductsResponseDTO>> List(
         [FromQuery] string? name, 
         [FromQuery] float? minPrice, 
         [FromQuery] float? maxPrice, 

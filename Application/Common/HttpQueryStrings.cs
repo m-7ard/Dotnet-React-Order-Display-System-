@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Text;
 
-namespace Infrastructure.HttpQueryStrings;
+namespace Application.Common;
 
 public static class HttpQueryStrings
 {
@@ -39,10 +39,10 @@ public static class HttpQueryStrings
                 else if (p.PropertyType == typeof(string))
                     _query.Append($"&{prefix}{p.Name}={value}");
 
-                else if (p.PropertyType == typeof(DateTime) && !value!.Equals(Activator.CreateInstance(p.PropertyType))) 
+                else if (p.PropertyType == typeof(DateTime) && !value!.Equals(Activator.CreateInstance(p.PropertyType)))
                     throw new Exception("Do not use BuildQueryString with DateTime, do it manually using an ISO string instead.");
 
-                else if (p.PropertyType.IsValueType && !value!.Equals(Activator.CreateInstance(p.PropertyType))) 
+                else if (p.PropertyType.IsValueType && !value!.Equals(Activator.CreateInstance(p.PropertyType)))
                     _query.Append($"&{prefix}{p.Name}={value}");
 
 

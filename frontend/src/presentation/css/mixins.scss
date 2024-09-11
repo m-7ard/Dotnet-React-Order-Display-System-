@@ -11,6 +11,21 @@
         @apply gap-2 px-4 py-1 text-base;
     }
 
+    .mixin-textarea-any {
+        
+        > textarea {
+            @apply block w-full transition-colors leading-none resize-none p-2;
+        }
+
+        [data-role="footer"] {
+            @apply w-full border-t;
+        }
+
+        [data-role="counter"] {
+            @apply w-fit ml-auto px-2 text-xs border-l;
+        }
+    }
+
     .mixin-char-input-like {
         @apply after:content-['.'] relative;
 
