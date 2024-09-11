@@ -2,14 +2,12 @@ import IProductDataAccess from "../../../interfaces/dataAccess/IProductAccess";
 import { ICommandHandler } from "../../ICommandHandler";
 import { err, ok } from "neverthrow";
 import IListProductsCommand from "./ListProductsCommand";
-import IListProductsResult from "./IListProductsServiceResult";
+import IListProductsResult from "./IListProductsResult";
 
 export default class ListProductsCommandHandler implements ICommandHandler<IListProductsCommand, IListProductsResult> {
-    readonly _productDataAccess: IProductDataAccess;
+    private _productDataAccess: IProductDataAccess;
 
-    constructor(props: {
-        productDataAccess: IProductDataAccess
-    }) {
+    constructor(props: { productDataAccess: IProductDataAccess }) {
         this._productDataAccess = props.productDataAccess;
     }
 
@@ -28,7 +26,7 @@ export default class ListProductsCommandHandler implements ICommandHandler<IList
                 return err({ type: "API", data: result.error });
             }
 
-            return ok({ products: result.value.products });
+            return ok({ products: result.value });
         } catch (error: unknown) {
             return err({ type: "Exception", data: error });
         }

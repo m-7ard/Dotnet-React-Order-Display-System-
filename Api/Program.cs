@@ -1,4 +1,5 @@
 using System.Globalization;
+using Api;
 using Application.Api.Products.Create.Handlers;
 using Application.Api.Products.Create.Validators;
 using Application.Common;
@@ -51,7 +52,11 @@ var services = builder.Services;
         options.SupportedUICultures = supportedCultures;
     });
 
-    services.AddControllersWithViews()
+    services.AddControllers()
+        .ConfigureApiBehaviorOptions(options =>
+        {
+            options.SuppressModelStateInvalidFilter = true;
+        })
         .AddViewLocalization()
         .AddDataAnnotationsLocalization();
 }
@@ -75,15 +80,6 @@ services.AddCors(options =>
         });
 });
 
-///
-///
-/// Disable default controller validation
-/// 
-
-services.Configure<ApiBehaviorOptions>(options =>
-{
-    options.SuppressModelStateInvalidFilter = true;
-});
 
 ///
 ///
@@ -96,7 +92,6 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Creat
 ///
 /// Dependency Injection / DI / Services
 /// 
-
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
@@ -114,7 +109,6 @@ builder.Services.AddScoped<IPlainErrorHandlingService, PlainApiErrorHandlingServ
 /// 
 
 builder.Services.AddValidatorsFromAssembly(typeof(CreateProductValidator).Assembly);
-ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop;
 
 ///
 ///

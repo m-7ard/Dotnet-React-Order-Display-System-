@@ -10,7 +10,7 @@ interface IMixinButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
 export default function MixinButton(props: PropsWithChildren<IMixinButtonProps>) {
     const { options, className, ...HTMLattrs } = props;
     return (
-        <button className={[options.size, options.theme, className].join(" ")} {...HTMLattrs}>
+        <button className={["mixin-button-like", options.size, options.theme, className].join(" ")} {...HTMLattrs}>
             {props.children}
         </button>
     )

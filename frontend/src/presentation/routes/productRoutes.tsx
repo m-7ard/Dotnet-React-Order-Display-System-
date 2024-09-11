@@ -1,13 +1,13 @@
 import { createRoute } from "@tanstack/react-router";
 import rootRoute from "./_rootRoute";
 import ProductsPage from "../Application/Products/ProductsPage";
-import commandDispatcher from "../deps/commandDispatcher";
+import CreateProductPage from "../Application/Products/Create/CreateProductPage";
 import ListProductsCommand from "../../application/commands/products/listProducts/ListProductsCommand";
+import commandDispatcher from "../deps/commandDispatcher";
 
-const baseProdutsRoute = createRoute({
+const baseProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/products",
-    staleTime: 120,
     loaderDeps: ({
         search,
     }: {
@@ -32,12 +32,19 @@ const baseProdutsRoute = createRoute({
         const result = await commandDispatcher.dispatch(command);
         
         return {
-            products: result.isErr() ? null : result.value.products
+            productsResult: result
         }
     },
     component: ProductsPage,
 });
 
+const createProductRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/products/create",
+    component: CreateProductPage
+});
+
 export default [
-    baseProdutsRoute
+    baseProductsRoute,
+    createProductRoute
 ];

@@ -12,24 +12,10 @@ export default function FrontpagePage() {
                     <span>↪</span>
                 </Link>
                 <Link
-                    to={"/"}
-                    className="mixin-button-like mixin-button-base theme-button-generic-white justify-between"
-                >
-                    <span>Menu Items</span>
-                    <span>↪</span>
-                </Link>
-                <Link
-                    to={"/"}
+                    to={"/orders"}
                     className="mixin-button-like mixin-button-base theme-button-generic-white justify-between"
                 >
                     <span>Orders</span>
-                    <span>↪</span>
-                </Link>
-                <Link
-                    to={"/"}
-                    className="mixin-button-like mixin-button-base theme-button-generic-white justify-between"
-                >
-                    <span>Table</span>
                     <span>↪</span>
                 </Link>
             </div>

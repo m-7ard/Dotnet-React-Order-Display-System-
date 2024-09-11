@@ -1,6 +1,8 @@
 using Application.Api.Orders.Create.DTOs;
 using Application.Api.Orders.Create.Handlers;
 using Application.Api.Orders.Create.Other;
+using Application.Api.Orders.List.DTOs;
+using Application.Api.Orders.List.Handlers;
 using Application.Api.Products.Create.DTOs;
 using Application.Api.Products.Create.Handlers;
 using Application.ErrorHandling.Api;
@@ -62,5 +64,32 @@ public class OrdersController : ControllerBase
         
         var response = new CreateOrderResponseDTO(order: value.Order);
         return StatusCode(StatusCodes.Status201Created, response);
+    }
+
+    [HttpGet("list")]
+    public async Task<ActionResult<CreateOrderRequestDTO>> List(
+        [FromQuery] float? minTotal, 
+        [FromQuery] float? maxTotal, 
+        [FromQuery] string? status, 
+        [FromQuery] DateTime? createdBefore, 
+        [FromQuery] DateTime? createdAfter)
+    {
+        var query = new ListOrdersQuery(
+            minTotal: minTotal,
+            maxTotal: maxTotal,
+            status: status,
+            createdBefore: createdBefore,
+            createdAfter: createdAfter
+        );
+        
+        var result = await _mediator.Send(query);
+   
+        if (result.TryPickT1(out var errors, out var value))
+        {
+            return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+        }
+
+        var response = new ListOrdersResponseDTO(orders: value.Orders);
+        return Ok(response);
     }
 }

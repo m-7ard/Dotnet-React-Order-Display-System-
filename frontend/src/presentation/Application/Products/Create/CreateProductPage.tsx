@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import UploadImagesForm, { GeneratedFileName, OriginalFileName } from "../../../components/ImageUploadForm";
+import UploadImagesForm, { GeneratedFileName, OriginalFileName } from "../../../components/Forms/ImageUploadForm";
 import IFormError from "../../../../domain/models/IFormError";
 import useItemManager from "../../../hooks/useItemManager";
 import StatelessCharField from "../../../components/StatelessCharField";
@@ -10,59 +10,92 @@ import { useApplicationExceptionContext } from "../../../contexts/ApplicationExc
 import apiToDomainCompatibleFormError from "../../../../application/mappers/apiToDomainCompatibleFormError";
 import CreateProductCommand from "../../../../application/commands/products/createProduct/CreateProductCommand";
 import FormField from "../../../components/Forms/FormField";
+import { Type } from "@sinclair/typebox";
+import typeboxToDomainCompatibleFormError from "../../../../application/mappers/typeboxToDomainCompatibleFormError";
+import StatelessTextArea from "../../../components/StatelessTextArea";
+import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
 
-interface State {
+const validatorSchema = Type.Object({
+    name: Type.String({
+        minLength: 1,
+        maxLength: 255,
+    }),
+    description: Type.String({
+        maxLength: 1028,
+    }),
+    price: Type.Number({
+        minimum: 0.01,
+        maximum: 10 ** 6,
+    }),
+    images: Type.Array(Type.String({ customPath: "/images/_" }), { maxItems: 8, suffixPath: "/_" }),
+});
+
+interface ValueState {
     name: string;
     description: string;
-    price: number;
+    price: string;
     images: Record<GeneratedFileName, OriginalFileName>;
 }
 
-type FormErrors = IFormError<{
+type ErrorState = IFormError<{
     name: string[];
     images: Record<GeneratedFileName, string[]>;
-}>
+    price: string[];
+    description: string[];
+}>;
 
-const initialState: State = {
+const initialValueState: ValueState = {
     name: "",
     description: "",
-    price: 0,
-    images: {}
+    price: "",
+    images: {},
 };
 
-export default function MenuItemsCreatePage() {
-    const itemManager = useItemManager<State>(initialState);
+const initialErrorState: ErrorState = {
+    _: undefined,
+    name: undefined,
+    images: undefined,
+    price: undefined,
+    description: undefined
+};
+
+export default function CreateProductPage() {
     const { commandDispatcher } = useCommandDispatcherContext();
     const { dispatchException } = useApplicationExceptionContext();
-    const errorManager = useItemManager<FormErrors>({
-        _: undefined,
-        name: undefined,
-        images: undefined
-    });
+
+    const itemManager = useItemManager<ValueState>(initialValueState);
+    const errorManager = useItemManager<ErrorState>(initialErrorState);
 
     const navigate = useNavigate();
-    const createMenuItemMutation = useMutation({
+    const createProductMutation = useMutation({
         mutationFn: async () => {
+            const validation = validateTypeboxSchema(validatorSchema, {
+                name: itemManager.items.name,
+                description: itemManager.items.description,
+                price: parseFloat(itemManager.items.price),
+                images: itemManager.items.images,
+            });
+
+            if (validation.isErr()) {
+                errorManager.setAll(typeboxToDomainCompatibleFormError(validation.error));
+                return;
+            }
+
             const command = new CreateProductCommand({
                 name: itemManager.items.name,
                 description: itemManager.items.description,
-                price: itemManager.items.price,
-                images: Object.values(itemManager.items.images),
+                price: parseInt(itemManager.items.price),
+                images: Object.keys(itemManager.items.images),
             });
-            const result = await commandDispatcher.dispatch(command);
 
-            errorManager.setAll({
-                _: undefined,
-                name: undefined,
-                images: undefined
-            });
+            const result = await commandDispatcher.dispatch(command);
 
             if (result.isOk()) {
                 navigate({ to: "/products" });
             } else if (result.error.type === "Exception") {
                 dispatchException(result.error.data);
             } else if (result.error.type === "API") {
-                const errors = apiToDomainCompatibleFormError<FormErrors>(result.error.data);
+                const errors = apiToDomainCompatibleFormError<ErrorState>(result.error.data);
                 errorManager.setAll(errors);
             }
         },
@@ -73,55 +106,60 @@ export default function MenuItemsCreatePage() {
             className="mixin-page-like mixin-page-base"
             onSubmit={async (e) => {
                 e.preventDefault();
-                await createMenuItemMutation.mutateAsync();
+                errorManager.setAll(initialErrorState);
+                await createProductMutation.mutateAsync();
             }}
             onReset={(e) => {
                 e.preventDefault();
-                itemManager.setAll(initialState);
+                errorManager.setAll(initialErrorState);
+                itemManager.setAll(initialValueState);
             }}
         >
-            <header className="text-2xl text-sky-600 font-medium">Create Menu Item</header>
+            <header className="text-2xl text-sky-600 font-medium">Create Product</header>
             <hr className="h-0 w-full border-bottom border-dashed border-gray-800"></hr>
             <div className="flex flex-col gap-2">
-                <FormField name="name" errors={errorManager.items.name} >
-                    <StatelessCharField 
+                <FormField name="name" errors={errorManager.items.name}>
+                    <StatelessCharField
                         onChange={(value) => itemManager.updateItem("name", value)}
                         value={itemManager.items.name}
                         options={{
                             size: "mixin-char-input-base",
-                            theme: "theme-input-generic-white"
+                            theme: "theme-input-generic-white",
                         }}
                     />
                 </FormField>
-                <FormField name="images" errors={errorManager.items.images?._} >
-                    <UploadImagesForm 
+                <FormField name="images" errors={errorManager.items.images?._}>
+                    <UploadImagesForm
                         onSubmit={async (files) => {
-                            const formErrors: string[] = [];
+                            const ErrorState: string[] = [];
 
                             for (let i = 0; i < files.length; i++) {
                                 const file = files[i];
                                 const originalFileName = file.name as OriginalFileName;
                                 const command = new UploadProductImagesCommand({ files: [file] });
                                 const result = await commandDispatcher.dispatch(command);
-                
+
                                 if (result.isOk()) {
                                     const generatedFileName = result.value.images[0] as GeneratedFileName;
                                     itemManager.updateItem("images", (prev) => ({
                                         ...prev,
-                                        [generatedFileName]: originalFileName
-                                    }))
+                                        [generatedFileName]: originalFileName,
+                                    }));
                                 } else if (result.error.type === "Exception") {
                                     dispatchException(result.error.data);
                                 } else if (result.error.type === "API") {
-                                    const uploadErrors = Object.values(apiToDomainCompatibleFormError<Record<string, string[]>>(result.error.data))
-                                        .reduce((acc, cur) => [...acc, ...cur], [])
-                                    formErrors.push(...uploadErrors);
+                                    const uploadErrors = Object.values(
+                                        apiToDomainCompatibleFormError<Record<GeneratedFileName, string[]>>(
+                                            result.error.data,
+                                        ),
+                                    ).reduce((acc, cur) => [...acc, ...cur], []);
+                                    ErrorState.push(...uploadErrors);
                                 }
                             }
 
-                            if (formErrors.length > 0) {
+                            if (ErrorState.length > 0) {
                                 errorManager.updateItem("images", {
-                                    "_": formErrors
+                                    _: ErrorState,
                                 });
                             }
                         }}
@@ -130,10 +168,32 @@ export default function MenuItemsCreatePage() {
                                 const newState = { ...prev };
                                 delete newState[originalFileName];
                                 return newState;
-                            })
+                            });
                         }}
                         errors={errorManager.items.images}
                         value={itemManager.items.images}
+                    />
+                </FormField>
+                <FormField name="price" errors={errorManager.items.price}>
+                    <StatelessCharField
+                        onChange={(value) => itemManager.updateItem("price", value)}
+                        value={itemManager.items.price.toString()}
+                        options={{
+                            size: "mixin-char-input-base",
+                            theme: "theme-input-generic-white",
+                        }}
+                    />
+                </FormField>
+                <FormField name="description" errors={errorManager.items.description}>
+                    <StatelessTextArea
+                        onChange={(value) => itemManager.updateItem("description", value)}
+                        value={itemManager.items.description}
+                        options={{
+                            size: "mixin-textarea-any",
+                            theme: "theme-textarea-generic-white",
+                        }}
+                        rows={5}
+                        maxLength={1028}
                     />
                 </FormField>
             </div>

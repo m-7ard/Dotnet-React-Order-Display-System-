@@ -37,7 +37,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
             {
                 errors.Add(new PlainApplicationError(
                     message: $"ProductImage of fileName \"{fileName}\" does not exist.",
-                    path: ["images"],
+                    path: ["images", fileName],
                     code: ValidationErrorCodes.ModelDoesNotExist
                 ));
                 continue;
@@ -47,7 +47,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
             {
                 errors.Add(new PlainApplicationError(
                     message:  $"MenuItemImage of fileName \"{fileName}\" has already been assigned to another Product.",
-                    path: ["images"],
+                    path: ["images", fileName],
                     code: ValidationErrorCodes.StateMismatch
                 ));
                 continue;

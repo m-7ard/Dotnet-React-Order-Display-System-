@@ -1,10 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.Products.Create.DTOs;
 using Application.Api.Products.List.DTOs;
+using Application.Common;
 using Domain.Models;
-using Infrastructure.HttpQueryStrings;
-using Microsoft.EntityFrameworkCore;
 
 namespace Tests.IntegrationTests.Products;
 

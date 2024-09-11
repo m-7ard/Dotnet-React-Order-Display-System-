@@ -31,8 +31,8 @@ public class UploadProductImageIntegrationTest : ProductsIntegrationTest
 
             var responseContent = await response.Content.ReadFromJsonAsync<UploadProductImagesResponseDTO>();
             Assert.NotNull(responseContent);
-            Assert.NotNull(responseContent.FileNames);
-            Assert.StrictEqual(1, responseContent.FileNames.Count);
+            Assert.NotNull(responseContent.Images);
+            Assert.StrictEqual(1, responseContent.Images.Count);
         }
     }
 

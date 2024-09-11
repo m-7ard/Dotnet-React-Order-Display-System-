@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.5",
+    "@sinclair/typebox": "^0.33.9",
     "@tanstack/react-query": "^5.53.3",
     "@tanstack/react-router": "^1.52.4",
+    "jsonpointer": "^5.0.1",
     "neverthrow": "^7.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

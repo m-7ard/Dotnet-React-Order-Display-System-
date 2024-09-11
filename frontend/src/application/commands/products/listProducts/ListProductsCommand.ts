@@ -1,5 +1,5 @@
 import ICommand from "../../ICommand";
-import IListProductsResult from "./IListProductsServiceResult";
+import IListProductsResult from "./IListProductsResult";
 
 export default class ListProductsCommand implements ICommand<IListProductsResult> {
     __returnType: IListProductsResult = null!;

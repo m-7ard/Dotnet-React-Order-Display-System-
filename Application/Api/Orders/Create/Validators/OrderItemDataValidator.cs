@@ -8,6 +8,7 @@ public class OrderItemDataValidator : AbstractValidator<OrderItemData>
     public OrderItemDataValidator()
     {
         RuleFor(x => x)
+            .Cascade(cascadeMode: CascadeMode.Stop)
             .NotEmpty()
             .WithMessage("Invalid data format");
 

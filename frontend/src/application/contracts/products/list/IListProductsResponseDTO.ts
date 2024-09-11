@@ -1,9 +1,7 @@
-import { Result } from "neverthrow";
-import IProduct from "../../../../domain/models/IProduct";
-import IPlainApiError from "../../../interfaces/IPlainApiError";
+import IProductApiModel from "../../../../infrastructure/apiModels/IProductApiModel";
 
-type IListProductsResponseDTO = Result<{
-    products: IProduct[];
-}, IPlainApiError>
+type IListProductsResponseDTO = {
+    products: IProductApiModel[];
+}
 
 export default IListProductsResponseDTO; 

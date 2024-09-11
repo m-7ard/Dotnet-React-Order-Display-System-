@@ -1,8 +1,5 @@
-import { Result } from "neverthrow";
-import IPlainApiError from "../../../interfaces/IPlainApiError";
-
-type IUploadProductImagesResponseDTO = Result<{
+type IUploadProductImagesResponseDTO = {
     images: string[];
-}, IPlainApiError>
+}
 
 export default IUploadProductImagesResponseDTO; 
