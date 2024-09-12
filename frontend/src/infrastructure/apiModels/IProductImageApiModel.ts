@@ -3,6 +3,6 @@ import IProductApiModel from "./IProductApiModel";
 export default interface IProductImageApiModel {
     id: number;
     fileName: string;
-    dateCreated: Date;
+    dateCreated: string;
     productId: IProductApiModel["id"] | null;
 }

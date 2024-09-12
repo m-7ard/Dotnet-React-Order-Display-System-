@@ -7,8 +7,8 @@ export default interface IOrderItemApiModel {
     status: {
         name: "Pending" | "Finished"
     };
-    dateCreated: Date;
-    dateFinished: Date;
+    dateCreated: string;
+    dateFinished: string;
     orderId: IOrderApiModel["id"];
     productHistory: IProductHistoryApiModel;
 }

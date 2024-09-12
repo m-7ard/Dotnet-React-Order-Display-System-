@@ -7,6 +7,6 @@ export default interface IProductHistoryApiModel {
     description: string;
     price: number;
     productId: IProductApiModel["id"];
-    validFrom: Date;
-    validTo: Date;
+    validFrom: string;
+    validTo: string;
 }

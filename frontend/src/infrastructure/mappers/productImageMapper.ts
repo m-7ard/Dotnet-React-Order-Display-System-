@@ -6,7 +6,7 @@ const productImageMapper = {
         return {
             id: source.id,
             fileName: source.fileName,
-            dateCreated: source.dateCreated,
+            dateCreated: new Date(source.dateCreated),
             productId: source.productId,
         };
     },

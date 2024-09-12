@@ -3,7 +3,7 @@
         @apply border border-gray-900 flex flex-grow;
 
         > input {
-            @apply text-gray-900 bg-gray-100 focus:bg-gray-200;
+            @apply text-gray-900 bg-white focus:bg-gray-200;
         }
     }
 
@@ -12,7 +12,7 @@
         @apply border border-gray-900 text-gray-900;
 
         &:not(#{$root}--active) {
-            @apply bg-gray-100 hover:bg-gray-200;
+            @apply bg-white hover:bg-gray-200;
         }
 
         &--active {
@@ -48,7 +48,7 @@
 
     .theme-checkbox-generic-white {
         $root: &;
-        @apply border border-gray-900 bg-gray-100 hover:bg-gray-200;
+        @apply border border-gray-900 bg-white hover:bg-gray-200;
         
         &--active, &:has(:checked) {
             @apply bg-blue-400;
@@ -56,10 +56,10 @@
     }
 
     .theme-textarea-generic-white {
-        @apply border border-gray-900 text-gray-900 bg-gray-100;
+        @apply border border-gray-900 text-gray-900 bg-white;
 
         > textarea {
-            @apply bg-gray-100 focus:bg-gray-200;
+            @apply bg-white focus:bg-gray-200;
         }
 
         [data-role="footer"] {

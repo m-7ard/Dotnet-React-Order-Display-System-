@@ -13,7 +13,6 @@ export default function FormField({
     label?: string;
     row?: boolean;
 }>) {
-    console.log("formField errors: ", errors)
     return (
         <div className="flex flex-col gap-y-0.5">
             {row ?? false ? (

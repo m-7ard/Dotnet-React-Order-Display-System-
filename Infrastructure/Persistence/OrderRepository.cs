@@ -26,20 +26,30 @@ public class OrderRepository : IOrderRepository
 
     public async Task<Order?> GetByIdAsync(int id)
     {
-        var orderDbEntity = await _dbContext.Order.SingleOrDefaultAsync(d => d.Id == id);
+        var orderDbEntity = await _dbContext.Order
+            .Include(d => d.OrderItems)
+            .ThenInclude(d => d.ProductHistory)
+            .SingleOrDefaultAsync(d => d.Id == id);
         return orderDbEntity is null ? null : OrderMapper.ToDomain(orderDbEntity);
     }
 
     public async Task<Order> UpdateStatusAsync(int id, OrderStatus status)
     {
-        var orderDbEntity = await _dbContext.Order.SingleAsync(d => d.Id == id);
-        var orderDomainEntity = OrderMapper.ToDomain(orderDbEntity);
+        var orderDbEntity = await _dbContext.Order
+            .Include(d => d.OrderItems)
+            .ThenInclude(d => d.ProductHistory)
+            .SingleAsync(d => d.Id == id);
 
+        // update domain
+        var orderDomainEntity = OrderMapper.ToDomain(orderDbEntity);
+        orderDomainEntity.UpdateStatus(status);
+
+        // update db record
         var updatedOrderdbEntity = OrderMapper.ToDbModel(orderDomainEntity);
-        
         _dbContext.Entry(orderDbEntity).CurrentValues.SetValues(updatedOrderdbEntity);
         await _dbContext.SaveChangesAsync();
 
+        // return tracked db entity
         return OrderMapper.ToDomain(orderDbEntity);
     }
 
