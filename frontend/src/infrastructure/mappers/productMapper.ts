@@ -9,7 +9,7 @@ const productMapper = {
             name: source.name,
             price: source.price,
             description: source.description,
-            dateCreated: source.dateCreated,
+            dateCreated: new Date(source.dateCreated),
             images: source.images.map(productImageMapper.apiToDomain),
         };
     },

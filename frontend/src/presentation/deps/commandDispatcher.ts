@@ -3,6 +3,8 @@ import CreateOrderCommand from "../../application/commands/orders/createOrder/Cr
 import CreateOrderCommandHandler from "../../application/commands/orders/createOrder/CreateOrderCommandHandler";
 import ListOrdersCommand from "../../application/commands/orders/listOrders/ListOrdersCommand";
 import ListOrdersCommandHandler from "../../application/commands/orders/listOrders/ListOrdersCommandHandler";
+import ReadOrderCommand from "../../application/commands/orders/readOrder/ReadOrderCommand";
+import ReadOrderCommandHandler from "../../application/commands/orders/readOrder/ReadOrderCommandHandler";
 import CreateProductCommand from "../../application/commands/products/createProduct/CreateProductCommand";
 import CreateProductCommandHandler from "../../application/commands/products/createProduct/CreateProductCommandHandler";
 import ListProductsCommand from "../../application/commands/products/listProducts/ListProductsCommand";
@@ -43,6 +45,13 @@ commandDispatcher.registerHandler(
 commandDispatcher.registerHandler(
     CreateOrderCommand,
     new CreateOrderCommandHandler({
+        orderDataAccess: orderDataAccess,
+    }),
+);
+
+commandDispatcher.registerHandler(
+    ReadOrderCommand,
+    new ReadOrderCommandHandler({
         orderDataAccess: orderDataAccess,
     }),
 );

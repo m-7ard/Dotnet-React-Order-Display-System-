@@ -1,11 +1,6 @@
-using Application.Api.Orders.List.Handlers;
-using Application.ErrorHandling.Application;
-using MediatR;
-using OneOf;
-
 namespace Application.Api.Orders.List.DTOs;
 
-public class ListOrdersRequestDTO : IRequest<OneOf<ListOrdersResult, List<PlainApplicationError>>>
+public class ListOrdersRequestDTO
 {
     public ListOrdersRequestDTO(float? minTotal, float? maxTotal, string? status, DateTime? createdBefore, DateTime? createdAfter)
     {

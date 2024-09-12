@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import UploadImagesForm, { GeneratedFileName, OriginalFileName } from "../../../components/Forms/ImageUploadForm";
 import IFormError from "../../../../domain/models/IFormError";
 import useItemManager from "../../../hooks/useItemManager";
-import StatelessCharField from "../../../components/StatelessCharField";
+import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
 import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcherContext";
 import UploadProductImagesCommand from "../../../../application/commands/products/uploadProductImages/UploadProductImagesCommand";
 import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
@@ -12,8 +12,9 @@ import CreateProductCommand from "../../../../application/commands/products/crea
 import FormField from "../../../components/Forms/FormField";
 import { Type } from "@sinclair/typebox";
 import typeboxToDomainCompatibleFormError from "../../../../application/mappers/typeboxToDomainCompatibleFormError";
-import StatelessTextArea from "../../../components/StatelessTextArea";
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
+import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
+import MixinButton from "../../../components/Resuables/MixinButton";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -56,7 +57,7 @@ const initialErrorState: ErrorState = {
     name: undefined,
     images: undefined,
     price: undefined,
-    description: undefined
+    description: undefined,
 };
 
 export default function CreateProductPage() {
@@ -73,7 +74,7 @@ export default function CreateProductPage() {
                 name: itemManager.items.name,
                 description: itemManager.items.description,
                 price: parseFloat(itemManager.items.price),
-                images: itemManager.items.images,
+                images: Object.keys(itemManager.items.images),
             });
 
             if (validation.isErr()) {
@@ -84,7 +85,7 @@ export default function CreateProductPage() {
             const command = new CreateProductCommand({
                 name: itemManager.items.name,
                 description: itemManager.items.description,
-                price: parseInt(itemManager.items.price),
+                price: parseFloat(itemManager.items.price),
                 images: Object.keys(itemManager.items.images),
             });
 
@@ -115,8 +116,8 @@ export default function CreateProductPage() {
                 itemManager.setAll(initialValueState);
             }}
         >
-            <header className="text-2xl text-sky-600 font-medium">Create Product</header>
-            <hr className="h-0 w-full border-bottom border-dashed border-gray-800"></hr>
+            <header className="text-2xl text-gray-900 font-bold">Create Product</header>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <div className="flex flex-col gap-2">
                 <FormField name="name" errors={errorManager.items.name}>
                     <StatelessCharField
@@ -197,13 +198,21 @@ export default function CreateProductPage() {
                     />
                 </FormField>
             </div>
-            <footer className="flex flex-row gap-x-2 justify-end">
-                <button className="mixin-button-like mixin-button-base theme-button-generic-white" type="reset">
+            <footer className="flex flex-row gap-2">
+                <MixinButton
+                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                    type="reset"
+                >
                     Reset
-                </button>
-                <button className="mixin-button-like mixin-button-base theme-button-generic-green" type="submit">
+                </MixinButton>
+                <MixinButton
+                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
+                    type="submit"
+                >
                     Submit
-                </button>
+                </MixinButton>
             </footer>
         </form>
     );

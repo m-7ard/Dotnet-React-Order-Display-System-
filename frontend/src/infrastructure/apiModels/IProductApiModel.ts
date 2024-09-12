@@ -5,6 +5,6 @@ export default interface IProductApiModel {
     name: string;
     price: number;
     description: string;
-    dateCreated: Date;
+    dateCreated: string;
     images: IProductImageApiModel[];
 }

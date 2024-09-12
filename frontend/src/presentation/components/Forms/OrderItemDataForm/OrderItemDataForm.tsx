@@ -1,9 +1,9 @@
 import { Type } from "@sinclair/typebox";
 import IFormError from "../../../../domain/models/IFormError";
 import IProduct from "../../../../domain/models/IProduct";
-import CoverImage from "../../CoverImage";
-import MixinButton from "../../MixinButton";
-import StatelessCharField from "../../StatelessCharField";
+import CoverImage from "../../Resuables/CoverImage";
+import MixinButton from "../../Resuables/MixinButton";
+import StatelessCharField from "../../StatelessFields/StatelessCharField";
 import { Value } from "@sinclair/typebox/value";
 
 export type IOrderItemDataFormValue = {
@@ -25,31 +25,21 @@ export default function OrderItemDataForm(props: {
 }) {
     const { onUpdate, onDelete, product, errors, value } = props;
 
-    const updateQuantity = (_value: number) => {
-        const isValid = Value.Check(Type.Integer({ minimum: 1 }), _value);
-        onUpdate("quantity", isValid ? parseInt(_value) : 1);
+    const updateQuantity = (quantity: number) => {
+        const isValid = Value.Check(Type.Integer({ minimum: 1 }), quantity);
+        onUpdate("quantity", isValid ? quantity : 1);
     };
 
     return (
         <div className="flex flex-col gap-1 p-1 border border-gray-400">
             <main className="flex flex-row gap-1">
                 <section className="w-32 h-32 grid grid-cols-2 grid-rows-2 gap-0.5 shrink-0">
+                {Array.from({ length: 4 }).map((_, i) => (
                     <CoverImage
                         className="row-span-1 col-span-1 border border-gray-400"
-                        src={`${import.meta.env.VITE_API_URL}/Media/${product.images[0]?.fileName}`}
+                        src={product.images[i] == null ? undefined : `${import.meta.env.VITE_API_URL}/Media/${product.images[i]?.fileName}`}
                     />
-                    <CoverImage
-                        className="row-span-1 col-span-1 border border-gray-400"
-                        src={`${import.meta.env.VITE_API_URL}/Media/${product.images[1]?.fileName}`}
-                    />
-                    <CoverImage
-                        className="row-span-1 col-span-1 border border-gray-400"
-                        src={`${import.meta.env.VITE_API_URL}/Media/${product.images[2]?.fileName}`}
-                    />
-                    <CoverImage
-                        className="row-span-1 col-span-1 border border-gray-400"
-                        src={`${import.meta.env.VITE_API_URL}/Media/${product.images[3]?.fileName}`}
-                    />
+                ))}
                 </section>
                 <section className="flex flex-col grow gap-1 overflow-hidden">
                     <header className="p-1 overflow-hidden p-1">

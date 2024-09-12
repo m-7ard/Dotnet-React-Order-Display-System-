@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLoaderData } from "@tanstack/react-router";
 import IProduct from "../../../domain/models/IProduct";
-import MixinButton from "../../components/MixinButton";
+import MixinButton from "../../components/Resuables/MixinButton";
 import { useApplicationExceptionContext } from "../../contexts/ApplicationExceptionHandlerContext";
 import { useEffect } from "react";
-import CoverImage from "../../components/CoverImage";
+import CoverImage from "../../components/Resuables/CoverImage";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -19,18 +19,23 @@ export default function ProductsPage() {
 
     return (
         <div className="mixin-page-like mixin-page-base">
-            <div className="text-2xl text-sky-600 font-medium">Products</div>
-            <hr className="h-0 w-full border-bottom border-dashed border-gray-800"></hr>
-            <div className="p-1 flex flex-col gap-2 bg-gray-200 border border-gray-400">
-                <div className="flex flex-row gap-2">
-                    <Link
-                        to="/products/create"
-                        className="mixin-button-like mixin-button-sm theme-button-generic-white"
+            <header className="text-2xl text-gray-900 font-bold">Products</header>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            <div className="flex flex-row gap-2">
+                <Link to="/products/create" className="basis-1/2">
+                    <MixinButton
+                        className="justify-center w-full rounded shadow"
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                     >
                         Create
-                    </Link>
-                    <div className="mixin-button-like mixin-button-sm theme-button-generic-white">Filter</div>
-                </div>
+                    </MixinButton>
+                </Link>
+                <MixinButton
+                    className="justify-center w-full rounded shadow basis-1/2"
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                >
+                    Filter
+                </MixinButton>
             </div>
             {products.map((product) => (
                 <Product product={product} key={product.id} />
@@ -43,10 +48,10 @@ function Product(props: { product: IProduct }) {
     const { product } = props;
 
     return (
-        <div className="p-1 flex flex-col gap-1 bg-gray-200 border border-gray-400">
-            <section className="grid grid-cols-2 h-32 w-full gap-1">
+        <div className="bg-white divide-y divide-gray-300 rounded shadow border-gray-300 border">
+            <section className="grid grid-cols-2 h-32 w-full gap-1 p-2 px-4">
                 <CoverImage
-                    className="row-span-1 col-span-1 border border-gray-400"
+                    className="row-span-1 col-span-1 border border-gray-400 rounded shadow overflow-hidden"
                     src={`${import.meta.env.VITE_API_URL}/Media/${product.images[0]?.fileName}`}
                 />
                 <div className="row-span-1 col-span-1 gap-1 grid grid-cols-2 grid-rows-2">
@@ -62,47 +67,34 @@ function Product(props: { product: IProduct }) {
                     ))}
                 </div>
             </section>
-            <main className="flex flex-col gap-1">
-                {[
-                    { label: "Name", value: product.name },
-                    { label: "Price", value: product.price },
-                ].map(({ label, value }) => (
-                    <div className="flex flex-row border border-gray-400 text-sm" key={label}>
-                        <div className="px-2 bg-gray-300 text-gray-900">{label}</div>
-                        <div className="px-2 border-l border-gray-400 flex grow justify-end bg-gray-100">{value}</div>
+            <main className="flex flex-col gap-1 p-2 px-4">
+                <div className="font-bold text-sm">{product.name}</div>
+                <div className="p-0.5 px-2 bg-gray-900 text-white font-bold rounded shadow w-fit text-sm">
+                    ${product.price}
+                </div>
+                <div className="flex flex-row gap-2 items-center text-xs ">
+                    <div>
+                        Date Created:
                     </div>
-                ))}
+                    <div>
+                        {product.dateCreated.toLocaleDateString("en-us")}
+                    </div>
+                </div>
             </main>
-            <footer className="flex flex-row gap-1 flex-wrap">
+            <footer className="flex flex-row gap-2 p-2 px-4">
                 <MixinButton
-                    className="grow"
+                    className="grow justify-center rounded shadow"
                     type="button"
-                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
-                >
-                    Edit
-                </MixinButton>
-                <MixinButton
-                    className="grow"
-                    type="button"
-                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
-                >
-                    Delete
-                </MixinButton>
-                <MixinButton
-                    className="grow"
-                    type="button"
-                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
-                >
-                    See History
-                </MixinButton>
-            </footer>
-            <footer className="flex flex-row gap-1 flex-wrap">
-                <MixinButton
-                    className="grow"
-                    type="button"
-                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                 >
                     See Orders
+                </MixinButton>
+                <MixinButton
+                    className="grow justify-center rounded shadow"
+                    type="button"
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                >
+                    ...
                 </MixinButton>
             </footer>
         </div>

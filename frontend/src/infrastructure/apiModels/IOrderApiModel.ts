@@ -6,7 +6,7 @@ export default interface IOrderApiModel {
     status: {
         name: "Pending" | "Finished"
     };
-    dateCreated: Date;
-    dateFinished: Date;
+    dateCreated: string;
+    dateFinished: string;
     orderItems: IOrderItemApiModel[];
 }

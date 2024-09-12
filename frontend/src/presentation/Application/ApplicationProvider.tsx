@@ -3,13 +3,19 @@ import { CommandDispatcherContext } from "../contexts/CommandDispatcherContext";
 import commandDispatcher from "../deps/commandDispatcher";
 import { ApplicationExceptionContext } from "../contexts/ApplicationExceptionHandlerContext";
 import InternalServerError from "../../application/errors/InternalServerError";
-import UnkownError from "../../application/errors/UnkownError";
+import UnknownError from "../../application/errors/UnkownError";
+import { StateManagersContext } from "../contexts/StateManagersContext";
+import { orderStateManager } from "../deps/stateManagers";
 
 export default function ApplicationProvider({ children }: PropsWithChildren) {
     return (
-        <CommandDispatcherContext.Provider value={{ commandDispatcher: commandDispatcher }}>
-            <ApplicationExceptionProvider>{children}</ApplicationExceptionProvider>
-        </CommandDispatcherContext.Provider>
+        <ApplicationExceptionProvider>
+            <CommandDispatcherContext.Provider value={{ commandDispatcher: commandDispatcher }}>
+                <StateManagersContext.Provider value={{ orderStateManager: orderStateManager }}>
+                    {children}
+                </StateManagersContext.Provider>
+            </CommandDispatcherContext.Provider>
+        </ApplicationExceptionProvider>
     );
 }
 
@@ -19,9 +25,9 @@ function ApplicationExceptionProvider({ children }: PropsWithChildren) {
         if (error instanceof InternalServerError) {
             setException(error);
         } else if (error instanceof Error) {
-            setException(new UnkownError({ message: error.message }));
+            setException(new UnknownError({ message: error.message }));
         } else {
-            setException(new UnkownError({}));
+            setException(new UnknownError({}));
         }
 
         console.warn(error);

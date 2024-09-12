@@ -2,14 +2,14 @@ import { useMutation } from "@tanstack/react-query";
 import IProduct from "../../../../domain/models/IProduct";
 import { useAbstractDialogContext } from "../../../contexts/AbstractDialogContext";
 import useItemManager from "../../../hooks/useItemManager";
-import { AbstractDialogPanel } from "../../AbstractDialog";
-import MixinButton from "../../MixinButton";
-import StatelessCharField from "../../StatelessCharField";
+import { AbstractDialogPanel } from "../../Resuables/AbstractDialog";
+import MixinButton from "../../Resuables/MixinButton";
+import StatelessCharField from "../../StatelessFields/StatelessCharField";
 import FormField from "../FormField";
 import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
 import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcherContext";
 import ListProductsCommand from "../../../../application/commands/products/listProducts/ListProductsCommand";
-import CoverImage from "../../CoverImage";
+import CoverImage from "../../Resuables/CoverImage";
 import { Type } from "@sinclair/typebox";
 import { Value } from "@sinclair/typebox/value";
 
@@ -50,7 +50,6 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
         mutationKey: ["products"],
         gcTime: 1000 * 60,
         mutationFn: async (variables: ValueState) => {
-            
             const command = new ListProductsCommand({
                 minPrice: Value.Check(Type.Number({ minimum: 0 }), parseFloat(variables.minPrice))
                     ? parseFloat(variables.minPrice)
@@ -157,7 +156,12 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                     <div className="text-sm text-gray-900">Results</div>
                 </header>
                 {searchResults.map((product) => (
-                    <Product product={product} existingProducts={existingProducts} onAdd={() => onAdd(product)} />
+                    <Product
+                        key={product.id}
+                        product={product}
+                        existingProducts={existingProducts}
+                        onAdd={() => onAdd(product)}
+                    />
                 ))}
             </footer>
         </AbstractDialogPanel>
@@ -175,22 +179,12 @@ function Product(props: {
     return (
         <div className={`flex flex-row gap-1 p-1 border border-gray-400 ${active ? "bg-gray-300" : "bg-gray-200"}`}>
             <div className="w-32 h-32 grid grid-cols-2 grid-rows-2 gap-0.5 shrink-0">
-                <CoverImage
-                    className="row-span-1 col-span-1 border border-gray-400"
-                    src={`${import.meta.env.VITE_API_URL}/Media/${product.images[0]?.fileName}`}
-                />
-                <CoverImage
-                    className="row-span-1 col-span-1 border border-gray-400"
-                    src={`${import.meta.env.VITE_API_URL}/Media/${product.images[1]?.fileName}`}
-                />
-                <CoverImage
-                    className="row-span-1 col-span-1 border border-gray-400"
-                    src={`${import.meta.env.VITE_API_URL}/Media/${product.images[2]?.fileName}`}
-                />
-                <CoverImage
-                    className="row-span-1 col-span-1 border border-gray-400"
-                    src={`${import.meta.env.VITE_API_URL}/Media/${product.images[3]?.fileName}`}
-                />
+                {Array.from({ length: 4 }).map((_, i) => (
+                    <CoverImage
+                        className="row-span-1 col-span-1 border border-gray-400"
+                        src={product.images[i] == null ? undefined : `${import.meta.env.VITE_API_URL}/Media/${product.images[i]?.fileName}`}
+                    />
+                ))}
             </div>
             <div className="flex flex-col gap-1 grow overflow-hidden">
                 <div className="p-1 overflow-hidden">

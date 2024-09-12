@@ -8,8 +8,8 @@ const orderItemMapper = {
             id: source.id,
             quantity: source.quantity,
             status: source.status.name,
-            dateCreated: source.dateCreated,
-            dateFinished: source.dateFinished,
+            dateCreated: new Date(source.dateCreated),
+            dateFinished: new Date(source.dateFinished),
             orderId: source.orderId,
             productHistory: productHistoryMapper.apiToDomain(source.productHistory),
         };

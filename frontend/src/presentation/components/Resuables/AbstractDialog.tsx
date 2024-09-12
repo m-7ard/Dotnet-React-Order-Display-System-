@@ -1,6 +1,6 @@
 import { Dialog, DialogPanel, DialogPanelProps } from "@headlessui/react";
 import { FunctionComponent, useState } from "react";
-import { AbstractDialogContext } from "../contexts/AbstractDialogContext";
+import { AbstractDialogContext } from "../../contexts/AbstractDialogContext";
 import { ReactNode } from "@tanstack/react-router";
 
 export type AbstractDialogTriggerProps = {

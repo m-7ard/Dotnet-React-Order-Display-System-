@@ -21,7 +21,7 @@ const validatorSchema = Type.Object({
             productId: Type.Number({ minimum: 1 }),
             quantity: Type.Number({ minimum: 1 }),
         }),
-        { "maxProperties": 1, suffixPath: "/_" },
+        { minProperties: 1, suffixPath: "/_" },
     ),
 });
 

@@ -9,8 +9,8 @@ const orderMapper = {
             id: source.id,
             total: source.total,
             status: OrderStatus.create(source.status.name),
-            dateCreated: source.dateCreated,
-            dateFinished: source.dateFinished,
+            dateCreated: new Date(source.dateCreated),
+            dateFinished: new Date(source.dateFinished),
             orderItems: source.orderItems.map(orderItemMapper.apiToDomain),
         };
     },

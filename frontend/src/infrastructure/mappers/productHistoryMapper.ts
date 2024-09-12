@@ -10,8 +10,8 @@ const productHistoryMapper = {
             description: source.description,
             price: source.price,
             productId: source.productId,
-            validFrom: source.validFrom,
-            validTo: source.validTo,
+            validFrom: new Date(source.validFrom),
+            validTo: new Date(source.validTo),
         };
     },
 };

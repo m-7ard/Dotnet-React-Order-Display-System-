@@ -8,6 +8,8 @@ import IPlainApiError from "../../application/interfaces/IPlainApiError";
 import handleResponse from "../utils/handleResponse";
 import orderMapper from "../mappers/orderMapper";
 import IListOrdersResponseDTO from "../../application/contracts/orders/list/IListOrdersResponseDTO";
+import IReadOrderRequestDTO from "../../application/contracts/orders/read/IReadOrderRequestDTO";
+import IReadOrderResponseDTO from "../../application/contracts/orders/read/IReadOrderResponseDTO";
 
 export default class OrderDataAccess implements IOrderDataAccess {
     private readonly _apiRoute = "http://localhost:5102/api/orders";
@@ -43,6 +45,27 @@ export default class OrderDataAccess implements IOrderDataAccess {
         });
 
         const { isOk, data } = await handleResponse<ICreateOrderResponseDTO, IPlainApiError>({
+            response,
+            onOk: async (res) => await res.json(),
+            onError: async (res) => await res.json(),
+        });
+
+        if (isOk) {
+            return ok(orderMapper.apiToDomain(data.order));
+        }
+
+        return err(data);
+    }
+
+    async readOrder(request: IReadOrderRequestDTO): Promise<Result<IOrder, IPlainApiError>> {
+        const response = await fetch(`${this._apiRoute}/${request.id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const { isOk, data } = await handleResponse<IReadOrderResponseDTO, IPlainApiError>({
             response,
             onOk: async (res) => await res.json(),
             onError: async (res) => await res.json(),

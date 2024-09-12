@@ -1,4 +1,6 @@
 import IFormError from "../../../domain/models/IFormError";
+import CoverImage from "../Resuables/CoverImage";
+import MixinButton from "../Resuables/MixinButton";
 
 export type OriginalFileName = string & { _: "orignalFileName" };
 export type GeneratedFileName = string & { _: "generatedFileName" };
@@ -24,22 +26,21 @@ export default function UploadImagesForm(props: {
     }
 
     return (
-        <div className="p-2 flex flex-col gap-1 bg-gray-100 border border-gray-400">
-            <div
-                className="
-                    mixin-button-like 
-                    mixin-button-sm 
-                    theme-button-generic-white 
-                    w-fit
-                    relative"
-            >
-                <div className="pointer-events-none ">Add Image</div>
-                <input
-                    type="file"
-                    multiple
-                    className="opacity-0 absolute inset-0 cursor-pointer file:cursor-pointer h-full w-full"
-                    onChange={async (e) => await uploadImages(e)}
-                ></input>
+        <div className="bg-white divide-y divide-gray-300 rounded shadow border-gray-300 border">
+            <div className="p-2 px-4">
+                <MixinButton
+                    className="rounded shadow w-fit overflow-hidden relative"
+                    type="button"
+                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                >
+                    <div className="pointer-events-none ">Add Image</div>
+                    <input
+                        type="file"
+                        multiple
+                        className="opacity-0 absolute inset-0 cursor-pointer file:cursor-pointer h-full w-full"
+                        onChange={async (e) => await uploadImages(e)}
+                    ></input>
+                </MixinButton>
             </div>
             {Object.entries(value).map((entries) => {
                 const generatedFileName = entries[0] as GeneratedFileName;
@@ -63,30 +64,28 @@ function Image(props: {
     generatedFileName: GeneratedFileName;
     originalFileName: OriginalFileName;
     onDelete: () => void;
-    errors?: string[]
+    errors?: string[];
 }) {
     const { generatedFileName, originalFileName, onDelete, errors } = props;
 
     return (
-        <div className="flex flex-col gap-1">
-            <div className="flex flex-row gap-1">
-                <div className="w-16 h-16 min-w-16 min-h-16 border border-gray-900 relative">
-                    <img
-                        className="absolute w-full h-full object-cover sm:object-contain"
-                        src={`${import.meta.env.VITE_API_URL}/Media/${generatedFileName}`}
-                        alt={originalFileName}
-                    ></img>
-                </div>
-                <div className="flex flex-col gap-1 overflow-hidden p-1">
+        <div className="flex flex-col gap-2 p-2 px-4">
+            <div className="flex flex-row gap-2">
+                <CoverImage
+                    className="w-16 h-16 min-w-16 min-h-16 border border-gray-300 rounded overflow-hidden"
+                    src={`${import.meta.env.VITE_API_URL}/Media/${generatedFileName}`}
+                />
+                <div className="flex flex-col gap-1 overflow-hidden grow">
                     <div className="text-sm text-medium truncate">{originalFileName}</div>
+                    <MixinButton
+                        className="ml-auto mt-auto justify-center rounded shadow"
+                        type="button"
+                        onClick={onDelete}
+                        options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                    >
+                        Remove
+                    </MixinButton>
                 </div>
-                <button
-                    type="button"
-                    onClick={onDelete}
-                    className="button-like theme-button-generic-white flex items-center justify-center leading-none ml-auto my-auto p-0.5 border border-gray-900 w-6 h-6 min-w-6 min-h-6"
-                >
-                    ✖
-                </button>
             </div>
             {errors == null ? null : (
                 <div className="flex flex-col gap-0.5">
@@ -98,6 +97,5 @@ function Image(props: {
                 </div>
             )}
         </div>
-
     );
 }

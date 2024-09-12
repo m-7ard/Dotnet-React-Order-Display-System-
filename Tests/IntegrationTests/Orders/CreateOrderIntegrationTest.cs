@@ -55,6 +55,21 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     }
 
     [Fact]
+    public async Task CreateOrder_EmptyOrderItemData_Falure()
+    {
+        var orderItemData = new Dictionary<string, OrderItemData>();
+
+        var request = new CreateOrderRequestDTO
+        (
+            orderItemData: orderItemData
+        );
+        var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
     public async Task CreateOrder_NonExistingProduct_Falure()
     {
         var orderItemData = new Dictionary<string, OrderItemData>();
