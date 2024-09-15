@@ -1,6 +1,5 @@
 import { ValueError } from "@sinclair/typebox/errors";
 import JSONPointer from "jsonpointer";
-import { err } from "neverthrow";
 
 interface ErrorStructure {
     _?: string[];

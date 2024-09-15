@@ -13,6 +13,7 @@ import CreateOrderCommand from "../../../../application/commands/orders/createOr
 import IProduct from "../../../../domain/models/IProduct";
 import OrderItemDataFormManager from "../../../components/Forms/OrderItemDataForm/OrderItemDataFormManager";
 import { IOrderItemDataFormValue } from "../../../components/Forms/OrderItemDataForm/OrderItemDataForm";
+import MixinButton from "../../../components/Resuables/MixinButton";
 
 const validatorSchema = Type.Object({
     orderItemData: Type.Record(
@@ -100,8 +101,8 @@ export default function CreateOrderPage() {
                 itemManager.setAll(initialValueState);
             }}
         >
-            <header className="text-2xl text-sky-600 font-medium">Create Order</header>
-            <hr className="h-0 w-full border-bottom border-dashed border-gray-800"></hr>
+            <header className="text-2xl text-gray-900 font-bold">Create Order</header>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <div className="flex flex-col gap-2">
                 <FormField name="orderItemData" errors={errorManager.items.orderItemData?._}>
                     <OrderItemDataFormManager
@@ -135,13 +136,21 @@ export default function CreateOrderPage() {
                     />
                 </FormField>
             </div>
-            <footer className="flex flex-row gap-x-2 justify-end">
-                <button className="mixin-button-like mixin-button-base theme-button-generic-white" type="reset">
+            <footer className="flex flex-row gap-2">
+                <MixinButton
+                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                    type="reset"
+                >
                     Reset
-                </button>
-                <button className="mixin-button-like mixin-button-base theme-button-generic-green" type="submit">
+                </MixinButton>
+                <MixinButton
+                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
+                    type="submit"
+                >
                     Submit
-                </button>
+                </MixinButton>
             </footer>
         </form>
     );

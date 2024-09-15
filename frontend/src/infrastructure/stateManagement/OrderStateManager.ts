@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
-import IOrderStateManager from "../../application/interfaces/IOrderStateManager";
-import IOrder from "../../domain/models/IOrder";
+import IOrderStateManager from "../../application/interfaces/stateManagers/IOrderStateManager";
+import Order from "../../domain/models/Order";
 
 export default class OrderStateManager implements IOrderStateManager {
     private readonly _queryClient: QueryClient;
@@ -11,11 +11,11 @@ export default class OrderStateManager implements IOrderStateManager {
         this._queryClient = props.queryClient;
     }
 
-    setOrder(order: IOrder): void {
+    setOrder(order: Order): void {
         this._queryClient.setQueryData(["order", order.id], order);
     }
 
-    getOrder(orderId: IOrder["id"]): IOrder | null {
+    getOrder(orderId: Order["id"]): Order | null {
         return this._queryClient.getQueryData(["order", orderId]) ?? null;
     }
 }

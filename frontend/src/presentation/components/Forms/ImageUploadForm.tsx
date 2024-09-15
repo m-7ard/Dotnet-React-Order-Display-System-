@@ -26,7 +26,7 @@ export default function UploadImagesForm(props: {
     }
 
     return (
-        <div className="bg-white divide-y divide-gray-300 rounded shadow border-gray-300 border">
+        <div className="bg-gray-50 divide-y divide-gray-300 rounded shadow border-gray-300 border">
             <div className="p-2 px-4">
                 <MixinButton
                     className="rounded shadow w-fit overflow-hidden relative"

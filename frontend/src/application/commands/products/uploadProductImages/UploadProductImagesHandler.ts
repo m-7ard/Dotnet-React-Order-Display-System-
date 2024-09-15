@@ -4,7 +4,7 @@ import { err, ok } from "neverthrow";
 import IListProductsCommand from "./UploadProductImagesCommand";
 import IUploadProductImagesResult from "./IUploadProductImagesResult";
 
-export default class UploadProductImagesCommandHandler implements ICommandHandler<IListProductsCommand, IUploadProductImagesResult> {
+export default class UploadProductImagesHandler implements ICommandHandler<IListProductsCommand, IUploadProductImagesResult> {
     readonly _productDataAccess: IProductDataAccess;
 
     constructor(props: {

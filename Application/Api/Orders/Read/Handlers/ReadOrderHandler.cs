@@ -1,17 +1,16 @@
 using Application.ErrorHandling.Application;
 using Application.ErrorHandling.Other;
 using Application.Interfaces.Persistence;
-using Domain.ValueObjects.Order;
 using MediatR;
 using OneOf;
 
 namespace Application.Api.Orders.Read.Handlers;
 
-public class ReadOrderHandler : IRequestHandler<ReadOrderQuery, OneOf<ReadOrderResult, List<PlainApplicationError>>>
+public class ReadProductHandler : IRequestHandler<ReadOrderQuery, OneOf<ReadOrderResult, List<PlainApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
 
-    public ReadOrderHandler(IOrderRepository orderRepository)
+    public ReadProductHandler(IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
     }
@@ -23,7 +22,7 @@ public class ReadOrderHandler : IRequestHandler<ReadOrderQuery, OneOf<ReadOrderR
         {
             return new List<PlainApplicationError>() {
                 new PlainApplicationError(
-                    message: $"Product with Id \"{request.Id}\" does not exist.",
+                    message: $"Order with Id \"{request.Id}\" does not exist.",
                     path: ["_"],
                     code: ValidationErrorCodes.ModelDoesNotExist
                 )

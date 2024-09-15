@@ -39,31 +39,35 @@ export default function OrderItemDataFormManager(props: {
     );
 
     return (
-        <div className="p-2 flex flex-col gap-1 bg-gray-200 border border-gray-400">
-            <AbstractDialog
-                Trigger={({ onToggle }) => (
-                    <MixinButton
-                        options={{
-                            size: "mixin-button-sm",
-                            theme: "theme-button-generic-white",
-                        }}
-                        className="justify-center"
-                        onClick={onToggle}
-                        type="button"
-                    >
-                        Add
-                    </MixinButton>
-                )}
-                Panel={
-                    <OrderItemDataFormManagerPanel
-                        existingProducts={searchPanelProducts}
-                        onAdd={(product) => {
-                            itemManager.addItem(product.id.toString(), product);
-                            onAdd(product);
-                        }}
+        <div className="flex flex-col gap-2">
+            <header className="mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow">
+                <div data-role="section">
+                    <AbstractDialog
+                        Trigger={({ onToggle }) => (
+                            <MixinButton
+                                options={{
+                                    size: "mixin-button-base",
+                                    theme: "theme-button-generic-white",
+                                }}
+                                className="shadow rounded"
+                                onClick={onToggle}
+                                type="button"
+                            >
+                                Add
+                            </MixinButton>
+                        )}
+                        Panel={
+                            <OrderItemDataFormManagerPanel
+                                existingProducts={searchPanelProducts}
+                                onAdd={(product) => {
+                                    itemManager.addItem(product.id.toString(), product);
+                                    onAdd(product);
+                                }}
+                            />
+                        }
                     />
-                }
-            />
+                </div>
+            </header>
             {Object.entries(value).map(([UID, orderItem]) => (
                 <OrderItemDataForm
                     product={itemManager.items[orderItem.productId]}

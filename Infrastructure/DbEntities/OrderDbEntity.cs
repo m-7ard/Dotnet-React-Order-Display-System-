@@ -23,5 +23,5 @@ public class OrderDbEntity
     public DateTime DateFinished { get; set; }
 
     // Order Item RFK
-    public List<OrderItemDbEntity> OrderItems { get; private set; } = [];
+    public List<OrderItemDbEntity> OrderItems { get; set; } = [];
 }

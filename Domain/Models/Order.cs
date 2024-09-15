@@ -1,4 +1,5 @@
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.OrderItem;
 
 namespace Domain.Models;
 public class Order
@@ -28,5 +29,16 @@ public class Order
         {
             DateFinished = DateTime.Now;
         }
+    }
+
+    public void UpdateOrderItemStatus(int orderItemId, OrderItemStatus status)
+    {
+        var orderItem = OrderItems.Find(orderItem => orderItem.Id == orderItemId);
+        if (orderItem is null)
+        {
+            throw new Exception($"OrderItem of Id \"{orderItemId}\" does not exist on Order of Id \"{Id}\"");
+        }
+
+        orderItem.UpdateStatus(status);
     }
 }

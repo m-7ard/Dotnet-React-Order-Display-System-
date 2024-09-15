@@ -16,7 +16,9 @@ export default class CommandDispatcher {
         const handler = this.handlers.get(command.constructor.name);
 
         if (!handler) {
-            throw new Error(`No handler registered for ${command.constructor.name}`);
+            const error = new Error(`No handler registered for ${command.constructor.name}`);
+            console.error(error);
+            throw error;
         }
 
         return handler.handle(command);

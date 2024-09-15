@@ -1,10 +1,9 @@
 import { Link, useLoaderData, useNavigate } from "@tanstack/react-router";
 import { useApplicationExceptionContext } from "../../contexts/ApplicationExceptionHandlerContext";
 import { useEffect } from "react";
-import IOrder from "../../../domain/models/IOrder";
 import MixinButton from "../../components/Resuables/MixinButton";
 import { useStateManagersContext } from "../../contexts/StateManagersContext";
-import CoverImage from "../../components/Resuables/CoverImage";
+import Order from "../../../domain/models/Order";
 
 export default function OrdersPage() {
     const { ordersResult } = useLoaderData({ from: "/orders" });
@@ -39,13 +38,13 @@ export default function OrdersPage() {
                 </MixinButton>
             </div>
             {queryData.map((order) => (
-                <Order order={order} key={order.id} />
+                <OrderElement order={order} key={order.id} />
             ))}
         </div>
     );
 }
 
-function Order(props: { order: IOrder }) {
+function OrderElement(props: { order: Order }) {
     const { order } = props;
     const navigate = useNavigate();
     const { orderStateManager } = useStateManagersContext();
@@ -59,7 +58,7 @@ function Order(props: { order: IOrder }) {
                 </div>
             </div>
             {order.orderItems.map((orderItem) => (
-                <div className="flex flex-col gap-2 p-2 px-4">
+                <div className="flex flex-col gap-2 p-2 px-4" key={orderItem.id}>
                     <div className="flex flex-col gap-1 grow">
                         <div>
                             <div className="text-sm font-semibold">Order Item #{orderItem.id}</div>

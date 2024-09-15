@@ -10,6 +10,8 @@ import handleResponse from "../utils/handleResponse";
 import IPlainApiError from "../../application/interfaces/IPlainApiError";
 import IProduct from "../../domain/models/IProduct";
 import productMapper from "../mappers/productMapper";
+import IReadProductRequestDTO from "../../application/contracts/products/read/IReadProductRequestDTO";
+import IReadProductResponseDTO from "../../application/contracts/products/read/IReadProductResponseDTO";
 
 export default class ProductDataAccess implements IProductDataAccess {
     private readonly _apiRoute = "http://localhost:5102/api/products";
@@ -64,5 +66,22 @@ export default class ProductDataAccess implements IProductDataAccess {
         });
 
         return isOk ? ok(data.images) : err(data);
+    }
+
+    async readProduct(request: IReadProductRequestDTO): Promise<Result<IProduct, IPlainApiError>> {
+        const response = await fetch(`${this._apiRoute}/${request.id}`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+            },        
+        });
+
+        const { isOk, data } = await handleResponse<IReadProductResponseDTO, IPlainApiError>({
+            response,
+            onOk: async (res) => await res.json(),
+            onError: async (res) => await res.json(),
+        });
+
+        return isOk ? ok(productMapper.apiToDomain(data.product)) : err(data);
     }
 }

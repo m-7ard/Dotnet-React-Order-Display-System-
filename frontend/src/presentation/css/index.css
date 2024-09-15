@@ -69,6 +69,12 @@
   .mixin-checkbox-sm > input {
     @apply p-2 text-sm leading-none absolute inset-0 transition-colors;
   }
+  .mixin-Pcard-like {
+    @apply divide-y border;
+  }
+  .mixin-Pcard-base > [data-role=section] {
+    @apply py-2 px-4;
+  }
 }
 @layer components {
   .theme-input-generic-white {
@@ -121,6 +127,9 @@
   }
   .theme-textarea-generic-white [data-role=counter] {
     @apply border-gray-900;
+  }
+  .theme-Pcard-generic-white {
+    @apply bg-white divide-gray-300 shadow border-gray-300;
   }
 }
 html {

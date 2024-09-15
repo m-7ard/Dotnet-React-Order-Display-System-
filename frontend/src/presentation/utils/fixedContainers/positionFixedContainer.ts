@@ -1,0 +1,42 @@
+export default function positionFixedContainer(
+    element: HTMLElement,
+    reference: HTMLElement,
+    positioning: Record<string, string>,
+) {
+    // positioning arg needs to be a dict / object.
+    const referenceDimensions = reference.getBoundingClientRect();
+
+    const parsedPositioning = { ...positioning };
+
+    //
+    Object.entries(positioning).forEach(([key, value]) => {
+        if (value.includes("%") && ["left", "right"].includes(key)) {
+            parsedPositioning[key] = reference.offsetWidth * (parseInt(value.slice(0, -1)) / 100) + "px";
+        } else if (value.includes("%") && ["top", "bottom"].includes(key)) {
+            parsedPositioning[key] = reference.offsetHeight * (parseInt(value.slice(0, -1)) / 100) + "px";
+        }
+    });
+
+    //
+    console.log(`calc(${referenceDimensions.top}px + calc(${parsedPositioning.top}))`);
+    if (parsedPositioning.top != undefined) {
+        element.style.top = `calc(${referenceDimensions.top}px + calc(${parsedPositioning.top}))`;
+    } else {
+        element.style.top = "";
+    }
+    if (parsedPositioning.left != undefined) {
+        element.style.left = `calc(${referenceDimensions.left}px + calc(${parsedPositioning.left}))`;
+    } else {
+        element.style.left = "";
+    }
+    if (parsedPositioning.right != undefined) {
+        element.style.right = `calc(${document.body.clientWidth - referenceDimensions.right}px + calc(${parsedPositioning.right}))`;
+    } else {
+        element.style.right = "";
+    }
+    if (parsedPositioning.bottom != undefined) {
+        element.style.bottom = `calc(${document.body.clientHeight - referenceDimensions.bottom}px + calc(${parsedPositioning.bottom}))`;
+    } else {
+        element.style.bottom = "";
+    }
+}

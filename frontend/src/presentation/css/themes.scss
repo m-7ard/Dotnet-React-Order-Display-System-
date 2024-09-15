@@ -70,4 +70,8 @@
             @apply border-gray-900;
         }
     }
+
+    .theme-Pcard-generic-white {
+        @apply bg-white divide-gray-300 shadow border-gray-300;
+    }
 }
