@@ -31,66 +31,75 @@ export default function OrderItemDataForm(props: {
     };
 
     return (
-        <div className="flex flex-col gap-1 p-1 border border-gray-400">
-            <main className="flex flex-row gap-1">
-                <section className="w-32 h-32 grid grid-cols-2 grid-rows-2 gap-0.5 shrink-0">
+        <div className="mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow">
+            <section className="w-full grid grid-cols-4 grid-rows-1 shrink-0 gap-1" data-role="section">
                 {Array.from({ length: 4 }).map((_, i) => (
                     <CoverImage
-                        className="row-span-1 col-span-1 border border-gray-400"
-                        src={product.images[i] == null ? undefined : `${import.meta.env.VITE_API_URL}/Media/${product.images[i]?.fileName}`}
+                        className="row-span-1 col-span-1 aspect-square border border-gray-300 rounded shadow overflow-hidden"
+                        src={
+                            product.images[i]?.fileName == null
+                                ? undefined
+                                : `${import.meta.env.VITE_API_URL}/Media/${product.images[i]?.fileName}`
+                        }
+                        key={i}
                     />
                 ))}
-                </section>
-                <section className="flex flex-col grow gap-1 overflow-hidden">
-                    <header className="p-1 overflow-hidden p-1">
-                        <div className="text-xs text-gray-600 leading-none">#{product.id}</div>
-                        <div className="text-sm font-medium leading-none line-clamp-4 break-words">{product.name}</div>
-                    </header>
-                    <footer className="flex flex-row gap-1 mt-auto">
-                        <MixinButton
-                            options={{
-                                size: "mixin-button-sm",
-                                theme: "theme-button-generic-white",
-                            }}
-                            type="button"
-                            onClick={() => updateQuantity(value.quantity + 1)}
-                        >
-                            +
-                        </MixinButton>
-                        <StatelessCharField
-                            options={{
-                                size: "mixin-char-input-sm",
-                                theme: "theme-input-generic-white",
-                            }}
-                            value={value.quantity.toString()}
-                            onChange={(value) => updateQuantity(parseInt(value))}
-                            className="flex grow"
-                        />
-                        <MixinButton
-                            options={{
-                                size: "mixin-button-sm",
-                                theme: "theme-button-generic-white",
-                            }}
-                            type="button"
-                            onClick={() => updateQuantity(value.quantity - 1)}
-                        >
-                            -
-                        </MixinButton>
-                    </footer>
-                </section>
+            </section>
+            <main className="flex flex-col gap-1" data-role="section">
+                <div className="font-bold text-sm">{product.name}</div>
+                <div className="p-0.5 px-2 bg-gray-900 text-white font-bold rounded shadow w-fit text-sm">
+                    ${product.price}
+                </div>
+                <div className="flex flex-row gap-2 items-center text-xs ">
+                    <div>Date Created:</div>
+                    <div>{product.dateCreated.toLocaleDateString("en-us")}</div>
+                </div>
             </main>
-            <footer>
+            <footer className="flex flex-row gap-4" data-role="section">
                 <MixinButton
+                    className="rounded shadow"
                     options={{
                         size: "mixin-button-sm",
                         theme: "theme-button-generic-white",
                     }}
-                    className="text-sm"
                     onClick={onDelete}
                     type="button"
                 >
-                    Remove Item
+                    ...
                 </MixinButton>
+                <div className="flex flex-row gap-2 grow">
+                    <MixinButton
+                        className="shadow rounded"
+                        options={{
+                            size: "mixin-button-sm",
+                            theme: "theme-button-generic-white",
+                        }}
+                        type="button"
+                        onClick={() => updateQuantity(value.quantity + 1)}
+                    >
+                        +
+                    </MixinButton>
+                    <StatelessCharField
+                        options={{
+                            size: "mixin-char-input-sm",
+                            theme: "theme-input-generic-white",
+                        }}
+                        value={value.quantity.toString()}
+                        onChange={(value) => updateQuantity(parseInt(value))}
+                        className="flex grow"
+                    />
+                    <MixinButton
+                        className="shadow rounded"
+                        options={{
+                            size: "mixin-button-sm",
+                            theme: "theme-button-generic-white",
+                        }}
+                        type="button"
+                        onClick={() => updateQuantity(value.quantity - 1)}
+                    >
+                        -
+                    </MixinButton>
+                </div>
             </footer>
         </div>
     );

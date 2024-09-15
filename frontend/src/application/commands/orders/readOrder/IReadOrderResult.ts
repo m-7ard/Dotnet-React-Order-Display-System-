@@ -1,9 +1,9 @@
 import { Result } from "neverthrow";
 import IApplicationErrors from "../../../interfaces/IApplicationErrors";
-import IOrder from "../../../../domain/models/IOrder";
+import Order from "../../../../domain/models/Order";
 
 type IReadOrderResult = Result<{
-    order: IOrder;
+    order: Order;
 }, IApplicationErrors>;
 
 export default IReadOrderResult;

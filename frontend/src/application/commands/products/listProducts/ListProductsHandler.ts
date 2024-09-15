@@ -1,32 +1,32 @@
-import ICreateProductResult from "./ICreateProductResult";
 import IProductDataAccess from "../../../interfaces/dataAccess/IProductAccess";
 import { ICommandHandler } from "../../ICommandHandler";
 import { err, ok } from "neverthrow";
-import CreateProductCommand from "./CreateProductCommand";
+import IListProductsCommand from "./ListProductsCommand";
+import IListProductsResult from "./IListProductsResult";
 
-export default class CreateProductCommandHandler
-    implements ICommandHandler<CreateProductCommand, ICreateProductResult>
-{
+export default class ListProductsHandler implements ICommandHandler<IListProductsCommand, IListProductsResult> {
     private _productDataAccess: IProductDataAccess;
 
     constructor(props: { productDataAccess: IProductDataAccess }) {
         this._productDataAccess = props.productDataAccess;
     }
 
-    async handle(request: CreateProductCommand): Promise<ICreateProductResult> {
+    async handle(request: IListProductsCommand): Promise<IListProductsResult> {
         try {
-            const result = await this._productDataAccess.createProduct({
+            const result = await this._productDataAccess.listProducts({
                 name: request.name,
-                price: request.price,
+                minPrice: request.minPrice,
+                maxPrice: request.maxPrice,
                 description: request.description,
-                images: request.images,
+                createdBefore: request.createdBefore,
+                createdAfter: request.createdAfter,
             });
 
             if (result.isErr()) {
                 return err({ type: "API", data: result.error });
             }
 
-            return ok({ product: result.value });
+            return ok({ products: result.value });
         } catch (error: unknown) {
             return err({ type: "Exception", data: error });
         }

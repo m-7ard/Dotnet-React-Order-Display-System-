@@ -75,25 +75,26 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
     const searchResults = searchProductsMutation.data ?? [];
 
     return (
-        <AbstractDialogPanel className="mixin-page-like mixin-page-base bg-gray-100 border border-gray-900 m-4 max-w-80">
+        <AbstractDialogPanel className="mixin-page-like mixin-page-base bg-gray-50 border border-gray-900 m-4 max-w-80">
             <header className="flex flex-row justify-between items-center">
-                <div className="text-base text-gray-900">Add Products</div>
+                <div className="text-2xl text-gray-900 font-bold">Create Product</div>
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",
                         theme: "theme-button-generic-white",
                     }}
                     onClick={onClose}
+                    className="rounded shadow"
                 >
                     Close
                 </MixinButton>
             </header>
-            <hr className="h-0 w-full border-bottom border-dashed border-gray-800"></hr>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <section className="flex flex-col gap-2">
                 <FormField name="name">
                     <StatelessCharField
                         options={{
-                            size: "mixin-char-input-sm",
+                            size: "mixin-char-input-base",
                             theme: "theme-input-generic-white",
                         }}
                         value={itemManager.items.name}
@@ -105,7 +106,7 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                         <FormField name="minPrice">
                             <StatelessCharField
                                 options={{
-                                    size: "mixin-char-input-sm",
+                                    size: "mixin-char-input-base",
                                     theme: "theme-input-generic-white",
                                 }}
                                 value={itemManager.items.minPrice}
@@ -117,7 +118,7 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                         <FormField name="maxPrice">
                             <StatelessCharField
                                 options={{
-                                    size: "mixin-char-input-sm",
+                                    size: "mixin-char-input-base",
                                     theme: "theme-input-generic-white",
                                 }}
                                 value={itemManager.items.maxPrice}
@@ -126,43 +127,41 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                         </FormField>
                     </div>
                 </div>
-                <div className="flex flex-row gap-2 justify-end">
-                    <MixinButton
-                        options={{
-                            size: "mixin-button-sm",
-                            theme: "theme-button-generic-white",
-                        }}
-                        className="justify-cetner"
-                        onClick={() => itemManager.setAll(initialValueState)}
-                    >
-                        Reset
-                    </MixinButton>
-                    <MixinButton
-                        options={{
-                            size: "mixin-button-sm",
-                            theme: "theme-button-generic-green",
-                        }}
-                        className="justify-cetner"
-                        type="button"
-                        onClick={() => searchProductsMutation.mutate(itemManager.items)}
-                    >
-                        Search
-                    </MixinButton>
-                </div>
             </section>
-            <hr className="h-0 w-full border-bottom border-dashed border-gray-800"></hr>
-            <footer className="flex flex-col gap-1">
+            <footer className="flex flex-row gap-2">
+                <MixinButton
+                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                    type="reset"
+                    onClick={() => itemManager.setAll(initialValueState)}
+                >
+                    Reset
+                </MixinButton>
+                <MixinButton
+                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
+                    type="submit"
+                    onClick={() => searchProductsMutation.mutate(itemManager.items)}
+                >
+                    Submit
+                </MixinButton>
+            </footer>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            <footer className="flex flex-col gap-2 grow overflow-hidden">
                 <header className="flex flex-row justify-between">
-                    <div className="text-sm text-gray-900">Results</div>
+                    <div className="text-base text-gray-900 font-bold">Results</div>
                 </header>
-                {searchResults.map((product) => (
-                    <Product
-                        key={product.id}
-                        product={product}
-                        existingProducts={existingProducts}
-                        onAdd={() => onAdd(product)}
-                    />
-                ))}
+                <div className="flex flex-col gap-4 overflow-scroll">
+                    {searchResults.map((product) => (
+                        <Product
+                            key={product.id}
+                            product={product}
+                            existingProducts={existingProducts}
+                            onAdd={() => onAdd(product)}
+                        />
+                    ))}
+                </div>
+
             </footer>
         </AbstractDialogPanel>
     );
@@ -174,41 +173,47 @@ function Product(props: {
     onAdd: () => void;
 }) {
     const { product, existingProducts, onAdd } = props;
-    const active = existingProducts[product.id.toString()] != null;
+    const isCurrentlyAdded = existingProducts[product.id.toString()] != null;
 
     return (
-        <div className={`flex flex-row gap-1 p-1 border border-gray-400 ${active ? "bg-gray-300" : "bg-gray-200"}`}>
-            <div className="w-32 h-32 grid grid-cols-2 grid-rows-2 gap-0.5 shrink-0">
-                {Array.from({ length: 4 }).map((_, i) => (
-                    <CoverImage
-                        className="row-span-1 col-span-1 border border-gray-400"
-                        src={product.images[i] == null ? undefined : `${import.meta.env.VITE_API_URL}/Media/${product.images[i]?.fileName}`}
-                    />
-                ))}
-            </div>
-            <div className="flex flex-col gap-1 grow overflow-hidden">
-                <div className="p-1 overflow-hidden">
-                    <div className="text-xs text-gray-600 leading-none">#{product.id}</div>
-                    <div className="text-base font-medium leading-none truncate">{product.name}</div>
+        <div className="bg-white divide-y divide-gray-300 rounded shadow border-gray-300 border">
+            <div className="flex flex-col gap-2 p-2 px-4">
+                <div className="w-full grid grid-cols-4 grid-rows-1 shrink-0 gap-1">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                        <CoverImage
+                            className="row-span-1 col-span-1 aspect-square border border-gray-300 rounded shadow overflow-hidden"
+                            src={
+                                product.images[i]?.fileName == null
+                                    ? undefined
+                                    : `${import.meta.env.VITE_API_URL}/Media/${product.images[i].fileName}`
+                            }
+                            key={i}
+                        />
+                    ))}
                 </div>
-                <div className="flex flex-row border border-gray-400 text-sm mt-auto">
-                    <div className="px-2 bg-gray-300 text-gray-900">Item Count</div>
-                    <div className="px-2 border-l border-gray-400 flex grow justify-end bg-gray-100 justify-center">
-                        {!active ? 0 : existingProducts[product.id.toString()].count}
+            </div>
+            <div className="flex flex-col gap-2 p-2 px-4">
+                <div className="flex flex-col gap-1 grow">
+                    <div>
+                        <div className="text-sm font-semibold">{product.name}</div>
+                        <div className="text-sm">{`${product.price}`}</div>
                     </div>
                 </div>
-                <div className="flex flex-col gap-1">
-                    <MixinButton
-                        options={{
-                            size: "mixin-button-sm",
-                            theme: "theme-button-generic-yellow",
-                        }}
-                        className={`justify-center`}
-                        onClick={onAdd}
-                    >
-                        Add
-                    </MixinButton>
+                <div className="flex flex-row gap-2 items-center text-sm">
+                    <div>Item Count</div>
+                    <div className="p-0.5 px-2 bg-gray-900 text-white font-bold rounded shadow">
+                        {existingProducts[product.id.toString()]?.count ?? 0}
+                    </div>
                 </div>
+            </div>
+            <div className="flex flex-row gap-1 mt-auto p-2 px-4">
+                <MixinButton
+                    className="basis-1/2 justify-center rounded shadow"
+                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-yellow" }}
+                    onClick={onAdd}
+                >
+                    Add Item
+                </MixinButton>
             </div>
         </div>
     );

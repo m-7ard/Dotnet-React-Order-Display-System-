@@ -12,11 +12,13 @@ export default class OrderStatus {
     }
 
     public static create(value: string) {
-        if (!OrderStatus.isValid(value)) {
+        if (value === OrderStatus.FINISHED.value) {
+            return OrderStatus.FINISHED;
+        } else if (value === OrderStatus.PENDING.value) {
+            return OrderStatus.PENDING;
+        } else {
             throw new Error(`${value} is not a valid OrderStatus`);
         }
-
-        return new OrderStatus(value);
     }
 
     public static isValid(status: string): boolean {

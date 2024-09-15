@@ -1,12 +1,14 @@
+using Application.Api.OrderItems.MarkFinished.DTOs;
+using Application.Api.OrderItems.MarkFinished.Handlers;
 using Application.Api.Orders.Create.DTOs;
 using Application.Api.Orders.Create.Handlers;
 using Application.Api.Orders.Create.Other;
 using Application.Api.Orders.List.DTOs;
 using Application.Api.Orders.List.Handlers;
+using Application.Api.Orders.MarkFinished.DTOs;
+using Application.Api.Orders.MarkFinished.Handlers;
 using Application.Api.Orders.Read.DTOs;
 using Application.Api.Orders.Read.Handlers;
-using Application.Api.Products.Create.DTOs;
-using Application.Api.Products.Create.Handlers;
 using Application.ErrorHandling.Api;
 using Application.ErrorHandling.Other;
 using Application.Interfaces.Services;
@@ -80,7 +82,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("list")]
-    public async Task<ActionResult<CreateOrderRequestDTO>> List(
+    public async Task<ActionResult<ListOrdersResponseDTO>> List(
         [FromQuery] float? minTotal,
         [FromQuery] float? maxTotal,
         [FromQuery] string? status,
@@ -107,7 +109,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CreateOrderRequestDTO>> Read(int id)
+    public async Task<ActionResult<ReadOrderResponseDTO>> Read(int id)
     {
         var query = new ReadOrderQuery(
             id: id
@@ -123,6 +125,47 @@ public class OrdersController : ControllerBase
         };
 
         var response = new ReadOrderResponseDTO(order: value.Order);
+        return Ok(response);
+    }
+
+    [HttpPut("{orderId}/item/{orderItemId}/mark_finished")]
+    public async Task<ActionResult<MarkOrderItemFinishedResponseDTO>> MarkOrderItemFinished(int orderId, int orderItemId)
+    {
+        var query = new MarkOrderItemFinishedCommand(
+            orderId: orderId,
+            orderItemId: orderItemId
+        );
+
+        var result = await _mediator.Send(query);
+
+        if (result.TryPickT1(out var errors, out var value))
+        {
+            return errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist)
+                ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
+                : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+        };
+
+        var response = new MarkOrderItemFinishedResponseDTO(order: value.Order);
+        return Ok(response);
+    }
+
+    [HttpPut("{orderId}/mark_finished")]
+    public async Task<ActionResult<MarkOrderFinishedResponseDTO>> MarkFinished(int orderId)
+    {
+        var query = new MarkOrderFinishedCommand(
+            orderId: orderId
+        );
+
+        var result = await _mediator.Send(query);
+
+        if (result.TryPickT1(out var errors, out var value))
+        {
+            return errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist)
+                ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
+                : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+        };
+
+        var response = new MarkOrderFinishedResponseDTO(order: value.Order);
         return Ok(response);
     }
 }

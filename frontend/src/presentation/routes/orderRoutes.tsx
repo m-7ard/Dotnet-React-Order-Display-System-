@@ -1,4 +1,4 @@
-import { createRoute, redirect } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
 import rootRoute from "./_rootRoute";
 import commandDispatcher from "../deps/commandDispatcher";
 import ListOrdersCommand from "../../application/commands/orders/listOrders/ListOrdersCommand";
@@ -9,8 +9,7 @@ import { orderStateManager } from "../deps/stateManagers";
 import ReadOrderCommand from "../../application/commands/orders/readOrder/ReadOrderCommand";
 import { Value } from "@sinclair/typebox/value";
 import { Type } from "@sinclair/typebox";
-import IOrder from "../../domain/models/IOrder";
-import IApplicationErrors from "../../application/interfaces/IApplicationErrors";
+import Order from "../../domain/models/Order";
 import UnknownError from "../../application/errors/UnkownError";
 import ILoaderResult from "../../application/interfaces/ILoaderResult";
 
@@ -56,7 +55,7 @@ const manageOrderRoute = createRoute({
     path: "/orders/$id/manage",
     loader: async ({
         params,
-    }): Promise<ILoaderResult<IOrder, unknown>> => {
+    }): Promise<ILoaderResult<Order, unknown>> => {
         const id = parseInt(params.id);
         if (!Value.Check(Type.Integer(), id)) {
             return {

@@ -1,7 +1,7 @@
-import IProduct from "../../../../domain/models/IProduct";
+import IProductApiModel from "../../../../infrastructure/apiModels/IProductApiModel";
 
 type ICreateProductRespnseDTO = {
-    product: IProduct;
+    product: IProductApiModel;
 }
 
 export default ICreateProductRespnseDTO;

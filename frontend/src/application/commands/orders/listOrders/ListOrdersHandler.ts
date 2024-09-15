@@ -7,7 +7,7 @@ import IListOrdersResult from "./IListOrdersResult";
 import ListOrdersCommand from "./ListOrdersCommand";
 import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 
-export default class ListOrdersCommandHandler implements ICommandHandler<IListProductsCommand, IListProductsResult> {
+export default class ListOrdersHandler implements ICommandHandler<IListProductsCommand, IListProductsResult> {
     private _orderDataAccess: IOrderDataAccess;
 
     constructor(props: { orderDataAccess: IOrderDataAccess }) {

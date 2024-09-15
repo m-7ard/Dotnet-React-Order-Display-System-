@@ -5,7 +5,7 @@ import ReadOrderCommand from "./ReadOrderCommand";
 import IReadOrderResult from "./IReadOrderResult";
 
 
-export default class ReadOrderCommandHandler implements ICommandHandler<ReadOrderCommand, IReadOrderResult> {
+export default class ReadOrderHandler implements ICommandHandler<ReadOrderCommand, IReadOrderResult> {
     private _orderDataAccess: IOrderDataAccess;
 
     constructor(props: { orderDataAccess: IOrderDataAccess }) {

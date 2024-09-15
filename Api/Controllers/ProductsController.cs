@@ -2,9 +2,12 @@ using Application.Api.Products.Create.DTOs;
 using Application.Api.Products.Create.Handlers;
 using Application.Api.Products.List.DTOs;
 using Application.Api.Products.List.Handlers;
+using Application.Api.Products.Read.DTOs;
+using Application.Api.Products.Read.Handlers;
 using Application.Api.Products.UploadImages.DTOs;
 using Application.Api.Products.UploadImages.Handlers;
 using Application.ErrorHandling.Api;
+using Application.ErrorHandling.Other;
 using Application.Interfaces.Services;
 using FluentValidation;
 using MediatR;
@@ -184,4 +187,22 @@ public class ProductsController : ControllerBase
         return Ok(response);
     }
     
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ListProductsResponseDTO>> Read(int id)
+    {
+        var query = new ReadProductQuery(
+            id: id
+        );
+        var result = await _mediator.Send(query);
+
+        if (result.TryPickT1(out var errors, out var value))
+        {
+            return errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist)
+                ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
+                : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));        
+        }
+
+        var response = new ReadProductResponseDTO(product: value.Product);
+        return Ok(response);
+    }
 }

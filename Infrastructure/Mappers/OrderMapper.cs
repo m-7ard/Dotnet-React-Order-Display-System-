@@ -25,8 +25,10 @@ public static class OrderMapper
             total: source.Total,
             dateCreated: source.DateCreated,
             dateFinished: source.DateFinished,
-            status: ToDbEntityStatus(source.Status)
-        );
+            status: ToDbEntityStatus(source.Status)) 
+        {
+            OrderItems = source.OrderItems.Select(OrderItemMapper.ToDbModel).ToList()
+        };
     }
 
     public static OrderDbEntity.Statuses ToDbEntityStatus(OrderStatus status)

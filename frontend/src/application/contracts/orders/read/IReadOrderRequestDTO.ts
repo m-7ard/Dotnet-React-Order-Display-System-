@@ -1,5 +1,5 @@
-import IOrder from "../../../../domain/models/IOrder";
+import Order from "../../../../domain/models/Order";
 
 export default interface IReadOrderRequestDTO {
-    id: IOrder["id"]
+    id: Order["id"]
 }

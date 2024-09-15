@@ -1,4 +1,4 @@
-import IOrder from "../../../../domain/models/IOrder";
+import Order from "../../../../domain/models/Order";
 import ICommand from "../../ICommand";
 import IReadOrderResult from "./IReadOrderResult";
 
@@ -6,10 +6,10 @@ export default class ReadOrderCommand implements ICommand<IReadOrderResult> {
     __returnType: IReadOrderResult = null!;
 
     constructor(props: {
-        orderId: IOrder["id"];
+        orderId: Order["id"];
     }) {
         this.orderId = props.orderId;
     }
 
-    public orderId: IOrder["id"];
+    public orderId: Order["id"];
 }

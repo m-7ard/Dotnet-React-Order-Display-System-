@@ -1,6 +1,7 @@
 using Application.Interfaces.Persistence;
 using Domain.Models;
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.OrderItem;
 using Infrastructure.DbEntities;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -84,5 +85,20 @@ public class OrderRepository : IOrderRepository
 
         var dbOrders = await query.ToListAsync();
         return dbOrders.Select(OrderMapper.ToDomain).ToList();
+    }
+
+    public async Task UpdateAsync(Order updatedOrder) 
+    {
+        var updatedOrderEntity = OrderMapper.ToDbModel(updatedOrder);
+        var currentOrderEntity = await _dbContext.Order.SingleAsync(d => d.Id == updatedOrder.Id);
+        _dbContext.Entry(currentOrderEntity).CurrentValues.SetValues(updatedOrderEntity);
+
+        foreach (var updatedItemEntity in updatedOrderEntity.OrderItems)
+        {
+            var currentOrderItemEntity = await _dbContext.OrderItem.SingleAsync(d => d.Id == updatedItemEntity.Id);
+            _dbContext.Entry(currentOrderItemEntity).CurrentValues.SetValues(updatedItemEntity);
+        }        
+        
+        await _dbContext.SaveChangesAsync();
     }
 }

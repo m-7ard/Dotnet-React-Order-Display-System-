@@ -1,10 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
-import { Link, useLoaderData } from "@tanstack/react-router";
+import { Link, useLoaderData, useNavigate } from "@tanstack/react-router";
 import IProduct from "../../../domain/models/IProduct";
 import MixinButton from "../../components/Resuables/MixinButton";
 import { useApplicationExceptionContext } from "../../contexts/ApplicationExceptionHandlerContext";
 import { useEffect } from "react";
 import CoverImage from "../../components/Resuables/CoverImage";
+import AbstractPopover, {
+    AbstractPopoverPanel,
+    AbstractPopoverTrigger,
+} from "../../components/Resuables/AbstractPopover";
+import useAbstractPanelPositioning from "../../hooks/useAbstractPanelPositioning";
+import { useStateManagersContext } from "../../contexts/StateManagersContext";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -46,42 +51,35 @@ export default function ProductsPage() {
 
 function Product(props: { product: IProduct }) {
     const { product } = props;
+    const productImages = product.images.map((image) => `${import.meta.env.VITE_API_URL}/Media/${image.fileName}`);
 
     return (
-        <div className="bg-white divide-y divide-gray-300 rounded shadow border-gray-300 border">
-            <section className="grid grid-cols-2 h-32 w-full gap-1 p-2 px-4">
+        <div className="mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow">
+            <section className="grid grid-cols-2 h-32 w-full gap-1" data-role="section">
                 <CoverImage
                     className="row-span-1 col-span-1 border border-gray-400 rounded shadow overflow-hidden"
-                    src={`${import.meta.env.VITE_API_URL}/Media/${product.images[0]?.fileName}`}
+                    src={productImages[0] == null ? undefined : productImages[0]}
                 />
                 <div className="row-span-1 col-span-1 gap-1 grid grid-cols-2 grid-rows-2">
                     {Array.from({ length: 4 }, (_, i) => i + 1).map((i) => (
                         <CoverImage
                             className="row-span-1 col-span-1 relative border border-gray-400"
-                            src={
-                                product.images[i] == null
-                                    ? ""
-                                    : `${import.meta.env.VITE_API_URL}/Media/${product.images[i]?.fileName}`
-                            }
+                            src={productImages[i] == null ? undefined : productImages[i]}
                         />
                     ))}
                 </div>
             </section>
-            <main className="flex flex-col gap-1 p-2 px-4">
+            <main className="flex flex-col gap-1" data-role="section">
                 <div className="font-bold text-sm">{product.name}</div>
                 <div className="p-0.5 px-2 bg-gray-900 text-white font-bold rounded shadow w-fit text-sm">
                     ${product.price}
                 </div>
                 <div className="flex flex-row gap-2 items-center text-xs ">
-                    <div>
-                        Date Created:
-                    </div>
-                    <div>
-                        {product.dateCreated.toLocaleDateString("en-us")}
-                    </div>
+                    <div>Date Created:</div>
+                    <div>{product.dateCreated.toLocaleDateString("en-us")}</div>
                 </div>
             </main>
-            <footer className="flex flex-row gap-2 p-2 px-4">
+            <footer className="flex flex-row gap-2" data-role="section">
                 <MixinButton
                     className="grow justify-center rounded shadow"
                     type="button"
@@ -89,14 +87,72 @@ function Product(props: { product: IProduct }) {
                 >
                     See Orders
                 </MixinButton>
+                <AbstractPopover
+                    Trigger={({ open }) => (
+                        <AbstractPopoverTrigger>
+                            <MixinButton
+                                className="justify-center rounded shadow"
+                                type="button"
+                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                            >
+                                ...
+                            </MixinButton>
+                        </AbstractPopoverTrigger>
+                    )}
+                    Panel={() => <ProductOptionMenu product={product} />}
+                    positioning={{ top: "100%", right: "0px" }}
+                />
+            </footer>
+        </div>
+    );
+}
+
+function ProductOptionMenu(props: { product: IProduct }) {
+    const { product } = props;
+    const { positionFlag } = useAbstractPanelPositioning();
+    const { productStateManager } = useStateManagersContext();
+    const navigate = useNavigate();
+
+    return (
+        <AbstractPopoverPanel
+            className={`z-50 fixed mt-1 shadow mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow ${positionFlag ? "visible" : "invisible"}`}
+        >
+            <section className="flex flex-col gap-1" data-role="section">
+                <a
+                    className="w-full"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        productStateManager.setProduct(product);
+                        navigate({ to: `/products/${product.id}/update` });
+                    }}
+                >
+                    <MixinButton
+                        className="justify-center rounded shadow w-full"
+                        type="button"
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                    >
+                        Update Product
+                    </MixinButton>
+                </a>
+            </section>
+            <section className="flex flex-col gap-1" data-role="section">
                 <MixinButton
-                    className="grow justify-center rounded shadow"
+                    className="justify-center rounded shadow"
                     type="button"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                 >
-                    ...
+                    Delete Product
                 </MixinButton>
-            </footer>
-        </div>
+            </section>
+            <section className="flex flex-col gap-1" data-role="section">
+                <MixinButton
+                    className="justify-center rounded shadow"
+                    type="button"
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                >
+                    See Product History
+                </MixinButton>
+            </section>
+        </AbstractPopoverPanel>
     );
 }
