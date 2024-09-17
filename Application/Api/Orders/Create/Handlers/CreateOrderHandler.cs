@@ -29,8 +29,8 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
     {
         var errors = new List<PlainApplicationError>();
        
+       // Get Product History
         var retrievedProductsHistory = new Dictionary<string, ProductHistory>();
-
         foreach (var (uid, orderItem) in request.OrderItemData)
         {
             var product = await _productRepository.GetByIdAsync(orderItem.ProductId);
@@ -69,6 +69,8 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             return errors;
         }
 
+
+        // Calc total
         float total = 0;
         foreach (var (uid, orderItem) in request.OrderItemData)
         {
@@ -76,6 +78,8 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             total += productHistory.Price * orderItem.Quantity;
         }
 
+
+        // Create Order
         var inputOrder = OrderFactory.BuildNewOrder(
             total: total,
             orderItems: [],
@@ -83,6 +87,8 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
         );
         var outputOrder = await _orderRepository.CreateAsync(inputOrder);
 
+
+        // Create Order Items
         foreach (var (uid, orderItem) in request.OrderItemData)
         {
             var inputOrderItem = OrderItemFactory.BuildNewOrderItem(

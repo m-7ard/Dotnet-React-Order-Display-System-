@@ -29,7 +29,6 @@ public class OrderRepository : IOrderRepository
     public async Task<Order?> GetByIdAsync(int id)
     {
         var orderDbEntity = await _dbContext.Order
-            .Include(d => d.OrderItems)
             .SingleOrDefaultAsync(d => d.Id == id);
         return orderDbEntity is null ? null : OrderMapper.ToDomain(orderDbEntity);
     }
@@ -37,8 +36,6 @@ public class OrderRepository : IOrderRepository
     public async Task<Order> UpdateStatusAsync(int id, OrderStatus status)
     {
         var orderDbEntity = await _dbContext.Order
-            .Include(d => d.OrderItems)
-            .ThenInclude(d => d.ProductHistory)
             .SingleAsync(d => d.Id == id);
 
         // update domain
@@ -56,7 +53,7 @@ public class OrderRepository : IOrderRepository
 
     public async Task<List<Order>> FindAllAsync(float? minTotal, float? maxTotal, OrderStatus? status, DateTime? createdBefore, DateTime? createdAfter)
     {
-        IQueryable<OrderDbEntity> query = _dbContext.Order.Include(d => d.OrderItems);
+        IQueryable<OrderDbEntity> query = _dbContext.Order;
 
         if (minTotal.HasValue)
         {
