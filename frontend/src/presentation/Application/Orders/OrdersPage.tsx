@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import MixinButton from "../../components/Resuables/MixinButton";
 import { useStateManagersContext } from "../../contexts/StateManagersContext";
 import Order from "../../../domain/models/Order";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 
 export default function OrdersPage() {
     const { ordersResult } = useLoaderData({ from: "/orders" });
@@ -50,15 +51,15 @@ function OrderElement(props: { order: Order }) {
     const { orderStateManager } = useStateManagersContext();
 
     return (
-        <div className="bg-white divide-y divide-gray-300 rounded shadow border-gray-300 border">
-            <div className="p-2 px-4 flex flex-col gap-2">
+        <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }} className="rounded shadow">
+            <MixinPrototypeCardSection className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between items-baseline">
                     <div className="text-base font-bold">Order #{order.id}</div>
                     <div className="text-sm">{`${order.status.value}`}</div>
                 </div>
-            </div>
+            </MixinPrototypeCardSection>
             {order.orderItems.map((orderItem) => (
-                <div className="flex flex-col gap-2 p-2 px-4" key={orderItem.id}>
+                <MixinPrototypeCardSection className="flex flex-col gap-2" key={orderItem.id}>
                     <div className="flex flex-col gap-1 grow">
                         <div>
                             <div className="text-sm font-semibold">Order Item #{orderItem.id}</div>
@@ -71,9 +72,9 @@ function OrderElement(props: { order: Order }) {
                         </div>{" "}
                         <div>{`${orderItem.productHistory.name}`}</div>
                     </div>
-                </div>
+                </MixinPrototypeCardSection>
             ))}
-            <div className="p-2 px-4 flex flex-col gap-2">
+            <MixinPrototypeCardSection className="flex flex-col gap-2">
                 <a
                     className="w-full"
                     onClick={(e) => {
@@ -89,7 +90,7 @@ function OrderElement(props: { order: Order }) {
                         Manage Order
                     </MixinButton>
                 </a>
-            </div>
-        </div>
+            </MixinPrototypeCardSection>
+        </MixinPrototypeCard>
     );
 }

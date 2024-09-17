@@ -3438,6 +3438,7 @@
           "Application": "1.0.0",
           "DotNetEnv": "3.1.1",
           "Infrastructure": "1.0.0",
+          "Microsoft.EntityFrameworkCore": "8.0.8",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
           "Swashbuckle.AspNetCore": "6.4.0"
         },

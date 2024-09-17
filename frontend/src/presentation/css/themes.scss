@@ -11,11 +11,11 @@
         $root: &;
         @apply border border-gray-900 text-gray-900;
 
-        &:not(#{$root}--active) {
+        &:not(&[data-active="true"]) {
             @apply bg-white hover:bg-gray-200;
         }
 
-        &--active {
+        &[data-active="true"] {
             @apply bg-gray-200;
         }
     }
@@ -24,11 +24,11 @@
         $root: &;
         @apply border border-gray-900 text-gray-900;
 
-        &:not(#{$root}--active) {
+        &:not(&[data-active="true"]) {
             @apply bg-yellow-300 hover:bg-yellow-400;
         }
 
-        &--active {
+        &[data-active="true"] {
             @apply bg-yellow-400;
         }
     }
@@ -37,12 +37,25 @@
         $root: &;
         @apply border border-gray-900 text-gray-900 ;
 
-        &:not(#{$root}--active) {
+        &:not(&[data-active="true"]) {
             @apply bg-green-300 hover:bg-green-400;
         }
 
-        &--active {
+        &[data-active="true"] {
             @apply bg-green-400;
+        }
+    }
+
+    .theme-button-generic-red {
+        $root: &;
+        @apply border border-gray-900 text-gray-900 ;
+
+        &:not(&[data-active="true"]) {
+            @apply bg-red-300 hover:bg-red-400;
+        }
+
+        &[data-active="true"] {
+            @apply bg-red-400;
         }
     }
 
@@ -72,6 +85,6 @@
     }
 
     .theme-Pcard-generic-white {
-        @apply bg-white divide-gray-300 shadow border-gray-300;
+        @apply bg-white divide-gray-900 shadow border-gray-900;
     }
 }

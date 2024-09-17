@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using Application.Api.Products.Create.DTOs;
 using Domain.Models;
-using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Tests.IntegrationTests.Products;

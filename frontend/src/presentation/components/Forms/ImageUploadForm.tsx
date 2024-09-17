@@ -1,6 +1,7 @@
 import IFormError from "../../../domain/models/IFormError";
 import CoverImage from "../Resuables/CoverImage";
 import MixinButton from "../Resuables/MixinButton";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 
 export type OriginalFileName = string & { _: "orignalFileName" };
 export type GeneratedFileName = string & { _: "generatedFileName" };
@@ -26,8 +27,8 @@ export default function UploadImagesForm(props: {
     }
 
     return (
-        <div className="bg-gray-50 divide-y divide-gray-300 rounded shadow border-gray-300 border">
-            <div className="p-2 px-4">
+        <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }} className="rounded shadow">
+            <MixinPrototypeCardSection>
                 <MixinButton
                     className="rounded shadow w-fit overflow-hidden relative"
                     type="button"
@@ -41,7 +42,7 @@ export default function UploadImagesForm(props: {
                         onChange={async (e) => await uploadImages(e)}
                     ></input>
                 </MixinButton>
-            </div>
+            </MixinPrototypeCardSection>
             {Object.entries(value).map((entries) => {
                 const generatedFileName = entries[0] as GeneratedFileName;
                 const originalFileName: OriginalFileName = entries[1];
@@ -56,7 +57,7 @@ export default function UploadImagesForm(props: {
                     />
                 );
             })}
-        </div>
+        </MixinPrototypeCard>
     );
 }
 
@@ -69,7 +70,7 @@ function Image(props: {
     const { generatedFileName, originalFileName, onDelete, errors } = props;
 
     return (
-        <div className="flex flex-col gap-2 p-2 px-4">
+        <MixinPrototypeCardSection className="flex flex-col gap-2">
             <div className="flex flex-row gap-2">
                 <CoverImage
                     className="w-16 h-16 min-w-16 min-h-16 border border-gray-300 rounded overflow-hidden"
@@ -96,6 +97,6 @@ function Image(props: {
                     ))}
                 </div>
             )}
-        </div>
+        </MixinPrototypeCardSection>
     );
 }

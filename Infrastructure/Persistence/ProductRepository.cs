@@ -76,4 +76,22 @@ public class ProductRepository : IProductRepository
         var dbProducts = await query.ToListAsync();
         return dbProducts.Select(ProductMapper.ToDomain).ToList();
     }
+
+    public async Task UpdateAsync(Product product)
+    {
+        var currentEntity = await _dbContext.Product.SingleAsync(d => d.Id == product.Id);
+        var updatedEntity = ProductMapper.ToDbEntity(product);
+        _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteByIdAsync(int id)
+    {
+        var entity = await _dbContext.Product
+            .Include(d => d.Images)
+            .SingleAsync(d => d.Id == id);
+
+        _dbContext.Remove(entity);
+        await _dbContext.SaveChangesAsync();
+    }
 }

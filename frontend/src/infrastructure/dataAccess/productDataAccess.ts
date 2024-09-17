@@ -12,6 +12,10 @@ import IProduct from "../../domain/models/IProduct";
 import productMapper from "../mappers/productMapper";
 import IReadProductRequestDTO from "../../application/contracts/products/read/IReadProductRequestDTO";
 import IReadProductResponseDTO from "../../application/contracts/products/read/IReadProductResponseDTO";
+import IUpdateProductRequestDTO from "../../application/contracts/products/update/IUpdateProductRequestDTO";
+import IUpdateProductRespnseDTO from "../../application/contracts/products/update/IUpdateProductRespnseDTO";
+import IDeleteProductRequestDTO from "../../application/contracts/products/delete/IDeleteProductRequestDTO";
+import IDeleteProductRespnseDTO from "../../application/contracts/products/delete/IDeleteProductRespnseDTO";
 
 export default class ProductDataAccess implements IProductDataAccess {
     private readonly _apiRoute = "http://localhost:5102/api/products";
@@ -83,5 +87,41 @@ export default class ProductDataAccess implements IProductDataAccess {
         });
 
         return isOk ? ok(productMapper.apiToDomain(data.product)) : err(data);
+    }
+
+    async updateProduct(request: IUpdateProductRequestDTO): Promise<Result<IProduct, IPlainApiError>> {
+        const response = await fetch(`${this._apiRoute}/${request.id}/update`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request)
+        });
+
+        const { isOk, data } = await handleResponse<IUpdateProductRespnseDTO, IPlainApiError>({
+            response,
+            onOk: async (res) => await res.json(),
+            onError: async (res) => await res.json(),
+        });
+
+        return isOk ? ok(productMapper.apiToDomain(data.product)) : err(data);
+    }
+
+    async deleteProduct(request: IDeleteProductRequestDTO): Promise<Result<null, IPlainApiError>> {
+        const response = await fetch(`${this._apiRoute}/${request.id}/delete`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request)
+        });
+
+        const { isOk, data } = await handleResponse<IDeleteProductRespnseDTO, IPlainApiError>({
+            response,
+            onOk: async (res) => await res.json(),
+            onError: async (res) => await res.json(),
+        });
+
+        return isOk ? ok(null) : err(data);    
     }
 }

@@ -10,6 +10,13 @@ import AbstractPopover, {
 } from "../../components/Resuables/AbstractPopover";
 import useAbstractPanelPositioning from "../../hooks/useAbstractPanelPositioning";
 import { useStateManagersContext } from "../../contexts/StateManagersContext";
+import AbstractDialog, { AbstractDialogPanel } from "../../components/Resuables/AbstractDialog";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
+import { useAbstractDialogContext } from "../../contexts/AbstractDialogContext";
+import { useMutation } from "@tanstack/react-query";
+import { useCommandDispatcherContext } from "../../contexts/CommandDispatcherContext";
+import DeleteProductCommand from "../../../application/commands/products/deleteProduct/DeleteProductCommand";
+import apiToDomainCompatibleFormError from "../../../application/mappers/apiToDomainCompatibleFormError";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -65,6 +72,7 @@ function Product(props: { product: IProduct }) {
                         <CoverImage
                             className="row-span-1 col-span-1 relative border border-gray-400"
                             src={productImages[i] == null ? undefined : productImages[i]}
+                            key={i}
                         />
                     ))}
                 </div>
@@ -136,13 +144,20 @@ function ProductOptionMenu(props: { product: IProduct }) {
                 </a>
             </section>
             <section className="flex flex-col gap-1" data-role="section">
-                <MixinButton
-                    className="justify-center rounded shadow"
-                    type="button"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                >
-                    Delete Product
-                </MixinButton>
+                <AbstractDialog 
+                    Trigger={({ open, onToggle }) => (
+                        <MixinButton
+                            className="justify-center rounded shadow"
+                            type="button"
+                            options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                            onClick={onToggle}
+                            active={open}
+                        >
+                            Delete Product
+                        </MixinButton>
+                    )}
+                    Panel={<DeleteProductDialogPanel product={product} />}
+                />
             </section>
             <section className="flex flex-col gap-1" data-role="section">
                 <MixinButton
@@ -155,4 +170,54 @@ function ProductOptionMenu(props: { product: IProduct }) {
             </section>
         </AbstractPopoverPanel>
     );
+}
+
+function DeleteProductDialogPanel(props: { product: IProduct }) {
+    const { product } = props;
+    const { onClose } = useAbstractDialogContext();
+
+    const { commandDispatcher } = useCommandDispatcherContext();
+    const { dispatchException } = useApplicationExceptionContext();
+
+    const navigate = useNavigate();
+    const deleteProductMutation = useMutation({
+        mutationFn: async () => {
+            const command = new DeleteProductCommand({
+                id: product.id,
+            });
+
+            const result = await commandDispatcher.dispatch(command);
+
+            if (result.isOk()) {
+                navigate({ to: "/products" });
+            } else if (result.error.type === "Exception") {
+                dispatchException(result.error.data);
+            } else if (result.error.type === "API") {
+                const errors = apiToDomainCompatibleFormError(result.error.data);
+                console.warn(errors);
+                navigate({ to: "/products" });
+            }
+        },
+    });
+
+    return (
+        <AbstractDialogPanel className="m-auto">
+            <MixinPrototypeCard className="rounded shadow w-72" options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}>
+                <MixinPrototypeCardSection>
+                    <header className="text-base text-gray-900 font-bold">Confirm Deletion</header>
+                </MixinPrototypeCardSection>
+                <MixinPrototypeCardSection>
+                    <header className="text-sm text-gray-900">Do you wish to delete "product #1"? This Process cannot be undone</header>
+                </MixinPrototypeCardSection>
+                <MixinPrototypeCardSection className="flex flex-row gap-2 justify-between">
+                    <MixinButton onClick={onClose} className="rounded shadow" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}>
+                        Cancel
+                    </MixinButton>
+                    <MixinButton onClick={() => deleteProductMutation.mutate()} className="rounded shadow" options={{ size: "mixin-button-base", theme: "theme-button-generic-red" }}>
+                        Delete
+                    </MixinButton>
+                </MixinPrototypeCardSection>
+            </MixinPrototypeCard>
+        </AbstractDialogPanel>
+    )
 }

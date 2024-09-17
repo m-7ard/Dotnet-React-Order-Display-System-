@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Application.Api.Products.Delete.DTOs;
 using Application.Api.Products.Read.DTOs;
 using Domain.Models;
 
@@ -34,7 +35,7 @@ public class ReadProductIntegrationTest : ProductsIntegrationTest
     public async Task ReadProduct_NonExistingId_Failure()
     {
         var request = new ReadProductRequestDTO();
-        var response = await _client.GetAsync($"{_route}/read/10000");
+        var response = await _client.GetAsync($"{_route}/10000");
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -44,7 +45,7 @@ public class ReadProductIntegrationTest : ProductsIntegrationTest
     public async Task ReadProduct_InvalidId_Failure()
     {
         var request = new ReadProductRequestDTO();
-        var response = await _client.GetAsync($"{_route}/read/10000");
+        var response = await _client.GetAsync($"{_route}/invalid");
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

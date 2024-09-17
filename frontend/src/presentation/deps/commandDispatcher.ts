@@ -13,12 +13,16 @@ import CreateProductCommand from "../../application/commands/products/createProd
 import CreateProductHandler from "../../application/commands/products/createProduct/CreateProductHandler";
 import ListProductsCommand from "../../application/commands/products/listProducts/ListProductsCommand";
 import ListProductsHandler from "../../application/commands/products/listProducts/ListProductsHandler";
-import ReadProductHandler from "../../application/commands/products/readProduct/ReadOrdeHandler";
+import ReadProductHandler from "../../application/commands/products/readProduct/ReadProductHandler";
 import ReadProductCommand from "../../application/commands/products/readProduct/ReadProductCommand";
+import UpdateProductCommand from "../../application/commands/products/updateProduct/UpdateProductCommand";
+import UpdateProductHandler from "../../application/commands/products/updateProduct/UpdateProductHandler";
 import UploadProductImagesCommand from "../../application/commands/products/uploadProductImages/UploadProductImagesCommand";
 import UploadProductImagesHandler from "../../application/commands/products/uploadProductImages/UploadProductImagesHandler";
 import { orderDataAccess, productDataAccess } from "./dataAccess";
 import { productStateManager } from "./stateManagers";
+import DeleteProductHandler from "../../application/commands/products/deleteProduct/DeleteProductHandler";
+import DeleteProductCommand from "../../application/commands/products/deleteProduct/DeleteProductCommand";
 
 const commandDispatcher = new CommandDispatcher();
 commandDispatcher.registerHandler(
@@ -82,6 +86,20 @@ commandDispatcher.registerHandler(
     new ReadProductHandler({
         productDataAccess: productDataAccess,
         productStateManager: productStateManager
+    }),
+);
+
+commandDispatcher.registerHandler(
+    UpdateProductCommand,
+    new UpdateProductHandler({
+        productDataAccess: productDataAccess,
+    }),
+);
+
+commandDispatcher.registerHandler(
+    DeleteProductCommand,
+    new DeleteProductHandler({
+        productDataAccess: productDataAccess,
     }),
 );
 

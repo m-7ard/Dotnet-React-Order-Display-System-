@@ -30,7 +30,7 @@ export function AbstractPopoverTrigger(attrs: React.ComponentProps<typeof Popove
     const {
         elements: { setReferenceElement },
     } = useTooltipContext();
-    return <PopoverButton {...attrs} ref={setReferenceElement} />;
+    return <PopoverButton as={"div"} {...attrs} ref={setReferenceElement} />;
 }
 
 export function AbstractPopoverPanel(attrs: React.ComponentProps<typeof PopoverPanel>) {
