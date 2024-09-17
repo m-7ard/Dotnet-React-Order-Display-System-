@@ -17,6 +17,7 @@ import StatelessTextArea from "../../../components/StatelessFields/StatelessText
 import MixinButton from "../../../components/Resuables/MixinButton";
 import { useEffect } from "react";
 import IProduct from "../../../../domain/models/IProduct";
+import UpdateProductCommand from "../../../../application/commands/products/updateProduct/UpdateProductCommand";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -87,7 +88,8 @@ export default function UpdateProductPage(props: {
                 return;
             }
 
-            const command = new CreateProductCommand({
+            const command = new UpdateProductCommand({
+                id: product.id,
                 name: itemManager.items.name,
                 description: itemManager.items.description,
                 price: parseFloat(itemManager.items.price),

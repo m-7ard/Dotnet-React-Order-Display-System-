@@ -8,29 +8,38 @@
   .theme-button-generic-white {
     @apply border border-gray-900 text-gray-900;
   }
-  .theme-button-generic-white:not(.theme-button-generic-white--active) {
+  .theme-button-generic-white:not(.theme-button-generic-white[data-active=true]) {
     @apply bg-white hover:bg-gray-200;
   }
-  .theme-button-generic-white--active {
+  .theme-button-generic-white[data-active=true] {
     @apply bg-gray-200;
   }
   .theme-button-generic-yellow {
     @apply border border-gray-900 text-gray-900;
   }
-  .theme-button-generic-yellow:not(.theme-button-generic-yellow--active) {
+  .theme-button-generic-yellow:not(.theme-button-generic-yellow[data-active=true]) {
     @apply bg-yellow-300 hover:bg-yellow-400;
   }
-  .theme-button-generic-yellow--active {
+  .theme-button-generic-yellow[data-active=true] {
     @apply bg-yellow-400;
   }
   .theme-button-generic-green {
     @apply border border-gray-900 text-gray-900;
   }
-  .theme-button-generic-green:not(.theme-button-generic-green--active) {
+  .theme-button-generic-green:not(.theme-button-generic-green[data-active=true]) {
     @apply bg-green-300 hover:bg-green-400;
   }
-  .theme-button-generic-green--active {
+  .theme-button-generic-green[data-active=true] {
     @apply bg-green-400;
+  }
+  .theme-button-generic-red {
+    @apply border border-gray-900 text-gray-900;
+  }
+  .theme-button-generic-red:not(.theme-button-generic-red[data-active=true]) {
+    @apply bg-red-300 hover:bg-red-400;
+  }
+  .theme-button-generic-red[data-active=true] {
+    @apply bg-red-400;
   }
   .theme-checkbox-generic-white {
     @apply border border-gray-900 bg-white hover:bg-gray-200;
@@ -51,6 +60,6 @@
     @apply border-gray-900;
   }
   .theme-Pcard-generic-white {
-    @apply bg-white divide-gray-300 shadow border-gray-300;
+    @apply bg-white divide-gray-900 shadow border-gray-900;
   }
 }/*# sourceMappingURL=themes.css.map */

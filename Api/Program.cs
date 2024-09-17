@@ -2,6 +2,8 @@ using System.Globalization;
 using Api;
 using Application.Api.Products.Create.Handlers;
 using Application.Api.Products.Create.Validators;
+using Application.Api.Products.Update.Handlers;
+using Application.Api.Products.Update.Validators;
 using Application.Common;
 using Application.ErrorHandling.Api;
 using Application.Interfaces.Persistence;
@@ -10,12 +12,11 @@ using FluentValidation;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
-
+// dotnet ef migrations add <Name> --project Api --startup-project Api
 
 
 ///
@@ -100,7 +101,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddScoped<IPlainErrorHandlingService, PlainApiErrorHandlingService>();
-
+//
 // builder.Services.AddSingleton<INewErrorHandlingService<ApiError>, ApiErrorHandlingService>();
 
 ///
@@ -108,7 +109,7 @@ builder.Services.AddScoped<IPlainErrorHandlingService, PlainApiErrorHandlingServ
 /// Fluent Validation DI / Dependency Injection
 /// 
 
-builder.Services.AddValidatorsFromAssembly(typeof(CreateProductValidator).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(UpdateProductValidator).Assembly);
 
 ///
 ///

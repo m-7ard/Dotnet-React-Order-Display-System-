@@ -2,6 +2,7 @@ using Application.ErrorHandling.Application;
 using Application.ErrorHandling.Other;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
+using Domain.Models;
 using MediatR;
 using OneOf;
 
@@ -23,13 +24,8 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
     public async Task<OneOf<CreateProductResult, List<PlainApplicationError>>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
         var errors = new List<PlainApplicationError>();
-        var inputProduct = ProductFactory.BuildNewProduct(
-            name: request.Name,
-            price: request.Price,
-            description: request.Description,
-            images: []
-        );
 
+        var productImageValue = new List<ProductImage>();
         foreach (var fileName in request.Images)
         {
             var productImage = await _productImageRepository.GetByFileNameAsync(fileName);
@@ -53,7 +49,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
                 continue;
             }
             
-            inputProduct.Images.Add(productImage);
+            productImageValue.Add(productImage);
         }
 
         if (errors.Count > 0)
@@ -61,18 +57,17 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
             return errors;
         }
 
-
-        var error = new List<PlainApplicationError>();
-        if (error.Count > 0)
-        {
-            return error;
-        }
+        var inputProduct = ProductFactory.BuildNewProduct(
+            name: request.Name,
+            price: request.Price,
+            description: request.Description,
+            images: productImageValue
+        );
 
         var outputProduct = await _productRepository.CreateAsync(inputProduct);
         foreach (var productImage in inputProduct.Images)
         {
-            var outputproductImage = await _productImageRepository.AssignToProduct(productId: outputProduct.Id, productImageId: productImage.Id);
-            outputProduct.Images.Add(outputproductImage);
+            await _productImageRepository.AssignToProductAsync(productId: outputProduct.Id, productImageId: productImage.Id);
         }
         
         var inputProductHistory = ProductHistoryFactory.BuildNewProductHistory(

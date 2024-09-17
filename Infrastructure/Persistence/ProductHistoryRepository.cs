@@ -24,7 +24,13 @@ public class ProductHistoryRespository : IProductHistoryRepository
 
     public async Task<ProductHistory?> GetLatestByProductIdAsync(int id)
     {
-        var productHistoryDbEntity = await _simpleProductOrderServiceDbContext.ProductHistory.FirstOrDefaultAsync(d => d.ProductId == id && d.ValidFrom > d.ValidTo);
+        var productHistoryDbEntity = await _simpleProductOrderServiceDbContext.ProductHistory.OrderByDescending(d => d.ValidFrom).FirstOrDefaultAsync(d => d.ProductId == id && d.ValidFrom > d.ValidTo);
+        return productHistoryDbEntity is null ? null : ProductHistoryMapper.ToDomain(productHistoryDbEntity);
+    }
+
+    public async Task<ProductHistory?> GetByIdAsync(int id)
+    {
+        var productHistoryDbEntity = await _simpleProductOrderServiceDbContext.ProductHistory.FirstOrDefaultAsync(d => d.ProductId == id);
         return productHistoryDbEntity is null ? null : ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 }

@@ -1,7 +1,7 @@
 import { err, ok } from "neverthrow";
 import { ICommandHandler } from "../../ICommandHandler";
 import ReadProductCommand from "./ReadProductCommand";
-import IReadProductResult from "./IReadOrderResult";
+import IReadProductResult from "./IReadProductResult";
 import IProductStateManager from "../../../interfaces/stateManagers/IProductStateManager";
 import IProductDataAccess from "../../../interfaces/dataAccess/IProductAccess";
 

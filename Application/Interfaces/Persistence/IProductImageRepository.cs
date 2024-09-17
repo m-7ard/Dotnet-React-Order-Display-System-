@@ -6,5 +6,7 @@ public interface IProductImageRepository
 {
     Task<ProductImage> CreateAsync(ProductImage productImage);
     Task<ProductImage?> GetByFileNameAsync(string fileName);
-    Task<ProductImage> AssignToProduct(int productId, int productImageId);
+    Task<ProductImage> AssignToProductAsync(int productId, int productImageId);
+    Task<List<ProductImage>> FilterByProductIdAsync(int productId);
+    Task DeleteByFileNameAsync(string fileName);
 }

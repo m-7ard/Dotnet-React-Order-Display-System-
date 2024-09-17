@@ -5,10 +5,14 @@ import IUploadProductImagesRequestDTO from "../../contracts/products/uploadImage
 import IProduct from "../../../domain/models/IProduct";
 import IPlainApiError from "../IPlainApiError";
 import IReadProductRequestDTO from "../../contracts/products/read/IReadProductRequestDTO";
+import IUpdateProductRequestDTO from "../../contracts/products/update/IUpdateProductRequestDTO";
+import IDeleteProductRequestDTO from "../../contracts/products/delete/IDeleteProductRequestDTO";
 
 export default interface IProductDataAccess {
     listProducts(request: IListProductsRequestDTO): Promise<Result<IProduct[], IPlainApiError>>;
     createProduct(request: ICreateProductRequestDTO): Promise<Result<IProduct, IPlainApiError>>;
     readProduct(request: IReadProductRequestDTO): Promise<Result<IProduct, IPlainApiError>>;
+    updateProduct(request: IUpdateProductRequestDTO): Promise<Result<IProduct, IPlainApiError>>;
+    deleteProduct(request: IDeleteProductRequestDTO): Promise<Result<null, IPlainApiError>>;
     uploadImages(request: IUploadProductImagesRequestDTO): Promise<Result<string[], IPlainApiError>>;
 }

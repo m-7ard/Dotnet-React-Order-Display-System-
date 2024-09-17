@@ -34,12 +34,15 @@ public class Mixins
             name: $"Product #{number}",
             price: number,
             description: $"Product #{number} Description",
-            images: images
+            images: []
         );
         var outputProduct = await _productRepository.CreateAsync(inputProduct);
-        var fullyUpdateProduct = await _productRepository.GetByIdAsync(outputProduct.Id);
+        foreach (var image in images)
+        {
+            outputProduct.Images.Add(await _productImageRepository.AssignToProductAsync(productId: outputProduct.Id, productImageId: image.Id));
+        }
 
-        return fullyUpdateProduct!;
+        return outputProduct!;
     }
 
     public async Task<Product> CreateProductAndProductHistory(int number, List<ProductImage> images)

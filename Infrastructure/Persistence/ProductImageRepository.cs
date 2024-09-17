@@ -7,32 +7,45 @@ namespace Infrastructure.Persistence;
 
 public class ProductImageRepository : IProductImageRepository
 {
-    private readonly SimpleProductOrderServiceDbContext _simpleProductOrderServiceDbContext;
+    private readonly SimpleProductOrderServiceDbContext _dbContext;
 
     public ProductImageRepository(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext)
     {
-        _simpleProductOrderServiceDbContext = simpleProductOrderServiceDbContext;
+        _dbContext = simpleProductOrderServiceDbContext;
     }
 
     public async Task<ProductImage> CreateAsync(ProductImage productImage)
     {
         var dbProductImage = ProductImageMapper.ToDbModel(productImage);
-        _simpleProductOrderServiceDbContext.ProductImage.Add(dbProductImage);
-        await _simpleProductOrderServiceDbContext.SaveChangesAsync();
+        _dbContext.ProductImage.Add(dbProductImage);
+        await _dbContext.SaveChangesAsync();
         return ProductImageMapper.ToDomain(dbProductImage);
     }
 
     public async Task<ProductImage?> GetByFileNameAsync(string fileName)
     {
-        var dbProductImage = await _simpleProductOrderServiceDbContext.ProductImage.FirstOrDefaultAsync(d => d.FileName == fileName);
+        var dbProductImage = await _dbContext.ProductImage.FirstOrDefaultAsync(d => d.FileName == fileName);
         return dbProductImage is null ? null : ProductImageMapper.ToDomain(dbProductImage);
     }
 
-    public async Task<ProductImage> AssignToProduct(int productId, int productImageId)
+    public async Task<ProductImage> AssignToProductAsync(int productId, int productImageId)
     {
-        var dbProductImage = await _simpleProductOrderServiceDbContext.ProductImage.SingleAsync(d => d.Id == productImageId);
+        var dbProductImage = await _dbContext.ProductImage.SingleAsync(d => d.Id == productImageId);
         dbProductImage.ProductId = productId;
-        await _simpleProductOrderServiceDbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
         return ProductImageMapper.ToDomain(dbProductImage);
+    }
+
+    public async Task<List<ProductImage>> FilterByProductIdAsync(int productId)
+    {
+        var dbProductImages = await _dbContext.ProductImage.Where(d => d.ProductId == productId).ToListAsync();
+        return dbProductImages.Select(ProductImageMapper.ToDomain).ToList();
+    }
+
+    public async Task DeleteByFileNameAsync(string fileName)
+    {
+        var dbProductImage = await _dbContext.ProductImage.SingleAsync(d => d.FileName == fileName);
+        _dbContext.Remove(dbProductImage);
+        await _dbContext.SaveChangesAsync();
     }
 }
