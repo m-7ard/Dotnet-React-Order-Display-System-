@@ -1,4 +1,4 @@
-import IOrderDataAccess from "../../application/interfaces/dataAccess/IOrderAccess";
+import IOrderDataAccess from "../../application/interfaces/dataAccess/IOrderDataAccess";
 import ICreateOrderRequestDTO from "../../application/contracts/orders/create/ICreateOrderRequestDTO";
 import ICreateOrderResponseDTO from "../../application/contracts/orders/create/ICreateOrderResponseDTO";
 import IListOrdersRequestDTO from "../../application/contracts/orders/list/IListOrdersRequestDTO";

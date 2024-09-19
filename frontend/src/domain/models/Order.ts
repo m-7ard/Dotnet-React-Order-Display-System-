@@ -1,4 +1,5 @@
 import OrderStatus from "../valueObjects/Order/OrderStatus";
+import OrderItemStatus from "../valueObjects/OrderItem/OrderItemStatus";
 import IOrderItem from "./IOrderItem";
 
 export default class Order {
@@ -26,6 +27,6 @@ export default class Order {
     public orderItems: IOrderItem[];
 
     canMarkFinished(): boolean {
-        return this.orderItems.every((orderItem) => orderItem.status === "Finished");
+        return this.orderItems.every((orderItem) => orderItem.status === OrderItemStatus.FINISHED);
     }
 }

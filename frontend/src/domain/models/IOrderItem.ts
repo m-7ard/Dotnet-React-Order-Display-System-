@@ -1,9 +1,10 @@
+import OrderItemStatus from "../valueObjects/OrderItem/OrderItemStatus";
 import IProductHistory from "./IProductHistory";
 
 export default interface IOrderItem {
     id: number;
     quantity: number;
-    status: "Pending" | "Finished";
+    status: OrderItemStatus;
     dateCreated: Date;
     dateFinished: Date;
     orderId: IOrderItem["id"];

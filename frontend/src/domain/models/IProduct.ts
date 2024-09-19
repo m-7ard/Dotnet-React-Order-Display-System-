@@ -1,4 +1,4 @@
-import IProductImage from "./IProductImage";
+import IImageData from "./IImageData";
 
 export default interface IProduct {
     id: number,
@@ -6,5 +6,5 @@ export default interface IProduct {
     price: number,
     description: string,
     dateCreated: Date,
-    images: IProductImage[]
+    images: IImageData[]
 }

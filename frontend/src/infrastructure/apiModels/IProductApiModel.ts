@@ -1,4 +1,4 @@
-import IProductImageApiModel from "./IProductImageApiModel";
+import IImageApiModel from "./IImageApiModel";
 
 export default interface IProductApiModel {
     id: number;
@@ -6,5 +6,5 @@ export default interface IProductApiModel {
     price: number;
     description: string;
     dateCreated: string;
-    images: IProductImageApiModel[];
+    images: IImageApiModel[];
 }

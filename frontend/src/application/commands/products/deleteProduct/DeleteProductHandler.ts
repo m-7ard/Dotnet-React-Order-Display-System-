@@ -2,7 +2,7 @@ import { err, ok } from "neverthrow";
 import { ICommandHandler } from "../../ICommandHandler";
 import DeleteProductCommand from "./DeleteProductCommand";
 import IDeleteProductResult from "./IDeleteProductResult";
-import IProductDataAccess from "../../../interfaces/dataAccess/IProductAccess";
+import IProductDataAccess from "../../../interfaces/dataAccess/IProductDataAccess";
 
 export default class DeleteProductHandler implements ICommandHandler<DeleteProductCommand, IDeleteProductResult> {
     private _productDataAccess: IProductDataAccess;

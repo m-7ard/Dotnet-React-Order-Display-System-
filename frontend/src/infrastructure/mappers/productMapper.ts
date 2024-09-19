@@ -1,6 +1,6 @@
 import IProduct from "../../domain/models/IProduct";
 import IProductApiModel from "../apiModels/IProductApiModel";
-import productImageMapper from "./productImageMapper";
+import ImageDataMapper from "./productImageMapper";
 
 const productMapper = {
     apiToDomain: (source: IProductApiModel): IProduct => {
@@ -10,7 +10,7 @@ const productMapper = {
             price: source.price,
             description: source.description,
             dateCreated: new Date(source.dateCreated),
-            images: source.images.map(productImageMapper.apiToDomain),
+            images: source.images.map(ImageDataMapper.apiToDomain),
         };
     },
 };

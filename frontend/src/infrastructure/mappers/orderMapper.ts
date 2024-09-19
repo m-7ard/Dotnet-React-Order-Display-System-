@@ -8,7 +8,7 @@ const orderMapper = {
         return new Order({
             id: source.id,
             total: source.total,
-            status: OrderStatus.create(source.status.name),
+            status: OrderStatus.create(source.status),
             dateCreated: new Date(source.dateCreated),
             dateFinished: new Date(source.dateFinished),
             orderItems: source.orderItems.map(orderItemMapper.apiToDomain),

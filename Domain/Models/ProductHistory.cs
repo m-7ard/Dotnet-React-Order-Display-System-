@@ -7,7 +7,7 @@ public class ProductHistory
         string name,
         List<string> images,
         float price,
-        int? productId,
+        int productId,
         DateTime validFrom,
         DateTime validTo,
         string description)
@@ -27,7 +27,7 @@ public class ProductHistory
     public List<string> Images { get; set; }
     public string Description { get; set; }
     public float Price { get; set; }
-    public int? ProductId { get; set; }
+    public int ProductId { get; set; }
     public DateTime ValidFrom { get; set; }
     public DateTime ValidTo { get; set; }
 }

@@ -1,15 +1,14 @@
-import IProductImage from "../../domain/models/IProductImage";
-import IProductImageApiModel from "../apiModels/IProductImageApiModel";
+import IImageData from "../../domain/models/IImageData";
+import IImageApiModel from "../apiModels/IImageApiModel";
 
-const productImageMapper = {
-    apiToDomain: (source: IProductImageApiModel): IProductImage => {
+const ImageDataMapper = {
+    apiToDomain: (source: IImageApiModel): IImageData => {
         return {
-            id: source.id,
             fileName: source.fileName,
-            dateCreated: new Date(source.dateCreated),
-            productId: source.productId,
+            originalFileName: source.originalFileName,
+            url: source.url
         };
     },
 };
 
-export default productImageMapper;
+export default ImageDataMapper;

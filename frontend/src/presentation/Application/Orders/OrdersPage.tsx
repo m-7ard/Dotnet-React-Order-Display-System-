@@ -63,7 +63,7 @@ function OrderElement(props: { order: Order }) {
                     <div className="flex flex-col gap-1 grow">
                         <div>
                             <div className="text-sm font-semibold">Order Item #{orderItem.id}</div>
-                            <div className="text-sm">{`${orderItem.status}`}</div>
+                            <div className="text-sm">{`${orderItem.status.value}`}</div>
                         </div>
                     </div>
                     <div className="flex flex-row gap-2 items-center text-sm">

@@ -4,7 +4,6 @@ import ProductsPage from "../Application/Products/ProductsPage";
 import CreateProductPage from "../Application/Products/Create/CreateProductPage";
 import ListProductsCommand from "../../application/commands/products/listProducts/ListProductsCommand";
 import commandDispatcher from "../deps/commandDispatcher";
-import UpdateProductPage from "../Application/Products/Update/UpdateProductPage";
 import UnknownError from "../../application/errors/UnkownError";
 import { Value } from "@sinclair/typebox/value";
 import { Type } from "@sinclair/typebox";
