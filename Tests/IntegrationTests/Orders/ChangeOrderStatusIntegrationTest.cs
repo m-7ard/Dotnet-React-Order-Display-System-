@@ -52,7 +52,7 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
         Assert.NotNull(content);
         Assert.NotNull(content.Order);
 
-        // Confirm it was updated (move this to a Unit Test?)
+        // Confirm it was updated
         var persistedOrder = await _factory.CreateDbContext().Order.SingleAsync(d => d.Id == _order001.Id)!;
         Assert.Equal(OrderDbEntity.Statuses.Finished, persistedOrder.Status);
     }

@@ -1,4 +1,5 @@
 using Application.Interfaces.Persistence;
+using Domain.DomainFactories;
 using Domain.Models;
 using Infrastructure.DbEntities;
 using Infrastructure.Mappers;
@@ -17,16 +18,18 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product> CreateAsync(Product product)
     {
-        var productDbEntity = ProductMapper.ToDbEntity(product);
+        var productDbEntity = ProductMapper.DomainToDbEntity(product);
         _dbContext.Add(productDbEntity);
         await _dbContext.SaveChangesAsync();
-        return ProductMapper.ToDomain(productDbEntity);
+        return ProductMapper.DbEntityToDomain(productDbEntity);
     }
 
     public async Task<Product?> GetByIdAsync(int id)
     {
-        var productDbEntity = await _dbContext.Product.SingleOrDefaultAsync(d => d.Id == id);
-        return productDbEntity is null ? null : ProductMapper.ToDomain(productDbEntity);
+        var productDbEntity = await _dbContext.Product
+            .Include(d => d.Images)
+            .SingleOrDefaultAsync(d => d.Id == id);
+        return productDbEntity is null ? null : ProductMapper.DbEntityToDomain(productDbEntity);
     }
 
     public async Task<List<Product>> FindAllAsync(string? name, float? minPrice, float? maxPrice, string? description, DateTime? createdBefore, DateTime? createdAfter)
@@ -74,13 +77,24 @@ public class ProductRepository : IProductRepository
         }
 
         var dbProducts = await query.ToListAsync();
-        return dbProducts.Select(ProductMapper.ToDomain).ToList();
+        return dbProducts.Select(ProductMapper.DbEntityToDomain).ToList();
     }
 
     public async Task UpdateAsync(Product product)
     {
-        var currentEntity = await _dbContext.Product.SingleAsync(d => d.Id == product.Id);
-        var updatedEntity = ProductMapper.ToDbEntity(product);
+        var currentEntity = await _dbContext.Product
+            .Include(d => d.Images)
+            .SingleAsync(d => d.Id == product.Id);
+        var updatedEntity = ProductMapper.DomainToDbEntity(product);
+
+        foreach (var oldImage in currentEntity.Images)
+        {
+            if (updatedEntity.Images.Find(d => d.Id == oldImage.Id) is null)
+            {
+                _dbContext.Remove(oldImage);
+            }
+        }
+
         _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
         await _dbContext.SaveChangesAsync();
     }
@@ -90,6 +104,11 @@ public class ProductRepository : IProductRepository
         var entity = await _dbContext.Product
             .Include(d => d.Images)
             .SingleAsync(d => d.Id == id);
+
+        foreach (var image in entity.Images)
+        {
+            _dbContext.Remove(image);
+        }
 
         _dbContext.Remove(entity);
         await _dbContext.SaveChangesAsync();

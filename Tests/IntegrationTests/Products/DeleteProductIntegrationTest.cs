@@ -8,13 +8,18 @@ namespace Tests.IntegrationTests.Products;
 
 public class DeleteProductIntegrationTest : ProductsIntegrationTest
 {
+    private DraftImage _validImage = null!;
     private Product _product001 = null!;
     public async override Task InitializeAsync()
     {
         await base.InitializeAsync();
         var db = _factory.CreateDbContext();
         var mixins = new Mixins(db);
-        _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
+        _validImage = await mixins.CreateDraftImage(
+            fileRoute: TestFileRoute.ValidImage,
+            destinationFileName: "saved-valid-image"
+        );
+        _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: [_validImage]);
     }
 
     [Fact]
@@ -29,6 +34,9 @@ public class DeleteProductIntegrationTest : ProductsIntegrationTest
         var db = _factory.CreateDbContext();
         var product = await db.Product.SingleOrDefaultAsync(d => d.Id == _product001.Id);
         Assert.Null(product);
+
+        var image = await db.ProductImage.SingleOrDefaultAsync(d => d.Id == _validImage.Id);
+        Assert.Null(image);
     }
 
     [Fact]

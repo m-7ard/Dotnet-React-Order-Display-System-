@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.Products.Create.DTOs;
 using Application.Api.Products.Update.DTOs;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -9,14 +8,14 @@ namespace Tests.IntegrationTests.Products;
 
 public class UpdateProductIntegrationTest : ProductsIntegrationTest
 {
-    private ProductImage _validImage = null!;
+    private DraftImage _validImage = null!;
     private Product _product001 = null!;
     public async override Task InitializeAsync()
     {
         await base.InitializeAsync();
         var db = _factory.CreateDbContext();
         var mixins = new Mixins(db);
-        _validImage = await mixins.CreateProductImage(
+        _validImage = await mixins.CreateDraftImage(
             fileRoute: TestFileRoute.ValidImage,
             destinationFileName: "saved-valid-image"
         );
@@ -94,6 +93,8 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        // Check Image model was deleted
         var db = _factory.CreateDbContext();
         var productImage = await db.ProductImage.SingleOrDefaultAsync(d => d.Id == _validImage.Id);
         Assert.Null(productImage);

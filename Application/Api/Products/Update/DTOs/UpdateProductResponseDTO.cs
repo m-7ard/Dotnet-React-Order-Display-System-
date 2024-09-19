@@ -1,13 +1,14 @@
+using Application.ApiModels;
 using Domain.Models;
 
 namespace Application.Api.Products.Update.DTOs;
 
 public class UpdateProductResponseDTO
 {
-    public UpdateProductResponseDTO(Product product)
+    public UpdateProductResponseDTO(ProductApiModel product)
     {
         Product = product;
     }
 
-    public Product Product { get; set; }
+    public ProductApiModel Product { get; set; }
 }

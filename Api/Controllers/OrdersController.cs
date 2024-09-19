@@ -9,10 +9,12 @@ using Application.Api.Orders.MarkFinished.DTOs;
 using Application.Api.Orders.MarkFinished.Handlers;
 using Application.Api.Orders.Read.DTOs;
 using Application.Api.Orders.Read.Handlers;
+using Application.ApiModels;
 using Application.ErrorHandling.Api;
 using Application.ErrorHandling.Other;
 using Application.Interfaces.Services;
 using FluentValidation;
+using Infrastructure.Mappers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,12 +29,14 @@ public class OrdersController : ControllerBase
     private readonly ISender _mediator;
     private readonly IPlainErrorHandlingService _errorHandlingService;
     private readonly IValidator<OrderItemData> _orderItemDataValidator;
+    private readonly IApiModelService _apiModelService;
 
-    public OrdersController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IValidator<OrderItemData> createProductValidator)
+    public OrdersController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IValidator<OrderItemData> createProductValidator, IApiModelService apiModelService)
     {
         _mediator = mediator;
         _errorHandlingService = errorHandlingService;
         _orderItemDataValidator = createProductValidator;
+        _apiModelService = apiModelService;
     }
 
     [HttpPost("create")]
@@ -77,7 +81,7 @@ public class OrdersController : ControllerBase
             return BadRequest(_errorHandlingService.TranslateServiceErrors(handlerErrors));
         }
 
-        var response = new CreateOrderResponseDTO(order: value.Order);
+        var response = new CreateOrderResponseDTO(order: await _apiModelService.CreateOrderApiModel(value.Order));
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
@@ -104,7 +108,13 @@ public class OrdersController : ControllerBase
             return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         }
 
-        var response = new ListOrdersResponseDTO(orders: value.Orders);
+        var orders = new List<OrderApiModel>();
+        foreach (var order in value.Orders)
+        {
+            orders.Add(await _apiModelService.CreateOrderApiModel(order));
+        }
+
+        var response = new ListOrdersResponseDTO(orders: orders);
         return Ok(response);
     }
 
@@ -124,7 +134,9 @@ public class OrdersController : ControllerBase
                 : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         };
 
-        var response = new ReadOrderResponseDTO(order: value.Order);
+        var response = new ReadOrderResponseDTO(
+            order: await _apiModelService.CreateOrderApiModel(value.Order)
+        );
         return Ok(response);
     }
 
@@ -145,7 +157,7 @@ public class OrdersController : ControllerBase
                 : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         };
 
-        var response = new MarkOrderItemFinishedResponseDTO(order: value.Order);
+        var response = new MarkOrderItemFinishedResponseDTO(order: await _apiModelService.CreateOrderApiModel(value.Order));
         return Ok(response);
     }
 
@@ -165,7 +177,7 @@ public class OrdersController : ControllerBase
                 : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         };
 
-        var response = new MarkOrderFinishedResponseDTO(order: value.Order);
+        var response = new MarkOrderFinishedResponseDTO(order: await _apiModelService.CreateOrderApiModel(value.Order));
         return Ok(response);
     }
 }

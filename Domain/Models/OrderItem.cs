@@ -1,9 +1,10 @@
 using Domain.ValueObjects.OrderItem;
 
 namespace Domain.Models;
+
 public class OrderItem
 {
-    public OrderItem(int id, int quantity, OrderItemStatus status, DateTime dateCreated, DateTime dateFinished, int orderId, ProductHistory productHistory)
+    public OrderItem(int id, int quantity, OrderItemStatus status, DateTime dateCreated, DateTime dateFinished, int orderId, int productHistoryId, int productId)
     {
         Id = id;
         Quantity = quantity;
@@ -11,7 +12,8 @@ public class OrderItem
         DateCreated = dateCreated;
         DateFinished = dateFinished;
         OrderId = orderId;
-        ProductHistory = productHistory;
+        ProductHistoryId = productHistoryId;
+        ProductId = productId;
     }
 
     public int Id { get; private set; }
@@ -20,7 +22,8 @@ public class OrderItem
     public DateTime DateCreated { get; private set; }
     public DateTime DateFinished { get; set; }
     public int OrderId { get; set; }
-    public ProductHistory ProductHistory { get; set; }
+    public int ProductId { get; set; }
+    public int ProductHistoryId { get; set; }
 
     public void UpdateStatus(OrderItemStatus status)
     {

@@ -1,13 +1,14 @@
+using Application.ApiModels;
 using Domain.Models;
 
 namespace Application.Api.OrderItems.MarkFinished.DTOs;
 
 public class MarkOrderItemFinishedResponseDTO
 {
-    public MarkOrderItemFinishedResponseDTO(Order order)
+    public MarkOrderItemFinishedResponseDTO(OrderApiModel order)
     {
         Order = order;
     }
 
-    public Order Order { get; set; }
+    public OrderApiModel Order { get; set; }
 }

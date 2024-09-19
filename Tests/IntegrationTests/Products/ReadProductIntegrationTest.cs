@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.Products.Delete.DTOs;
 using Application.Api.Products.Read.DTOs;
 using Domain.Models;
 

@@ -5,7 +5,7 @@ namespace Domain.DomainFactories;
 
 public class OrderItemFactory
 {
-    public static OrderItem BuildExistingOrderItem(int id, int quantity, OrderItemStatus status, DateTime dateCreated, DateTime dateFinished, int orderId, ProductHistory productHistory)
+    public static OrderItem BuildExistingOrderItem(int id, int quantity, OrderItemStatus status, DateTime dateCreated, DateTime dateFinished, int orderId, int productHistoryId, int productId)
     {
         return new OrderItem(
             id: id,
@@ -14,11 +14,12 @@ public class OrderItemFactory
             dateCreated: dateCreated,
             dateFinished: dateFinished,
             orderId: orderId,
-            productHistory: productHistory
+            productHistoryId: productHistoryId,
+            productId: productId
         );
     }
 
-    public static OrderItem BuildNewOrderItem(int quantity, OrderItemStatus status, int orderId, ProductHistory productHistory)
+    public static OrderItem BuildNewOrderItem(int quantity, OrderItemStatus status, int productHistoryId)
     {
         return new OrderItem(
             id: 0,
@@ -26,8 +27,9 @@ public class OrderItemFactory
             status: status,
             dateCreated: new DateTime(),
             dateFinished: new DateTime(),
-            orderId: orderId,
-            productHistory: productHistory
+            orderId: 0,
+            productHistoryId: productHistoryId,
+            productId: 0
         );
     }
 }

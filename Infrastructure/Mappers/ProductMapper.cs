@@ -1,3 +1,4 @@
+using Application.ApiModels;
 using Domain.Models;
 using Infrastructure.DbEntities;
 
@@ -5,7 +6,7 @@ namespace Infrastructure.Mappers;
 
 public static class ProductMapper
 {
-    public static ProductDbEntity ToDbEntity(Product domain)
+    public static ProductDbEntity DomainToDbEntity(Product domain)
     {
         return new ProductDbEntity(
             id: domain.Id, 
@@ -13,10 +14,12 @@ public static class ProductMapper
             name: domain.Name,
             description: domain.Description,
             price: domain.Price
-        );
+        ) {
+            Images = domain.Images.Select(ProductImageMapper.ToDbModel).ToList()
+        };
     }
 
-    public static Product ToDomain(ProductDbEntity dbEntity)
+    public static Product DbEntityToDomain(ProductDbEntity dbEntity)
     {
         return new Product(
             id: dbEntity.Id, 

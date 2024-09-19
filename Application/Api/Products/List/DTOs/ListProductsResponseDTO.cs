@@ -1,13 +1,13 @@
-using Domain.Models;
+using Application.ApiModels;
 
 namespace Application.Api.Products.List.DTOs;
 
 public class ListProductsResponseDTO
 {
-    public ListProductsResponseDTO(List<Product> products)
+    public ListProductsResponseDTO(List<ProductApiModel> products)
     {
         Products = products;
     }
 
-    public List<Product> Products { get; set; }
+    public List<ProductApiModel> Products { get; set; }
 }
