@@ -43,7 +43,7 @@ public class ProductRepository : IProductRepository
 
         if (!string.IsNullOrEmpty(description))
         {
-            query = query.Where(item => item.Name.Contains(description));
+            query = query.Where(item => item.Description.Contains(description));
         }
 
         if (minPrice.HasValue)

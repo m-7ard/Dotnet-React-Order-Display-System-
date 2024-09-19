@@ -1,9 +1,10 @@
 using Application.ErrorHandling.Application;
-using Domain.ValueObjects.Order;
 using MediatR;
 using OneOf;
 
 namespace Application.Api.Orders.List.Handlers;
+
+/* TODO: add filter by productId in items and implement in fe */
 
 public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<PlainApplicationError>>>
 {

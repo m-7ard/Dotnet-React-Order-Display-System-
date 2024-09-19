@@ -1,5 +1,5 @@
 import { Dialog, DialogPanel, DialogPanelProps } from "@headlessui/react";
-import { FunctionComponent, useState } from "react";
+import { ElementType, FunctionComponent, useState } from "react";
 import { AbstractDialogContext } from "../../contexts/AbstractDialogContext";
 import { ReactNode } from "@tanstack/react-router";
 
@@ -33,6 +33,6 @@ export default function AbstractDialog({
     );
 }
 
-export function AbstractDialogPanel(props: DialogPanelProps) {
+export function AbstractDialogPanel<T extends ElementType>(props: DialogPanelProps<T>) {
     return <DialogPanel {...props} />;
 }

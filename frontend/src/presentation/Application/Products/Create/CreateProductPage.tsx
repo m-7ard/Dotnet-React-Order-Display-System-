@@ -5,7 +5,6 @@ import IFormError from "../../../../domain/models/IFormError";
 import useItemManager from "../../../hooks/useItemManager";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
 import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcherContext";
-import UploadProductImagesCommand from "../../../../application/commands/products/uploadProductImages/UploadProductImagesCommand";
 import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
 import apiToDomainCompatibleFormError from "../../../../application/mappers/apiToDomainCompatibleFormError";
 import CreateProductCommand from "../../../../application/commands/products/createProduct/CreateProductCommand";
