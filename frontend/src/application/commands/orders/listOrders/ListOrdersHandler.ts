@@ -2,7 +2,7 @@ import { ICommandHandler } from "../../ICommandHandler";
 import { err, ok } from "neverthrow";
 import IListProductsCommand from "./ListOrdersCommand";
 import IListProductsResult from "./IListOrdersResult";
-import IOrderDataAccess from "../../../interfaces/dataAccess/IOrderAccess";
+import IOrderDataAccess from "../../../interfaces/dataAccess/IOrderDataAccess";
 import IListOrdersResult from "./IListOrdersResult";
 import ListOrdersCommand from "./ListOrdersCommand";
 import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";

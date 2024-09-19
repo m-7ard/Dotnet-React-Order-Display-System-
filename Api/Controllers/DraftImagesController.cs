@@ -1,5 +1,6 @@
 using Application.Api.DraftImages.UploadImages.DTOs;
 using Application.Api.DraftImages.UploadImages.Handlers;
+using Application.ApiModels;
 using Application.ErrorHandling.Api;
 using Application.Interfaces.Services;
 using MediatR;
@@ -18,7 +19,7 @@ public class DraftImagesController : ControllerBase
     private readonly List<string> _permittedExtensions = [".jpg", ".jpeg", ".png"];
     private readonly long _fileSizeLimit = 8 * 1024 * 1024; // 8 MB
 
-    public DraftImagesController(ISender mediator, IPlainErrorHandlingService errorHandlingService)
+    public DraftImagesController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IApiModelService apiModelService)
     {
         _mediator = mediator;
         _errorHandlingService = errorHandlingService;
@@ -100,7 +101,11 @@ public class DraftImagesController : ControllerBase
             return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         }
 
-        var response = new UploadDraftImagesResponseDTO(images: value.DraftImage.Select(file => file.FileName).ToList());
+        var response = new UploadDraftImagesResponseDTO(images: value.DraftImage.Select(d => new ImageApiModel(
+            fileName: d.FileName,
+            originalFileName: d.OriginalFileName,
+            url: d.Url
+        )).ToList());
         return StatusCode(StatusCodes.Status201Created, response);
     }
 }

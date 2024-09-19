@@ -13,6 +13,7 @@ using Application.ApiModels;
 using Application.ErrorHandling.Api;
 using Application.ErrorHandling.Other;
 using Application.Interfaces.Services;
+using Domain.Models;
 using FluentValidation;
 using Infrastructure.Mappers;
 using MediatR;

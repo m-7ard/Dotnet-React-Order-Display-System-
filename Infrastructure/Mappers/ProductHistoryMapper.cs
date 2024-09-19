@@ -12,7 +12,7 @@ public static class ProductHistoryMapper
             name: source.Name,
             images: source.Images,
             price: source.Price,
-            productId: source.ProductId,
+            productId: source.OriginalProductId,
             validFrom: source.ValidFrom,
             validTo: source.ValidTo,
             description: source.Description
@@ -28,6 +28,7 @@ public static class ProductHistoryMapper
             description: source.Description,
             price: source.Price,
             productId: source.ProductId,
+            originalProductId: source.ProductId,
             validFrom: source.ValidFrom,
             validTo: source.ValidTo
         );

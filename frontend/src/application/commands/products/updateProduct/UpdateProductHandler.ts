@@ -1,5 +1,5 @@
 import IUpdateProductResult from "./IUpdateProductResult";
-import IProductDataAccess from "../../../interfaces/dataAccess/IProductAccess";
+import IProductDataAccess from "../../../interfaces/dataAccess/IProductDataAccess";
 import { ICommandHandler } from "../../ICommandHandler";
 import { err, ok } from "neverthrow";
 import UpdateProductCommand from "./UpdateProductCommand";

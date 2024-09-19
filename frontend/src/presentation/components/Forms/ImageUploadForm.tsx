@@ -3,14 +3,19 @@ import CoverImage from "../Resuables/CoverImage";
 import MixinButton from "../Resuables/MixinButton";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 
-export type OriginalFileName = string & { _: "orignalFileName" };
+export type RequiredImageFormData = {
+    url: string;
+    originalFileName: string;
+    generatedFileName: string;
+};
 export type GeneratedFileName = string & { _: "generatedFileName" };
+export type UploadImageFormValue = Record<GeneratedFileName, RequiredImageFormData>;
 
 export default function UploadImagesForm(props: {
     onDelete: (generatedFileName: GeneratedFileName) => void;
     onSubmit: (files: File[]) => Promise<void>;
     errors?: IFormError<{ [generatedFileName: GeneratedFileName]: string[] }>;
-    value: Record<GeneratedFileName, OriginalFileName>;
+    value: UploadImageFormValue;
 }) {
     const { onDelete, onSubmit, errors, value } = props;
 
@@ -45,13 +50,13 @@ export default function UploadImagesForm(props: {
             </MixinPrototypeCardSection>
             {Object.entries(value).map((entries) => {
                 const generatedFileName = entries[0] as GeneratedFileName;
-                const originalFileName: OriginalFileName = entries[1];
+                const imageData = entries[1];
 
                 return (
                     <Image
                         errors={errors?.[generatedFileName]}
-                        generatedFileName={generatedFileName}
-                        originalFileName={originalFileName}
+                        url={imageData.url}
+                        originalFileName={imageData.originalFileName}
                         onDelete={() => onDelete(generatedFileName)}
                         key={generatedFileName}
                     />
@@ -62,19 +67,19 @@ export default function UploadImagesForm(props: {
 }
 
 function Image(props: {
-    generatedFileName: GeneratedFileName;
-    originalFileName: OriginalFileName;
+    originalFileName: string;
+    url: string;
     onDelete: () => void;
     errors?: string[];
 }) {
-    const { generatedFileName, originalFileName, onDelete, errors } = props;
+    const { originalFileName, url, onDelete, errors } = props;
 
     return (
         <MixinPrototypeCardSection className="flex flex-col gap-2">
             <div className="flex flex-row gap-2">
                 <CoverImage
                     className="w-16 h-16 min-w-16 min-h-16 border border-gray-300 rounded overflow-hidden"
-                    src={`${import.meta.env.VITE_API_URL}/Media/${generatedFileName}`}
+                    src={`${import.meta.env.VITE_API_URL}/${url}`}
                 />
                 <div className="flex flex-col gap-1 overflow-hidden grow">
                     <div className="text-sm text-medium truncate">{originalFileName}</div>

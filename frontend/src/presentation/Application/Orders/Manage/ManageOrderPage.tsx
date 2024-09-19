@@ -13,6 +13,7 @@ import IFormError from "../../../../domain/models/IFormError";
 import apiToDomainCompatibleFormError from "../../../../application/mappers/apiToDomainCompatibleFormError";
 import MarkOrderFinishedCommand from "../../../../application/commands/orders/markFinished/MarkOrderFinishedCommand";
 import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
+import OrderItemStatus from "../../../../domain/valueObjects/OrderItem/OrderItemStatus";
 
 export default function ManageOrderPage() {
     const { id } = useParams({ from: "/orders/$id/manage" });
@@ -77,7 +78,7 @@ export default function ManageOrderPage() {
                         {order.status === OrderStatus.PENDING && (
                             <>
                                 <MixinButton
-                                    className="basis-1/2 justify-center rounded shadow"
+                                    className={`basis-1/2 justify-center rounded shadow ${order.canMarkFinished() ? "" : "contrast-50 cursor-not-allowed"}`}
                                     options={{ size: "mixin-button-sm", theme: "theme-button-generic-green" }}
                                     onClick={() => markOrderFinishedMutation.mutate()}
                                 >
@@ -158,7 +159,7 @@ function OrderItem(props: { orderItem: IOrderItem }) {
             <div className="flex flex-col gap-1 grow">
                 <div>
                     <div className="text-sm font-semibold">Order Item #{orderItem.id}</div>
-                    <div className="text-sm">{`${orderItem.status}`}</div>
+                    <div className="text-sm">{`${orderItem.status.value}`}</div>
                 </div>
             </div>
             <div className="flex flex-row gap-2 items-center text-sm">
@@ -166,7 +167,7 @@ function OrderItem(props: { orderItem: IOrderItem }) {
                 <div>{`${orderItem.productHistory.name}`}</div>
             </div>
             <div className="flex flex-row gap-1 mt-auto">
-                {orderItem.status === "Pending" && (
+                {orderItem.status === OrderItemStatus.PENDING && (
                     <>
                         <MixinButton
                             className="basis-1/2 justify-center rounded shadow"
@@ -183,7 +184,7 @@ function OrderItem(props: { orderItem: IOrderItem }) {
                         </MixinButton>
                     </>
                 )}
-                {orderItem.status === "Finished" && (
+                {orderItem.status === OrderItemStatus.FINISHED && (
                     <>
                         <MixinButton
                             className="basis-1/2 justify-center rounded shadow"

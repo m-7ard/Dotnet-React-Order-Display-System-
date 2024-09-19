@@ -1,5 +1,5 @@
 import { err, ok } from "neverthrow";
-import IOrderDataAccess from "../../../interfaces/dataAccess/IOrderAccess";
+import IOrderDataAccess from "../../../interfaces/dataAccess/IOrderDataAccess";
 import { ICommandHandler } from "../../ICommandHandler";
 import ReadOrderCommand from "./ReadOrderCommand";
 import IReadOrderResult from "./IReadOrderResult";

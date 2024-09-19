@@ -17,9 +17,9 @@ import ReadProductHandler from "../../application/commands/products/readProduct/
 import ReadProductCommand from "../../application/commands/products/readProduct/ReadProductCommand";
 import UpdateProductCommand from "../../application/commands/products/updateProduct/UpdateProductCommand";
 import UpdateProductHandler from "../../application/commands/products/updateProduct/UpdateProductHandler";
-import UploadProductImagesCommand from "../../application/commands/products/uploadProductImages/UploadProductImagesCommand";
-import UploadProductImagesHandler from "../../application/commands/products/uploadProductImages/UploadProductImagesHandler";
-import { orderDataAccess, productDataAccess } from "./dataAccess";
+import UploadDraftImagesCommand from "../../application/commands/draftImages/uploadProductImages/UploadDraftImagesCommand";
+import UploadDraftImagesHandler from "../../application/commands/draftImages/uploadProductImages/UploadDraftImagesHandler";
+import { draftImageDataAccess, orderDataAccess, productDataAccess } from "./dataAccess";
 import { productStateManager } from "./stateManagers";
 import DeleteProductHandler from "../../application/commands/products/deleteProduct/DeleteProductHandler";
 import DeleteProductCommand from "../../application/commands/products/deleteProduct/DeleteProductCommand";
@@ -35,13 +35,6 @@ commandDispatcher.registerHandler(
 commandDispatcher.registerHandler(
     ListProductsCommand,
     new ListProductsHandler({
-        productDataAccess: productDataAccess,
-    }),
-);
-
-commandDispatcher.registerHandler(
-    UploadProductImagesCommand,
-    new UploadProductImagesHandler({
         productDataAccess: productDataAccess,
     }),
 );
@@ -100,6 +93,13 @@ commandDispatcher.registerHandler(
     DeleteProductCommand,
     new DeleteProductHandler({
         productDataAccess: productDataAccess,
+    }),
+);
+
+commandDispatcher.registerHandler(
+    UploadDraftImagesCommand,
+    new UploadDraftImagesHandler({
+        draftImageDataAccess: draftImageDataAccess,
     }),
 );
 

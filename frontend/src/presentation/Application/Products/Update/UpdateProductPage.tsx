@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import UploadImagesForm, { GeneratedFileName, OriginalFileName } from "../../../components/Forms/ImageUploadForm";
+import UploadImagesForm, { GeneratedFileName, RequiredImageFormData, UploadImageFormValue } from "../../../components/Forms/ImageUploadForm";
 import IFormError from "../../../../domain/models/IFormError";
 import useItemManager from "../../../hooks/useItemManager";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
 import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcherContext";
-import UploadProductImagesCommand from "../../../../application/commands/products/uploadProductImages/UploadProductImagesCommand";
+import UploadDraftImagesCommand from "../../../../application/commands/draftImages/uploadProductImages/UploadDraftImagesCommand";
 import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
 import apiToDomainCompatibleFormError from "../../../../application/mappers/apiToDomainCompatibleFormError";
 import FormField from "../../../components/Forms/FormField";
@@ -36,7 +36,7 @@ interface ValueState {
     name: string;
     description: string;
     price: string;
-    images: Record<GeneratedFileName, OriginalFileName>;
+    images: UploadImageFormValue;
 }
 
 type ErrorState = IFormError<{
@@ -62,7 +62,14 @@ export default function UpdateProductPage(props: {
         name: product.name,
         description: product.description,
         price: product.price.toString(),
-        images: product.images.reduce((acc, { fileName }) => ({...acc, [fileName]: fileName}), {})
+        images: product.images.reduce<UploadImageFormValue>((acc, imageData) => {
+            const generatedFileName = imageData.fileName as GeneratedFileName;
+            return { ...acc, [generatedFileName]: {
+                generatedFileName: generatedFileName,
+                originalFileName: imageData.originalFileName,
+                url: imageData.url
+            }};
+        }, {})
     }
 
     const { commandDispatcher } = useCommandDispatcherContext();
@@ -74,11 +81,12 @@ export default function UpdateProductPage(props: {
     const navigate = useNavigate();
     const updateProductMutation = useMutation({
         mutationFn: async () => {
+            const images = Object.keys(itemManager.items.images);
             const validation = validateTypeboxSchema(validatorSchema, {
                 name: itemManager.items.name,
                 description: itemManager.items.description,
                 price: parseFloat(itemManager.items.price),
-                images: Object.keys(itemManager.items.images),
+                images: images,
             });
 
             if (validation.isErr()) {
@@ -91,7 +99,7 @@ export default function UpdateProductPage(props: {
                 name: itemManager.items.name,
                 description: itemManager.items.description,
                 price: parseFloat(itemManager.items.price),
-                images: Object.keys(itemManager.items.images),
+                images: images,
             });
 
             const result = await commandDispatcher.dispatch(command);
@@ -141,16 +149,22 @@ export default function UpdateProductPage(props: {
 
                             for (let i = 0; i < files.length; i++) {
                                 const file = files[i];
-                                const originalFileName = file.name as OriginalFileName;
-                                const command = new UploadProductImagesCommand({ files: [file] });
+                                const command = new UploadDraftImagesCommand({ files: [file] });
                                 const result = await commandDispatcher.dispatch(command);
 
                                 if (result.isOk()) {
-                                    const generatedFileName = result.value.images[0] as GeneratedFileName;
-                                    itemManager.updateItem("images", (prev) => ({
-                                        ...prev,
-                                        [generatedFileName]: originalFileName,
-                                    }));
+                                    const imageData = result.value.images[0];
+                                    const generatedFileName = imageData.fileName as GeneratedFileName;
+                                    
+                                    itemManager.updateItem("images", (prev) => {
+                                        const newState = {...prev};
+                                        newState[generatedFileName] = {
+                                            generatedFileName: generatedFileName,
+                                            originalFileName: imageData.originalFileName,
+                                            url: imageData.url
+                                        }
+                                        return newState;
+                                    });
                                 } else if (result.error.type === "Exception") {
                                     dispatchException(result.error.data);
                                 } else if (result.error.type === "API") {

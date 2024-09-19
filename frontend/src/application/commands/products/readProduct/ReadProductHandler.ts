@@ -3,7 +3,7 @@ import { ICommandHandler } from "../../ICommandHandler";
 import ReadProductCommand from "./ReadProductCommand";
 import IReadProductResult from "./IReadProductResult";
 import IProductStateManager from "../../../interfaces/stateManagers/IProductStateManager";
-import IProductDataAccess from "../../../interfaces/dataAccess/IProductAccess";
+import IProductDataAccess from "../../../interfaces/dataAccess/IProductDataAccess";
 
 export default class ReadProductHandler implements ICommandHandler<ReadProductCommand, IReadProductResult> {
     private _productDataAccess: IProductDataAccess;

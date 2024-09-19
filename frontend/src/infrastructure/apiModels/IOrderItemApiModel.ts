@@ -4,9 +4,7 @@ import IProductHistoryApiModel from "./IProductHistoryApiModel";
 export default interface IOrderItemApiModel {
     id: number;
     quantity: number;
-    status: {
-        name: "Pending" | "Finished"
-    };
+    status: string;
     dateCreated: string;
     dateFinished: string;
     orderId: IOrderApiModel["id"];

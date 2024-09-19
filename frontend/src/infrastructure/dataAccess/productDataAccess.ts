@@ -1,11 +1,11 @@
 import { err, ok, Result } from "neverthrow";
 import IListProductsRequestDTO from "../../application/contracts/products/list/IListProductsRequestDTO";
 import IListProductsResponseDTO from "../../application/contracts/products/list/IListProductsResponseDTO";
-import IProductDataAccess from "../../application/interfaces/dataAccess/IProductAccess";
+import IProductDataAccess from "../../application/interfaces/dataAccess/IProductDataAccess";
 import ICreateProductRequestDTO from "../../application/contracts/products/create/ICreateProductRequestDTO";
 import ICreateProductRespnseDTO from "../../application/contracts/products/create/ICreateProductResponseDTO";
-import IUploadProductImagesRequestDTO from "../../application/contracts/products/uploadImages/IUploadProductImagesRequestDTO";
-import IUploadProductImagesResponseDTO from "../../application/contracts/products/uploadImages/IUploadProductImagesResponseDTO";
+import IUploadDraftImagesRequestDTO from "../../application/contracts/draftImages/uploadImages/IUploadDraftImagesRequestDTO";
+import IUploadDraftImagesResponseDTO from "../../application/contracts/draftImages/uploadImages/IUploadDraftImagesResponseDTO";
 import handleResponse from "../utils/handleResponse";
 import IPlainApiError from "../../application/interfaces/IPlainApiError";
 import IProduct from "../../domain/models/IProduct";
@@ -54,27 +54,9 @@ export default class ProductDataAccess implements IProductDataAccess {
         return isOk ? ok(productMapper.apiToDomain(data.product)) : err(data);
     }
 
-    async uploadImages(request: IUploadProductImagesRequestDTO): Promise<Result<string[], IPlainApiError>> {
-        const formData = new FormData();
-        request.files.forEach((file) => formData.append("Files", file));
-        
-        const response = await fetch(`${this._apiRoute}/upload_images`, {
-            method: "POST",
-            body: formData
-        });
-
-        const { isOk, data } = await handleResponse<IUploadProductImagesResponseDTO, IPlainApiError>({
-            response,
-            onOk: async (res) => await res.json(),
-            onError: async (res) => await res.json(),
-        });
-
-        return isOk ? ok(data.images) : err(data);
-    }
-
     async readProduct(request: IReadProductRequestDTO): Promise<Result<IProduct, IPlainApiError>> {
         const response = await fetch(`${this._apiRoute}/${request.id}`, {
-            method: "PUT",
+            method: "GET",
             headers: {
                 'Content-Type': 'application/json',
             },        

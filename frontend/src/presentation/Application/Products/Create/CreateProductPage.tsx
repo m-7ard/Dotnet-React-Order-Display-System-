@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import UploadImagesForm, { GeneratedFileName, OriginalFileName } from "../../../components/Forms/ImageUploadForm";
+import UploadImagesForm, { GeneratedFileName, RequiredImageFormData } from "../../../components/Forms/ImageUploadForm";
 import IFormError from "../../../../domain/models/IFormError";
 import useItemManager from "../../../hooks/useItemManager";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
@@ -15,6 +15,7 @@ import typeboxToDomainCompatibleFormError from "../../../../application/mappers/
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
 import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
 import MixinButton from "../../../components/Resuables/MixinButton";
+import UploadDraftImagesCommand from "../../../../application/commands/draftImages/uploadProductImages/UploadDraftImagesCommand";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -35,7 +36,7 @@ interface ValueState {
     name: string;
     description: string;
     price: string;
-    images: Record<GeneratedFileName, OriginalFileName>;
+    images: Record<GeneratedFileName, RequiredImageFormData>;
 }
 
 type ErrorState = IFormError<{
@@ -136,16 +137,22 @@ export default function CreateProductPage() {
 
                             for (let i = 0; i < files.length; i++) {
                                 const file = files[i];
-                                const originalFileName = file.name as OriginalFileName;
-                                const command = new UploadProductImagesCommand({ files: [file] });
+                                const command = new UploadDraftImagesCommand({ files: [file] });
                                 const result = await commandDispatcher.dispatch(command);
 
                                 if (result.isOk()) {
-                                    const generatedFileName = result.value.images[0] as GeneratedFileName;
-                                    itemManager.updateItem("images", (prev) => ({
-                                        ...prev,
-                                        [generatedFileName]: originalFileName,
-                                    }));
+                                    const imageData = result.value.images[0];
+                                    const generatedFileName = imageData.fileName as GeneratedFileName;
+
+                                    itemManager.updateItem("images", (prev) => {
+                                        const newState = { ...prev };
+                                        newState[generatedFileName] = {
+                                            generatedFileName: generatedFileName,
+                                            originalFileName: imageData.originalFileName,
+                                            url: imageData.url
+                                        };
+                                        return newState;
+                                    });
                                 } else if (result.error.type === "Exception") {
                                     dispatchException(result.error.data);
                                 } else if (result.error.type === "API") {

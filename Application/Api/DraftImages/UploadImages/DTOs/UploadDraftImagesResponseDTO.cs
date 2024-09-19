@@ -1,11 +1,13 @@
+using Application.ApiModels;
+
 namespace Application.Api.DraftImages.UploadImages.DTOs;
 
 public class UploadDraftImagesResponseDTO
 {
-    public UploadDraftImagesResponseDTO(List<string> images)
+    public UploadDraftImagesResponseDTO(List<ImageApiModel> images)
     {
         Images = images;
     }
 
-    public List<string> Images { get; set; }
+    public List<ImageApiModel> Images { get; set; }
 }

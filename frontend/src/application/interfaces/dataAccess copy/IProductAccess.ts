@@ -1,7 +1,7 @@
 import { Result } from "neverthrow";
 import ICreateProductRequestDTO from "../../contracts/products/create/ICreateProductRequestDTO";
 import IListProductsRequestDTO from "../../contracts/products/list/IListProductsRequestDTO";
-import IUploadProductImagesRequestDTO from "../../contracts/products/uploadImages/IUploadProductImagesRequestDTO";
+import IUploadDraftImagesRequestDTO from "../../contracts/draftImages/uploadImages/IUploadDraftImagesRequestDTO";
 import IProduct from "../../../domain/models/IProduct";
 import IPlainApiError from "../IPlainApiError";
 import IReadProductRequestDTO from "../../contracts/products/read/IReadProductRequestDTO";
@@ -14,5 +14,5 @@ export default interface IProductDataAccess {
     readProduct(request: IReadProductRequestDTO): Promise<Result<IProduct, IPlainApiError>>;
     updateProduct(request: IUpdateProductRequestDTO): Promise<Result<IProduct, IPlainApiError>>;
     deleteProduct(request: IDeleteProductRequestDTO): Promise<Result<null, IPlainApiError>>;
-    uploadImages(request: IUploadProductImagesRequestDTO): Promise<Result<string[], IPlainApiError>>;
+    uploadImages(request: IUploadDraftImagesRequestDTO): Promise<Result<string[], IPlainApiError>>;
 }

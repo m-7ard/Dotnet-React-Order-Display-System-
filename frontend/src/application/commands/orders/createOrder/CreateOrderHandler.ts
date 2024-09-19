@@ -1,5 +1,5 @@
 import { err, ok } from "neverthrow";
-import IOrderDataAccess from "../../../interfaces/dataAccess/IOrderAccess";
+import IOrderDataAccess from "../../../interfaces/dataAccess/IOrderDataAccess";
 import { ICommandHandler } from "../../ICommandHandler";
 import CreateOrderCommand from "./CreateOrderCommand";
 import ICreateOrderResult from "./ICreateOrderResult";

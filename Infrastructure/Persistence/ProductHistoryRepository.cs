@@ -30,7 +30,7 @@ public class ProductHistoryRespository : IProductHistoryRepository
 
     public async Task<ProductHistory?> GetByIdAsync(int id)
     {
-        var productHistoryDbEntity = await _simpleProductOrderServiceDbContext.ProductHistory.FirstOrDefaultAsync(d => d.ProductId == id);
+        var productHistoryDbEntity = await _simpleProductOrderServiceDbContext.ProductHistory.FirstOrDefaultAsync(d => d.Id == id);
         return productHistoryDbEntity is null ? null : ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 }
