@@ -1,8 +1,5 @@
 using System.Globalization;
-using Api;
 using Application.Api.Products.Create.Handlers;
-using Application.Api.Products.Create.Validators;
-using Application.Api.Products.Update.Handlers;
 using Application.Api.Products.Update.Validators;
 using Application.Common;
 using Application.ErrorHandling.Api;
@@ -10,6 +7,7 @@ using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
 using FluentValidation;
 using Infrastructure;
+using Infrastructure.ApiModel;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -95,12 +93,13 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Creat
 /// 
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IProductHistoryRepository, ProductHistoryRespository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+builder.Services.AddScoped<IDraftImageRepository, DraftImageRepository>();
+
 builder.Services.AddScoped<IPlainErrorHandlingService, PlainApiErrorHandlingService>();
+builder.Services.AddScoped<IApiModelService, ApiModelService>();
 //
 // builder.Services.AddSingleton<INewErrorHandlingService<ApiError>, ApiErrorHandlingService>();
 

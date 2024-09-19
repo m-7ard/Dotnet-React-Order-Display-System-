@@ -44,4 +44,15 @@ public class ProductHistoryFactory
             description: description
         );
     }
+
+        public static ProductHistory BuildNewProductHistoryFromProduct(Product product)
+    {
+        return BuildNewProductHistory(
+            name: product.Name,
+            images: product.Images.Select(image => image.FileName).ToList(),
+            price: product.Price,
+            productId: product.Id,
+            description: product.Description
+        );
+    }
 }

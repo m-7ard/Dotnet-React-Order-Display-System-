@@ -1,8 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using Application.Api.OrderItems.MarkFinished.DTOs;
-using Application.Api.Orders.List.DTOs;
-using Application.Common;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
@@ -31,7 +29,7 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
             orderStatus: OrderStatus.Pending,
             orderItemStatus: OrderItemStatus.Pending
         );
-        _orderItem001 = _order001.OrderItems.Find(orderItem => orderItem.ProductHistory.ProductId == _product001.Id)!; 
+        _orderItem001 = _order001.OrderItems.Find(orderItem => orderItem.ProductHistoryId == _product001.Id)!; 
     }
 
     [Fact]
@@ -49,7 +47,7 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
         
         var updatedOrderItem = content.Order.OrderItems.Find(orderItem => orderItem.Id == _orderItem001.Id);
         Assert.NotNull(updatedOrderItem);
-        Assert.Equal(OrderItemStatus.Finished, updatedOrderItem.Status);
+        Assert.Equal(OrderItemStatus.Finished.Name, updatedOrderItem.Status);
 
         // Confirm it was updated (move this to a Unit Test?)
         var db = _factory.CreateDbContext();

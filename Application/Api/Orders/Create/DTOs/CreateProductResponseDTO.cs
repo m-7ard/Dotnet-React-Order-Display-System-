@@ -1,13 +1,14 @@
+using Application.ApiModels;
 using Domain.Models;
 
 namespace Application.Api.Orders.Create.DTOs;
 
 public class CreateOrderResponseDTO
 {
-    public CreateOrderResponseDTO(Order order)
+    public CreateOrderResponseDTO(OrderApiModel order)
     {
         Order = order;
     }
 
-    public Order Order { get; set; }
+    public OrderApiModel Order { get; set; }
 }

@@ -1,13 +1,13 @@
-using Domain.Models;
+using Application.ApiModels;
 
 namespace Application.Api.Products.Read.DTOs;
 
 public class ReadProductResponseDTO
 {
-    public ReadProductResponseDTO(Product product)
+    public ReadProductResponseDTO(ProductApiModel product)
     {
         Product = product;
     }
 
-    public Product Product { get; set; }
+    public ProductApiModel Product { get; set; }
 }

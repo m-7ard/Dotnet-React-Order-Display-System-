@@ -8,20 +8,20 @@ namespace Tests.IntegrationTests.Products;
 
 public class CreateProductIntegrationTest : ProductsIntegrationTest
 {
-    private ProductImage _validImage = null!;
+    private DraftImage _validImage = null!;
     public async override Task InitializeAsync()
     {
         await base.InitializeAsync();
         var db = _factory.CreateDbContext();
         var mixins = new Mixins(db);
-        _validImage = await mixins.CreateProductImage(
+        _validImage = await mixins.CreateDraftImage(
             fileRoute: TestFileRoute.ValidImage,
             destinationFileName: "saved-valid-image"
         );
     }
 
     [Fact]
-    public async Task CreateProduct_ValidData_Success()
+    public async Task CreateProduct_WithoutImages_Success()
     {
         var request = new CreateProductRequestDTO
         (

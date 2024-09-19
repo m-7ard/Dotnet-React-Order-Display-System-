@@ -1,3 +1,4 @@
+using Application.ApiModels;
 using Domain.Models;
 using Domain.ValueObjects.OrderItem;
 using Infrastructure.DbEntities;
@@ -15,7 +16,8 @@ public static class OrderItemMapper
             dateCreated: source.DateCreated,
             dateFinished: source.DateFinished,
             orderId: source.OrderId,
-            productHistory: ProductHistoryMapper.ToDomain(source.ProductHistory)
+            productHistoryId: source.ProductHistoryId,
+            productId: source.ProductId
         );
     }
 
@@ -28,7 +30,8 @@ public static class OrderItemMapper
             dateCreated: source.DateCreated,
             dateFinished: source.DateFinished,
             orderId: source.OrderId,
-            productHistoryId: source.ProductHistory.Id
+            productHistoryId: source.ProductHistoryId,
+            productId: source.ProductId
         );
     }
 

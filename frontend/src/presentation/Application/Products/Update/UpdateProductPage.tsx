@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useLoaderData, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import UploadImagesForm, { GeneratedFileName, OriginalFileName } from "../../../components/Forms/ImageUploadForm";
 import IFormError from "../../../../domain/models/IFormError";
 import useItemManager from "../../../hooks/useItemManager";
@@ -8,14 +8,12 @@ import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcher
 import UploadProductImagesCommand from "../../../../application/commands/products/uploadProductImages/UploadProductImagesCommand";
 import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
 import apiToDomainCompatibleFormError from "../../../../application/mappers/apiToDomainCompatibleFormError";
-import CreateProductCommand from "../../../../application/commands/products/createProduct/CreateProductCommand";
 import FormField from "../../../components/Forms/FormField";
 import { Type } from "@sinclair/typebox";
 import typeboxToDomainCompatibleFormError from "../../../../application/mappers/typeboxToDomainCompatibleFormError";
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
 import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
 import MixinButton from "../../../components/Resuables/MixinButton";
-import { useEffect } from "react";
 import IProduct from "../../../../domain/models/IProduct";
 import UpdateProductCommand from "../../../../application/commands/products/updateProduct/UpdateProductCommand";
 

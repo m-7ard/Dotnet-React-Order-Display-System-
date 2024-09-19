@@ -1,7 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.Orders.Create.DTOs;
-using Application.Api.Orders.Create.Other;
 using Application.Api.Orders.Read.DTOs;
 using Domain.Models;
 using Domain.ValueObjects.Order;

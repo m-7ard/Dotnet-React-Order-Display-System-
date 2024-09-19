@@ -10,8 +10,10 @@ public static class ProductImageMapper
         return new ProductImage(
             id: source.Id,
             fileName: source.FileName,
+            originalFileName: source.OriginalFileName,
             dateCreated: source.DateCreated,
-            productId: source.ProductId
+            productId: source.ProductId,
+            url: source.Url
         );
     }
 
@@ -20,8 +22,10 @@ public static class ProductImageMapper
         return new ProductImageDbEntity(
             id: source.Id,
             fileName: source.FileName,
+            originalFileName: source.OriginalFileName,
             dateCreated: source.DateCreated,
-            productId: source.ProductId
+            productId: source.ProductId,
+            url: source.Url
         );
     }
 }

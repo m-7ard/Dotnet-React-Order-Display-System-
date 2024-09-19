@@ -1,11 +1,11 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.Products.UploadImages.DTOs;
+using Application.Api.DraftImages.UploadImages.DTOs;
 using Application.Common;
 
-namespace Tests.IntegrationTests.Products;
+namespace Tests.IntegrationTests.DraftImages;
 
-public class UploadProductImageIntegrationTest : ProductsIntegrationTest
+public class UploadDraftImageIntegrationTest : DraftImageIntegrationTest
 {
     [Fact]
     public async Task UploadImages_ValidFiles_Success()
@@ -25,11 +25,11 @@ public class UploadProductImageIntegrationTest : ProductsIntegrationTest
         {
             formData.Add(content, "Files", "valid-1.jpg");
             var response = await _client.PostAsync($"{_route}/upload_images", formData);
-        
+
             Assert.NotNull(response);
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
-            var responseContent = await response.Content.ReadFromJsonAsync<UploadProductImagesResponseDTO>();
+            var responseContent = await response.Content.ReadFromJsonAsync<UploadDraftImagesResponseDTO>();
             Assert.NotNull(responseContent);
             Assert.NotNull(responseContent.Images);
             Assert.StrictEqual(1, responseContent.Images.Count);
@@ -54,7 +54,7 @@ public class UploadProductImageIntegrationTest : ProductsIntegrationTest
         {
             formData.Add(content, "Files", "too-large-image.png");
             var response = await _client.PostAsync($"{_route}/upload_images", formData);
-        
+
             Assert.NotNull(response);
             Assert.Equal(HttpStatusCode.RequestEntityTooLarge, response.StatusCode);
         }
@@ -78,7 +78,7 @@ public class UploadProductImageIntegrationTest : ProductsIntegrationTest
         {
             formData.Add(content, "Files", "text-file.txt");
             var response = await _client.PostAsync($"{_route}/upload_images", formData);
-        
+
             Assert.NotNull(response);
             Assert.Equal(HttpStatusCode.UnsupportedMediaType, response.StatusCode);
         }
@@ -116,7 +116,7 @@ public class UploadProductImageIntegrationTest : ProductsIntegrationTest
                 formData.Add(content, "Files", "valid-1.jpg");
             }
             var response = await _client.PostAsync($"{_route}/upload_images", formData);
-        
+
             Assert.NotNull(response);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }

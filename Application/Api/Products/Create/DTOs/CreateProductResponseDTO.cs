@@ -1,13 +1,14 @@
+using Application.ApiModels;
 using Domain.Models;
 
 namespace Application.Api.Products.Create.DTOs;
 
 public class CreateProductResponseDTO
 {
-    public CreateProductResponseDTO(Product product)
+    public CreateProductResponseDTO(ProductApiModel product)
     {
         Product = product;
     }
 
-    public Product Product { get; set; }
+    public ProductApiModel Product { get; set; }
 }

@@ -4,23 +4,36 @@ namespace Domain.DomainFactories;
 
 public class ProductImageFactory
 {
-    public static ProductImage BuildExistingProductImage(int id, string fileName, DateTime dateCreated, int? productId)
+    public static ProductImage BuildExistingProductImage(int id, string fileName, string originalFileName, string url, DateTime dateCreated, int? productId)
     {
         return new ProductImage(
             id: id,
-            dateCreated: dateCreated,
             fileName: fileName,
+            originalFileName: originalFileName,
+            url: url,
+            dateCreated: dateCreated,
             productId: productId
         );
     }
 
-    public static ProductImage BuildNewProductImage(string fileName)
+    public static ProductImage BuildNewProductImage(string fileName,string originalFileName, string url)
     {
         return new ProductImage(
             id: 0,
-            dateCreated: new DateTime(),
             fileName: fileName,
-            productId: null
+            originalFileName: originalFileName,
+            url: url,
+            dateCreated: new DateTime(),
+            productId: 0
+        );
+    }
+
+    public static ProductImage BuildNewProductImageFromDraftImage(DraftImage source)
+    {
+        return BuildNewProductImage(
+            fileName: source.FileName,
+            originalFileName: source.OriginalFileName,
+            url: source.Url
         );
     }
 }

@@ -11,14 +11,14 @@ namespace Application.Api.Products.Update.Handlers;
 public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<UpdateProductResult, List<PlainApplicationError>>>
 {
     private readonly IProductRepository _productRepository;
-    private readonly IProductImageRepository _productImageRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
+    private readonly IDraftImageRepository _draftImageRepository;
 
-    public UpdateProductHandler(IProductRepository productRespository, IProductImageRepository productImageRespository, IProductHistoryRepository productHistoryRepository)
+    public UpdateProductHandler(IProductRepository productRespository, IProductHistoryRepository productHistoryRepository, IDraftImageRepository draftImageRepository)
     {
         _productRepository = productRespository;
-        _productImageRepository = productImageRespository;
         _productHistoryRepository = productHistoryRepository;
+        _draftImageRepository = draftImageRepository;
     }
 
     public async Task<OneOf<UpdateProductResult, List<PlainApplicationError>>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
@@ -38,10 +38,19 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
         }
 
         var newProductImageValue = new List<ProductImage>();
+        var draftsUsed = new List<DraftImage>();
+
         foreach (var fileName in request.Images)
         {
-            var productImage = await _productImageRepository.GetByFileNameAsync(fileName);
-            if (productImage is null)
+            var productImage = productUpdating.Images.Find(image => image.FileName == fileName);
+            if (productImage is not null)
+            {
+                newProductImageValue.Add(productImage);
+                continue;
+            }
+
+            var draftImage = await _draftImageRepository.GetByFileNameAsync(fileName);
+            if (draftImage is null)
             {
                 errors.Add(new PlainApplicationError(
                     message: $"ProductImage of fileName \"{fileName}\" does not exist.",
@@ -51,17 +60,8 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
                 continue;
             }
 
-            if (productImage.ProductId is not null && productImage.ProductId != request.Id)
-            {
-                errors.Add(new PlainApplicationError(
-                    message: $"ProductImage of fileName \"{fileName}\" has already been assigned to another Product.",
-                    path: ["images", fileName],
-                    code: ValidationErrorCodes.StateMismatch
-                ));
-                continue;
-            }
-
-            newProductImageValue.Add(productImage);
+            newProductImageValue.Add(ProductImageFactory.BuildNewProductImageFromDraftImage(draftImage));
+            draftsUsed.Add(draftImage);
         }
 
         if (errors.Count > 0)
@@ -75,35 +75,13 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
         productUpdating.Images = newProductImageValue;
         await _productRepository.UpdateAsync(productUpdating);
 
-        // Delete unused Image models
-        var oldProductImageValue = await _productImageRepository.FilterByProductIdAsync(productId: productUpdating.Id);
-        foreach (var oldImage in oldProductImageValue)
+        foreach (var draftImage in draftsUsed)
         {
-            if (newProductImageValue.Find(d => d.FileName == oldImage.FileName) is null)
-            {
-                await _productImageRepository.DeleteByFileNameAsync(oldImage.FileName);
-            }
+            await _draftImageRepository.DeleteByFileNameAsync(draftImage.FileName);
         }
 
-        // Assign new Image models
-        foreach (var newOrExistingImage in newProductImageValue)
-        {
-            if (newOrExistingImage.ProductId is not null) 
-            {
-                continue;
-            }
-
-            await _productImageRepository.AssignToProductAsync(productId: productUpdating.Id, productImageId: newOrExistingImage.Id);
-        }
-        
         // Create new Product History
-        var inputProductHistory = ProductHistoryFactory.BuildNewProductHistory(
-            name: productUpdating.Name,
-            images: productUpdating.Images.Select(image => image.FileName).ToList(),
-            price: productUpdating.Price,
-            productId: productUpdating.Id,
-            description: productUpdating.Description
-        );
+        var inputProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(productUpdating);
         var productHistory = await _productHistoryRepository.CreateAsync(inputProductHistory);
 
         return new UpdateProductResult

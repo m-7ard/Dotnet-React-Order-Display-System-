@@ -8,12 +8,11 @@ using Application.Api.Products.Read.DTOs;
 using Application.Api.Products.Read.Handlers;
 using Application.Api.Products.Update.DTOs;
 using Application.Api.Products.Update.Handlers;
-using Application.Api.Products.UploadImages.DTOs;
-using Application.Api.Products.UploadImages.Handlers;
 using Application.ErrorHandling.Api;
 using Application.ErrorHandling.Other;
 using Application.Interfaces.Services;
 using FluentValidation;
+using Infrastructure.Mappers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,15 +28,15 @@ public class ProductsController : ControllerBase
     private readonly IPlainErrorHandlingService _errorHandlingService;
     private readonly IValidator<CreateProductRequestDTO> _createProductValidator;
     private readonly IValidator<UpdateProductRequestDTO> _updateProductValidator;
-    private readonly List<string> _permittedExtensions = [".jpg", ".jpeg", ".png"];
-    private readonly long _fileSizeLimit = 8 * 1024 * 1024; // 8 MB
+    private readonly IApiModelService _apiModelService;
 
-    public ProductsController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IValidator<CreateProductRequestDTO> createProductValidator, IValidator<UpdateProductRequestDTO> updateProductValidator)
+    public ProductsController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IValidator<CreateProductRequestDTO> createProductValidator, IValidator<UpdateProductRequestDTO> updateProductValidator, IApiModelService apiModelService)
     {
         _mediator = mediator;
         _errorHandlingService = errorHandlingService;
         _createProductValidator = createProductValidator;
         _updateProductValidator = updateProductValidator;
+        _apiModelService = apiModelService;
     }
 
     [HttpPost("create")]
@@ -81,87 +80,7 @@ public class ProductsController : ControllerBase
             return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         }
         
-        var response = new CreateProductResponseDTO(product: value.Product);
-        return StatusCode(StatusCodes.Status201Created, response);
-    }
-
-    [HttpPost("upload_images")]
-    public async Task<ActionResult<UploadProductImagesResponseDTO>> UploadImages(List<IFormFile> files)
-    {
-        if (files == null || files.Count == 0)
-        {
-            return BadRequest(new List<PlainApiError>() {
-                _errorHandlingService.CreateError(
-                    path: ["_"],
-                    message: "Must upload at least 1 file.",
-                    fieldName: "_"
-                )
-            });
-        }
-
-        if (files.Count > 8)
-        {
-            return BadRequest(new List<PlainApiError>() {
-                _errorHandlingService.CreateError(
-                    path: ["_"],
-                    message: "Cannot upload more than 8 files.",
-                    fieldName: "_"
-                )
-            });
-        }
-
-        var contentTooLargeErrors = new List<PlainApiError>();
-
-        foreach (var file in files)
-        {
-            if (file.Length > _fileSizeLimit)
-            {
-                contentTooLargeErrors.Add(
-                    _errorHandlingService.CreateError(
-                        path: [file.FileName],
-                        message: $"File \"{file.FileName}\" exceeds the 8 MB size limit.",
-                        fieldName: file.FileName
-                    )
-                );
-            }
-        }
-
-        if (contentTooLargeErrors.Count > 0)
-        {
-            return StatusCode(StatusCodes.Status413PayloadTooLarge, contentTooLargeErrors);
-        }
-
-        var invalidFileFormatErrors = new List<PlainApiError>();
-
-        foreach (var file in files)
-        {
-            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-            if (string.IsNullOrEmpty(extension) || !_permittedExtensions.Contains(extension))
-            {
-                invalidFileFormatErrors.Add(
-                    _errorHandlingService.CreateError(
-                        path: [file.FileName],
-                        message: $"File \"{file.FileName}\" has an invalid file extension.",
-                        fieldName: file.FileName
-                    )
-                );
-            }
-
-            if (invalidFileFormatErrors.Count > 0)
-            {
-                return StatusCode(StatusCodes.Status415UnsupportedMediaType, invalidFileFormatErrors);
-            }
-        }
-
-        var command = new UploadProductImagesCommand(files: files);
-        var result = await _mediator.Send(command);
-
-        if (result.TryPickT1(out var errors, out var value))
-        {
-            return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
-        }
-
-        var response = new UploadProductImagesResponseDTO(images: value.ProductImages.Select(file => file.FileName).ToList());
+        var response = new CreateProductResponseDTO(product: _apiModelService.CreateProductApiModel(value.Product));
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
@@ -189,7 +108,7 @@ public class ProductsController : ControllerBase
             return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         }
 
-        var response = new ListProductsResponseDTO(products: value.Products);
+        var response = new ListProductsResponseDTO(products: value.Products.Select(_apiModelService.CreateProductApiModel).ToList());
         return Ok(response);
     }
     
@@ -208,7 +127,7 @@ public class ProductsController : ControllerBase
                 : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));        
         }
 
-        var response = new ReadProductResponseDTO(product: value.Product);
+        var response = new ReadProductResponseDTO(product: _apiModelService.CreateProductApiModel(value.Product));
         return Ok(response);
     }
 
@@ -255,7 +174,7 @@ public class ProductsController : ControllerBase
                 : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));        
         }
 
-        var response = new UpdateProductResponseDTO(product: value.Product);
+        var response = new UpdateProductResponseDTO(product: _apiModelService.CreateProductApiModel(value.Product));
         return Ok(response);
     }
 

@@ -11,13 +11,13 @@ namespace Application.Api.Products.Create.Handlers;
 public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<CreateProductResult, List<PlainApplicationError>>>
 {
     private readonly IProductRepository _productRepository;
-    private readonly IProductImageRepository _productImageRepository;
+    private readonly IDraftImageRepository _draftImageRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
 
-    public CreateProductHandler(IProductRepository productRespository, IProductImageRepository productImageRespository, IProductHistoryRepository productHistoryRepository)
+    public CreateProductHandler(IProductRepository productRespository, IDraftImageRepository draftImageRepository, IProductHistoryRepository productHistoryRepository)
     {
         _productRepository = productRespository;
-        _productImageRepository = productImageRespository;
+        _draftImageRepository = draftImageRepository;
         _productHistoryRepository = productHistoryRepository;
     }
 
@@ -25,31 +25,21 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
     {
         var errors = new List<PlainApplicationError>();
 
-        var productImageValue = new List<ProductImage>();
+        var draftImages = new List<DraftImage>();
         foreach (var fileName in request.Images)
         {
-            var productImage = await _productImageRepository.GetByFileNameAsync(fileName);
-            if (productImage is null)
+            var draftImage = await _draftImageRepository.GetByFileNameAsync(fileName);
+            if (draftImage is null)
             {
                 errors.Add(new PlainApplicationError(
-                    message: $"ProductImage of fileName \"{fileName}\" does not exist.",
+                    message: $"DraftImage of fileName \"{fileName}\" does not exist.",
                     path: ["images", fileName],
                     code: ValidationErrorCodes.ModelDoesNotExist
                 ));
                 continue;
             }
 
-            if (productImage.ProductId is not null)
-            {
-                errors.Add(new PlainApplicationError(
-                    message:  $"MenuItemImage of fileName \"{fileName}\" has already been assigned to another Product.",
-                    path: ["images", fileName],
-                    code: ValidationErrorCodes.StateMismatch
-                ));
-                continue;
-            }
-            
-            productImageValue.Add(productImage);
+            draftImages.Add(draftImage);
         }
 
         if (errors.Count > 0)
@@ -61,23 +51,16 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
             name: request.Name,
             price: request.Price,
             description: request.Description,
-            images: productImageValue
+            images: draftImages.Select(ProductImageFactory.BuildNewProductImageFromDraftImage).ToList()
         );
 
-        var outputProduct = await _productRepository.CreateAsync(inputProduct);
-        foreach (var productImage in inputProduct.Images)
+        foreach (var draftImage in draftImages)
         {
-            await _productImageRepository.AssignToProductAsync(productId: outputProduct.Id, productImageId: productImage.Id);
+            await _draftImageRepository.DeleteByFileNameAsync(draftImage.FileName);
         }
-        
-        var inputProductHistory = ProductHistoryFactory.BuildNewProductHistory(
-            name: outputProduct.Name,
-            images: outputProduct.Images.Select(image => image.FileName).ToList(),
-            price: outputProduct.Price,
-            productId: outputProduct.Id,
-            description: outputProduct.Description
-        );
-        var productHistory = await _productHistoryRepository.CreateAsync(inputProductHistory);
+
+        var outputProduct = await _productRepository.CreateAsync(inputProduct);
+        await _productHistoryRepository.CreateAsync(ProductHistoryFactory.BuildNewProductHistoryFromProduct(outputProduct));
 
         return new CreateProductResult
         (

@@ -30,7 +30,7 @@ public class ProductHistoryDbEntity
 
     // Product FK
     public int? ProductId { get; set; }
-    public ProductDbEntity? Product { get; private set; }
+    public ProductDbEntity? Product { get; set; }
     
     public DateTime ValidFrom { get; set; }
     public DateTime ValidTo { get; set; }

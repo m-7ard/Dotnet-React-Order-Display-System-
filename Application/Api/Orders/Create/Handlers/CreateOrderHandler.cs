@@ -15,21 +15,18 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
     private readonly IProductRepository _productRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
     private readonly IOrderRepository _orderRepository;
-    private readonly IOrderItemRepository _orderItemRepository;
 
-    public CreateOrderHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IOrderRepository orderRepository, IOrderItemRepository orderItemRepository)
+    public CreateOrderHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IOrderRepository orderRepository)
     {
         _productRepository = productRepository;
         _productHistoryRepository = productHistoryRepository;
         _orderRepository = orderRepository;
-        _orderItemRepository = orderItemRepository;
     }
 
     public async Task<OneOf<CreateOrderResult, List<PlainApplicationError>>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
         var errors = new List<PlainApplicationError>();
        
-       // Get Product History
         var retrievedProductsHistory = new Dictionary<string, ProductHistory>();
         foreach (var (uid, orderItem) in request.OrderItemData)
         {
@@ -69,38 +66,28 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             return errors;
         }
 
-
         // Calc total
-        float total = 0;
-        foreach (var (uid, orderItem) in request.OrderItemData)
-        {
+        float total = request.OrderItemData.Keys.Sum(uid => {
             var productHistory = retrievedProductsHistory[uid];
-            total += productHistory.Price * orderItem.Quantity;
-        }
-
+            var orderItem = request.OrderItemData[uid];
+            return productHistory.Price * orderItem.Quantity;
+        });
 
         // Create Order
         var inputOrder = OrderFactory.BuildNewOrder(
             total: total,
-            orderItems: [],
+            orderItems: request.OrderItemData.Keys.Select(uid => {
+                var orderItemData = request.OrderItemData[uid];
+                return OrderItemFactory.BuildNewOrderItem(
+                    quantity: orderItemData.Quantity,
+                    status: OrderItemStatus.Pending,
+                    productHistoryId: retrievedProductsHistory[uid].Id
+                );
+            }).ToList(),
             status: OrderStatus.Pending
         );
+
         var outputOrder = await _orderRepository.CreateAsync(inputOrder);
-
-
-        // Create Order Items
-        foreach (var (uid, orderItem) in request.OrderItemData)
-        {
-            var inputOrderItem = OrderItemFactory.BuildNewOrderItem(
-                quantity: orderItem.Quantity,
-                status: OrderItemStatus.Pending,
-                orderId: outputOrder.Id,
-                productHistory: retrievedProductsHistory[uid]
-            );
-            var outputOrderItem = await _orderItemRepository.CreateAsync(inputOrderItem);
-            outputOrder.OrderItems.Add(outputOrderItem);
-        }
-
         return new CreateOrderResult(order: outputOrder);
     }
 }

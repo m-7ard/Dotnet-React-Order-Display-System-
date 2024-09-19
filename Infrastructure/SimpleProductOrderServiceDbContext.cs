@@ -15,6 +15,7 @@ public class SimpleProductOrderServiceDbContext : DbContext
     public DbSet<ProductImageDbEntity> ProductImage { get; set; } = null!;
     public DbSet<OrderDbEntity> Order { get; set; } = null!;
     public DbSet<OrderItemDbEntity> OrderItem { get; set; } = null!;
+    public DbSet<DraftImageDbEntity> DraftImage { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,6 +36,14 @@ public class SimpleProductOrderServiceDbContext : DbContext
             .HasMaxLength(1028)
             .IsRequired();
         modelBuilder.Entity<ProductHistoryDbEntity>().Property(d => d.ValidFrom).HasDefaultValueSql("GETDATE()");
+        modelBuilder.Entity<ProductHistoryDbEntity>()
+            .HasOne(h => h.Product)
+            .WithMany(p => p.ProductHistories)
+            .HasForeignKey(h => h.ProductId)
+            .OnDelete(DeleteBehavior.SetNull);
+            
+        // DraftImage
+        modelBuilder.Entity<ProductImageDbEntity>().Property(d => d.DateCreated).HasDefaultValueSql("GETDATE()");
 
         // ProductImage
         modelBuilder.Entity<ProductImageDbEntity>().Property(d => d.DateCreated).HasDefaultValueSql("GETDATE()");

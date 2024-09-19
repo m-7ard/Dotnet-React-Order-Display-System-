@@ -15,5 +15,6 @@ public class ProductDbEntity
     public DateTime DateCreated { get; private set; }
     public float Price { get; set; }
     public string Description { get; set; }
-    public List<ProductImageDbEntity> Images { get; private set; } = [];
+    public List<ProductImageDbEntity> Images { get; set; } = [];
+    public List<ProductHistoryDbEntity> ProductHistories { get; set; } = [];
 }
