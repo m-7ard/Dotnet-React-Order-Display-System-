@@ -17,6 +17,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useCommandDispatcherContext } from "../../contexts/CommandDispatcherContext";
 import DeleteProductCommand from "../../../application/commands/products/deleteProduct/DeleteProductCommand";
 import apiToDomainCompatibleFormError from "../../../application/mappers/apiToDomainCompatibleFormError";
+import FilterProductsDialogPanel from "./_ProductsPage/FilterProductsDialogPanel";
+import DeleteProductDialogPanel from "./_ProductsPage/DeleteProductDialogPanel";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -42,12 +44,22 @@ export default function ProductsPage() {
                         Create
                     </MixinButton>
                 </Link>
-                <MixinButton
-                    className="justify-center w-full rounded shadow basis-1/2"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                >
-                    Filter
-                </MixinButton>
+                <AbstractDialog 
+                    Trigger={({ open, onToggle }) => (
+                        <MixinButton
+                            className="justify-center w-full rounded shadow basis-1/2"
+                            options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                            active={open}
+                            onClick={onToggle}
+                        >
+                            Filter
+                        </MixinButton>
+
+                    )}
+                    Panel={<FilterProductsDialogPanel />}
+                />
+
+
             </div>
             {products.map((product) => (
                 <Product product={product} key={product.id} />
@@ -170,54 +182,4 @@ function ProductOptionMenu(props: { product: IProduct }) {
             </section>
         </AbstractPopoverPanel>
     );
-}
-
-function DeleteProductDialogPanel(props: { product: IProduct }) {
-    const { product } = props;
-    const { onClose } = useAbstractDialogContext();
-
-    const { commandDispatcher } = useCommandDispatcherContext();
-    const { dispatchException } = useApplicationExceptionContext();
-
-    const navigate = useNavigate();
-    const deleteProductMutation = useMutation({
-        mutationFn: async () => {
-            const command = new DeleteProductCommand({
-                id: product.id,
-            });
-
-            const result = await commandDispatcher.dispatch(command);
-
-            if (result.isOk()) {
-                navigate({ to: "/products" });
-            } else if (result.error.type === "Exception") {
-                dispatchException(result.error.data);
-            } else if (result.error.type === "API") {
-                const errors = apiToDomainCompatibleFormError(result.error.data);
-                console.warn(errors);
-                navigate({ to: "/products" });
-            }
-        },
-    });
-
-    return (
-        <AbstractDialogPanel className="m-auto">
-            <MixinPrototypeCard className="rounded shadow w-72" options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}>
-                <MixinPrototypeCardSection>
-                    <header className="text-base text-gray-900 font-bold">Confirm Deletion</header>
-                </MixinPrototypeCardSection>
-                <MixinPrototypeCardSection>
-                    <header className="text-sm text-gray-900">Do you wish to delete "product #1"? This Process cannot be undone</header>
-                </MixinPrototypeCardSection>
-                <MixinPrototypeCardSection className="flex flex-row gap-2 justify-between">
-                    <MixinButton onClick={onClose} className="rounded shadow" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}>
-                        Cancel
-                    </MixinButton>
-                    <MixinButton onClick={() => deleteProductMutation.mutate()} className="rounded shadow" options={{ size: "mixin-button-base", theme: "theme-button-generic-red" }}>
-                        Delete
-                    </MixinButton>
-                </MixinPrototypeCardSection>
-            </MixinPrototypeCard>
-        </AbstractDialogPanel>
-    )
 }
