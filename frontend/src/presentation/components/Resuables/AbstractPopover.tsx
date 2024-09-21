@@ -1,41 +1,25 @@
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
-import React, { ComponentProps, ComponentType } from "react";
+import React, { ComponentProps, ComponentType, useState } from "react";
 import TooltipProvider from "./TooltipProvider";
-import { useTooltipContext } from "../../contexts/TooltipContext";
+import { createPortal } from "react-dom";
+import { AbstractPopoverContext } from "../../contexts/AbstractPopoverContext";
 
-export type AbstractPopoverTriggerProps = { open: boolean };
-export type AbstractPopoverPanelProps = Record<string, never>;
 export type AbstractPopoverProps = {
-    Trigger: ComponentType<AbstractPopoverTriggerProps>;
-    Panel: ComponentType<AbstractPopoverPanelProps>;
+    Trigger: ComponentType<{ open: boolean; onToggle: () => void }>;
+    Panel: React.ReactNode;
     positioning: ComponentProps<typeof TooltipProvider>["positioning"];
 };
 
-export default function AbstractPopover({ Trigger, Panel, positioning }: AbstractPopoverProps) {
+export default function AbstractPopover({ Trigger, Panel }: AbstractPopoverProps) {
+    const [open, setOpen] = useState(false);
+
     return (
-        <Popover className={"flex flex-col"}>
-            {({ open }) => {
-                return (
-                    <TooltipProvider open={open} positioning={positioning}>
-                        {<Trigger open={open} />}
-                        {open && <Panel />}
-                    </TooltipProvider>
-                );
+        <AbstractPopoverContext.Provider
+            value={{
+                onClose: () => setOpen(false),
             }}
-        </Popover>
+        >
+            {<Trigger open={open} onToggle={() => setOpen(!open)} />}
+            {open && createPortal(Panel, document.body)}
+        </AbstractPopoverContext.Provider>
     );
-}
-
-export function AbstractPopoverTrigger(attrs: React.ComponentProps<typeof PopoverButton>) {
-    const {
-        elements: { setReferenceElement },
-    } = useTooltipContext();
-    return <PopoverButton as={"div"} {...attrs} ref={setReferenceElement} />;
-}
-
-export function AbstractPopoverPanel(attrs: React.ComponentProps<typeof PopoverPanel>) {
-    const {
-        elements: { setTargetElement },
-    } = useTooltipContext();
-    return <PopoverPanel {...attrs} ref={setTargetElement} />;
 }

@@ -2,7 +2,7 @@ namespace Application.ApiModels;
 
 public class OrderApiModel
 {
-    public OrderApiModel(int id, float total, DateTime dateCreated, DateTime dateFinished, List<OrderItemApiModel> orderItems, string status)
+    public OrderApiModel(int id, decimal total, DateTime dateCreated, DateTime dateFinished, List<OrderItemApiModel> orderItems, string status)
     {
         Id = id;
         Total = total;
@@ -13,7 +13,7 @@ public class OrderApiModel
     }
 
     public int Id { get; private set; }
-    public float Total { get; set; }
+    public decimal Total { get; set; }
     public string Status { get; set; }
     public DateTime DateCreated { get; private set; }
     public DateTime DateFinished { get; set; }

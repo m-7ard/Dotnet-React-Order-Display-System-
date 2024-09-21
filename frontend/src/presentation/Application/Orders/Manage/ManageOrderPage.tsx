@@ -24,8 +24,8 @@ export default function ManageOrderPage() {
     const { orderStateManager } = useStateManagersContext();
     const errorsManager = useItemManager<IFormError<Record<string, unknown>>>({ _: undefined });
 
-    const orderQuery = useQuery({ 
-        queryKey: ["order", parseInt(id)], 
+    const orderQuery = useQuery({
+        queryKey: ["order", parseInt(id)],
         queryFn: () => (ok ? data : null),
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -156,17 +156,23 @@ function OrderItem(props: { orderItem: IOrderItem }) {
                     />
                 ))}
             </div>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <div className="flex flex-col gap-1 grow">
                 <div>
                     <div className="text-sm font-semibold">Order Item #{orderItem.id}</div>
                     <div className="text-sm">{`${orderItem.status.value}`}</div>
                 </div>
             </div>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            <div className="text-sm font-bold">{`${orderItem.productHistory.name}`}</div>
             <div className="flex flex-row gap-2 items-center text-sm">
                 <div className="p-0.5 px-2 bg-gray-900 text-white font-bold rounded shadow">x{orderItem.quantity}</div>{" "}
-                <div>{`${orderItem.productHistory.name}`}</div>
+                <div className="p-0.5 px-2 bg-gray-900 text-white font-bold rounded shadow">
+                    {orderItem.productHistory.price}$
+                </div>{" "}
             </div>
-            <div className="flex flex-row gap-1 mt-auto">
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            <div className="flex flex-row gap-2">
                 {orderItem.status === OrderItemStatus.PENDING && (
                     <>
                         <MixinButton

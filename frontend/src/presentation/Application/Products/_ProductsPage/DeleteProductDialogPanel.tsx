@@ -3,7 +3,6 @@ import { useNavigate } from "@tanstack/react-router";
 import DeleteProductCommand from "../../../../application/commands/products/deleteProduct/DeleteProductCommand";
 import apiToDomainCompatibleFormError from "../../../../application/mappers/apiToDomainCompatibleFormError";
 import IProduct from "../../../../domain/models/IProduct";
-import { AbstractDialogPanel } from "../../../components/Resuables/AbstractDialog";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import { useAbstractDialogContext } from "../../../contexts/AbstractDialogContext";
 import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
@@ -38,7 +37,7 @@ export default function DeleteProductDialogPanel(props: { product: IProduct }) {
     });
 
     return (
-        <AbstractDialogPanel className="rounded shadow mixin-page-like mixin-page-base bg-gray-50 border border-gray-900 m-auto max-w-72">
+        <div className="mixin-page-base rounded shadow mixin-page-like bg-gray-50 border border-gray-900 m-auto max-w-72">
             <header className="flex flex-row justify-between items-center">
                 <div className="text-xl text-gray-900 font-bold">Confirm Deletion</div>
                 <MixinButton
@@ -74,6 +73,6 @@ export default function DeleteProductDialogPanel(props: { product: IProduct }) {
                     Delete
                 </MixinButton>
             </footer>
-        </AbstractDialogPanel>
+        </div>
     );
 }

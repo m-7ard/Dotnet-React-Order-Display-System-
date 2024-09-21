@@ -2,7 +2,7 @@ namespace Application.Api.Products.Update.DTOs;
 
 public class UpdateProductRequestDTO
 {
-    public UpdateProductRequestDTO(string name, float price, string description, List<string> images)
+    public UpdateProductRequestDTO(string name, decimal price, string description, List<string> images)
     {
         Name = name;
         Price = price;
@@ -11,7 +11,7 @@ public class UpdateProductRequestDTO
     }
 
     public string Name { get; set; }
-    public float Price { get; set; }
+    public decimal Price { get; set; }
     public string Description { get; set; }
     public List<string> Images { get; set; }
 }

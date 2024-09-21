@@ -1,7 +1,7 @@
-import { Dialog, DialogPanel, DialogPanelProps } from "@headlessui/react";
-import { ElementType, FunctionComponent, useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { AbstractDialogContext } from "../../contexts/AbstractDialogContext";
 import { ReactNode } from "@tanstack/react-router";
+import { createPortal } from "react-dom";
 
 export type AbstractDialogTriggerProps = {
     open: boolean;
@@ -21,18 +21,39 @@ export default function AbstractDialog({
     const onToggle = () => setOpen(!open);
 
     return (
-        <AbstractDialogContext.Provider value={{
-            onClose: () => setOpen(false)
-        }}>
+        <AbstractDialogContext.Provider
+            value={{
+                onClose: () => setOpen(false),
+            }}
+        >
             {Trigger == null ? null : <Trigger onToggle={() => onToggle()} open={open} />}
-            <Dialog open={open} onClose={() => setOpen(false)} className="relative flex" style={{ zIndex: 5000 }}>
-                <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-                <div className="fixed inset-0 flex justify-center">{open ? Panel : null}</div>
-            </Dialog>
+            {open ? (
+                <Dialog open={open} onClose={() => setOpen(false)}>
+                    {Panel}
+                </Dialog>
+            ) : null}
         </AbstractDialogContext.Provider>
     );
 }
 
-export function AbstractDialogPanel<T extends ElementType>(props: DialogPanelProps<T>) {
-    return <DialogPanel {...props} />;
+function Dialog(props: {
+    open: boolean;
+    onClose: () => void;
+    children: ReactNode | ((props: { open: boolean; onClose: () => void }) => ReactNode);
+}) {
+    const { children, onClose, open } = props;
+
+    return createPortal(
+        <div
+            className="fixed inset-0 bg-black/30 flex items-center justify-center"
+            onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                    onClose();
+                }
+            }}
+        >
+            {typeof children === "function" ? children({ open, onClose }) : children}
+        </div>,
+        document.body,
+    );
 }

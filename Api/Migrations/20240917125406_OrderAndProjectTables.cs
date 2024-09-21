@@ -17,7 +17,7 @@ namespace Api.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Total = table.Column<float>(type: "real", nullable: false),
+                    Total = table.Column<decimal>(type: "real", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     DateFinished = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -35,7 +35,7 @@ namespace Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    Price = table.Column<float>(type: "real", nullable: false),
+                    Price = table.Column<decimal>(type: "real", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1028)", maxLength: 1028, nullable: false)
                 },
                 constraints: table =>
@@ -52,7 +52,7 @@ namespace Api.Migrations
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Images = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1028)", maxLength: 1028, nullable: false),
-                    Price = table.Column<float>(type: "real", nullable: false),
+                    Price = table.Column<decimal>(type: "real", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     ValidFrom = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     ValidTo = table.Column<DateTime>(type: "datetime2", nullable: false)

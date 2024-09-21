@@ -88,18 +88,22 @@ public class OrdersController : ControllerBase
 
     [HttpGet("list")]
     public async Task<ActionResult<ListOrdersResponseDTO>> List(
-        [FromQuery] float? minTotal,
-        [FromQuery] float? maxTotal,
+        [FromQuery] int? id,
+        [FromQuery] decimal? minTotal,
+        [FromQuery] decimal? maxTotal,
         [FromQuery] string? status,
         [FromQuery] DateTime? createdBefore,
-        [FromQuery] DateTime? createdAfter)
+        [FromQuery] DateTime? createdAfter,
+        [FromQuery] int? productId)
     {
         var query = new ListOrdersQuery(
             minTotal: minTotal,
             maxTotal: maxTotal,
             status: status,
             createdBefore: createdBefore,
-            createdAfter: createdAfter
+            createdAfter: createdAfter,
+            productId: productId,
+            id: id
         );
 
         var result = await _mediator.Send(query);

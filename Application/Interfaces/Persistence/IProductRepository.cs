@@ -8,5 +8,5 @@ public interface IProductRepository
     Task UpdateAsync(Product product);
     Task DeleteByIdAsync(int id);
     Task<Product?> GetByIdAsync(int id);
-    Task<List<Product>> FindAllAsync(string? name, float? minPrice, float? maxPrice, string? description, DateTime? createdBefore, DateTime? createdAfter);
+    Task<List<Product>> FindAllAsync(string? name, decimal? minPrice, decimal? maxPrice, string? description, DateTime? createdBefore, DateTime? createdAfter);
 }

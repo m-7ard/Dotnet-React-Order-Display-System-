@@ -6,7 +6,7 @@ namespace Application.Api.Products.Create.Handlers;
 
 public class CreateProductCommand : IRequest<OneOf<CreateProductResult, List<PlainApplicationError>>>
 {
-    public CreateProductCommand(string name, float price, string description, List<string> images)
+    public CreateProductCommand(string name, decimal price, string description, List<string> images)
     {
         Name = name;
         Price = price;
@@ -15,7 +15,7 @@ public class CreateProductCommand : IRequest<OneOf<CreateProductResult, List<Pla
     }
 
     public string Name { get; set; }
-    public float Price { get; set; }
+    public decimal Price { get; set; }
     public string Description { get; set; }
     public List<string> Images { get; set; }
 }

@@ -87,8 +87,8 @@ public class ProductsController : ControllerBase
     [HttpGet("list")]
     public async Task<ActionResult<ListProductsResponseDTO>> List(
         [FromQuery] string? name, 
-        [FromQuery] float? minPrice, 
-        [FromQuery] float? maxPrice, 
+        [FromQuery] decimal? minPrice, 
+        [FromQuery] decimal? maxPrice, 
         [FromQuery] string? description, 
         [FromQuery] DateTime? createdBefore, 
         [FromQuery] DateTime? createdAfter)

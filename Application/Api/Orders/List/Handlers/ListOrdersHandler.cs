@@ -22,7 +22,9 @@ public class ListOrdersHandler : IRequestHandler<ListOrdersQuery, OneOf<ListOrde
             maxTotal: request.MaxTotal,
             status: (request.Status is null || !OrderStatus.IsValid(request.Status)) ? null : new OrderStatus(name: request.Status),
             createdBefore: request.CreatedBefore,
-            createdAfter: request.CreatedAfter
+            createdAfter: request.CreatedAfter,
+            productId: request.ProductId,
+            id: request.Id
         );
 
         var result = new ListOrdersResult(orders: orders);

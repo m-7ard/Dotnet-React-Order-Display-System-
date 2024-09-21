@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import IProduct from "../../../../domain/models/IProduct";
 import { useAbstractDialogContext } from "../../../contexts/AbstractDialogContext";
 import useItemManager from "../../../hooks/useItemManager";
-import { AbstractDialogPanel } from "../../Resuables/AbstractDialog";
 import MixinButton from "../../Resuables/MixinButton";
 import StatelessCharField from "../../StatelessFields/StatelessCharField";
 import FormField from "../FormField";
@@ -75,9 +74,9 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
     const searchResults = searchProductsMutation.data ?? [];
 
     return (
-        <AbstractDialogPanel className="mixin-page-like mixin-page-base bg-gray-50 border border-gray-900 m-4 max-w-80">
+        <div className="mixin-page-like mixin-page-base bg-gray-50 border border-gray-900 m-4 max-w-80">
             <header className="flex flex-row justify-between items-center">
-                <div className="text-2xl text-gray-900 font-bold">Create Product</div>
+                <div className="text-xl text-gray-900 font-bold">Filter Orders</div>
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",
@@ -164,7 +163,7 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                 </div>
 
             </footer>
-        </AbstractDialogPanel>
+        </div>
     );
 }
 

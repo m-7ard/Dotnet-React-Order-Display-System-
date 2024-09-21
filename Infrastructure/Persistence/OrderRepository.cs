@@ -52,33 +52,45 @@ public class OrderRepository : IOrderRepository
         return OrderMapper.ToDomain(orderDbEntity);
     }
 
-    public async Task<List<Order>> FindAllAsync(float? minTotal, float? maxTotal, OrderStatus? status, DateTime? createdBefore, DateTime? createdAfter)
+    public async Task<List<Order>> FindAllAsync(decimal? minTotal, decimal? maxTotal, OrderStatus? status, DateTime? createdBefore, DateTime? createdAfter, int? productId, int? id)
     {
         IQueryable<OrderDbEntity> query = _dbContext.Order.Include(d => d.OrderItems);
+        Console.WriteLine($"----------------------- {id}");
+        Console.WriteLine($"----------------------- {productId}");
 
-        if (minTotal.HasValue)
+        if (id is not null)
         {
-            query = query.Where(item => item.Total >= minTotal.Value);
+            query = query.Where(order => order.Id == id);
         }
 
-        if (maxTotal.HasValue)
+        if (minTotal is not null)
         {
-            query = query.Where(item => item.Total <= maxTotal.Value);
+            query = query.Where(order => order.Total >= minTotal);
         }
 
-        if (createdAfter.HasValue)
+        if (maxTotal is not null)
         {
-            query = query.Where(item => item.DateCreated >= createdAfter);
+            query = query.Where(order => order.Total <= maxTotal);
         }
 
-        if (createdBefore.HasValue)
+        if (createdAfter is not null)
         {
-            query = query.Where(item => item.DateCreated <= createdBefore);
+            query = query.Where(order => order.DateCreated >= createdAfter);
+        }
+
+        if (createdBefore is not null)
+        {
+            query = query.Where(order => order.DateCreated <= createdBefore);
         }
 
         if (status is not null)
         {
-            query = query.Where(item => item.Status == OrderMapper.ToDbEntityStatus(status));
+            query = query.Where(order => order.Status == OrderMapper.ToDbEntityStatus(status));
+        }
+
+        if (productId is not null)
+        {
+            query = query.Where(order => order.OrderItems.Any(item => item.ProductId == productId));
         }
 
         var dbOrders = await query.ToListAsync();
