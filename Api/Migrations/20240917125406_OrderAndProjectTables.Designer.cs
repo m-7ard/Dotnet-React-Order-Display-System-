@@ -44,7 +44,7 @@ namespace Api.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<float>("Total")
+                    b.Property<decimal>("Total")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
@@ -112,7 +112,7 @@ namespace Api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<float>("Price")
+                    b.Property<decimal>("Price")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
@@ -142,7 +142,7 @@ namespace Api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<float>("Price")
+                    b.Property<decimal>("Price")
                         .HasColumnType("real");
 
                     b.Property<int>("ProductId")

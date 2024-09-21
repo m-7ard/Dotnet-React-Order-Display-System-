@@ -6,7 +6,7 @@ namespace Application.Api.Products.Update.Handlers;
 
 public class UpdateProductCommand : IRequest<OneOf<UpdateProductResult, List<PlainApplicationError>>>
 {
-    public UpdateProductCommand(string name, float price, string description, List<string> images, int id)
+    public UpdateProductCommand(string name, decimal price, string description, List<string> images, int id)
     {
         Name = name;
         Price = price;
@@ -17,7 +17,7 @@ public class UpdateProductCommand : IRequest<OneOf<UpdateProductResult, List<Pla
 
     public int Id { get; set; }
     public string Name { get; set; }
-    public float Price { get; set; }
+    public decimal Price { get; set; }
     public string Description { get; set; }
     public List<string> Images { get; set; }
 }

@@ -19,7 +19,7 @@ public class OrderItemFactory
         );
     }
 
-    public static OrderItem BuildNewOrderItem(int quantity, OrderItemStatus status, int productHistoryId)
+    public static OrderItem BuildNewOrderItem(int quantity, OrderItemStatus status, int productHistoryId, int productId)
     {
         return new OrderItem(
             id: 0,
@@ -29,7 +29,7 @@ public class OrderItemFactory
             dateFinished: new DateTime(),
             orderId: 0,
             productHistoryId: productHistoryId,
-            productId: 0
+            productId: productId
         );
     }
 }

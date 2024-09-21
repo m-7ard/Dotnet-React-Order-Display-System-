@@ -12,6 +12,7 @@ import { Type } from "@sinclair/typebox";
 import Order from "../../domain/models/Order";
 import UnknownError from "../../application/errors/UnkownError";
 import ILoaderResult from "../../application/interfaces/ILoaderResult";
+import parseTypeboxSchemaOrNull from "../utils/parseTypeboxSchemaOrNull";
 
 const baseOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -20,20 +21,24 @@ const baseOrdersRoute = createRoute({
         search,
     }: {
         search: {
-            minTotal?: number;
-            maxTotal?: number;
+            id?: string;
+            minTotal?: string;
+            maxTotal?: string;
             status?: string;
-            createdBefore?: Date;
-            createdAfter?: Date;
+            createdBefore?: string;
+            createdAfter?: string;
+            productId?: string
         };
     }) => search,
     loader: async ({ deps }) => {
         const command = new ListOrdersCommand({
-            minTotal: deps.minTotal ?? null,
-            maxTotal: deps.maxTotal ?? null,
-            status: deps.status ?? null,
-            createdBefore: deps.createdBefore ?? null,
-            createdAfter: deps.createdAfter ?? null,
+            id: parseTypeboxSchemaOrNull(Type.Number({ minimum: 0 }), deps.id),
+            minTotal: parseTypeboxSchemaOrNull(Type.Number({ minimum: 0 }), deps.minTotal),
+            maxTotal: parseTypeboxSchemaOrNull(Type.Number({ minimum: 0 }), deps.maxTotal),
+            status: parseTypeboxSchemaOrNull(Type.String(), deps.status),
+            createdBefore: parseTypeboxSchemaOrNull(Type.Date(), deps.createdBefore),
+            createdAfter: parseTypeboxSchemaOrNull(Type.Date(), deps.createdAfter),
+            productId: parseTypeboxSchemaOrNull(Type.Number({ minimum: 0 }), deps.productId),
         });
         const result = await commandDispatcher.dispatch(command);
 

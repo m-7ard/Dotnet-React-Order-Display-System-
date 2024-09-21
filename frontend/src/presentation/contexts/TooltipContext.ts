@@ -1,13 +1,12 @@
 import createSafeContext from "../utils/createSafeContext";
 
 export const [TooltipContext, useTooltipContext] = createSafeContext<{
-    open: boolean;
     elements: {
         referenceElement: HTMLElement | null;
         setReferenceElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
         targetElement: HTMLElement | null;
         setTargetElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
-    }
+    };
     positioning: {
         top?: string;
         right?: string;

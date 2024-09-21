@@ -7,7 +7,7 @@ public class ProductHistoryDbEntity
         string name,
         List<string> images,
         string description,
-        float price,
+        decimal price,
         int? productId,
         DateTime validFrom,
         DateTime validTo,
@@ -28,7 +28,7 @@ public class ProductHistoryDbEntity
     public string Name { get; set; } = null!;
     public List<string> Images { get; set; } = [];
     public string Description { get; set; } = null!;
-    public float Price { get; set; }
+    public decimal Price { get; set; }
 
     // Product FK
     public int? ProductId { get; set; }

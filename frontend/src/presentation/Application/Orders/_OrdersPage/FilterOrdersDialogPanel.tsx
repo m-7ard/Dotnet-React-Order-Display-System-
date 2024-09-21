@@ -4,28 +4,29 @@ import MixinButton from "../../../components/Resuables/MixinButton";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
 import { useAbstractDialogContext } from "../../../contexts/AbstractDialogContext";
 import useItemManager from "../../../hooks/useItemManager";
-import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
+import StatelessListBox from "../../../components/StatelessFields/StatelessListBox";
+import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 
 type ValueState = {
     id: string;
-    name: string;
-    minPrice: string;
-    maxPrice: string;
-    description: string;
+    minTotal: string;
+    maxTotal: string;
+    status: string;
     createdBefore: string;
     createdAfter: string;
+    productId: string;
 };
 
 export default function FilterProductsDialogPanel() {
-    const searchParams: Record<string, string> = useSearch({ from: "/products" });
+    const searchParams: Record<string, string> = useSearch({ from: "/orders" });
     const initialValueState: ValueState = {
         id: searchParams.id ?? "",
-        name: searchParams.name ?? "",
-        minPrice: searchParams.minPrice ?? "",
-        maxPrice: searchParams.maxPrice ?? "",
-        description: searchParams.description ?? "",
+        minTotal: searchParams.minTotal ?? "",
+        maxTotal: searchParams.maxTotal ?? "",
+        status: searchParams.status ?? "",
         createdBefore: searchParams.createdBefore ?? "",
-        createdAfter: searchParams.createdAfter ?? ""
+        createdAfter: searchParams.createdAfter ?? "",
+        productId: searchParams.productId ?? "",
     };
     const { onClose } = useAbstractDialogContext();
     const itemManager = useItemManager<ValueState>(initialValueState);
@@ -33,10 +34,11 @@ export default function FilterProductsDialogPanel() {
 
     return (
         <form
+            id="headlessui-portal-root"
             className="rounded shadow mixin-page-like mixin-page-base bg-gray-50 border border-gray-900 m-auto max-w-72"
             onSubmit={(e) => {
                 e.preventDefault();
-                navigate({ to: "/products", search: itemManager.items });
+                navigate({ to: "/orders", search: itemManager.items });
                 onClose();
             }}
             onReset={(e) => {
@@ -45,7 +47,7 @@ export default function FilterProductsDialogPanel() {
             }}
         >
             <header className="flex flex-row justify-between items-center">
-                <div className="text-xl text-gray-900 font-bold">Filter Products</div>
+                <div className="text-xl text-gray-900 font-bold">Filter Orders</div>
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",
@@ -60,52 +62,59 @@ export default function FilterProductsDialogPanel() {
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <section className="flex flex-col gap-2">
-                <FormField name="name">
+                <FormField name="id">
                     <StatelessCharField
                         options={{
                             size: "mixin-char-input-base",
                             theme: "theme-input-generic-white",
                         }}
-                        value={itemManager.items.name}
-                        onChange={(value) => itemManager.updateItem("name", value)}
+                        value={itemManager.items.id}
+                        onChange={(value) => itemManager.updateItem("id", value)}
                     />
                 </FormField>
                 <div className="flex flex-row gap-2">
                     <div className="basis-1/2">
-                        <FormField name="minPrice">
+                        <FormField name="minTotal">
                             <StatelessCharField
                                 options={{
                                     size: "mixin-char-input-base",
                                     theme: "theme-input-generic-white",
                                 }}
-                                value={itemManager.items.minPrice}
-                                onChange={(value) => itemManager.updateItem("minPrice", value)}
+                                value={itemManager.items.minTotal}
+                                onChange={(value) => itemManager.updateItem("minTotal", value)}
                             />
                         </FormField>
                     </div>
                     <div className="basis-1/2">
-                        <FormField name="maxPrice">
+                        <FormField name="maxTotal">
                             <StatelessCharField
                                 options={{
                                     size: "mixin-char-input-base",
                                     theme: "theme-input-generic-white",
                                 }}
-                                value={itemManager.items.maxPrice}
-                                onChange={(value) => itemManager.updateItem("maxPrice", value)}
+                                value={itemManager.items.maxTotal}
+                                onChange={(value) => itemManager.updateItem("maxTotal", value)}
                             />
                         </FormField>
                     </div>
                 </div>
-                <FormField name="description">
-                    <StatelessTextArea
-                        onChange={(value) => itemManager.updateItem("description", value)}
-                        value={itemManager.items.description}
-                        options={{
-                            size: "mixin-textarea-any",
-                            theme: "theme-textarea-generic-white",
+                <FormField name="status">
+                    <StatelessListBox
+                        onChange={(value) => {
+                            console.log(value);
+                            itemManager.updateItem("status", value);
                         }}
-                        rows={5}
-                        maxLength={1028}
+                        value={itemManager.items.status}
+                        choices={[
+                            {
+                                value: OrderStatus.FINISHED.value,
+                                label: OrderStatus.FINISHED.value,
+                            },
+                            {
+                                value: OrderStatus.PENDING.value,
+                                label: OrderStatus.PENDING.value,
+                            },
+                        ]}
                     />
                 </FormField>
                 <FormField name="createdBefore">
@@ -128,6 +137,16 @@ export default function FilterProductsDialogPanel() {
                         value={itemManager.items.createdAfter}
                         type="date"
                         onChange={(value) => itemManager.updateItem("createdAfter", value)}
+                    />
+                </FormField>
+                <FormField name="productId">
+                    <StatelessCharField
+                        options={{
+                            size: "mixin-char-input-base",
+                            theme: "theme-input-generic-white",
+                        }}
+                        value={itemManager.items.productId}
+                        onChange={(value) => itemManager.updateItem("productId", value)}
                     />
                 </FormField>
             </section>

@@ -67,7 +67,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
         }
 
         // Calc total
-        float total = request.OrderItemData.Keys.Sum(uid => {
+        decimal total = request.OrderItemData.Keys.Sum(uid => {
             var productHistory = retrievedProductsHistory[uid];
             var orderItem = request.OrderItemData[uid];
             return productHistory.Price * orderItem.Quantity;
@@ -81,7 +81,8 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
                 return OrderItemFactory.BuildNewOrderItem(
                     quantity: orderItemData.Quantity,
                     status: OrderItemStatus.Pending,
-                    productHistoryId: retrievedProductsHistory[uid].Id
+                    productHistoryId: retrievedProductsHistory[uid].Id,
+                    productId: orderItemData.ProductId
                 );
             }).ToList(),
             status: OrderStatus.Pending

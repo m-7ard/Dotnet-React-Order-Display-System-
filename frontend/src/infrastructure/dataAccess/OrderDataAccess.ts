@@ -32,7 +32,6 @@ export default class OrderDataAccess implements IOrderDataAccess {
         });
 
         if (isOk) {
-            console.log("data: ", data.orders);
             return ok(data.orders.map(orderMapper.apiToDomain));
         }
 

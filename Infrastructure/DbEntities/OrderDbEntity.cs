@@ -7,7 +7,7 @@ public class OrderDbEntity
         Finished
     }
 
-    public OrderDbEntity(int id, float total, DateTime dateCreated, DateTime dateFinished, Statuses status)
+    public OrderDbEntity(int id, decimal total, DateTime dateCreated, DateTime dateFinished, Statuses status)
     {
         Id = id;
         Total = total;
@@ -17,7 +17,7 @@ public class OrderDbEntity
     }
 
     public int Id { get; private set; }
-    public float Total { get; set; }
+    public decimal Total { get; set; }
     public Statuses Status { get; set; }
     public DateTime DateCreated { get; private set; }
     public DateTime DateFinished { get; set; }

@@ -28,7 +28,7 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
         var request = new UpdateProductRequestDTO
         (
             name: "Product #1 Updated",
-            price: (float)123.99,
+            price: (decimal)123.99,
             description: "description Updated",
             images: new List<string>() { _validImage.FileName }
         );

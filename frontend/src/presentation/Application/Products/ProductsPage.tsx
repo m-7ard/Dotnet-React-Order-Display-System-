@@ -4,21 +4,15 @@ import MixinButton from "../../components/Resuables/MixinButton";
 import { useApplicationExceptionContext } from "../../contexts/ApplicationExceptionHandlerContext";
 import { useEffect } from "react";
 import CoverImage from "../../components/Resuables/CoverImage";
-import AbstractPopover, {
-    AbstractPopoverPanel,
-    AbstractPopoverTrigger,
-} from "../../components/Resuables/AbstractPopover";
 import useAbstractPanelPositioning from "../../hooks/useAbstractPanelPositioning";
 import { useStateManagersContext } from "../../contexts/StateManagersContext";
-import AbstractDialog, { AbstractDialogPanel } from "../../components/Resuables/AbstractDialog";
-import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
-import { useAbstractDialogContext } from "../../contexts/AbstractDialogContext";
-import { useMutation } from "@tanstack/react-query";
-import { useCommandDispatcherContext } from "../../contexts/CommandDispatcherContext";
-import DeleteProductCommand from "../../../application/commands/products/deleteProduct/DeleteProductCommand";
-import apiToDomainCompatibleFormError from "../../../application/mappers/apiToDomainCompatibleFormError";
+import AbstractDialog from "../../components/Resuables/AbstractDialog";
 import FilterProductsDialogPanel from "./_ProductsPage/FilterProductsDialogPanel";
 import DeleteProductDialogPanel from "./_ProductsPage/DeleteProductDialogPanel";
+import AbstractTooltip, {
+    AbstractTooltipDefaultPanel,
+    AbstractTooltipTrigger,
+} from "../../components/Resuables/AbstractTooltip";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -44,7 +38,7 @@ export default function ProductsPage() {
                         Create
                     </MixinButton>
                 </Link>
-                <AbstractDialog 
+                <AbstractDialog
                     Trigger={({ open, onToggle }) => (
                         <MixinButton
                             className="justify-center w-full rounded shadow basis-1/2"
@@ -54,12 +48,9 @@ export default function ProductsPage() {
                         >
                             Filter
                         </MixinButton>
-
                     )}
                     Panel={<FilterProductsDialogPanel />}
                 />
-
-
             </div>
             {products.map((product) => (
                 <Product product={product} key={product.id} />
@@ -107,19 +98,21 @@ function Product(props: { product: IProduct }) {
                 >
                     See Orders
                 </MixinButton>
-                <AbstractPopover
-                    Trigger={({ open }) => (
-                        <AbstractPopoverTrigger>
+                <AbstractTooltip
+                    Trigger={({ open, onToggle }) => (
+                        <AbstractTooltipTrigger>
                             <MixinButton
                                 className="justify-center rounded shadow"
                                 type="button"
                                 options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                                onClick={onToggle}
+                                active={open}
                             >
                                 ...
                             </MixinButton>
-                        </AbstractPopoverTrigger>
+                        </AbstractTooltipTrigger>
                     )}
-                    Panel={() => <ProductOptionMenu product={product} />}
+                    Panel={<ProductOptionMenu product={product} />}
                     positioning={{ top: "100%", right: "0px" }}
                 />
             </footer>
@@ -129,13 +122,12 @@ function Product(props: { product: IProduct }) {
 
 function ProductOptionMenu(props: { product: IProduct }) {
     const { product } = props;
-    const { positionFlag } = useAbstractPanelPositioning();
     const { productStateManager } = useStateManagersContext();
     const navigate = useNavigate();
 
     return (
-        <AbstractPopoverPanel
-            className={`z-50 fixed mt-1 shadow mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow ${positionFlag ? "visible" : "invisible"}`}
+        <AbstractTooltipDefaultPanel
+            className={`z-50 fixed mt-1 shadow mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow`}
         >
             <section className="flex flex-col gap-1" data-role="section">
                 <a
@@ -156,7 +148,7 @@ function ProductOptionMenu(props: { product: IProduct }) {
                 </a>
             </section>
             <section className="flex flex-col gap-1" data-role="section">
-                <AbstractDialog 
+                <AbstractDialog
                     Trigger={({ open, onToggle }) => (
                         <MixinButton
                             className="justify-center rounded shadow"
@@ -180,6 +172,6 @@ function ProductOptionMenu(props: { product: IProduct }) {
                     See Product History
                 </MixinButton>
             </section>
-        </AbstractPopoverPanel>
+        </AbstractTooltipDefaultPanel>
     );
 }

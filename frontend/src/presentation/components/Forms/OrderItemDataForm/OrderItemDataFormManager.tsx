@@ -82,6 +82,7 @@ export default function OrderItemDataFormManager(props: {
                         itemManager.deleteItem(UID);
                         onDelete(UID);
                     }}
+                    key={UID}
                 />
             ))}
         </div>

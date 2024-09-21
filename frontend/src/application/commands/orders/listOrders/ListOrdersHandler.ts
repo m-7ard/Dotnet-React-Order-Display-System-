@@ -21,11 +21,13 @@ export default class ListOrdersHandler implements ICommandHandler<IListProductsC
             }
 
             const result = await this._orderDataAccess.listOrders({
+                id: request.id,
                 createdAfter: request.createdAfter,
                 createdBefore: request.createdBefore,
                 maxTotal: request.maxTotal,
                 minTotal: request.minTotal,
                 status: request.status,
+                productId: request.productId,
             });
 
             if (result.isErr()) {

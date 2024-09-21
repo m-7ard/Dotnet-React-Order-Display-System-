@@ -4,7 +4,7 @@ public class Product
     public Product(
         int id, 
         string name, 
-        float price, 
+        decimal price, 
         string description, 
         DateTime dateCreated, 
         List<ProductImage> images)
@@ -19,7 +19,7 @@ public class Product
 
     public int Id { get; private set; }
     public string Name { get; set; }
-    public float Price { get; set; }
+    public decimal Price { get; set; }
     public string Description { get; set; }
     public DateTime DateCreated { get; private set; }
     public List<ProductImage> Images { get; set; }

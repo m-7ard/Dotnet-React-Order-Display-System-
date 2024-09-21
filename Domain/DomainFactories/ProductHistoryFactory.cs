@@ -8,7 +8,7 @@ public class ProductHistoryFactory
         int id,
         string name,
         List<string> images,
-        float price,
+        decimal price,
         int productId,
         DateTime validFrom,
         DateTime validTo,
@@ -29,7 +29,7 @@ public class ProductHistoryFactory
     public static ProductHistory BuildNewProductHistory(
         string name,
         List<string> images,
-        float price,
+        decimal price,
         int productId,
         string description)
     {

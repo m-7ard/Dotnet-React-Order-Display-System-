@@ -26,7 +26,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
         var request = new CreateProductRequestDTO
         (
             name: "Product #1",
-            price: (float)1.1,
+            price: (decimal)1.1,
             description: "description",
             images: new List<string>()
         );
@@ -51,7 +51,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
         var images = new List<string>(){ _validImage.FileName };
         var request = new CreateProductRequestDTO(
             name: "MenuItem #1",
-            price: (float)123.12,
+            price: (decimal)123.12,
             description: "description",
             images: images
         );
@@ -77,7 +77,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
 
         var request = new CreateProductRequestDTO(
             name: "MenuItem #1",
-            price: (float)123.12,
+            price: (decimal)123.12,
             description: "description",
             images: images
         );
@@ -94,7 +94,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
         var images = new List<string>() { "non-existing-image-jpg" };
         var request = new CreateProductRequestDTO(
             name: "MenuItem #1",
-            price: (float)123.12,
+            price: (decimal)123.12,
             description: "description",
             images: images
         );

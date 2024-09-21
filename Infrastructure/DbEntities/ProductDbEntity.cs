@@ -1,7 +1,7 @@
 namespace Infrastructure.DbEntities;
 public class ProductDbEntity
 {
-    public ProductDbEntity(int id, string name, DateTime dateCreated, float price, string description)
+    public ProductDbEntity(int id, string name, DateTime dateCreated, decimal price, string description)
     {
         Id = id;
         Name = name;
@@ -13,7 +13,7 @@ public class ProductDbEntity
     public int Id { get; private set; }
     public string Name { get; set; }
     public DateTime DateCreated { get; private set; }
-    public float Price { get; set; }
+    public decimal Price { get; set; }
     public string Description { get; set; }
     public List<ProductImageDbEntity> Images { get; set; } = [];
     public List<ProductHistoryDbEntity> ProductHistories { get; set; } = [];

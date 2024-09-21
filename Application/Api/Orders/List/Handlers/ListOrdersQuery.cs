@@ -4,22 +4,24 @@ using OneOf;
 
 namespace Application.Api.Orders.List.Handlers;
 
-/* TODO: add filter by productId in items and implement in fe */
-
 public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<PlainApplicationError>>>
 {
-    public ListOrdersQuery(float? minTotal, float? maxTotal, string? status, DateTime? createdBefore, DateTime? createdAfter)
+    public ListOrdersQuery(decimal? minTotal, decimal? maxTotal, string? status, DateTime? createdBefore, DateTime? createdAfter, int? productId, int? id)
     {
         MinTotal = minTotal;
         MaxTotal = maxTotal;
         Status = status;
         CreatedBefore = createdBefore;
         CreatedAfter = createdAfter;
+        ProductId = productId;
+        Id = id;
     }
 
-    public float? MinTotal { get; set; }
-    public float? MaxTotal { get; set; }
+    public decimal? MinTotal { get; set; }
+    public decimal? MaxTotal { get; set; }
     public string? Status { get; set; }
     public DateTime? CreatedBefore { get; set; }
     public DateTime? CreatedAfter { get; set; }
+    public int? ProductId { get; set; }
+    public int? Id { get; set; }
 }

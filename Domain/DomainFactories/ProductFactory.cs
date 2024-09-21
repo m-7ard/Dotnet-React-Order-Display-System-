@@ -4,7 +4,7 @@ namespace Domain.DomainFactories;
 
 public class ProductFactory
 {
-    public static Product BuildExistingProduct(int id, string name, float price, string description, DateTime dateCreated, List<ProductImage> images)
+    public static Product BuildExistingProduct(int id, string name, decimal price, string description, DateTime dateCreated, List<ProductImage> images)
     {
         return new Product(
             id: id,
@@ -16,7 +16,7 @@ public class ProductFactory
         );
     }
 
-    public static Product BuildNewProduct(string name, float price, string description, List<ProductImage> images)
+    public static Product BuildNewProduct(string name, decimal price, string description, List<ProductImage> images)
     {
         return new Product(
             id: 0,
