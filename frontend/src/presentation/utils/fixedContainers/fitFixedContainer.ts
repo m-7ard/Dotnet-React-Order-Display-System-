@@ -1,5 +1,4 @@
 export default function fitFixedContainer(element: HTMLElement) {
-    /* TODO: set max heigh / width in case the container extends */
     let elementDimensions = element.getBoundingClientRect();
 
     if (elementDimensions.bottom > document.body.clientHeight) {

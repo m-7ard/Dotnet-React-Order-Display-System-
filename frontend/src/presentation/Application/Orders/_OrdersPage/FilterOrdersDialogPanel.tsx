@@ -100,9 +100,9 @@ export default function FilterProductsDialogPanel() {
                 </div>
                 <FormField name="status">
                     <StatelessListBox
+                        nullable
                         onChange={(value) => {
-                            console.log(value);
-                            itemManager.updateItem("status", value);
+                            itemManager.updateItem("status", value == null ? "" : value.toString());
                         }}
                         value={itemManager.items.status}
                         choices={[
@@ -150,7 +150,6 @@ export default function FilterProductsDialogPanel() {
                     />
                 </FormField>
             </section>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <footer className="flex flex-row gap-2">
                 <MixinButton
                     className="rounded shadow overflow-hidden basis-1/2 justify-center"

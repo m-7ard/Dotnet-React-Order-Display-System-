@@ -93,6 +93,34 @@ public class ProductsController : ControllerBase
         [FromQuery] DateTime? createdBefore, 
         [FromQuery] DateTime? createdAfter)
     {
+    
+        if (name is not null && name.Length == 0)
+        {
+            name = null;
+        }
+
+        if (minPrice is not null && minPrice < 0)
+        {
+            minPrice = null;
+        }
+
+        if (maxPrice is not null && minPrice is not null && minPrice > maxPrice)
+        {
+            minPrice = null;
+            maxPrice = null;
+        }
+
+        if (description is not null && description.Length == 0)
+        {
+            description = null;
+        }
+
+        if (createdBefore is not null && createdAfter is not null && createdBefore > createdAfter)
+        {
+            createdBefore = null;
+            createdAfter = null;
+        }
+
         var query = new ListProductsQuery(
             name: name,
             minPrice: minPrice,

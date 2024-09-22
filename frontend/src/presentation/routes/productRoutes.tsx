@@ -11,6 +11,8 @@ import IProduct from "../../domain/models/IProduct";
 import ILoaderResult from "../../application/interfaces/ILoaderResult";
 import ReadProductCommand from "../../application/commands/products/readProduct/ReadProductCommand";
 import UpdateProductRoute from "../Application/Products/Update/UpdateProductRoute";
+import listProductsSchema from "../schemas/listProductsSchema";
+import parseTypeboxSchemaOrNull from "../utils/parseTypeboxSchemaOrNull";
 
 const baseProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -19,28 +21,30 @@ const baseProductsRoute = createRoute({
         search,
     }: {
         search: {
+            id?: string;
+            minPrice?: string;
+            maxPrice?: string;
             name?: string;
-            minPrice?: number;
-            maxPrice?: number;
+            createdAfter?: string;
+            createdBefore?: string;
             description?: string;
-            createdBefore?: Date;
-            createdAfter?: Date;
-        };
+        }
     }) => search,
     loader: async ({ deps }) => {
         const command = new ListProductsCommand({
-            name: deps.name ?? null,
-            minPrice: deps.minPrice ?? null,
-            maxPrice: deps.maxPrice ?? null,
-            description: deps.description ?? null,
-            createdBefore: deps.createdBefore ?? null,
-            createdAfter: deps.createdAfter ?? null,
+            id: parseTypeboxSchemaOrNull(listProductsSchema.properties.id, deps.id),
+            minPrice: parseTypeboxSchemaOrNull(listProductsSchema.properties.minPrice, deps.minPrice),
+            maxPrice: parseTypeboxSchemaOrNull(listProductsSchema.properties.maxPrice, deps.maxPrice),
+            name: parseTypeboxSchemaOrNull(listProductsSchema.properties.name, deps.name),
+            createdAfter: parseTypeboxSchemaOrNull(listProductsSchema.properties.createdAfter, deps.createdAfter),
+            createdBefore: parseTypeboxSchemaOrNull(listProductsSchema.properties.createdBefore, deps.createdBefore),
+            description: parseTypeboxSchemaOrNull(listProductsSchema.properties.description, deps.description),
         });
         const result = await commandDispatcher.dispatch(command);
-        
+
         return {
-            productsResult: result
-        }
+            productsResult: result,
+        };
     },
     component: ProductsPage,
 });
@@ -48,16 +52,14 @@ const baseProductsRoute = createRoute({
 const createProductRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/products/create",
-    component: CreateProductPage
+    component: CreateProductPage,
 });
 
 const updateProductRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/products/$id/update",
     component: UpdateProductRoute,
-    loader: async ({
-        params,
-    }): Promise<ILoaderResult<IProduct, unknown>> => {
+    loader: async ({ params }): Promise<ILoaderResult<IProduct, unknown>> => {
         const id = parseInt(params.id);
         if (!Value.Check(Type.Integer(), id)) {
             return {
@@ -77,7 +79,7 @@ const updateProductRoute = createRoute({
         }
 
         const { type, data } = result.error;
-        
+
         return {
             ok: false,
             data: type === "Exception" ? data : new UnknownError({}),
@@ -85,8 +87,4 @@ const updateProductRoute = createRoute({
     },
 });
 
-export default [
-    baseProductsRoute,
-    createProductRoute,
-    updateProductRoute
-];
+export default [baseProductsRoute, createProductRoute, updateProductRoute];
