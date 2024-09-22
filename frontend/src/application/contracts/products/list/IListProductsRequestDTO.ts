@@ -1,4 +1,5 @@
 export default interface IListProductsRequestDTO {
+    id: number | null;
     name: string | null;
     minPrice: number | null;
     maxPrice: number | null;

@@ -4,7 +4,6 @@ import MixinButton from "../../components/Resuables/MixinButton";
 import { useApplicationExceptionContext } from "../../contexts/ApplicationExceptionHandlerContext";
 import { useEffect } from "react";
 import CoverImage from "../../components/Resuables/CoverImage";
-import useAbstractPanelPositioning from "../../hooks/useAbstractPanelPositioning";
 import { useStateManagersContext } from "../../contexts/StateManagersContext";
 import AbstractDialog from "../../components/Resuables/AbstractDialog";
 import FilterProductsDialogPanel from "./_ProductsPage/FilterProductsDialogPanel";
@@ -13,6 +12,8 @@ import AbstractTooltip, {
     AbstractTooltipDefaultPanel,
     AbstractTooltipTrigger,
 } from "../../components/Resuables/AbstractTooltip";
+import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -62,6 +63,7 @@ export default function ProductsPage() {
 function Product(props: { product: IProduct }) {
     const { product } = props;
     const productImages = product.images.map((image) => `${import.meta.env.VITE_API_URL}/Media/${image.fileName}`);
+    const navigate = useNavigate();
 
     return (
         <div className="mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow">
@@ -91,13 +93,21 @@ function Product(props: { product: IProduct }) {
                 </div>
             </main>
             <footer className="flex flex-row gap-2" data-role="section">
-                <MixinButton
-                    className="grow justify-center rounded shadow"
-                    type="button"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                <a
+                    className="w-full"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        navigate({ to: `/orders`, search: { productId: product.id } });
+                    }}
                 >
-                    See Orders
-                </MixinButton>
+                    <MixinButton
+                        className="w-full justify-center rounded shadow"
+                        type="button"
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                    >
+                        See Orders
+                    </MixinButton>
+                </a>
                 <AbstractTooltip
                     Trigger={({ open, onToggle }) => (
                         <AbstractTooltipTrigger>
@@ -126,52 +136,53 @@ function ProductOptionMenu(props: { product: IProduct }) {
     const navigate = useNavigate();
 
     return (
-        <AbstractTooltipDefaultPanel
-            className={`z-50 fixed mt-1 shadow mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow`}
-        >
-            <section className="flex flex-col gap-1" data-role="section">
-                <a
-                    className="w-full"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        productStateManager.setProduct(product);
-                        navigate({ to: `/products/${product.id}/update` });
-                    }}
-                >
+        <AbstractTooltipDefaultPanel className={`z-10 fixed mt-1`}>
+            <MixinPrototypeCard
+                className="shadow rounded shadow"
+                options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}
+            >
+                <MixinPrototypeCardSection className="flex flex-col gap-2">
+                    <a
+                        className="w-full"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            productStateManager.setProduct(product);
+                            navigate({ to: `/products/${product.id}/update` });
+                        }}
+                    >
+                        <MixinButton
+                            className="justify-center rounded shadow w-full"
+                            type="button"
+                            options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                        >
+                            Update Product
+                        </MixinButton>
+                    </a>
+                    <AbstractDialog
+                        Trigger={({ open, onToggle }) => (
+                            <MixinButton
+                                className="justify-center rounded shadow w-full"
+                                type="button"
+                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                                onClick={() => {
+                                    onToggle();
+                                }}
+                                active={open}
+                            >
+                                Delete Product
+                            </MixinButton>
+                        )}
+                        Panel={<DeleteProductDialogPanel product={product} />}
+                    />
                     <MixinButton
-                        className="justify-center rounded shadow w-full"
+                        className="justify-center rounded shadow"
                         type="button"
                         options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                     >
-                        Update Product
+                        See Product History
                     </MixinButton>
-                </a>
-            </section>
-            <section className="flex flex-col gap-1" data-role="section">
-                <AbstractDialog
-                    Trigger={({ open, onToggle }) => (
-                        <MixinButton
-                            className="justify-center rounded shadow"
-                            type="button"
-                            options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                            onClick={onToggle}
-                            active={open}
-                        >
-                            Delete Product
-                        </MixinButton>
-                    )}
-                    Panel={<DeleteProductDialogPanel product={product} />}
-                />
-            </section>
-            <section className="flex flex-col gap-1" data-role="section">
-                <MixinButton
-                    className="justify-center rounded shadow"
-                    type="button"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                >
-                    See Product History
-                </MixinButton>
-            </section>
+                </MixinPrototypeCardSection>
+            </MixinPrototypeCard>
         </AbstractTooltipDefaultPanel>
     );
 }

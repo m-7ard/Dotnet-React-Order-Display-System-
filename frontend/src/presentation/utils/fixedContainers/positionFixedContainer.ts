@@ -18,7 +18,7 @@ export default function positionFixedContainer(
     });
 
     //
-    console.log(`calc(${referenceDimensions.top}px + calc(${parsedPositioning.top}))`);
+    // console.log(`calc(${referenceDimensions.top}px + calc(${parsedPositioning.top}))`);
     if (parsedPositioning.top != undefined) {
         element.style.top = `calc(${referenceDimensions.top}px + calc(${parsedPositioning.top}))`;
     } else {

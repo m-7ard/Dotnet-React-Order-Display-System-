@@ -43,6 +43,12 @@
   .mixin-page-base {
     @apply px-4 py-4 gap-y-4;
   }
+  .mixin-panel-like {
+    @apply flex flex-col grow max-h-full;
+  }
+  .mixin-panel-base {
+    @apply px-4 py-4 gap-y-4;
+  }
   .mixin-checkbox-like {
     @apply after:content-["."] 
             after:flex 

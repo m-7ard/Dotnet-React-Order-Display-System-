@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, PropsWithChildren, useState } from "react";
 import { AbstractDialogContext } from "../../contexts/AbstractDialogContext";
 import { ReactNode } from "@tanstack/react-router";
 import { createPortal } from "react-dom";
@@ -28,7 +28,7 @@ export default function AbstractDialog({
         >
             {Trigger == null ? null : <Trigger onToggle={() => onToggle()} open={open} />}
             {open ? (
-                <Dialog open={open} onClose={() => setOpen(false)}>
+                <Dialog onClose={() => setOpen(false)}>
                     {Panel}
                 </Dialog>
             ) : null}
@@ -36,23 +36,21 @@ export default function AbstractDialog({
     );
 }
 
-function Dialog(props: {
-    open: boolean;
+function Dialog(props: PropsWithChildren<{
     onClose: () => void;
-    children: ReactNode | ((props: { open: boolean; onClose: () => void }) => ReactNode);
-}) {
-    const { children, onClose, open } = props;
+}>) {
+    const { children, onClose } = props;
 
     return createPortal(
         <div
-            className="fixed inset-0 bg-black/30 flex items-center justify-center"
+            className="fixed z-20 inset-0 bg-black/30 flex items-center justify-center"
             onClick={(e) => {
                 if (e.target === e.currentTarget) {
                     onClose();
                 }
             }}
         >
-            {typeof children === "function" ? children({ open, onClose }) : children}
+            {children}
         </div>,
         document.body,
     );

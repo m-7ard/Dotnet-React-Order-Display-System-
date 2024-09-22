@@ -46,6 +46,12 @@
   .mixin-page-base {
     @apply px-4 py-4 gap-y-4;
   }
+  .mixin-panel-like {
+    @apply flex flex-col grow max-h-full;
+  }
+  .mixin-panel-base {
+    @apply px-4 py-4 gap-y-4;
+  }
   .mixin-checkbox-like {
     @apply after:content-["."] 
             after:flex 
@@ -139,6 +145,9 @@
   }
   .theme-Pcard-generic-white {
     @apply bg-white divide-gray-900 shadow border-gray-900;
+  }
+  .theme-panel-generic-white {
+    @apply bg-gray-50 border border-gray-900;
   }
 }
 html {

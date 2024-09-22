@@ -16,7 +16,7 @@ export default class ListOrdersHandler implements ICommandHandler<IListProductsC
 
     async handle(request: ListOrdersCommand): Promise<IListOrdersResult> {
         try {
-            if (request.status != null && OrderStatus.isValid(request.status)) {
+            if (request.status != null && !OrderStatus.isValid(request.status)) {
                 request.status = null;
             }
 

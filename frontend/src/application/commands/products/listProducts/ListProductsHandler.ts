@@ -14,6 +14,7 @@ export default class ListProductsHandler implements ICommandHandler<IListProduct
     async handle(request: IListProductsCommand): Promise<IListProductsResult> {
         try {
             const result = await this._productDataAccess.listProducts({
+                id: request.id,
                 name: request.name,
                 minPrice: request.minPrice,
                 maxPrice: request.maxPrice,

@@ -55,8 +55,7 @@ public class OrderRepository : IOrderRepository
     public async Task<List<Order>> FindAllAsync(decimal? minTotal, decimal? maxTotal, OrderStatus? status, DateTime? createdBefore, DateTime? createdAfter, int? productId, int? id)
     {
         IQueryable<OrderDbEntity> query = _dbContext.Order.Include(d => d.OrderItems);
-        Console.WriteLine($"----------------------- {id}");
-        Console.WriteLine($"----------------------- {productId}");
+        Console.WriteLine($"----------------------- {status?.Name}");
 
         if (id is not null)
         {

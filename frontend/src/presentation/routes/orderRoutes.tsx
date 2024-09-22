@@ -13,6 +13,8 @@ import Order from "../../domain/models/Order";
 import UnknownError from "../../application/errors/UnkownError";
 import ILoaderResult from "../../application/interfaces/ILoaderResult";
 import parseTypeboxSchemaOrNull from "../utils/parseTypeboxSchemaOrNull";
+import { parseListProductsSchema } from "../schemas/listProductsSchema";
+import { parseListOrdersSchema } from "../schemas/listOrdersSchema";
 
 const baseOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -31,14 +33,15 @@ const baseOrdersRoute = createRoute({
         };
     }) => search,
     loader: async ({ deps }) => {
+        const parsedParams = parseListOrdersSchema(deps);
         const command = new ListOrdersCommand({
-            id: parseTypeboxSchemaOrNull(Type.Number({ minimum: 0 }), deps.id),
-            minTotal: parseTypeboxSchemaOrNull(Type.Number({ minimum: 0 }), deps.minTotal),
-            maxTotal: parseTypeboxSchemaOrNull(Type.Number({ minimum: 0 }), deps.maxTotal),
-            status: parseTypeboxSchemaOrNull(Type.String(), deps.status),
-            createdBefore: parseTypeboxSchemaOrNull(Type.Date(), deps.createdBefore),
-            createdAfter: parseTypeboxSchemaOrNull(Type.Date(), deps.createdAfter),
-            productId: parseTypeboxSchemaOrNull(Type.Number({ minimum: 0 }), deps.productId),
+            id: parsedParams.id,
+            minTotal: parsedParams.minTotal,
+            maxTotal: parsedParams.maxTotal,
+            status: parsedParams.status,
+            createdBefore: parsedParams.createdBefore,
+            createdAfter: parsedParams.createdAfter,
+            productId: parsedParams.productId,
         });
         const result = await commandDispatcher.dispatch(command);
 
