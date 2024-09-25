@@ -85,17 +85,23 @@ public class ProductRepository : IProductRepository
         var currentEntity = await _dbContext.Product
             .Include(d => d.Images)
             .SingleAsync(d => d.Id == product.Id);
+
         var updatedEntity = ProductMapper.DomainToDbEntity(product);
 
-        foreach (var oldImage in currentEntity.Images)
+        var removedImages = currentEntity.Images
+            .Where(oldImage => !updatedEntity.Images.Any(newImage => newImage.Id == oldImage.Id))
+            .ToList();
+        _dbContext.ProductImage.RemoveRange(removedImages);
+        
+        var newImages = updatedEntity.Images.Where(image => !currentEntity.Images.Exists(other => other.FileName == image.FileName));
+        foreach (var image in newImages)
         {
-            if (updatedEntity.Images.Find(d => d.Id == oldImage.Id) is null)
-            {
-                _dbContext.Remove(oldImage);
-            }
+            image.ProductId = currentEntity.Id;
+            _dbContext.ProductImage.Add(image);
         }
 
         _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
+
         await _dbContext.SaveChangesAsync();
     }
 

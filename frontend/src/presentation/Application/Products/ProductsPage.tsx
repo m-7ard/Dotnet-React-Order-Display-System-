@@ -5,7 +5,6 @@ import { useApplicationExceptionContext } from "../../contexts/ApplicationExcept
 import { useEffect } from "react";
 import CoverImage from "../../components/Resuables/CoverImage";
 import { useStateManagersContext } from "../../contexts/StateManagersContext";
-import AbstractDialog from "../../components/Resuables/AbstractDialog";
 import FilterProductsDialogPanel from "./_ProductsPage/FilterProductsDialogPanel";
 import DeleteProductDialogPanel from "./_ProductsPage/DeleteProductDialogPanel";
 import AbstractTooltip, {
@@ -14,6 +13,7 @@ import AbstractTooltip, {
 } from "../../components/Resuables/AbstractTooltip";
 import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
+import GlobalDialog from "../../components/Dialog/GlobalDialog";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -39,18 +39,19 @@ export default function ProductsPage() {
                         Create
                     </MixinButton>
                 </Link>
-                <AbstractDialog
-                    Trigger={({ open, onToggle }) => (
+                <GlobalDialog
+                    zIndex={10}
+                    Trigger={({ onToggle }) => (
                         <MixinButton
                             className="justify-center w-full rounded shadow basis-1/2"
                             options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                            active={open}
                             onClick={onToggle}
                         >
                             Filter
                         </MixinButton>
                     )}
-                    Panel={<FilterProductsDialogPanel />}
+                    Panel={FilterProductsDialogPanel}
+                    panelProps={{}}
                 />
             </div>
             {products.map((product) => (
@@ -66,32 +67,23 @@ function Product(props: { product: IProduct }) {
     const navigate = useNavigate();
 
     return (
-        <div className="mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow">
-            <section className="grid grid-cols-2 h-32 w-full gap-1" data-role="section">
+        <MixinPrototypeCard
+            options={{
+                size: "mixin-Pcard-base",
+                theme: "theme-Pcard-generic-white",
+            }}
+        >
+            <MixinPrototypeCardSection className="flex flex-row gap-2">
                 <CoverImage
-                    className="row-span-1 col-span-1 border border-gray-400 rounded shadow overflow-hidden"
+                    className="w-24 h-24 border border-gray-400 rounded shadow overflow-hidden"
                     src={productImages[0] == null ? undefined : productImages[0]}
                 />
-                <div className="row-span-1 col-span-1 gap-1 grid grid-cols-2 grid-rows-2">
-                    {Array.from({ length: 4 }, (_, i) => i + 1).map((i) => (
-                        <CoverImage
-                            className="row-span-1 col-span-1 relative border border-gray-400"
-                            src={productImages[i] == null ? undefined : productImages[i]}
-                            key={i}
-                        />
-                    ))}
+                <div className="flex flex-col gap-1 grow">
+                    <div className="text-sm font-bold">{product.name}</div>
+                    <div className="text-sm">${product.price}</div>
+                    <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>
-            </section>
-            <main className="flex flex-col gap-1" data-role="section">
-                <div className="font-bold text-sm">{product.name}</div>
-                <div className="p-0.5 px-2 bg-gray-900 text-white font-bold rounded shadow w-fit text-sm">
-                    ${product.price}
-                </div>
-                <div className="flex flex-row gap-2 items-center text-xs ">
-                    <div>Date Created:</div>
-                    <div>{product.dateCreated.toLocaleDateString("en-us")}</div>
-                </div>
-            </main>
+            </MixinPrototypeCardSection>
             <footer className="flex flex-row gap-2" data-role="section">
                 <a
                     className="w-full"
@@ -126,13 +118,14 @@ function Product(props: { product: IProduct }) {
                     positioning={{ top: "100%", right: "0px" }}
                 />
             </footer>
-        </div>
+        </MixinPrototypeCard>
     );
 }
 
 function ProductOptionMenu(props: { product: IProduct }) {
     const { product } = props;
     const { productStateManager } = useStateManagersContext();
+    const { onClose } = useAbstractTooltipContext();
     const navigate = useNavigate();
 
     return (
@@ -158,21 +151,23 @@ function ProductOptionMenu(props: { product: IProduct }) {
                             Update Product
                         </MixinButton>
                     </a>
-                    <AbstractDialog
-                        Trigger={({ open, onToggle }) => (
+                    <GlobalDialog
+                        zIndex={20}
+                        Trigger={({ onToggle }) => (
                             <MixinButton
                                 className="justify-center rounded shadow w-full"
                                 type="button"
                                 options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                                 onClick={() => {
                                     onToggle();
+                                    onClose();
                                 }}
-                                active={open}
                             >
                                 Delete Product
                             </MixinButton>
                         )}
-                        Panel={<DeleteProductDialogPanel product={product} />}
+                        Panel={DeleteProductDialogPanel}
+                        panelProps={{ product: product }}
                     />
                     <MixinButton
                         className="justify-center rounded shadow"

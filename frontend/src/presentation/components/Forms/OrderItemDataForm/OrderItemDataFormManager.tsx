@@ -1,10 +1,11 @@
 import IFormError from "../../../../domain/models/IFormError";
 import MixinButton from "../../Resuables/MixinButton";
 import IProduct from "../../../../domain/models/IProduct";
-import AbstractDialog from "../../Resuables/AbstractDialog";
 import OrderItemDataFormManagerPanel, { OrderItemDataFormManagerPanelProps } from "./OrderItemDataFormManagerPanel";
 import useItemManager from "../../../hooks/useItemManager";
 import OrderItemDataForm, { IOrderItemDataFormError, IOrderItemDataFormValue } from "./OrderItemDataForm";
+import { useState } from "react";
+import GlobalDialog from "../../Dialog/GlobalDialog";
 
 type OrderItemDataFormManagerError = IFormError<{
     [UID: string]: IOrderItemDataFormError;
@@ -38,11 +39,14 @@ export default function OrderItemDataFormManager(props: {
         {},
     );
 
+    const [count, setCount] = useState(0);
+
     return (
         <div className="flex flex-col gap-2">
             <header className="mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow">
                 <div data-role="section">
-                    <AbstractDialog
+                    <GlobalDialog
+                        zIndex={10}
                         Trigger={({ onToggle }) => (
                             <MixinButton
                                 options={{
@@ -56,15 +60,16 @@ export default function OrderItemDataFormManager(props: {
                                 Add
                             </MixinButton>
                         )}
-                        Panel={
-                            <OrderItemDataFormManagerPanel
-                                existingProducts={searchPanelProducts}
-                                onAdd={(product) => {
-                                    itemManager.addItem(product.id.toString(), product);
-                                    onAdd(product);
-                                }}
-                            />
-                        }
+                        Panel={OrderItemDataFormManagerPanel}
+                        panelProps={{
+                            count: count,
+                            existingProducts: searchPanelProducts,
+                            onAdd: (product) => {
+                                itemManager.addItem(product.id.toString(), product);
+                                onAdd(product);
+                                setCount((prev) => prev + 1);
+                            },
+                        }}
                     />
                 </div>
             </header>
