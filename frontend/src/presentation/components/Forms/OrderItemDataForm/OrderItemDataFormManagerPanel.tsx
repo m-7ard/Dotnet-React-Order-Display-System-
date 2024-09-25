@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import IProduct from "../../../../domain/models/IProduct";
-import { useAbstractDialogContext } from "../../../contexts/AbstractDialogContext";
 import useItemManager from "../../../hooks/useItemManager";
 import MixinButton from "../../Resuables/MixinButton";
 import StatelessCharField from "../../StatelessFields/StatelessCharField";
@@ -12,6 +11,7 @@ import CoverImage from "../../Resuables/CoverImage";
 import StatelessTextArea from "../../StatelessFields/StatelessTextArea";
 import { useState } from "react";
 import { parseListProductsSchema } from "../../../schemas/listProductsSchema";
+import { useGlobalDialogPanelContext } from "../../Dialog/GlobalDialogPanelContext";
 
 export type OrderItemDataFormManagerPanelProps = {
     existingProducts: {
@@ -21,6 +21,7 @@ export type OrderItemDataFormManagerPanelProps = {
         };
     };
     onAdd: (product: IProduct) => void;
+    count: number;
 };
 
 type ValueState = {
@@ -44,13 +45,16 @@ const initialValueState: ValueState = {
 };
 
 export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormManagerPanelProps) {
-    const { existingProducts, onAdd } = props;
+    const { existingProducts, onAdd, count } = props;
     const { dispatchException } = useApplicationExceptionContext();
     const { commandDispatcher } = useCommandDispatcherContext();
-    const { onClose } = useAbstractDialogContext();
+    const { onClose } = useGlobalDialogPanelContext();
+    console.log("OrderItemDataFormManagerPanel: ", props)
 
     const [route, setRoute] = useState<"form" | "result">("form");
     const itemManager = useItemManager<ValueState>(initialValueState);
+
+    console.log('count', existingProducts)
 
     const searchProductsMutation = useMutation({
         mutationKey: ["products"],
@@ -132,9 +136,9 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                     ),
                     result: (
                         <section className="flex flex-col gap-2 grow overflow-hidden">
-                            <header className="flex flex-row justify-between items-baseline">
+                            <header className="flex flex-col">
                                 <div className="text-base text-gray-900 font-bold">Results</div>
-                                <div className="text-sm text-gray-900">Count {searchResults.length}</div>
+                                <div className="text-xs text-gray-600">Count {searchResults.length}</div>
                             </header>
                             <div className="flex flex-col gap-4 overflow-scroll">
                                 {searchResults.map((product) => (
@@ -158,7 +162,7 @@ function Product(props: { product: IProduct; count: number; onAdd: () => void })
     const { product, count, onAdd } = props;
 
     return (
-        <output className="bg-white divide-y divide-gray-300 rounded shadow border-gray-300 border">
+        <output className="bg-white divide-y divide-gray-300 rounded shadow border-gray-900 border">
             <div className="flex flex-col gap-2 p-2 px-4">
                 <div className="w-full grid grid-cols-4 grid-rows-1 shrink-0 gap-1">
                     {Array.from({ length: 4 }).map((_, i) => (

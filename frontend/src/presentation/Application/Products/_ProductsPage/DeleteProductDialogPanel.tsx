@@ -4,13 +4,13 @@ import DeleteProductCommand from "../../../../application/commands/products/dele
 import apiToDomainCompatibleFormError from "../../../../application/mappers/apiToDomainCompatibleFormError";
 import IProduct from "../../../../domain/models/IProduct";
 import MixinButton from "../../../components/Resuables/MixinButton";
-import { useAbstractDialogContext } from "../../../contexts/AbstractDialogContext";
 import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
 import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcherContext";
+import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialogPanelContext";
 
 export default function DeleteProductDialogPanel(props: { product: IProduct }) {
     const { product } = props;
-    const { onClose } = useAbstractDialogContext();
+    const { onClose } = useGlobalDialogPanelContext();
 
     const { commandDispatcher } = useCommandDispatcherContext();
     const { dispatchException } = useApplicationExceptionContext();

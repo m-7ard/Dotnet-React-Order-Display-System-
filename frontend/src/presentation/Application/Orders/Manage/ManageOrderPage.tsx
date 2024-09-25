@@ -14,6 +14,17 @@ import apiToDomainCompatibleFormError from "../../../../application/mappers/apiT
 import MarkOrderFinishedCommand from "../../../../application/commands/orders/markFinished/MarkOrderFinishedCommand";
 import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import OrderItemStatus from "../../../../domain/valueObjects/OrderItem/OrderItemStatus";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../../components/Resuables/MixinPrototypeCard";
+
+const ORDER_ITEM_STATUS_COLORS = {
+    [OrderItemStatus.FINISHED.value]: "bg-green-400",
+    [OrderItemStatus.PENDING.value]: "bg-orange-400/70",
+};
+
+const ORDER_STATUS_COLORS = {
+    [OrderStatus.FINISHED.value]: "bg-green-400",
+    [OrderStatus.PENDING.value]: "bg-orange-400/70",
+};
 
 export default function ManageOrderPage() {
     const { id } = useParams({ from: "/orders/$id/manage" });
@@ -68,13 +79,20 @@ export default function ManageOrderPage() {
         <div className="mixin-page-like mixin-page-base">
             <header className="text-2xl text-gray-900 font-bold">Manage Order</header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <div className="mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow">
-                <div className="p-2 px-4 flex flex-col gap-2" data-role="section">
+            <MixinPrototypeCard
+                options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}
+                className="rounded shadow"
+            >
+                <MixinPrototypeCardSection className={`flex flex-col ${ORDER_STATUS_COLORS[order.status.value]}`}>
                     <div className="flex flex-row justify-between items-baseline">
-                        <div className="text-base font-bold">Order #{order.id}</div>
+                        <div className="text-sm">Order #{order.id}</div>
                         <div className="text-sm">{`${order.status.value}`}</div>
                     </div>
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-row justify-between items-baseline">
+                        <div className="text-sm">{order.dateCreated.toLocaleTimeString()}</div>
+                        <div className="text-sm">{order.total}$</div>
+                    </div>
+                    <div className="flex flex-row gap-1">
                         {order.status === OrderStatus.PENDING && (
                             <>
                                 <MixinButton
@@ -109,11 +127,12 @@ export default function ManageOrderPage() {
                             </>
                         )}
                     </div>
-                </div>
+                </MixinPrototypeCardSection>
+
                 {order.orderItems.map((orderItem) => (
                     <OrderItem orderItem={orderItem} key={orderItem.id} />
                 ))}
-            </div>
+            </MixinPrototypeCard>
         </div>
     );
 }
@@ -142,11 +161,11 @@ function OrderItem(props: { orderItem: IOrderItem }) {
     });
 
     return (
-        <div className="flex flex-col gap-2" data-role="section">
-            <div className="w-full grid grid-cols-4 grid-rows-1 shrink-0 gap-1">
+        <MixinPrototypeCardSection className="flex flex-col gap-2" key={orderItem.id}>
+            <div className="w-full flex flex-row justify-between px-2 py-1 bg-gray-200 shrink-0 rounded">
                 {Array.from({ length: 4 }).map((_, i) => (
                     <CoverImage
-                        className="row-span-1 col-span-1 aspect-square border border-gray-300 rounded shadow overflow-hidden"
+                        className="h-12 w-12 border border-gray-900 rounded overflow-hidden bg-gray-50"
                         src={
                             orderItem.productHistory.images[i] == null
                                 ? undefined
@@ -156,57 +175,54 @@ function OrderItem(props: { orderItem: IOrderItem }) {
                     />
                 ))}
             </div>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <div className="flex flex-col gap-1 grow">
-                <div>
-                    <div className="text-sm font-semibold">Order Item #{orderItem.id}</div>
-                    <div className="text-sm">{`${orderItem.status.value}`}</div>
+            <div className="flex flex-col gap-1 overflow-hidden max-w-full">
+                <div className="flex flex-row gap-2 items-center text-base">
+                    <div className="text-sm font-bold bg-gray-200 px-2 py-1/2 rounded">x{orderItem.quantity}</div>
+                    <div className="text-sm truncate">{orderItem.productHistory.name}</div>
+                    <div className="text-sm ml-auto">{`${orderItem.productHistory.price}$`}</div>
+                </div>
+                <div className="flex flex-row gap-2 items-center text-base">
+                    <div className={`text-sm ${ORDER_ITEM_STATUS_COLORS[orderItem.status.value]} px-2 py-px rounded`}>{orderItem.status.value}</div>
+                    <div className="text-sm ml-auto">
+                        Total - {`${orderItem.productHistory.price * orderItem.quantity}$`}
+                    </div>
+                </div>
+                <div className="flex flex-row gap-1">
+                    {orderItem.status === OrderItemStatus.PENDING && (
+                        <>
+                            <MixinButton
+                                className="basis-1/2 justify-center rounded shadow"
+                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-green" }}
+                                onClick={() => markOrderItemFinishedMutation.mutate()}
+                            >
+                                Mark Finished
+                            </MixinButton>
+                            <MixinButton
+                                className="basis-1/2 justify-center rounded shadow"
+                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                            >
+                                Other Options
+                            </MixinButton>
+                        </>
+                    )}
+                    {orderItem.status === OrderItemStatus.FINISHED && (
+                        <>
+                            <MixinButton
+                                className="basis-1/2 justify-center rounded shadow"
+                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                            >
+                                Item Progress
+                            </MixinButton>
+                            <MixinButton
+                                className="basis-1/2 justify-center rounded shadow"
+                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                            >
+                                Other Options
+                            </MixinButton>
+                        </>
+                    )}
                 </div>
             </div>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <div className="text-sm font-bold">{`${orderItem.productHistory.name}`}</div>
-            <div className="flex flex-row gap-2 items-center text-sm">
-                <div className="p-0.5 px-2 bg-gray-900 text-white font-bold rounded shadow">x{orderItem.quantity}</div>{" "}
-                <div className="p-0.5 px-2 bg-gray-900 text-white font-bold rounded shadow">
-                    {orderItem.productHistory.price}$
-                </div>{" "}
-            </div>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <div className="flex flex-row gap-2">
-                {orderItem.status === OrderItemStatus.PENDING && (
-                    <>
-                        <MixinButton
-                            className="basis-1/2 justify-center rounded shadow"
-                            options={{ size: "mixin-button-sm", theme: "theme-button-generic-green" }}
-                            onClick={() => markOrderItemFinishedMutation.mutate()}
-                        >
-                            Mark Finished
-                        </MixinButton>
-                        <MixinButton
-                            className="basis-1/2 justify-center rounded shadow"
-                            options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
-                        >
-                            Other Options
-                        </MixinButton>
-                    </>
-                )}
-                {orderItem.status === OrderItemStatus.FINISHED && (
-                    <>
-                        <MixinButton
-                            className="basis-1/2 justify-center rounded shadow"
-                            options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
-                        >
-                            Item Progress
-                        </MixinButton>
-                        <MixinButton
-                            className="basis-1/2 justify-center rounded shadow"
-                            options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
-                        >
-                            Other Options
-                        </MixinButton>
-                    </>
-                )}
-            </div>
-        </div>
+        </MixinPrototypeCardSection>
     );
 }

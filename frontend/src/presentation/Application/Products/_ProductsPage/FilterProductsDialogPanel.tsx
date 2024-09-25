@@ -2,9 +2,9 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import FormField from "../../../components/Forms/FormField";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
-import { useAbstractDialogContext } from "../../../contexts/AbstractDialogContext";
 import useItemManager from "../../../hooks/useItemManager";
 import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
+import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialogPanelContext";
 
 type ValueState = {
     id: string;
@@ -27,7 +27,7 @@ export default function FilterProductsDialogPanel() {
         createdBefore: searchParams.createdBefore ?? "",
         createdAfter: searchParams.createdAfter ?? ""
     };
-    const { onClose } = useAbstractDialogContext();
+    const { onClose } = useGlobalDialogPanelContext();
     const itemManager = useItemManager<ValueState>(initialValueState);
     const navigate = useNavigate();
 

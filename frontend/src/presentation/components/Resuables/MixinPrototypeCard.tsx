@@ -1,19 +1,15 @@
 import { ElementType, PropsWithChildren } from "react";
+import PolymorphicProps from "../../types/PolymorphicProps";
 
-type IMixinPrototypeCardProps<T extends React.ElementType> = {
+type MixinPrototypeCardProps<E extends ElementType> = PolymorphicProps<E> & {
     options: {
         size: "mixin-Pcard-base";
         theme: "theme-Pcard-generic-white";
     };
-    as?: T;
-} & React.ComponentProps<T>;
-
-type IMixinPrototypeCardSectionProps<T extends React.ElementType> = {
-    as?: T;
-} & React.ComponentProps<T>;
+};
 
 export default function MixinPrototypeCard<T extends ElementType = "div">(
-    props: PropsWithChildren<IMixinPrototypeCardProps<T>>,
+    props: PropsWithChildren<MixinPrototypeCardProps<T>>,
 ) {
     const { options, as, className, ...HTMLattrs } = props;
     const Component = as ?? "div";
@@ -25,8 +21,10 @@ export default function MixinPrototypeCard<T extends ElementType = "div">(
     );
 }
 
+type MixinPrototypeCardSectionProps<E extends ElementType> = PolymorphicProps<E> & {};
+
 export function MixinPrototypeCardSection<T extends ElementType = "section">(
-    props: PropsWithChildren<IMixinPrototypeCardSectionProps<T>>,
+    props: PropsWithChildren<MixinPrototypeCardSectionProps<T>>,
 ) {
     const { as, className, ...HTMLattrs } = props;
     const Component = as ?? "section";

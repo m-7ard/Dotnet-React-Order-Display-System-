@@ -24,7 +24,6 @@ export default class DraftImageDataAccess implements IDraftImageDataAccess {
             onOk: async (res) => await res.json(),
             onError: async (res) => await res.json(),
         });
-        console.log(data)
 
         return isOk ? ok(data.images.map(ImageDataMapper.apiToDomain)) : err(data);
     }
