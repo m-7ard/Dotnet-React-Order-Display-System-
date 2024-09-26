@@ -14,6 +14,7 @@ import AbstractTooltip, {
 import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
+import Linkbox from "../../components/Resuables/LinkBox";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -28,35 +29,39 @@ export default function ProductsPage() {
 
     return (
         <div className="mixin-page-like mixin-page-base">
-            <header className="text-2xl text-gray-900 font-bold">Products</header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <div className="flex flex-row gap-2">
-                <Link to="/products/create" className="basis-1/2">
-                    <MixinButton
-                        className="justify-center w-full rounded shadow"
-                        options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                    >
-                        Create
-                    </MixinButton>
-                </Link>
-                <GlobalDialog
-                    zIndex={10}
-                    Trigger={({ onToggle }) => (
+            <header className="flex flex-row gap-2 items-center">
+                <Linkbox parts={[{ isLink: true, to: "/products", label: "Products" }]} />
+                <div className="flex flex-row gap-2 ml-auto">
+                    <Link to="/products/create">
                         <MixinButton
-                            className="justify-center w-full rounded shadow basis-1/2"
-                            options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                            onClick={onToggle}
+                            className="justify-center w-full  "
+                            options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
                         >
-                            Filter
+                            Create
                         </MixinButton>
-                    )}
-                    Panel={FilterProductsDialogPanel}
-                    panelProps={{}}
-                />
-            </div>
-            {products.map((product) => (
-                <Product product={product} key={product.id} />
-            ))}
+                    </Link>
+                    <GlobalDialog
+                        zIndex={10}
+                        Trigger={({ onToggle }) => (
+                            <MixinButton
+                                className="justify-center w-full   basis-1/2"
+                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                onClick={onToggle}
+                            >
+                                Filter
+                            </MixinButton>
+                        )}
+                        Panel={FilterProductsDialogPanel}
+                        panelProps={{}}
+                    />
+                </div>
+            </header>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            <section className="flex flex-col overflow-auto  gap-4 p-4 bg-gray-100 border border-gray-900">
+                {products.map((product) => (
+                    <Product product={product} key={product.id} />
+                ))}
+            </section>
         </div>
     );
 }
@@ -75,7 +80,7 @@ function Product(props: { product: IProduct }) {
         >
             <MixinPrototypeCardSection className="flex flex-row gap-2">
                 <CoverImage
-                    className="w-24 h-24 border border-gray-400 rounded shadow overflow-hidden"
+                    className="w-16 h-16 border border-gray-900   overflow-hidden"
                     src={productImages[0] == null ? undefined : productImages[0]}
                 />
                 <div className="flex flex-col gap-1 grow">
@@ -84,7 +89,7 @@ function Product(props: { product: IProduct }) {
                     <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>
             </MixinPrototypeCardSection>
-            <footer className="flex flex-row gap-2" data-role="section">
+            <footer className="flex flex-row gap-2 bg-gray-100" data-role="section">
                 <a
                     className="w-full"
                     onClick={(e) => {
@@ -93,9 +98,9 @@ function Product(props: { product: IProduct }) {
                     }}
                 >
                     <MixinButton
-                        className="w-full justify-center rounded shadow"
+                        className="w-full justify-center  "
                         type="button"
-                        options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}
                     >
                         See Orders
                     </MixinButton>
@@ -104,7 +109,7 @@ function Product(props: { product: IProduct }) {
                     Trigger={({ open, onToggle }) => (
                         <AbstractTooltipTrigger>
                             <MixinButton
-                                className="justify-center rounded shadow"
+                                className="justify-center  "
                                 type="button"
                                 options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                                 onClick={onToggle}
@@ -129,9 +134,9 @@ function ProductOptionMenu(props: { product: IProduct }) {
     const navigate = useNavigate();
 
     return (
-        <AbstractTooltipDefaultPanel className={`z-10 fixed mt-1`}>
+        <AbstractTooltipDefaultPanel className={`z-10 fixed mt-1 shadow`}>
             <MixinPrototypeCard
-                className="shadow rounded shadow"
+                className="  "
                 options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}
             >
                 <MixinPrototypeCardSection className="flex flex-col gap-2">
@@ -144,9 +149,9 @@ function ProductOptionMenu(props: { product: IProduct }) {
                         }}
                     >
                         <MixinButton
-                            className="justify-center rounded shadow w-full"
+                            className="justify-center w-full"
                             type="button"
-                            options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                            options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
                         >
                             Update Product
                         </MixinButton>
@@ -155,9 +160,9 @@ function ProductOptionMenu(props: { product: IProduct }) {
                         zIndex={20}
                         Trigger={({ onToggle }) => (
                             <MixinButton
-                                className="justify-center rounded shadow w-full"
+                                className="justify-center w-full"
                                 type="button"
-                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                                options={{ size: "mixin-button-base", theme: "theme-button-generic-red" }}
                                 onClick={() => {
                                     onToggle();
                                     onClose();
@@ -170,7 +175,7 @@ function ProductOptionMenu(props: { product: IProduct }) {
                         panelProps={{ product: product }}
                     />
                     <MixinButton
-                        className="justify-center rounded shadow"
+                        className="justify-center  "
                         type="button"
                         options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                     >

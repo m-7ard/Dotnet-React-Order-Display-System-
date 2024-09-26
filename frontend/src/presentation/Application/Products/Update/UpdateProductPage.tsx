@@ -1,6 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import UploadImagesForm, { GeneratedFileName, RequiredImageFormData, UploadImageFormValue } from "../../../components/Forms/ImageUploadForm";
+import UploadImagesForm, {
+    GeneratedFileName,
+    RequiredImageFormData,
+    UploadImageFormValue,
+} from "../../../components/Forms/ImageUploadForm";
 import IFormError from "../../../../domain/models/IFormError";
 import useItemManager from "../../../hooks/useItemManager";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
@@ -16,6 +20,7 @@ import StatelessTextArea from "../../../components/StatelessFields/StatelessText
 import MixinButton from "../../../components/Resuables/MixinButton";
 import IProduct from "../../../../domain/models/IProduct";
 import UpdateProductCommand from "../../../../application/commands/products/updateProduct/UpdateProductCommand";
+import Linkbox from "../../../components/Resuables/LinkBox";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -54,9 +59,7 @@ const initialErrorState: ErrorState = {
     description: undefined,
 };
 
-export default function UpdateProductPage(props: {
-    product: IProduct
-}) {
+export default function UpdateProductPage(props: { product: IProduct }) {
     const { product } = props;
     const initialValueState: ValueState = {
         name: product.name,
@@ -64,13 +67,16 @@ export default function UpdateProductPage(props: {
         price: product.price.toString(),
         images: product.images.reduce<UploadImageFormValue>((acc, imageData) => {
             const generatedFileName = imageData.fileName as GeneratedFileName;
-            return { ...acc, [generatedFileName]: {
-                generatedFileName: generatedFileName,
-                originalFileName: imageData.originalFileName,
-                url: imageData.url
-            }};
-        }, {})
-    }
+            return {
+                ...acc,
+                [generatedFileName]: {
+                    generatedFileName: generatedFileName,
+                    originalFileName: imageData.originalFileName,
+                    url: imageData.url,
+                },
+            };
+        }, {}),
+    };
 
     const { commandDispatcher } = useCommandDispatcherContext();
     const { dispatchException } = useApplicationExceptionContext();
@@ -129,7 +135,15 @@ export default function UpdateProductPage(props: {
                 itemManager.setAll(initialValueState);
             }}
         >
-            <header className="text-2xl text-gray-900 font-bold">Update Product</header>
+            <header className="flex flex-row gap-2 items-center">
+                <Linkbox
+                    parts={[
+                        { isLink: true, to: "/products", label: "Products" },
+                        { isLink: false, label: product.id },
+                        { isLink: true, to: `/products/${product.id}/update`, label: "Update" },
+                    ]}
+                />
+            </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <div className="flex flex-col gap-2">
                 <FormField name="name" errors={errorManager.items.name}>
@@ -155,14 +169,14 @@ export default function UpdateProductPage(props: {
                                 if (result.isOk()) {
                                     const imageData = result.value.images[0];
                                     const generatedFileName = imageData.fileName as GeneratedFileName;
-                                    
+
                                     itemManager.updateItem("images", (prev) => {
-                                        const newState = {...prev};
+                                        const newState = { ...prev };
                                         newState[generatedFileName] = {
                                             generatedFileName: generatedFileName,
                                             originalFileName: imageData.originalFileName,
-                                            url: imageData.url
-                                        }
+                                            url: imageData.url,
+                                        };
                                         return newState;
                                     });
                                 } else if (result.error.type === "Exception") {
@@ -219,14 +233,14 @@ export default function UpdateProductPage(props: {
             </div>
             <footer className="flex flex-row gap-2">
                 <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    className="  overflow-hidden basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                     type="reset"
                 >
                     Reset
                 </MixinButton>
                 <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    className="  overflow-hidden basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
                     type="submit"
                 >

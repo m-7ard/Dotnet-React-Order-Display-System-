@@ -2,16 +2,16 @@ import { useMutation } from "@tanstack/react-query";
 import IProduct from "../../../../domain/models/IProduct";
 import useItemManager from "../../../hooks/useItemManager";
 import MixinButton from "../../Resuables/MixinButton";
-import StatelessCharField from "../../StatelessFields/StatelessCharField";
-import FormField from "../FormField";
 import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
 import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcherContext";
 import ListProductsCommand from "../../../../application/commands/products/listProducts/ListProductsCommand";
 import CoverImage from "../../Resuables/CoverImage";
-import StatelessTextArea from "../../StatelessFields/StatelessTextArea";
 import { useState } from "react";
 import { parseListProductsSchema } from "../../../schemas/listProductsSchema";
 import { useGlobalDialogPanelContext } from "../../Dialog/GlobalDialogPanelContext";
+import Linkbox from "../../Resuables/LinkBox";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../Resuables/MixinPrototypeCard";
+import FilterProductFieldset from "../../Fieldsets/FilterProductFieldset";
 
 export type OrderItemDataFormManagerPanelProps = {
     existingProducts: {
@@ -21,7 +21,6 @@ export type OrderItemDataFormManagerPanelProps = {
         };
     };
     onAdd: (product: IProduct) => void;
-    count: number;
 };
 
 type ValueState = {
@@ -45,16 +44,14 @@ const initialValueState: ValueState = {
 };
 
 export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormManagerPanelProps) {
-    const { existingProducts, onAdd, count } = props;
+    const { existingProducts, onAdd } = props;
     const { dispatchException } = useApplicationExceptionContext();
     const { commandDispatcher } = useCommandDispatcherContext();
     const { onClose } = useGlobalDialogPanelContext();
-    console.log("OrderItemDataFormManagerPanel: ", props)
+    console.log("OrderItemDataFormManagerPanel: ", props);
 
     const [route, setRoute] = useState<"form" | "result">("form");
     const itemManager = useItemManager<ValueState>(initialValueState);
-
-    console.log('count', existingProducts)
 
     const searchProductsMutation = useMutation({
         mutationKey: ["products"],
@@ -85,71 +82,81 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
 
     return (
         <div className="mixin-panel-like mixin-panel-base theme-panel-generic-white max-w-80 max-h-[80vh]">
-            <header className="flex flex-row justify-between items-center">
-                <div className="text-xl text-gray-900 font-bold">Filter Orders</div>
+            <header className="flex flex-row gap-2 items-center justify-between">
+                <Linkbox
+                    parts={[
+                        { isLink: false, label: "Products" },
+                        { isLink: false, label: "Filter" },
+                    ]}
+                />
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",
                         theme: "theme-button-generic-white",
                     }}
                     onClick={onClose}
-                    className="rounded shadow"
+                    className=" "
                 >
                     Close
                 </MixinButton>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <nav className="flex flex-row gap-4">
-                <MixinButton
-                    options={{
-                        size: "mixin-button-base",
-                        theme: route === "form" ? "theme-button-generic-yellow" : "theme-button-generic-white",
-                    }}
+            <nav className="flex flex-row divide-x divide-gray-900 border border-gray-900 text-sm overflow-hidden shrink-0">
+                <button
                     type="button"
                     onClick={() => setRoute("form")}
-                    className="basis-1/2 justify-center"
+                    className={`mixin-button-like basis-1/2 justify-center py-1 px-2 shrink-0 ${route === "form" ? "bg-gray-200 " : "bg-white hover:bg-gray-200"}`}
                 >
                     Form
-                </MixinButton>
-                <MixinButton
-                    options={{
-                        size: "mixin-button-base",
-                        theme: route === "result" ? "theme-button-generic-yellow" : "theme-button-generic-white",
-                    }}
+                </button>
+                <button
                     type="button"
                     onClick={() => setRoute("result")}
-                    className="basis-1/2 justify-center"
+                    className={`mixin-button-like basis-1/2 justify-center py-1 px-2 shrink-0 ${route === "result" ? "bg-gray-200 " : "bg-white hover:bg-gray-200"}`}
                 >
                     Results
-                </MixinButton>
+                </button>
             </nav>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             {
                 {
                     form: (
-                        <FilterProductsForm
-                            data={itemManager.items}
-                            onChange={(field, value) => itemManager.updateItem(field, value)}
-                            onSubmit={() => searchProductsMutation.mutate(itemManager.items)}
-                            onReset={() => itemManager.setAll(initialValueState)}
-                        />
+                        <>
+                            <fieldset className="flex flex-col gap-2 p-4 bg-gray-100 border border-gray-900">
+                                <FilterProductFieldset
+                                    data={itemManager.items}
+                                    onChange={(field, value) => itemManager.updateItem(field, value)}
+                                />
+                            </fieldset>
+                            <footer className="flex flex-row gap-2">
+                                <MixinButton
+                                    className="  overflow-hidden basis-1/2 justify-center"
+                                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                                    onClick={() => itemManager.setAll(initialValueState)}
+                                    type="button"
+                                >
+                                    Reset
+                                </MixinButton>
+                                <MixinButton
+                                    className="  overflow-hidden basis-1/2 justify-center"
+                                    options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
+                                    onClick={() => searchProductsMutation.mutate(itemManager.items)}
+                                    type="button"
+                                >
+                                    Submit
+                                </MixinButton>
+                            </footer>
+                        </>
                     ),
                     result: (
-                        <section className="flex flex-col gap-2 grow overflow-hidden">
-                            <header className="flex flex-col">
-                                <div className="text-base text-gray-900 font-bold">Results</div>
-                                <div className="text-xs text-gray-600">Count {searchResults.length}</div>
-                            </header>
-                            <div className="flex flex-col gap-4 overflow-scroll">
-                                {searchResults.map((product) => (
-                                    <Product
-                                        key={product.id}
-                                        product={product}
-                                        count={existingProducts[product.id.toString()]?.count ?? 0}
-                                        onAdd={() => onAdd(product)}
-                                    />
-                                ))}
-                            </div>
+                        <section className="flex flex-col gap-4 overflow-scroll p-4 bg-gray-100 border border-gray-900">
+                            {searchResults.map((product) => (
+                                <Product
+                                    key={product.id}
+                                    product={product}
+                                    count={existingProducts[product.id.toString()]?.count ?? 0}
+                                    onAdd={() => onAdd(product)}
+                                />
+                            ))}
                         </section>
                     ),
                 }[route]
@@ -162,147 +169,39 @@ function Product(props: { product: IProduct; count: number; onAdd: () => void })
     const { product, count, onAdd } = props;
 
     return (
-        <output className="bg-white divide-y divide-gray-300 rounded shadow border-gray-900 border">
-            <div className="flex flex-col gap-2 p-2 px-4">
-                <div className="w-full grid grid-cols-4 grid-rows-1 shrink-0 gap-1">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <CoverImage
-                            className="row-span-1 col-span-1 aspect-square border border-gray-300 rounded shadow overflow-hidden"
-                            src={
-                                product.images[i]?.fileName == null
-                                    ? undefined
-                                    : `${import.meta.env.VITE_API_URL}/Media/${product.images[i].fileName}`
-                            }
-                            key={i}
-                        />
-                    ))}
-                </div>
-            </div>
-            <div className="flex flex-col gap-2 p-2 px-4">
+        <MixinPrototypeCard
+            options={{
+                size: "mixin-Pcard-base",
+                theme: "theme-Pcard-generic-white",
+            }}
+        >
+            <MixinPrototypeCardSection className="flex flex-row gap-2">
+                <CoverImage
+                    className="w-16 h-16 border border-gray-900  overflow-hidden"
+                    src={
+                        product.images[0] == null
+                            ? undefined
+                            : `${import.meta.env.VITE_API_URL}/Media/${product.images[0].fileName}`
+                    }
+                />
                 <div className="flex flex-col gap-1 grow">
-                    <div>
-                        <div className="text-sm font-semibold">{product.name}</div>
-                        <div className="text-sm">{`${product.price}`}</div>
-                    </div>
+                    <div className="text-sm font-bold">{product.name}</div>
+                    <div className="text-sm">${product.price}</div>
+                    <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>
-                <div className="flex flex-row gap-2 items-center text-sm">
-                    <div>Item Count</div>
-                    <div className="p-0.5 px-2 bg-gray-900 text-white font-bold rounded shadow">{count}</div>
+            </MixinPrototypeCardSection>
+            <MixinPrototypeCardSection className="flex flex-row gap-1 justify-between bg-gray-100">
+                <div className="flex flex-row gap-2 items-center text-sm px-2 py-px bg-gray-200  border border-gray-900">
+                    x{count}
                 </div>
-            </div>
-            <div className="flex flex-row gap-1 mt-auto p-2 px-4">
                 <MixinButton
-                    className="basis-1/2 justify-center rounded shadow"
+                    className="basis-1/2 justify-center  "
                     options={{ size: "mixin-button-sm", theme: "theme-button-generic-yellow" }}
                     onClick={onAdd}
                 >
                     Add Item
                 </MixinButton>
-            </div>
-        </output>
-    );
-}
-
-function FilterProductsForm(props: {
-    data: ValueState;
-    onChange: (field: keyof ValueState, value: ValueState[keyof ValueState]) => void;
-    onSubmit: () => void;
-    onReset: () => void;
-}) {
-    const { data, onChange, onSubmit, onReset } = props;
-
-    return (
-        <>
-            <section className="flex flex-col gap-2 overflow-auto">
-                <FormField name="name">
-                    <StatelessCharField
-                        options={{
-                            size: "mixin-char-input-base",
-                            theme: "theme-input-generic-white",
-                        }}
-                        value={data.name}
-                        onChange={(value) => onChange("name", value)}
-                    />
-                </FormField>
-                <div className="flex flex-row gap-2">
-                    <div className="basis-1/2">
-                        <FormField name="minPrice">
-                            <StatelessCharField
-                                options={{
-                                    size: "mixin-char-input-base",
-                                    theme: "theme-input-generic-white",
-                                }}
-                                value={data.minPrice}
-                                onChange={(value) => onChange("minPrice", value)}
-                            />
-                        </FormField>
-                    </div>
-                    <div className="basis-1/2">
-                        <FormField name="maxPrice">
-                            <StatelessCharField
-                                options={{
-                                    size: "mixin-char-input-base",
-                                    theme: "theme-input-generic-white",
-                                }}
-                                value={data.maxPrice}
-                                onChange={(value) => onChange("maxPrice", value)}
-                            />
-                        </FormField>
-                    </div>
-                </div>
-                <FormField name="description">
-                    <StatelessTextArea
-                        onChange={(value) => onChange("description", value)}
-                        value={data.description}
-                        options={{
-                            size: "mixin-textarea-any",
-                            theme: "theme-textarea-generic-white",
-                        }}
-                        rows={5}
-                        maxLength={1028}
-                    />
-                </FormField>
-                <FormField name="createdBefore">
-                    <StatelessCharField
-                        options={{
-                            size: "mixin-char-input-base",
-                            theme: "theme-input-generic-white",
-                        }}
-                        value={data.createdBefore}
-                        type="date"
-                        onChange={(value) => onChange("createdBefore", value)}
-                    />
-                </FormField>
-                <FormField name="createdAfter">
-                    <StatelessCharField
-                        options={{
-                            size: "mixin-char-input-base",
-                            theme: "theme-input-generic-white",
-                        }}
-                        value={data.createdAfter}
-                        type="date"
-                        onChange={(value) => onChange("createdAfter", value)}
-                    />
-                </FormField>
-            </section>
-            <footer className="flex flex-row gap-2">
-                <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                    onClick={() => onReset()}
-                    type="button"
-                >
-                    Reset
-                </MixinButton>
-                <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
-                    onClick={() => onSubmit()}
-                    type="button"
-                >
-                    Submit
-                </MixinButton>
-            </footer>
-        </>
+            </MixinPrototypeCardSection>
+        </MixinPrototypeCard>
     );
 }

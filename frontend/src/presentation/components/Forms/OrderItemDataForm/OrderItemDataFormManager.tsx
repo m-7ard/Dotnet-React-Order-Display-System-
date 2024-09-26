@@ -43,53 +43,51 @@ export default function OrderItemDataFormManager(props: {
 
     return (
         <div className="flex flex-col gap-2">
-            <header className="mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow">
-                <div data-role="section">
-                    <GlobalDialog
-                        zIndex={10}
-                        Trigger={({ onToggle }) => (
-                            <MixinButton
-                                options={{
-                                    size: "mixin-button-base",
-                                    theme: "theme-button-generic-white",
-                                }}
-                                className="shadow rounded"
-                                onClick={onToggle}
-                                type="button"
-                            >
-                                Add
-                            </MixinButton>
-                        )}
-                        Panel={OrderItemDataFormManagerPanel}
-                        panelProps={{
-                            count: count,
-                            existingProducts: searchPanelProducts,
-                            onAdd: (product) => {
-                                itemManager.addItem(product.id.toString(), product);
-                                onAdd(product);
-                                setCount((prev) => prev + 1);
-                            },
+            <GlobalDialog
+                zIndex={10}
+                Trigger={({ onToggle }) => (
+                    <MixinButton
+                        options={{
+                            size: "mixin-button-sm",
+                            theme: "theme-button-generic-white",
                         }}
+                        className="w-full justify-center "
+                        onClick={onToggle}
+                        type="button"
+                    >
+                        Add
+                    </MixinButton>
+                )}
+                Panel={OrderItemDataFormManagerPanel}
+                panelProps={{
+                    count: count,
+                    existingProducts: searchPanelProducts,
+                    onAdd: (product) => {
+                        itemManager.addItem(product.id.toString(), product);
+                        onAdd(product);
+                        setCount((prev) => prev + 1);
+                    },
+                }}
+            />
+            <div className="flex flex-col gap-4 p-4 bg-gray-100 border border-gray-900">
+                {Object.entries(value).map(([UID, orderItem]) => (
+                    <OrderItemDataForm
+                        product={itemManager.items[orderItem.productId]}
+                        errors={errors?.[UID]}
+                        value={value[UID]}
+                        onUpdate={(fieldName, fieldValue) => {
+                            const newValue = { ...value[UID] };
+                            newValue[fieldName] = fieldValue;
+                            onUpdate(UID, newValue);
+                        }}
+                        onDelete={() => {
+                            itemManager.deleteItem(UID);
+                            onDelete(UID);
+                        }}
+                        key={UID}
                     />
-                </div>
-            </header>
-            {Object.entries(value).map(([UID, orderItem]) => (
-                <OrderItemDataForm
-                    product={itemManager.items[orderItem.productId]}
-                    errors={errors?.[UID]}
-                    value={value[UID]}
-                    onUpdate={(fieldName, fieldValue) => {
-                        const newValue = { ...value[UID] };
-                        newValue[fieldName] = fieldValue;
-                        onUpdate(UID, newValue);
-                    }}
-                    onDelete={() => {
-                        itemManager.deleteItem(UID);
-                        onDelete(UID);
-                    }}
-                    key={UID}
-                />
-            ))}
+                ))}
+            </div>
         </div>
     );
 }

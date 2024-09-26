@@ -5,6 +5,8 @@ import StatelessCharField from "../../../components/StatelessFields/StatelessCha
 import useItemManager from "../../../hooks/useItemManager";
 import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialogPanelContext";
+import Linkbox from "../../../components/Resuables/LinkBox";
+import MixinPanel from "../../../components/Resuables/MixinPanel";
 
 type ValueState = {
     id: string;
@@ -17,7 +19,7 @@ type ValueState = {
 };
 
 export default function FilterProductsDialogPanel() {
-    const searchParams: Record<string, string> = useSearch({ from: "/products" });
+    const searchParams: Record<string, string> = useSearch({ strict: false });
     const initialValueState: ValueState = {
         id: searchParams.id ?? "",
         name: searchParams.name ?? "",
@@ -25,15 +27,15 @@ export default function FilterProductsDialogPanel() {
         maxPrice: searchParams.maxPrice ?? "",
         description: searchParams.description ?? "",
         createdBefore: searchParams.createdBefore ?? "",
-        createdAfter: searchParams.createdAfter ?? ""
+        createdAfter: searchParams.createdAfter ?? "",
     };
     const { onClose } = useGlobalDialogPanelContext();
     const itemManager = useItemManager<ValueState>(initialValueState);
     const navigate = useNavigate();
 
     return (
-        <form
-            className="rounded shadow mixin-page-like mixin-page-base bg-gray-50 border border-gray-900 m-auto max-w-72"
+        <MixinPanel
+            as="form"
             onSubmit={(e) => {
                 e.preventDefault();
                 navigate({ to: "/products", search: itemManager.items });
@@ -43,16 +45,25 @@ export default function FilterProductsDialogPanel() {
                 e.preventDefault();
                 itemManager.setAll(initialValueState);
             }}
+            options={{
+                size: "mixin-panel-base",
+                theme: "theme-panel-generic-white",
+            }}
         >
             <header className="flex flex-row justify-between items-center">
-                <div className="text-xl text-gray-900 font-bold">Filter Products</div>
+                <Linkbox
+                    parts={[
+                        { isLink: false, label: "Products" },
+                        { isLink: false, label: "Filter" },
+                    ]}
+                />
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",
                         theme: "theme-button-generic-white",
                     }}
                     onClick={onClose}
-                    className="rounded shadow"
+                    className=" "
                     type="button"
                 >
                     Close
@@ -133,20 +144,20 @@ export default function FilterProductsDialogPanel() {
             </section>
             <footer className="flex flex-row gap-2">
                 <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    className="  overflow-hidden basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                     type="reset"
                 >
                     Reset
                 </MixinButton>
                 <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    className="  overflow-hidden basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
                     type="submit"
                 >
                     Filter
                 </MixinButton>
             </footer>
-        </form>
+        </MixinPanel>
     );
 }

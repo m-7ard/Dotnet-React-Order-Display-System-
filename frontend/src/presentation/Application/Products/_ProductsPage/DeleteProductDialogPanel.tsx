@@ -7,6 +7,8 @@ import MixinButton from "../../../components/Resuables/MixinButton";
 import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
 import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcherContext";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialogPanelContext";
+import MixinPanel from "../../../components/Resuables/MixinPanel";
+import Linkbox from "../../../components/Resuables/LinkBox";
 
 export default function DeleteProductDialogPanel(props: { product: IProduct }) {
     const { product } = props;
@@ -37,16 +39,31 @@ export default function DeleteProductDialogPanel(props: { product: IProduct }) {
     });
 
     return (
-        <div className="mixin-page-base rounded shadow mixin-page-like bg-gray-50 border border-gray-900 m-auto max-w-72">
+        <MixinPanel
+            as="form"
+            options={{
+                size: "mixin-panel-base",
+                theme: "theme-panel-generic-white",
+            }}
+            onSubmit={(e) => {
+                e.preventDefault();
+                deleteProductMutation.mutate();
+            }}
+        >
             <header className="flex flex-row justify-between items-center">
-                <div className="text-xl text-gray-900 font-bold">Confirm Deletion</div>
+                <Linkbox
+                    parts={[
+                        { isLink: false, label: "Products" },
+                        { isLink: false, label: "Delete" },
+                    ]}
+                />
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",
                         theme: "theme-button-generic-white",
                     }}
                     onClick={onClose}
-                    className="rounded shadow"
+                    className=" "
                     type="button"
                 >
                     Close
@@ -60,19 +77,20 @@ export default function DeleteProductDialogPanel(props: { product: IProduct }) {
             <footer className="flex flex-row gap-2">
                 <MixinButton
                     onClick={onClose}
-                    className="rounded shadow basis-1/2 justify-center"
+                    className="  basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                    type="button"
                 >
                     Cancel
                 </MixinButton>
                 <MixinButton
-                    onClick={() => deleteProductMutation.mutate()}
-                    className="rounded shadow basis-1/2 justify-center"
+                    className="  basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-red" }}
+                    type="submit"
                 >
                     Delete
                 </MixinButton>
             </footer>
-        </div>
+        </MixinPanel>
     );
 }

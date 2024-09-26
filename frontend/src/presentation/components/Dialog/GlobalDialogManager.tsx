@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { PropsWithChildren, useCallback, useState } from "react";
+import React, { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { GlobalDialogContext } from "./GlobalDialogContext";
 import { GlobalDialogPanelContext, useGlobalDialogPanelContext } from "./GlobalDialogPanelContext";
@@ -17,6 +17,17 @@ type DialogStore = {
 export default function GlobalDialogManager(props: React.PropsWithChildren) {
     const { children } = props;
     const [dialogs, setDialogs] = useState<DialogStore>({});
+
+    const closeAllDialogs = useCallback(() => {
+        setDialogs({});
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener("popstate", closeAllDialogs);
+        return () => {
+            window.removeEventListener("popstate", closeAllDialogs);
+        };
+    }, [closeAllDialogs]);
 
     const dispatchDialog = useCallback(
         (ID: string, data: DialogData) =>

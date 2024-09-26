@@ -5,6 +5,9 @@ import CoverImage from "../../Resuables/CoverImage";
 import MixinButton from "../../Resuables/MixinButton";
 import StatelessCharField from "../../StatelessFields/StatelessCharField";
 import { Value } from "@sinclair/typebox/value";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../Resuables/MixinPrototypeCard";
+import { useAbstractTooltipContext } from "../../../contexts/AbstractTooltipContext";
+import AbstractTooltip, { AbstractTooltipDefaultPanel, AbstractTooltipTrigger } from "../../Resuables/AbstractTooltip";
 
 export type IOrderItemDataFormValue = {
     productId: number;
@@ -31,48 +34,56 @@ export default function OrderItemDataForm(props: {
     };
 
     return (
-        <div className="mixin-Pcard-like mixin-Pcard-base theme-Pcard-generic-white rounded shadow">
-            <section className="w-full grid grid-cols-4 grid-rows-1 shrink-0 gap-1" data-role="section">
-                {Array.from({ length: 4 }).map((_, i) => (
-                    <CoverImage
-                        className="row-span-1 col-span-1 aspect-square border border-gray-300 rounded shadow overflow-hidden"
-                        src={
-                            product.images[i]?.fileName == null
-                                ? undefined
-                                : `${import.meta.env.VITE_API_URL}/Media/${product.images[i]?.fileName}`
-                        }
-                        key={i}
-                    />
-                ))}
-            </section>
-            <main className="flex flex-col gap-1" data-role="section">
-                <div className="font-bold text-sm">{product.name}</div>
-                <div className="p-0.5 px-2 bg-gray-900 text-white font-bold rounded shadow w-fit text-sm">
-                    ${product.price}
+        <MixinPrototypeCard
+            options={{
+                size: "mixin-Pcard-base",
+                theme: "theme-Pcard-generic-white",
+            }}
+            className="shadow"
+        >
+            <MixinPrototypeCardSection className="flex flex-row gap-2">
+                <CoverImage
+                    className="w-16 h-16 border border-gray-900  overflow-hidden"
+                    src={
+                        product.images[0] == null
+                            ? undefined
+                            : `${import.meta.env.VITE_API_URL}/Media/${product.images[0].fileName}`
+                    }
+                />
+                <div className="flex flex-col gap-1 grow">
+                    <div className="text-sm font-bold">{product.name}</div>
+                    <div className="text-sm">${product.price}</div>
+                    <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>
-                <div className="flex flex-row gap-2 items-center text-xs ">
-                    <div>Date Created:</div>
-                    <div>{product.dateCreated.toLocaleDateString("en-us")}</div>
-                </div>
-            </main>
-            <footer className="flex flex-row gap-4" data-role="section">
-                <MixinButton
-                    className="rounded shadow"
-                    options={{
-                        size: "mixin-button-sm",
-                        theme: "theme-button-generic-white",
-                    }}
-                    onClick={onDelete}
-                    type="button"
-                >
-                    ...
-                </MixinButton>
+            </MixinPrototypeCardSection>
+            <MixinPrototypeCardSection className="flex flex-row gap-2 bg-gray-100">
+                <AbstractTooltip
+                    Trigger={({ open, onToggle }) => (
+                        <AbstractTooltipTrigger>
+                            <MixinButton
+                                className=" "
+                                options={{
+                                    size: "mixin-button-sm",
+                                    theme: "theme-button-generic-white",
+                                }}
+                                onClick={() => {
+                                    onToggle();
+                                }}
+                                type="button"
+                                active={open}
+                            >
+                                ...
+                            </MixinButton>
+                        </AbstractTooltipTrigger>
+                    )}
+                    Panel={<OrderItemDataFormOptionMenu onDelete={() => onDelete()} />}
+                    positioning={{ top: "100%", left: "0px" }}
+                />
                 <div className="flex flex-row gap-2 grow">
                     <MixinButton
-                        className="shadow rounded"
                         options={{
                             size: "mixin-button-sm",
-                            theme: "theme-button-generic-white",
+                            theme: "theme-button-generic-green",
                         }}
                         type="button"
                         onClick={() => updateQuantity(value.quantity + 1)}
@@ -89,10 +100,9 @@ export default function OrderItemDataForm(props: {
                         className="flex grow"
                     />
                     <MixinButton
-                        className="shadow rounded"
                         options={{
                             size: "mixin-button-sm",
-                            theme: "theme-button-generic-white",
+                            theme: "theme-button-generic-red",
                         }}
                         type="button"
                         onClick={() => updateQuantity(value.quantity - 1)}
@@ -100,7 +110,32 @@ export default function OrderItemDataForm(props: {
                         -
                     </MixinButton>
                 </div>
-            </footer>
-        </div>
+            </MixinPrototypeCardSection>
+        </MixinPrototypeCard>
+    );
+}
+
+function OrderItemDataFormOptionMenu(props: { onDelete: () => void }) {
+    const { onDelete } = props;
+    // const { onClose } = useAbstractTooltipContext();
+
+    return (
+        <AbstractTooltipDefaultPanel className={`z-10 fixed mt-1`}>
+            <MixinPrototypeCard
+                className="  "
+                options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}
+            >
+                <MixinPrototypeCardSection className="flex flex-col gap-2">
+                    <MixinButton
+                        className="justify-center w-full"
+                        type="button"
+                        onClick={onDelete}
+                        options={{ size: "mixin-button-sm", theme: "theme-button-generic-red" }}
+                    >
+                        Remove Item
+                    </MixinButton>
+                </MixinPrototypeCardSection>
+            </MixinPrototypeCard>
+        </AbstractTooltipDefaultPanel>
     );
 }

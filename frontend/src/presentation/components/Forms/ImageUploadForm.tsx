@@ -32,10 +32,10 @@ export default function UploadImagesForm(props: {
     }
 
     return (
-        <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }} className="rounded shadow">
+        <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}>
             <MixinPrototypeCardSection>
                 <MixinButton
-                    className="rounded shadow w-fit overflow-hidden relative"
+                    className="  w-fit overflow-hidden relative"
                     type="button"
                     options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
                 >
@@ -78,13 +78,13 @@ function Image(props: {
         <MixinPrototypeCardSection className="flex flex-col gap-2">
             <div className="flex flex-row gap-2">
                 <CoverImage
-                    className="w-16 h-16 min-w-16 min-h-16 border border-gray-300 rounded overflow-hidden"
+                    className="w-16 h-16 min-w-16 min-h-16 border border-gray-900  overflow-hidden"
                     src={`${import.meta.env.VITE_API_URL}/${url}`}
                 />
                 <div className="flex flex-col gap-1 overflow-hidden grow">
                     <div className="text-sm text-medium truncate">{originalFileName}</div>
                     <MixinButton
-                        className="ml-auto mt-auto justify-center rounded shadow"
+                        className="ml-auto mt-auto justify-center  "
                         type="button"
                         onClick={onDelete}
                         options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
