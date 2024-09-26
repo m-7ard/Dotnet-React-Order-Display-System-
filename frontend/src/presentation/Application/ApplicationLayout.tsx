@@ -5,14 +5,14 @@ import MixinButton from "../components/Resuables/MixinButton";
 
 function ApplicationHeader() {
     return (
-        <header className="py-2 px-4 flex flex-row gap-x-2 bg-gray-100 items-center border-b border-gray-400">
+        <header className="py-2 px-4 flex flex-row gap-x-2 bg-green-100 items-center border-b border-gray-900">
             <Link to="/">
                 <MixinButton
                     options={{
                         size: "mixin-button-base",
                         theme: "theme-button-generic-white",
                     }}
-                    className="rounded shadow"
+                    className=" "
                 >
                     ☰
                 </MixinButton>
@@ -26,7 +26,7 @@ function ApplicationExceptionNotice() {
     if (exception == null) return null;
     return (
         <div
-            className="fixed mx-auto top-4 left-4 right-4 flex flex-col bg-red-400 border border-gray-400 shadow p-4 gap-4 text-gray-100 max-w-96"
+            className="fixed mx-auto top-4 left-4 right-4 flex flex-col bg-red-400 border border-gray-900  p-4 gap-4 text-gray-100 max-w-96"
             style={{ zIndex: 1000000 }}
         >
             <div className="flex flex-row gap-4 justify-between items-center">
@@ -46,14 +46,14 @@ export default function ApplicationLayout() {
                 className="
                     flex
                     flex-col
-                    bg-gray-50 
+                    bg-white
                     h-full
                     w-full 
                     max-w-80 
                     mx-auto 
                     overflow-hidden 
                     border-x 
-                    border-gray-400
+                    border-gray-900
                     text-gray-900"
             >
                 <ApplicationExceptionNotice />

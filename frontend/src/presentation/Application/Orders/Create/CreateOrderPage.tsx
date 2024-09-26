@@ -14,6 +14,7 @@ import IProduct from "../../../../domain/models/IProduct";
 import OrderItemDataFormManager from "../../../components/Forms/OrderItemDataForm/OrderItemDataFormManager";
 import { IOrderItemDataFormValue } from "../../../components/Forms/OrderItemDataForm/OrderItemDataForm";
 import MixinButton from "../../../components/Resuables/MixinButton";
+import Linkbox from "../../../components/Resuables/LinkBox";
 
 const validatorSchema = Type.Object({
     orderItemData: Type.Record(
@@ -61,7 +62,7 @@ export default function CreateOrderPage() {
     const createOrderMutation = useMutation({
         mutationFn: async () => {
             const validation = validateTypeboxSchema(validatorSchema, {
-                orderItemData: itemManager.items.orderItemData
+                orderItemData: itemManager.items.orderItemData,
             });
 
             if (validation.isErr()) {
@@ -101,7 +102,14 @@ export default function CreateOrderPage() {
                 itemManager.setAll(initialValueState);
             }}
         >
-            <header className="text-2xl text-gray-900 font-bold">Create Order</header>
+            <header className="flex flex-row gap-2 items-center">
+                <Linkbox
+                    parts={[
+                        { isLink: true, to: "/orders", label: "Orders" },
+                        { isLink: true, to: "/orders/create", label: "Create" },
+                    ]}
+                />
+            </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <div className="flex flex-col gap-2">
                 <FormField name="orderItemData" errors={errorManager.items.orderItemData?._}>
@@ -138,14 +146,14 @@ export default function CreateOrderPage() {
             </div>
             <footer className="flex flex-row gap-2">
                 <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    className="  overflow-hidden basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                     type="reset"
                 >
                     Reset
                 </MixinButton>
                 <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    className="  overflow-hidden basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
                     type="submit"
                 >

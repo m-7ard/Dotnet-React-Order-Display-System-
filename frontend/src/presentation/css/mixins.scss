@@ -67,7 +67,7 @@
     }
 
     .mixin-panel-base {
-        @apply px-4 py-4 gap-y-4;
+        @apply px-4 py-4 gap-y-4 max-w-72;
     }
 
     .mixin-checkbox-like {

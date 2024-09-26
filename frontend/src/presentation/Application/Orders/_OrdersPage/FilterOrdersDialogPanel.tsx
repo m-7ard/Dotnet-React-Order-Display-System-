@@ -6,6 +6,7 @@ import useItemManager from "../../../hooks/useItemManager";
 import StatelessListBox from "../../../components/StatelessFields/StatelessListBox";
 import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialogPanelContext";
+import Linkbox from "../../../components/Resuables/LinkBox";
 
 type ValueState = {
     id: string;
@@ -18,7 +19,7 @@ type ValueState = {
 };
 
 export default function FilterProductsDialogPanel() {
-    const searchParams: Record<string, string> = useSearch({ from: "/orders" });
+    const searchParams: Record<string, string> = useSearch({ strict: false });
     const initialValueState: ValueState = {
         id: searchParams.id ?? "",
         minTotal: searchParams.minTotal ?? "",
@@ -35,7 +36,7 @@ export default function FilterProductsDialogPanel() {
     return (
         <form
             id="headlessui-portal-root"
-            className="rounded shadow mixin-page-like mixin-page-base bg-gray-50 border border-gray-900 m-auto max-w-72"
+            className="  mixin-page-like mixin-page-base bg-gray-50 border border-gray-900 m-auto max-w-72"
             onSubmit={(e) => {
                 e.preventDefault();
                 navigate({ to: "/orders", search: itemManager.items });
@@ -47,14 +48,19 @@ export default function FilterProductsDialogPanel() {
             }}
         >
             <header className="flex flex-row justify-between items-center">
-                <div className="text-xl text-gray-900 font-bold">Filter Orders</div>
+                <Linkbox
+                    parts={[
+                        { isLink: true, to: "/orders", label: "Orders" },
+                        { isLink: false, label: "Filter" },
+                    ]}
+                />
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",
                         theme: "theme-button-generic-white",
                     }}
                     onClick={onClose}
-                    className="rounded shadow"
+                    className=""
                     type="button"
                 >
                     Close
@@ -152,14 +158,14 @@ export default function FilterProductsDialogPanel() {
             </section>
             <footer className="flex flex-row gap-2">
                 <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    className="  overflow-hidden basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                     type="reset"
                 >
                     Reset
                 </MixinButton>
                 <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    className="  overflow-hidden basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
                     type="submit"
                 >

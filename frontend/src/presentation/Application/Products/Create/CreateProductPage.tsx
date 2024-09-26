@@ -15,6 +15,7 @@ import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
 import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import UploadDraftImagesCommand from "../../../../application/commands/draftImages/uploadProductImages/UploadDraftImagesCommand";
+import Linkbox from "../../../components/Resuables/LinkBox";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -116,7 +117,14 @@ export default function CreateProductPage() {
                 itemManager.setAll(initialValueState);
             }}
         >
-            <header className="text-2xl text-gray-900 font-bold">Create Product</header>
+            <header className="flex flex-row gap-2 items-center">
+                <Linkbox
+                    parts={[
+                        { isLink: true, to: "/products", label: "Products" },
+                        { isLink: true, to: `/products/create`, label: "Create" },
+                    ]}
+                />
+            </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <div className="flex flex-col gap-2">
                 <FormField name="name" errors={errorManager.items.name}>
@@ -148,7 +156,7 @@ export default function CreateProductPage() {
                                         newState[generatedFileName] = {
                                             generatedFileName: generatedFileName,
                                             originalFileName: imageData.originalFileName,
-                                            url: imageData.url
+                                            url: imageData.url,
                                         };
                                         return newState;
                                     });
@@ -206,14 +214,14 @@ export default function CreateProductPage() {
             </div>
             <footer className="flex flex-row gap-2">
                 <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    className="  overflow-hidden basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                     type="reset"
                 >
                     Reset
                 </MixinButton>
                 <MixinButton
-                    className="rounded shadow overflow-hidden basis-1/2 justify-center"
+                    className="  overflow-hidden basis-1/2 justify-center"
                     options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
                     type="submit"
                 >
