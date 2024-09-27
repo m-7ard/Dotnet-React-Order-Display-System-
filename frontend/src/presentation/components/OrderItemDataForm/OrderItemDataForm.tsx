@@ -1,13 +1,13 @@
 import { Type } from "@sinclair/typebox";
-import IFormError from "../../../../domain/models/IFormError";
-import IProduct from "../../../../domain/models/IProduct";
-import CoverImage from "../../Resuables/CoverImage";
-import MixinButton from "../../Resuables/MixinButton";
-import StatelessCharField from "../../StatelessFields/StatelessCharField";
+import IFormError from "../../../domain/models/IFormError";
+import IProduct from "../../../domain/models/IProduct";
+import CoverImage from "../Resuables/CoverImage";
+import MixinButton from "../Resuables/MixinButton";
+import StatelessCharField from "../StatelessFields/StatelessCharField";
 import { Value } from "@sinclair/typebox/value";
-import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../Resuables/MixinPrototypeCard";
-import { useAbstractTooltipContext } from "../../../contexts/AbstractTooltipContext";
-import AbstractTooltip, { AbstractTooltipDefaultPanel, AbstractTooltipTrigger } from "../../Resuables/AbstractTooltip";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
+import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
+import AbstractTooltip, { AbstractTooltipDefaultPanel, AbstractTooltipTrigger } from "../Resuables/AbstractTooltip";
 
 export type IOrderItemDataFormValue = {
     productId: number;

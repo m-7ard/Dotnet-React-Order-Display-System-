@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import UploadImagesForm, {
     GeneratedFileName,
-    RequiredImageFormData,
     UploadImageFormValue,
 } from "../../../components/Forms/ImageUploadForm";
 import IFormError from "../../../../domain/models/IFormError";

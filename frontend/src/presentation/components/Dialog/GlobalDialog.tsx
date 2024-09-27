@@ -1,6 +1,6 @@
 import React, { ComponentType, useEffect, useId, useRef } from "react";
 import { useGlobalDialogContext } from "./GlobalDialogContext";
-import { deepEqual } from "@tanstack/react-router";
+import deepEqual from "../../utils/deepEqual";
 
 export default function GlobalDialog<T>(props: {
     Trigger: React.FunctionComponent<{ onToggle: () => void; }>;

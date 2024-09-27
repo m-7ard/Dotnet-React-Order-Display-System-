@@ -7,20 +7,13 @@ import StatelessListBox from "../../../components/StatelessFields/StatelessListB
 import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialogPanelContext";
 import Linkbox from "../../../components/Resuables/LinkBox";
-
-type ValueState = {
-    id: string;
-    minTotal: string;
-    maxTotal: string;
-    status: string;
-    createdBefore: string;
-    createdAfter: string;
-    productId: string;
-};
+import FilterOrdersFieldset, {
+    FilterOrdersFieldsetValueState,
+} from "../../../components/Fieldsets/FilterOrdersFieldset";
 
 export default function FilterProductsDialogPanel() {
     const searchParams: Record<string, string> = useSearch({ strict: false });
-    const initialValueState: ValueState = {
+    const initialValueState: FilterOrdersFieldsetValueState = {
         id: searchParams.id ?? "",
         minTotal: searchParams.minTotal ?? "",
         maxTotal: searchParams.maxTotal ?? "",
@@ -30,12 +23,11 @@ export default function FilterProductsDialogPanel() {
         productId: searchParams.productId ?? "",
     };
     const { onClose } = useGlobalDialogPanelContext();
-    const itemManager = useItemManager<ValueState>(initialValueState);
+    const itemManager = useItemManager<FilterOrdersFieldsetValueState>(initialValueState);
     const navigate = useNavigate();
 
     return (
         <form
-            id="headlessui-portal-root"
             className="  mixin-page-like mixin-page-base bg-gray-50 border border-gray-900 m-auto max-w-72"
             onSubmit={(e) => {
                 e.preventDefault();
@@ -67,95 +59,12 @@ export default function FilterProductsDialogPanel() {
                 </MixinButton>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="flex flex-col gap-2">
-                <FormField name="id">
-                    <StatelessCharField
-                        options={{
-                            size: "mixin-char-input-base",
-                            theme: "theme-input-generic-white",
-                        }}
-                        value={itemManager.items.id}
-                        onChange={(value) => itemManager.updateItem("id", value)}
-                    />
-                </FormField>
-                <div className="flex flex-row gap-2">
-                    <div className="basis-1/2">
-                        <FormField name="minTotal">
-                            <StatelessCharField
-                                options={{
-                                    size: "mixin-char-input-base",
-                                    theme: "theme-input-generic-white",
-                                }}
-                                value={itemManager.items.minTotal}
-                                onChange={(value) => itemManager.updateItem("minTotal", value)}
-                            />
-                        </FormField>
-                    </div>
-                    <div className="basis-1/2">
-                        <FormField name="maxTotal">
-                            <StatelessCharField
-                                options={{
-                                    size: "mixin-char-input-base",
-                                    theme: "theme-input-generic-white",
-                                }}
-                                value={itemManager.items.maxTotal}
-                                onChange={(value) => itemManager.updateItem("maxTotal", value)}
-                            />
-                        </FormField>
-                    </div>
-                </div>
-                <FormField name="status">
-                    <StatelessListBox
-                        nullable
-                        onChange={(value) => {
-                            itemManager.updateItem("status", value == null ? "" : value.toString());
-                        }}
-                        value={itemManager.items.status}
-                        choices={[
-                            {
-                                value: OrderStatus.FINISHED.value,
-                                label: OrderStatus.FINISHED.value,
-                            },
-                            {
-                                value: OrderStatus.PENDING.value,
-                                label: OrderStatus.PENDING.value,
-                            },
-                        ]}
-                    />
-                </FormField>
-                <FormField name="createdBefore">
-                    <StatelessCharField
-                        options={{
-                            size: "mixin-char-input-base",
-                            theme: "theme-input-generic-white",
-                        }}
-                        value={itemManager.items.createdBefore}
-                        type="date"
-                        onChange={(value) => itemManager.updateItem("createdBefore", value)}
-                    />
-                </FormField>
-                <FormField name="createdAfter">
-                    <StatelessCharField
-                        options={{
-                            size: "mixin-char-input-base",
-                            theme: "theme-input-generic-white",
-                        }}
-                        value={itemManager.items.createdAfter}
-                        type="date"
-                        onChange={(value) => itemManager.updateItem("createdAfter", value)}
-                    />
-                </FormField>
-                <FormField name="productId">
-                    <StatelessCharField
-                        options={{
-                            size: "mixin-char-input-base",
-                            theme: "theme-input-generic-white",
-                        }}
-                        value={itemManager.items.productId}
-                        onChange={(value) => itemManager.updateItem("productId", value)}
-                    />
-                </FormField>
-            </section>
+            <fieldset className="flex flex-col gap-2 p-4 bg-gray-100 border border-gray-900">
+                <FilterOrdersFieldset
+                    data={itemManager.items}
+                    onChange={(field, value) => itemManager.updateItem(field, value)}
+                />
+            </fieldset>
             <footer className="flex flex-row gap-2">
                 <MixinButton
                     className="  overflow-hidden basis-1/2 justify-center"

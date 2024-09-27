@@ -84,7 +84,7 @@ function DialogBackdrop(props: PropsWithChildren<{ zIndex: number }>) {
         <div
             className={`fixed inset-0 flex flex-row justify-center items-center bg-black/30 p-4`}
             style={{ zIndex: zIndex }}
-            onClick={(e) => {
+            onMouseDown={(e) => {
                 if (e.target === e.currentTarget) {
                     onClose();
                 }
