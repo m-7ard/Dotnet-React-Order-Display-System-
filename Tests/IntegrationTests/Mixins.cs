@@ -11,7 +11,7 @@ namespace Tests.IntegrationTests;
 
 public class Mixins
 {
-    private readonly SimpleProductOrderServiceDbContext _simpleProductOrderServiceDbContexts;
+    private readonly SimpleProductOrderServiceDbContext _dbContexts;
     private readonly IProductRepository _productRepository;
     private readonly IDraftImageRepository _draftImageRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
@@ -19,11 +19,11 @@ public class Mixins
 
     public Mixins(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext)
     {
-        _simpleProductOrderServiceDbContexts = simpleProductOrderServiceDbContext;
-        _productRepository = new ProductRepository(_simpleProductOrderServiceDbContexts);
-        _draftImageRepository = new DraftImageRepository(_simpleProductOrderServiceDbContexts);
-        _productHistoryRepository = new ProductHistoryRespository(_simpleProductOrderServiceDbContexts);
-        _orderRespository = new OrderRepository(_simpleProductOrderServiceDbContexts);
+        _dbContexts = simpleProductOrderServiceDbContext;
+        _productRepository = new ProductRepository(_dbContexts);
+        _draftImageRepository = new DraftImageRepository(_dbContexts);
+        _productHistoryRepository = new ProductHistoryRespository(_dbContexts);
+        _orderRespository = new OrderRepository(_dbContexts);
     }
 
     public async Task<Product> CreateProduct(int number, List<DraftImage> images)
@@ -88,7 +88,8 @@ public class Mixins
             var orderItem = OrderItemFactory.BuildNewOrderItem(
                 quantity: number,
                 status: orderItemStatus,
-                productHistoryId: productHistory.Id
+                productHistoryId: productHistory.Id,
+                productId: product.Id
             );
             orderItems.Add(orderItem);
         }

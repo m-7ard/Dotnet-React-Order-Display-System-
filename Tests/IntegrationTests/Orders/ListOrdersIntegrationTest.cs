@@ -46,8 +46,8 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
                createdBefore: null,
                createdAfter: null
         );
-        var queryString = request.ToQueryString();
-        var response = await _client.GetAsync($"{_route}/list{queryString}");
+        var queryString = ObjToQueryString.Convert(request);
+        var response = await _client.GetAsync($"{_route}/list?{queryString}");
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -58,7 +58,7 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
         Assert.StrictEqual(2, content.Orders.Count);
     }
 
-        [Fact]
+    [Fact]
     public async Task ListAllOrders_MaxTotal_Success()
     {
         var request = new ListOrdersRequestDTO
@@ -69,8 +69,8 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
                createdBefore: null,
                createdAfter: null
         );
-        var queryString = request.ToQueryString();
-        var response = await _client.GetAsync($"{_route}/list{queryString}");
+        var queryString = ObjToQueryString.Convert(request);
+        var response = await _client.GetAsync($"{_route}/list?{queryString}");
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -84,8 +84,16 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task ListAllOrders_CreatedBefore_Success()
     {
-        var createdBefore = _order001.DateCreated.ToString("o");
-        var response = await _client.GetAsync($"{_route}/list?createdBefore={createdBefore}");
+        var request = new ListOrdersRequestDTO
+        (
+               minTotal: null,
+               maxTotal: null,
+               status: null,
+               createdBefore: _order001.DateCreated,
+               createdAfter: null
+        );
+        var queryString = ObjToQueryString.Convert(request);
+        var response = await _client.GetAsync($"{_route}/list?{queryString}");
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -107,8 +115,8 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
                createdBefore: null,
                createdAfter: null
         );
-        var queryString = request.ToQueryString();
-        var response = await _client.GetAsync($"{_route}/list{queryString}");
+        var queryString = ObjToQueryString.Convert(request);
+        var response = await _client.GetAsync($"{_route}/list?{queryString}");
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

@@ -18,10 +18,10 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product> CreateAsync(Product product)
     {
-        var productDbEntity = ProductMapper.DomainToDbEntity(product);
+        var productDbEntity = ProductMapper.FromDomainToDbEntity(product);
         _dbContext.Add(productDbEntity);
         await _dbContext.SaveChangesAsync();
-        return ProductMapper.DbEntityToDomain(productDbEntity);
+        return ProductMapper.FromDbEntityToDomain(productDbEntity);
     }
 
     public async Task<Product?> GetByIdAsync(int id)
@@ -29,7 +29,7 @@ public class ProductRepository : IProductRepository
         var productDbEntity = await _dbContext.Product
             .Include(d => d.Images)
             .SingleOrDefaultAsync(d => d.Id == id);
-        return productDbEntity is null ? null : ProductMapper.DbEntityToDomain(productDbEntity);
+        return productDbEntity is null ? null : ProductMapper.FromDbEntityToDomain(productDbEntity);
     }
 
     public async Task<List<Product>> FindAllAsync(string? name, decimal? minPrice, decimal? maxPrice, string? description, DateTime? createdBefore, DateTime? createdAfter)
@@ -77,7 +77,7 @@ public class ProductRepository : IProductRepository
         }
 
         var dbProducts = await query.ToListAsync();
-        return dbProducts.Select(ProductMapper.DbEntityToDomain).ToList();
+        return dbProducts.Select(ProductMapper.FromDbEntityToDomain).ToList();
     }
 
     public async Task UpdateAsync(Product product)
@@ -86,7 +86,7 @@ public class ProductRepository : IProductRepository
             .Include(d => d.Images)
             .SingleAsync(d => d.Id == product.Id);
 
-        var updatedEntity = ProductMapper.DomainToDbEntity(product);
+        var updatedEntity = ProductMapper.FromDomainToDbEntity(product);
 
         var removedImages = currentEntity.Images
             .Where(oldImage => !updatedEntity.Images.Any(newImage => newImage.Id == oldImage.Id))

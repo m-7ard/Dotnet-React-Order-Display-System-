@@ -1,3 +1,4 @@
+using Application.Api.ProductHistories.List.DTOs;
 using Application.Api.Products.Create.DTOs;
 using Application.Api.Products.Create.Handlers;
 using Application.Api.Products.Delete.DTOs;
