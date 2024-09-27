@@ -1,17 +1,17 @@
 import { useMutation } from "@tanstack/react-query";
-import IProduct from "../../../../domain/models/IProduct";
-import useItemManager from "../../../hooks/useItemManager";
-import MixinButton from "../../Resuables/MixinButton";
-import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
-import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcherContext";
-import ListProductsCommand from "../../../../application/commands/products/listProducts/ListProductsCommand";
-import CoverImage from "../../Resuables/CoverImage";
+import IProduct from "../../../domain/models/IProduct";
+import useItemManager from "../../hooks/useItemManager";
+import MixinButton from "../Resuables/MixinButton";
+import { useApplicationExceptionContext } from "../../contexts/ApplicationExceptionHandlerContext";
+import { useCommandDispatcherContext } from "../../contexts/CommandDispatcherContext";
+import ListProductsCommand from "../../../application/commands/products/listProducts/ListProductsCommand";
+import CoverImage from "../Resuables/CoverImage";
 import { useState } from "react";
-import { parseListProductsSchema } from "../../../schemas/listProductsSchema";
-import { useGlobalDialogPanelContext } from "../../Dialog/GlobalDialogPanelContext";
-import Linkbox from "../../Resuables/LinkBox";
-import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../Resuables/MixinPrototypeCard";
-import FilterProductFieldset from "../../Fieldsets/FilterProductFieldset";
+import { parseListProductsSchema } from "../../schemas/listProductsSchema";
+import { useGlobalDialogPanelContext } from "../Dialog/GlobalDialogPanelContext";
+import Linkbox from "../Resuables/LinkBox";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
+import FilterProductsFieldset, { FilterProductsFieldsetValueState } from "../Fieldsets/FilterProductFieldset";
 
 export type OrderItemDataFormManagerPanelProps = {
     existingProducts: {
@@ -23,17 +23,7 @@ export type OrderItemDataFormManagerPanelProps = {
     onAdd: (product: IProduct) => void;
 };
 
-type ValueState = {
-    id: string;
-    name: string;
-    minPrice: string;
-    maxPrice: string;
-    description: string;
-    createdAfter: string;
-    createdBefore: string;
-};
-
-const initialValueState: ValueState = {
+const initialValueState: FilterProductsFieldsetValueState = {
     id: "",
     name: "",
     minPrice: "",
@@ -48,15 +38,14 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
     const { dispatchException } = useApplicationExceptionContext();
     const { commandDispatcher } = useCommandDispatcherContext();
     const { onClose } = useGlobalDialogPanelContext();
-    console.log("OrderItemDataFormManagerPanel: ", props);
 
     const [route, setRoute] = useState<"form" | "result">("form");
-    const itemManager = useItemManager<ValueState>(initialValueState);
+    const itemManager = useItemManager<FilterProductsFieldsetValueState>(initialValueState);
 
     const searchProductsMutation = useMutation({
         mutationKey: ["products"],
         gcTime: 1000 * 60,
-        mutationFn: async (variables: ValueState) => {
+        mutationFn: async (variables: FilterProductsFieldsetValueState) => {
             const parsedParams = parseListProductsSchema(variables);
             const command = new ListProductsCommand({
                 id: parsedParams.id,
@@ -122,7 +111,7 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                     form: (
                         <>
                             <fieldset className="flex flex-col gap-2 p-4 bg-gray-100 border border-gray-900">
-                                <FilterProductFieldset
+                                <FilterProductsFieldset
                                     data={itemManager.items}
                                     onChange={(field, value) => itemManager.updateItem(field, value)}
                                 />

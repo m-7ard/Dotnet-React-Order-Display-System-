@@ -1,11 +1,11 @@
-import IFormError from "../../../../domain/models/IFormError";
-import MixinButton from "../../Resuables/MixinButton";
-import IProduct from "../../../../domain/models/IProduct";
+import IFormError from "../../../domain/models/IFormError";
+import MixinButton from "../Resuables/MixinButton";
+import IProduct from "../../../domain/models/IProduct";
 import OrderItemDataFormManagerPanel, { OrderItemDataFormManagerPanelProps } from "./OrderItemDataFormManagerPanel";
-import useItemManager from "../../../hooks/useItemManager";
+import useItemManager from "../../hooks/useItemManager";
 import OrderItemDataForm, { IOrderItemDataFormError, IOrderItemDataFormValue } from "./OrderItemDataForm";
 import { useState } from "react";
-import GlobalDialog from "../../Dialog/GlobalDialog";
+import GlobalDialog from "../Dialog/GlobalDialog";
 
 type OrderItemDataFormManagerError = IFormError<{
     [UID: string]: IOrderItemDataFormError;

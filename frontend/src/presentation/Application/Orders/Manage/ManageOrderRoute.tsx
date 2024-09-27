@@ -1,16 +1,16 @@
 import { Navigate, useLoaderData, useParams } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
-import UpdateProductPage from "./UpdateProductPage";
 import { useQuery } from "@tanstack/react-query";
+import ManageOrderPage from "./ManageOrderPage";
 
-export default function UpdateProductRoute() {
-    const { id } = useParams({ from: "/products/$id/update" });
-    const { ok, data } = useLoaderData({ from: "/products/$id/update" });
+export default function ManageOrderRoute() {
+    const { id } = useParams({ from: "/orders/$id/manage" });
+    const { ok, data } = useLoaderData({ from: "/orders/$id/manage" });
     const { dispatchException } = useApplicationExceptionContext();
 
-    const productQuery = useQuery({
-        queryKey: ["product", parseInt(id)],
+    const orderQuery = useQuery({
+        queryKey: ["order", parseInt(id)],
         queryFn: () => (ok ? data : null),
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -25,13 +25,13 @@ export default function UpdateProductRoute() {
     }, [ok, dispatchException, data]);
 
     if (!ok) {
-        return <Navigate to="/products" />;
+        return <Navigate to="/orders" />;
     }
 
-    if (productQuery.data == null) {
+    if (orderQuery.data == null) {
         return;
     }
 
-    const product = productQuery.data;
-    return <UpdateProductPage product={product} />;
+    const order = orderQuery.data;
+    return <ManageOrderPage order={order} />;
 }

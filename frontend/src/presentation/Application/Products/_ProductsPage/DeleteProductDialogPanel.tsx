@@ -48,6 +48,7 @@ export default function DeleteProductDialogPanel(props: { product: IProduct }) {
             onSubmit={(e) => {
                 e.preventDefault();
                 deleteProductMutation.mutate();
+                onClose();
             }}
         >
             <header className="flex flex-row justify-between items-center">

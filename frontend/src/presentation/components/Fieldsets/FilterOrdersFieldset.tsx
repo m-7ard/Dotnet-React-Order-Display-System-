@@ -1,71 +1,79 @@
+import OrderStatus from "../../../domain/valueObjects/Order/OrderStatus";
 import FormField from "../Forms/FormField";
 import StatelessCharField from "../StatelessFields/StatelessCharField";
-import StatelessTextArea from "../StatelessFields/StatelessTextArea";
+import StatelessListBox from "../StatelessFields/StatelessListBox";
 
-export type FilterProductsFieldsetValueState = {
+export type FilterOrdersFieldsetValueState = {
     id: string;
-    name: string;
-    minPrice: string;
-    maxPrice: string;
-    description: string;
-    createdAfter: string;
+    minTotal: string;
+    maxTotal: string;
+    status: string;
     createdBefore: string;
+    createdAfter: string;
+    productId: string;
 };
 
-export default function FilterProductsFieldset(props: {
-    data: FilterProductsFieldsetValueState;
-    onChange: (field: keyof FilterProductsFieldsetValueState, value: FilterProductsFieldsetValueState[keyof FilterProductsFieldsetValueState]) => void;
+export default function FilterOrdersFieldset(props: {
+    data: FilterOrdersFieldsetValueState;
+    onChange: (field: keyof FilterOrdersFieldsetValueState, value: FilterOrdersFieldsetValueState[keyof FilterOrdersFieldsetValueState]) => void;
 }) {
     const { data, onChange } = props;
 
     return (
         <>
-            <FormField name="name">
+            <FormField name="id">
                 <StatelessCharField
                     options={{
                         size: "mixin-char-input-base",
                         theme: "theme-input-generic-white",
                     }}
-                    value={data.name}
-                    onChange={(value) => onChange("name", value)}
+                    value={data.id}
+                    onChange={(value) => onChange("id", value)}
                 />
             </FormField>
             <div className="flex flex-row gap-2">
                 <div className="basis-1/2">
-                    <FormField name="minPrice">
+                    <FormField name="minTotal">
                         <StatelessCharField
                             options={{
                                 size: "mixin-char-input-base",
                                 theme: "theme-input-generic-white",
                             }}
-                            value={data.minPrice}
-                            onChange={(value) => onChange("minPrice", value)}
+                            value={data.minTotal}
+                            onChange={(value) => onChange("minTotal", value)}
                         />
                     </FormField>
                 </div>
                 <div className="basis-1/2">
-                    <FormField name="maxPrice">
+                    <FormField name="maxTotal">
                         <StatelessCharField
                             options={{
                                 size: "mixin-char-input-base",
                                 theme: "theme-input-generic-white",
                             }}
-                            value={data.maxPrice}
-                            onChange={(value) => onChange("maxPrice", value)}
+                            value={data.maxTotal}
+                            onChange={(value) => onChange("maxTotal", value)}
                         />
                     </FormField>
                 </div>
             </div>
-            <FormField name="description">
-                <StatelessTextArea
-                    onChange={(value) => onChange("description", value)}
-                    value={data.description}
-                    options={{
-                        size: "mixin-textarea-any",
-                        theme: "theme-textarea-generic-white",
+            <FormField name="status">
+                <StatelessListBox
+                    nullable
+                    onChange={(value) => {
+                        onChange("status", value == null ? "" : value.toString());
                     }}
-                    rows={5}
-                    maxLength={1028}
+                    value={data.maxTotal}
+                    choices={[
+                        {
+                            value: OrderStatus.FINISHED.value,
+                            label: OrderStatus.FINISHED.value,
+                        },
+                        {
+                            value: OrderStatus.PENDING.value,
+                            label: OrderStatus.PENDING.value,
+                        },
+                    ]}
                 />
             </FormField>
             <FormField name="createdBefore">
@@ -88,6 +96,16 @@ export default function FilterProductsFieldset(props: {
                     value={data.createdAfter}
                     type="date"
                     onChange={(value) => onChange("createdAfter", value)}
+                />
+            </FormField>
+            <FormField name="productId">
+                <StatelessCharField
+                    options={{
+                        size: "mixin-char-input-base",
+                        theme: "theme-input-generic-white",
+                    }}
+                    value={data.productId}
+                    onChange={(value) => onChange("productId", value)}
                 />
             </FormField>
         </>

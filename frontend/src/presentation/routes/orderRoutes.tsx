@@ -4,7 +4,6 @@ import commandDispatcher from "../deps/commandDispatcher";
 import ListOrdersCommand from "../../application/commands/orders/listOrders/ListOrdersCommand";
 import OrdersPage from "../Application/Orders/OrdersPage";
 import CreateOrderPage from "../Application/Orders/Create/CreateOrderPage";
-import ManageOrderPage from "../Application/Orders/Manage/ManageOrderPage";
 import { orderStateManager } from "../deps/stateManagers";
 import ReadOrderCommand from "../../application/commands/orders/readOrder/ReadOrderCommand";
 import { Value } from "@sinclair/typebox/value";
@@ -12,9 +11,8 @@ import { Type } from "@sinclair/typebox";
 import Order from "../../domain/models/Order";
 import UnknownError from "../../application/errors/UnkownError";
 import ILoaderResult from "../../application/interfaces/ILoaderResult";
-import parseTypeboxSchemaOrNull from "../utils/parseTypeboxSchemaOrNull";
-import { parseListProductsSchema } from "../schemas/listProductsSchema";
 import { parseListOrdersSchema } from "../schemas/listOrdersSchema";
+import ManageOrderRoute from "../Application/Orders/Manage/ManageOrderRoute";
 
 const baseOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -94,7 +92,7 @@ const manageOrderRoute = createRoute({
             data: type === "Exception" ? data : new UnknownError({}),
         };
     },
-    component: ManageOrderPage,
+    component: ManageOrderRoute,
 });
 
 export default [baseOrdersRoute, createOrderRoute, manageOrderRoute];

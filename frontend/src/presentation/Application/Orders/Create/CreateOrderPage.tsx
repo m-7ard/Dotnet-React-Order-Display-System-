@@ -11,8 +11,8 @@ import typeboxToDomainCompatibleFormError from "../../../../application/mappers/
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
 import CreateOrderCommand from "../../../../application/commands/orders/createOrder/CreateOrderCommand";
 import IProduct from "../../../../domain/models/IProduct";
-import OrderItemDataFormManager from "../../../components/Forms/OrderItemDataForm/OrderItemDataFormManager";
-import { IOrderItemDataFormValue } from "../../../components/Forms/OrderItemDataForm/OrderItemDataForm";
+import OrderItemDataFormManager from "../../../components/OrderItemDataForm/OrderItemDataFormManager";
+import { IOrderItemDataFormValue } from "../../../components/OrderItemDataForm/OrderItemDataForm";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import Linkbox from "../../../components/Resuables/LinkBox";
 

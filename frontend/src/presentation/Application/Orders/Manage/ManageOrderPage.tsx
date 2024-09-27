@@ -16,6 +16,7 @@ import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import OrderItemStatus from "../../../../domain/valueObjects/OrderItem/OrderItemStatus";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../../components/Resuables/MixinPrototypeCard";
 import Linkbox from "../../../components/Resuables/LinkBox";
+import Order from "../../../../domain/models/Order";
 
 const ORDER_ITEM_STATUS_COLORS = {
     [OrderItemStatus.FINISHED.value]: "bg-green-600/50",
@@ -27,23 +28,12 @@ const ORDER_STATUS_COLORS = {
     [OrderStatus.PENDING.value]: "bg-orange-400/70",
 };
 
-export default function ManageOrderPage() {
-    const { id } = useParams({ from: "/orders/$id/manage" });
-    const { ok, data } = useLoaderData({ from: "/orders/$id/manage" });
-
+export default function ManageOrderPage(props: { order: Order }) {
+    const { order } = props;
     const { dispatchException } = useApplicationExceptionContext();
     const { commandDispatcher } = useCommandDispatcherContext();
     const { orderStateManager } = useStateManagersContext();
     const errorsManager = useItemManager<IFormError<Record<string, unknown>>>({ _: undefined });
-
-    const orderQuery = useQuery({
-        queryKey: ["order", parseInt(id)],
-        queryFn: () => (ok ? data : null),
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-        refetchOnMount: false,
-        gcTime: 0,
-    });
 
     const markOrderFinishedMutation = useMutation({
         mutationFn: async () => {
@@ -63,18 +53,6 @@ export default function ManageOrderPage() {
             }
         },
     });
-
-    useEffect(() => {
-        if (!ok) {
-            dispatchException(data);
-        }
-    }, [ok, dispatchException, data]);
-
-    if (!ok) {
-        return <Navigate to="/orders" />;
-    }
-
-    const order = orderQuery.data ?? data;
 
     return (
         <div className="mixin-page-like mixin-page-base">
