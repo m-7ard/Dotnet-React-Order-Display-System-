@@ -32,16 +32,7 @@ public class ApiModelService : IApiModelService
                 dateCreated: orderItem.DateCreated,
                 dateFinished: orderItem.DateFinished,
                 orderId: order.Id,
-                productHistory: new ProductHistoryApiModel(
-                    id: productHistory.Id,
-                    name: productHistory.Name,
-                    images: productHistory.Images,
-                    description: productHistory.Description,
-                    price: productHistory.Price,
-                    productId: productHistory.ProductId,
-                    validFrom: productHistory.ValidFrom,
-                    validTo: productHistory.ValidTo
-                )
+                productHistory: CreateProductHistoryApiModel(productHistory)
             );
 
             orderItems.Add(orderItemApiModel);
@@ -75,5 +66,19 @@ public class ApiModelService : IApiModelService
         );
 
         return productApiModel;
+    }
+
+    public ProductHistoryApiModel CreateProductHistoryApiModel(ProductHistory productHistory)
+    {
+        return new ProductHistoryApiModel(
+            id: productHistory.Id,
+            name: productHistory.Name,
+            images: productHistory.Images,
+            description: productHistory.Description,
+            price: productHistory.Price,
+            productId: productHistory.ProductId,
+            validFrom: productHistory.ValidFrom,
+            validTo: productHistory.ValidTo
+        );
     }
 }

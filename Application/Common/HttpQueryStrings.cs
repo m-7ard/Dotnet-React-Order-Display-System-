@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 
@@ -30,24 +31,30 @@ public static class HttpQueryStrings
 
 
                 if (p.PropertyType.IsArray && value?.GetType() == typeof(DateTime[]))
-                    throw new Exception("Do not use BuildQueryString with DateTime, do it manually using an ISO string instead.");
-
+                    foreach (var item in (DateTime[])value)
+                    {
+                        DateTime date = (DateTime)item;
+                        _query.Append($"&{prefix}{StringCaseConverter.ToCamelCase(p.Name)}={date.ToString("o")}");
+                    }
+                    
                 else if (p.PropertyType.IsArray)
                     foreach (var item in (Array)value!)
-                        _query.Append($"&{prefix}{p.Name}={item}");
+                        _query.Append($"&{prefix}{StringCaseConverter.ToCamelCase(p.Name)}={item}");
 
                 else if (p.PropertyType == typeof(string))
-                    _query.Append($"&{prefix}{p.Name}={value}");
+                    _query.Append($"&{prefix}{StringCaseConverter.ToCamelCase(p.Name)}={value}");
 
                 else if (p.PropertyType == typeof(DateTime) && !value!.Equals(Activator.CreateInstance(p.PropertyType)))
-                    throw new Exception("Do not use BuildQueryString with DateTime, do it manually using an ISO string instead.");
-
+                {
+                    DateTime date = (DateTime)value;
+                    _query.Append($"&{prefix}{StringCaseConverter.ToCamelCase(p.Name)}={date.ToString("o")}");
+                }
                 else if (p.PropertyType.IsValueType && !value!.Equals(Activator.CreateInstance(p.PropertyType)))
-                    _query.Append($"&{prefix}{p.Name}={value}");
+                    _query.Append($"&{prefix}{StringCaseConverter.ToCamelCase(p.Name)}={value}");
 
 
                 else if (p.PropertyType.IsClass)
-                    BuildQueryString(value, $"{prefix}{p.Name}.");
+                    BuildQueryString(value, $"{prefix}{StringCaseConverter.ToCamelCase(p.Name)}.");
             }
         }
     }

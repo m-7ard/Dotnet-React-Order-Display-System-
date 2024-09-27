@@ -6,7 +6,7 @@ namespace Infrastructure.Mappers;
 
 public static class ProductMapper
 {
-    public static ProductDbEntity DomainToDbEntity(Product domain)
+    public static ProductDbEntity FromDomainToDbEntity(Product domain)
     {
         return new ProductDbEntity(
             id: domain.Id, 
@@ -19,7 +19,7 @@ public static class ProductMapper
         };
     }
 
-    public static Product DbEntityToDomain(ProductDbEntity dbEntity)
+    public static Product FromDbEntityToDomain(ProductDbEntity dbEntity)
     {
         return new Product(
             id: dbEntity.Id, 

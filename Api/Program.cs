@@ -15,7 +15,8 @@ using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 // dotnet ef migrations add <Name> --project Api --startup-project Api
-
+// API/.env DefaultConnection="Server=localhost;Database=XXX;Trusted_Connection=True;TrustServerCertificate=True;"
+// frontend/.env VITE_API_URL=http://localhost:5102
 
 ///
 ///
