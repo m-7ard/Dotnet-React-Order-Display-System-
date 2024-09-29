@@ -3,12 +3,13 @@ namespace Application.Api.Products.List.DTOs;
 public class ListProductsRequestDTO
 {
     public ListProductsRequestDTO(
-        string? name, 
-        decimal? minPrice, 
-        decimal? maxPrice, 
-        string? description, 
-        DateTime? createdBefore, 
-        DateTime? createdAfter)
+        string? name,
+        decimal? minPrice,
+        decimal? maxPrice,
+        string? description,
+        DateTime? createdBefore,
+        DateTime? createdAfter,
+        int? id)
     {
         Name = name;
         MinPrice = minPrice;
@@ -16,8 +17,10 @@ public class ListProductsRequestDTO
         Description = description;
         CreatedBefore = createdBefore;
         CreatedAfter = createdAfter;
+        Id = id;
     }
 
+    public int? Id { get; set; }
     public string? Name { get; set; }
     public decimal? MinPrice { get; set; }
     public decimal? MaxPrice { get; set; }

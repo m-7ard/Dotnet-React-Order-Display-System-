@@ -94,16 +94,61 @@ public class OrdersController : ControllerBase
         [FromQuery] string? status,
         [FromQuery] DateTime? createdBefore,
         [FromQuery] DateTime? createdAfter,
-        [FromQuery] int? productId)
+        [FromQuery] int? productId,
+        [FromQuery] int? productHistoryId)
     {
-        var query = new ListOrdersQuery(
+        var parameters = new ListOrdersRequestDTO(
+            id: id,
             minTotal: minTotal,
             maxTotal: maxTotal,
             status: status,
             createdBefore: createdBefore,
             createdAfter: createdAfter,
             productId: productId,
-            id: id
+            productHistoryId: productHistoryId
+        );
+
+        if (id is not null && id <= 0)
+        {
+            id = null;
+        }
+
+        if (productId is not null && productId <= 0)
+        {
+            productId = null;
+        }
+
+        if (productHistoryId is not null && productHistoryId <= 0)
+        {
+            productHistoryId = null;
+        }
+
+        if (minTotal is not null && minTotal < 0)
+        {
+            minTotal = null;
+        }
+
+        if (maxTotal is not null && minTotal is not null && minTotal > maxTotal)
+        {
+            minTotal = null;
+            maxTotal = null;
+        }
+
+        if (createdBefore is not null && createdAfter is not null && createdBefore > createdAfter)
+        {
+            createdBefore = null;
+            createdAfter = null;
+        }
+
+        var query = new ListOrdersQuery(
+            minTotal: minTotal,
+            maxTotal: maxTotal,
+            status: status,
+            createdBefore: createdBefore,
+            createdAfter: createdAfter,
+            id: id,
+            productId: productId,
+            productHistoryId: productHistoryId
         );
 
         var result = await _mediator.Send(query);

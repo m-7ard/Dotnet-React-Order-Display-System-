@@ -30,4 +30,9 @@ public class ProductHistory
     public int ProductId { get; set; }
     public DateTime ValidFrom { get; set; }
     public DateTime ValidTo { get; set; }
+
+    public void Invalidate()
+    {
+        ValidTo = DateTime.Now;
+    }
 }

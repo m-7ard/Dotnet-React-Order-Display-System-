@@ -1,7 +1,6 @@
 using Application.Interfaces.Persistence;
 using Domain.Models;
 using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 using Infrastructure.DbEntities;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -52,10 +51,17 @@ public class OrderRepository : IOrderRepository
         return OrderMapper.ToDomain(orderDbEntity);
     }
 
-    public async Task<List<Order>> FindAllAsync(decimal? minTotal, decimal? maxTotal, OrderStatus? status, DateTime? createdBefore, DateTime? createdAfter, int? productId, int? id)
+    public async Task<List<Order>> FindAllAsync(
+        decimal? minTotal, 
+        decimal? maxTotal, 
+        OrderStatus? status, 
+        DateTime? createdBefore, 
+        DateTime? createdAfter, 
+        int? productId, 
+        int? id, 
+        int? productHistoryId)
     {
         IQueryable<OrderDbEntity> query = _dbContext.Order.Include(d => d.OrderItems);
-        Console.WriteLine($"----------------------- {status?.Name}");
 
         if (id is not null)
         {
@@ -90,6 +96,11 @@ public class OrderRepository : IOrderRepository
         if (productId is not null)
         {
             query = query.Where(order => order.OrderItems.Any(item => item.ProductId == productId));
+        }
+
+        if (productHistoryId is not null)
+        {
+            query = query.Where(order => order.OrderItems.Any((item) => item.ProductHistoryId == productHistoryId));
         }
 
         var dbOrders = await query.ToListAsync();

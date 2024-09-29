@@ -7,11 +7,11 @@ import { useCommandDispatcherContext } from "../../contexts/CommandDispatcherCon
 import ListProductsCommand from "../../../application/commands/products/listProducts/ListProductsCommand";
 import CoverImage from "../Resuables/CoverImage";
 import { useState } from "react";
-import { parseListProductsSchema } from "../../schemas/listProductsSchema";
 import { useGlobalDialogPanelContext } from "../Dialog/GlobalDialogPanelContext";
 import Linkbox from "../Resuables/LinkBox";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 import FilterProductsFieldset, { FilterProductsFieldsetValueState } from "../Fieldsets/FilterProductFieldset";
+import parseListProductsCommandParameters from "../../../application/commands/products/listProducts/parseListProductsCommandParameters";
 
 export type OrderItemDataFormManagerPanelProps = {
     existingProducts: {
@@ -46,16 +46,8 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
         mutationKey: ["products"],
         gcTime: 1000 * 60,
         mutationFn: async (variables: FilterProductsFieldsetValueState) => {
-            const parsedParams = parseListProductsSchema(variables);
-            const command = new ListProductsCommand({
-                id: parsedParams.id,
-                minPrice: parsedParams.minPrice,
-                maxPrice: parsedParams.maxPrice,
-                name: parsedParams.name,
-                createdAfter: parsedParams.createdAfter,
-                createdBefore: parsedParams.createdBefore,
-                description: parsedParams.description,
-            });
+            const parsedParams = parseListProductsCommandParameters(variables);
+            const command = new ListProductsCommand(parsedParams);
             const result = await commandDispatcher.dispatch(command);
 
             if (result.isOk()) {

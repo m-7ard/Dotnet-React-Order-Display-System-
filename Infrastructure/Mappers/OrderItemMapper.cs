@@ -1,4 +1,3 @@
-using Application.ApiModels;
 using Domain.Models;
 using Domain.ValueObjects.OrderItem;
 using Infrastructure.DbEntities;

@@ -87,6 +87,7 @@ public class ProductsController : ControllerBase
 
     [HttpGet("list")]
     public async Task<ActionResult<ListProductsResponseDTO>> List(
+        [FromQuery] int? id, 
         [FromQuery] string? name, 
         [FromQuery] decimal? minPrice, 
         [FromQuery] decimal? maxPrice, 
@@ -94,7 +95,11 @@ public class ProductsController : ControllerBase
         [FromQuery] DateTime? createdBefore, 
         [FromQuery] DateTime? createdAfter)
     {
-    
+        if (id is not null && id <= 0)
+        {
+            id = null;
+        }
+
         if (name is not null && name.Length == 0)
         {
             name = null;
@@ -123,6 +128,7 @@ public class ProductsController : ControllerBase
         }
 
         var query = new ListProductsQuery(
+            id: id,
             name: name,
             minPrice: minPrice,
             maxPrice: maxPrice,
@@ -198,9 +204,16 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist)
-                ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
-                : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));        
+            if (errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist))
+            {
+                return NotFound(_errorHandlingService.TranslateServiceErrors(errors));
+            }
+            else if (errors.Any(err => err.Code is ValidationErrorCodes.IntegrityError))
+            {
+                return Conflict(_errorHandlingService.TranslateServiceErrors(errors));
+            }
+
+            return BadRequest(_errorHandlingService.TranslateServiceErrors(errors)); 
         }
 
         var response = new UpdateProductResponseDTO(product: _apiModelService.CreateProductApiModel(value.Product));
@@ -217,9 +230,16 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist)
-                ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
-                : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+            if (errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist))
+            {
+                return NotFound(_errorHandlingService.TranslateServiceErrors(errors));
+            }
+            else if (errors.Any(err => err.Code is ValidationErrorCodes.IntegrityError))
+            {
+                return Conflict(_errorHandlingService.TranslateServiceErrors(errors));
+            }
+
+            return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         }
 
         var response = new DeleteProductResponseDTO();

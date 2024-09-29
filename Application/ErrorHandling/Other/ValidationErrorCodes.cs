@@ -5,6 +5,7 @@ public class ValidationErrorCodes
     public const string IsNull = "IsNull";
     public const string StateMismatch = "StateMismatch";
     public const string ModelDoesNotExist = "ModelDoesNotExist";
+    public const string IntegrityError = "IntegrityError";
     public const string ModelAlreadyExists = "ModelAlreadyExists";
     public const string Custom = "Custom";
     public const string FileSizeExceeded = "FileSizeExceeded";

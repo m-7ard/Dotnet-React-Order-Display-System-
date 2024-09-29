@@ -17,6 +17,7 @@ public class ListProductsHandler : IRequestHandler<ListProductsQuery, OneOf<List
     public async Task<OneOf<ListProductsResult, List<PlainApplicationError>>> Handle(ListProductsQuery request, CancellationToken cancellationToken)
     {
         var products = await _productRepository.FindAllAsync(
+            id: request.Id,
             name: request.Name,
             minPrice: request.MinPrice,
             maxPrice: request.MaxPrice,

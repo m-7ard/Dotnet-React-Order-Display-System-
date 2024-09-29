@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import createSafeContext from "../../utils/createSafeContext";
 
 export const [GlobalDialogPanelContext, useGlobalDialogPanelContext] = createSafeContext<{

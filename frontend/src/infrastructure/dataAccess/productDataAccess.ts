@@ -4,8 +4,6 @@ import IListProductsResponseDTO from "../../application/contracts/products/list/
 import IProductDataAccess from "../../application/interfaces/dataAccess/IProductDataAccess";
 import ICreateProductRequestDTO from "../../application/contracts/products/create/ICreateProductRequestDTO";
 import ICreateProductRespnseDTO from "../../application/contracts/products/create/ICreateProductResponseDTO";
-import IUploadDraftImagesRequestDTO from "../../application/contracts/draftImages/uploadImages/IUploadDraftImagesRequestDTO";
-import IUploadDraftImagesResponseDTO from "../../application/contracts/draftImages/uploadImages/IUploadDraftImagesResponseDTO";
 import handleResponse from "../utils/handleResponse";
 import IPlainApiError from "../../application/interfaces/IPlainApiError";
 import IProduct from "../../domain/models/IProduct";

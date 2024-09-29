@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Application.Api.Products.Delete.DTOs;
 using Domain.Models;
+using Infrastructure.DbEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Tests.IntegrationTests.Products;
@@ -10,6 +11,7 @@ public class DeleteProductIntegrationTest : ProductsIntegrationTest
 {
     private DraftImage _validImage = null!;
     private Product _product001 = null!;
+    private ProductHistoryDbEntity _product001History = null!;
     public async override Task InitializeAsync()
     {
         await base.InitializeAsync();
@@ -20,6 +22,7 @@ public class DeleteProductIntegrationTest : ProductsIntegrationTest
             destinationFileName: "saved-valid-image"
         );
         _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: [_validImage]);
+        _product001History = await db.ProductHistory.SingleAsync(d => d.Id == _product001.Id);
     }
 
     [Fact]
@@ -37,6 +40,9 @@ public class DeleteProductIntegrationTest : ProductsIntegrationTest
 
         var image = await db.ProductImage.SingleOrDefaultAsync(d => d.Id == _validImage.Id);
         Assert.Null(image);
+
+        var updatedProductHistory = await db.ProductHistory.SingleAsync(d => d.Id == _product001History.Id);
+        Assert.True(updatedProductHistory.ValidTo > updatedProductHistory.ValidFrom);     
     }
 
     [Fact]

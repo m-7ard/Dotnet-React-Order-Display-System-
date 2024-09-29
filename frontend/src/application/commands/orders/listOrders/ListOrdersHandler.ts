@@ -28,6 +28,7 @@ export default class ListOrdersHandler implements ICommandHandler<IListProductsC
                 minTotal: request.minTotal,
                 status: request.status,
                 productId: request.productId,
+                productHistoryId: request.productHistoryId
             });
 
             if (result.isErr()) {

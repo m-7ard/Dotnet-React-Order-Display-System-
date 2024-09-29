@@ -1,5 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
-import parseTypeboxSchemaOrNull from "../utils/parseTypeboxSchemaOrNull";
+import parseTypeboxSchemaOrNull from "../../../../presentation/utils/parseTypeboxSchemaOrNull";
 
 const listOrdersSchema = Type.Object({
     id: Type.Number({ minimum: 0 }),
@@ -9,9 +9,16 @@ const listOrdersSchema = Type.Object({
     createdBefore: Type.Date(),
     createdAfter: Type.Date(),
     productId: Type.Number({ minimum: 0 }),
+    productHistoryId: Type.Number({ minimum: 0 }),
 });
 
-export function parseListOrdersSchema(data: Partial<Record<keyof Static<typeof listOrdersSchema>, unknown>>) {
+type Schema = Static<typeof listOrdersSchema>;
+type K = keyof Schema;
+type ParsedParams = {
+    [key in K]: Schema[key] | null;
+};
+
+export default function parseListOrdersCommandParameters(data: Record<K, unknown>): ParsedParams {
     return {
         id: parseTypeboxSchemaOrNull(listOrdersSchema.properties.id, data.id),
         minTotal: parseTypeboxSchemaOrNull(listOrdersSchema.properties.minTotal, data.minTotal),
@@ -20,7 +27,6 @@ export function parseListOrdersSchema(data: Partial<Record<keyof Static<typeof l
         createdAfter: parseTypeboxSchemaOrNull(listOrdersSchema.properties.createdAfter, data.createdAfter),
         createdBefore: parseTypeboxSchemaOrNull(listOrdersSchema.properties.createdBefore, data.createdBefore),
         productId: parseTypeboxSchemaOrNull(listOrdersSchema.properties.productId, data.productId),
-    }
+        productHistoryId: parseTypeboxSchemaOrNull(listOrdersSchema.properties.productHistoryId, data.productHistoryId),
+    };
 }
-
-export default listOrdersSchema;

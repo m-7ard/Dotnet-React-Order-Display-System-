@@ -3,43 +3,45 @@ import MixinButton from "../../../components/Resuables/MixinButton";
 import useItemManager from "../../../hooks/useItemManager";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialogPanelContext";
 import Linkbox from "../../../components/Resuables/LinkBox";
-import FilterOrdersFieldset, {
-    FilterOrdersFieldsetValueState,
-} from "../../../components/Fieldsets/FilterOrdersFieldset";
+import MixinPanel from "../../../components/Resuables/MixinPanel";
+import FilterProductHistoriesFieldset, { FilterProductHistoriesFieldsetValueState } from "../../../components/Fieldsets/FilterProductHistoriesFieldset";
 
-export default function FilterProductsDialogPanel() {
+export default function FilterProductHistoriesDialogPanel() {
     const searchParams: Record<string, string> = useSearch({ strict: false });
-    const initialValueState: FilterOrdersFieldsetValueState = {
-        id: searchParams.id ?? "",
-        minTotal: searchParams.minTotal ?? "",
-        maxTotal: searchParams.maxTotal ?? "",
-        status: searchParams.status ?? "",
-        createdBefore: searchParams.createdBefore ?? "",
-        createdAfter: searchParams.createdAfter ?? "",
+    const initialValueState: FilterProductHistoriesFieldsetValueState = {
+        name: searchParams.name ?? "",
+        minPrice: searchParams.minPrice ?? "",
+        maxPrice: searchParams.maxPrice ?? "",
+        description: searchParams.description ?? "",
+        validTo: searchParams.validTo ?? "",
+        validFrom: searchParams.validFrom ?? "",
         productId: searchParams.productId ?? "",
-        productHistoryId: searchParams.productHistoryId ?? "",
     };
     const { onClose } = useGlobalDialogPanelContext();
-    const itemManager = useItemManager<FilterOrdersFieldsetValueState>(initialValueState);
+    const itemManager = useItemManager<FilterProductHistoriesFieldsetValueState>(initialValueState);
     const navigate = useNavigate();
 
     return (
-        <form
-            className="  mixin-page-like mixin-page-base bg-gray-50 border border-gray-900 m-auto max-w-72"
+        <MixinPanel
+            as="form"
             onSubmit={(e) => {
                 e.preventDefault();
-                navigate({ to: "/orders", search: itemManager.items });
+                navigate({ to: "/product_histories", search: itemManager.items });
                 onClose();
             }}
             onReset={(e) => {
                 e.preventDefault();
                 itemManager.setAll(initialValueState);
             }}
+            options={{
+                size: "mixin-panel-base",
+                theme: "theme-panel-generic-white",
+            }}
         >
             <header className="flex flex-row justify-between items-center">
                 <Linkbox
                     parts={[
-                        { isLink: true, to: "/orders", label: "Orders" },
+                        { isLink: false, label: "Product Histories" },
                         { isLink: false, label: "Filter" },
                     ]}
                 />
@@ -49,7 +51,7 @@ export default function FilterProductsDialogPanel() {
                         theme: "theme-button-generic-white",
                     }}
                     onClick={onClose}
-                    className=""
+                    className=" "
                     type="button"
                 >
                     Close
@@ -57,7 +59,7 @@ export default function FilterProductsDialogPanel() {
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <fieldset className="flex flex-col gap-2 p-4 bg-gray-100 border border-gray-900">
-                <FilterOrdersFieldset
+                <FilterProductHistoriesFieldset
                     data={itemManager.items}
                     onChange={(field, value) => itemManager.updateItem(field, value)}
                 />
@@ -78,6 +80,6 @@ export default function FilterProductsDialogPanel() {
                     Filter
                 </MixinButton>
             </footer>
-        </form>
+        </MixinPanel>
     );
 }

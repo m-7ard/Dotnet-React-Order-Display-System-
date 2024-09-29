@@ -1,12 +1,10 @@
-import { Navigate, useLoaderData, useParams } from "@tanstack/react-router";
 import { useApplicationExceptionContext } from "../../../contexts/ApplicationExceptionHandlerContext";
-import { useEffect } from "react";
 import CoverImage from "../../../components/Resuables/CoverImage";
 import MixinButton from "../../../components/Resuables/MixinButton";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import MarkOrderItemFinishedCommand from "../../../../application/commands/orderItems/markFinished/MarkOrderItemFinishedCommand";
 import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcherContext";
-import IOrderItem from "../../../../domain/models/IOrderItem";
+import OrderItem from "../../../../domain/models/OrderItem";
 import { useStateManagersContext } from "../../../contexts/StateManagersContext";
 import useItemManager from "../../../hooks/useItemManager";
 import IFormError from "../../../../domain/models/IFormError";
@@ -119,13 +117,13 @@ export default function ManageOrderPage(props: { order: Order }) {
                 </MixinPrototypeCardSection>
             </MixinPrototypeCard>
             {order.orderItems.map((orderItem) => (
-                <OrderItem orderItem={orderItem} key={orderItem.id} />
+                <OrderItemElement orderItem={orderItem} key={orderItem.id} />
             ))}
         </div>
     );
 }
 
-function OrderItem(props: { orderItem: IOrderItem }) {
+function OrderItemElement(props: { orderItem: OrderItem }) {
     const { orderItem } = props;
 
     const { dispatchException } = useApplicationExceptionContext();
@@ -189,7 +187,7 @@ function OrderItem(props: { orderItem: IOrderItem }) {
                         {orderItem.status.value}
                     </div>
                     <div className="text-sm ml-auto">
-                        Total - {`${orderItem.productHistory.price * orderItem.quantity}$`}
+                        Total - {`${orderItem.getTotal()}$`}
                     </div>
                 </div>
             </MixinPrototypeCardSection>
