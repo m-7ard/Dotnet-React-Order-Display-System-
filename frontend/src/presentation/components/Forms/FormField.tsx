@@ -1,29 +1,30 @@
-import { PropsWithChildren } from "react";
+import React from "react";
 import generateLabel from "../../utils/generateLabel";
 
-export default function FormField({
+export default function FormField<T extends string>({
     errors,
     name,
     label,
     row = false,
     children,
-}: PropsWithChildren<{
+}: {
     errors?: string[];
-    name: string;
+    name: T;
     label?: string;
     row?: boolean;
-}>) {
+    children: React.ReactNode | ((props: { name: T; }) => React.ReactNode)
+}) {
     return (
         <div className="flex flex-col gap-y-0.5">
             {row ?? false ? (
                 <div className="flex flex-row gap-2 items-center">
-                    {children}
+                    {typeof children === "function" ? children({ name }) : children}
                     <div className="text-sm font-medium">{label ?? generateLabel(name)}</div>
                 </div>
             ) : (
                 <>
                     <div className="text-sm font-medium leading-none">{label ?? generateLabel(name)}</div>
-                    {children}
+                    {typeof children === "function" ? children({ name }) : children}
                 </>
             )}
             {errors == null ? null : (

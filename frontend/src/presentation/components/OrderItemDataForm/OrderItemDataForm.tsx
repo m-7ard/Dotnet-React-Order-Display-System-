@@ -6,7 +6,6 @@ import MixinButton from "../Resuables/MixinButton";
 import StatelessCharField from "../StatelessFields/StatelessCharField";
 import { Value } from "@sinclair/typebox/value";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
-import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
 import AbstractTooltip, { AbstractTooltipDefaultPanel, AbstractTooltipTrigger } from "../Resuables/AbstractTooltip";
 
 export type IOrderItemDataFormValue = {
@@ -26,7 +25,7 @@ export default function OrderItemDataForm(props: {
     errors?: IOrderItemDataFormError;
     value: IOrderItemDataFormValue;
 }) {
-    const { onUpdate, onDelete, product, errors, value } = props;
+    const { onUpdate, onDelete, product, value } = props;
 
     const updateQuantity = (quantity: number) => {
         const isValid = Value.Check(Type.Integer({ minimum: 1 }), quantity);

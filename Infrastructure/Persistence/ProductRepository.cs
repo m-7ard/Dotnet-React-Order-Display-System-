@@ -32,9 +32,14 @@ public class ProductRepository : IProductRepository
         return productDbEntity is null ? null : ProductMapper.FromDbEntityToDomain(productDbEntity);
     }
 
-    public async Task<List<Product>> FindAllAsync(string? name, decimal? minPrice, decimal? maxPrice, string? description, DateTime? createdBefore, DateTime? createdAfter)
+    public async Task<List<Product>> FindAllAsync(int? id, string? name, decimal? minPrice, decimal? maxPrice, string? description, DateTime? createdBefore, DateTime? createdAfter)
     {
         IQueryable<ProductDbEntity> query = _dbContext.Product.Include(d => d.Images);
+
+        if (id is not null)
+        {
+            query = query.Where(item => item.Id == id);
+        }
 
         if (!string.IsNullOrEmpty(name))
         {

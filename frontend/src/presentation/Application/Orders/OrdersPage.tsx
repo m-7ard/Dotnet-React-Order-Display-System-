@@ -109,7 +109,7 @@ function OrderElement(props: { order: Order }) {
                                 {orderItem.status.value}
                             </div>
                             <div className="text-sm ml-auto">
-                                Total - {`${orderItem.productHistory.price * orderItem.quantity}$`}
+                                Total - {`${orderItem.getTotal()}$`}
                             </div>
                         </div>
                     </div>

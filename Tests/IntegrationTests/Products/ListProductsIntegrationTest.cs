@@ -17,9 +17,7 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
         var db = _factory.CreateDbContext();
         var mixins = new Mixins(db);
         _price1_NameDescProduct1 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
-        Task.Delay(1000).Wait();
         _price2_NameDescProduct2 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
-        Task.Delay(1000).Wait();
         _price3_NameDescProduct3 = await mixins.CreateProductAndProductHistory(number: 3, images: []);
     }
 
@@ -28,6 +26,7 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
     {
         var request = new ListProductsRequestDTO
         (
+            id: null,
             name: null,
             minPrice: null,
             maxPrice: null,
@@ -52,6 +51,7 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
     {
         var request = new ListProductsRequestDTO
         (
+            id: null,
             name: null,
             minPrice: 2,
             maxPrice: null,
@@ -76,6 +76,7 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
     {
         var request = new ListProductsRequestDTO
         (
+            id: null,
             name: "1",
             minPrice: null,
             maxPrice: null,
@@ -100,6 +101,7 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
     {
             var request = new ListProductsRequestDTO
         (
+            id: null,
             name: null,
             minPrice: null,
             maxPrice: null,

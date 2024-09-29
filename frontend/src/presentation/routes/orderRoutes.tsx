@@ -11,8 +11,8 @@ import { Type } from "@sinclair/typebox";
 import Order from "../../domain/models/Order";
 import UnknownError from "../../application/errors/UnkownError";
 import ILoaderResult from "../../application/interfaces/ILoaderResult";
-import { parseListOrdersSchema } from "../schemas/listOrdersSchema";
 import ManageOrderRoute from "../Application/Orders/Manage/ManageOrderRoute";
+import parseListOrdersCommandParameters from "../../application/commands/orders/listOrders/parseListOrdersCommandParameters";
 
 const baseOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -27,20 +27,22 @@ const baseOrdersRoute = createRoute({
             status?: string;
             createdBefore?: string;
             createdAfter?: string;
-            productId?: string
+            productId?: string;
+            productHistoryId?: string;
         };
     }) => search,
     loader: async ({ deps }) => {
-        const parsedParams = parseListOrdersSchema(deps);
-        const command = new ListOrdersCommand({
-            id: parsedParams.id,
-            minTotal: parsedParams.minTotal,
-            maxTotal: parsedParams.maxTotal,
-            status: parsedParams.status,
-            createdBefore: parsedParams.createdBefore,
-            createdAfter: parsedParams.createdAfter,
-            productId: parsedParams.productId,
+        const parsedParams = parseListOrdersCommandParameters({
+            id: deps.id,
+            minTotal: deps.minTotal,
+            maxTotal: deps.maxTotal,
+            status: deps.status,
+            createdBefore: deps.createdBefore,
+            createdAfter: deps.createdAfter,
+            productId: deps.productId,
+            productHistoryId: deps.productHistoryId,
         });
+        const command = new ListOrdersCommand(parsedParams);
         const result = await commandDispatcher.dispatch(command);
 
         return {
@@ -59,9 +61,7 @@ const createOrderRoute = createRoute({
 const manageOrderRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/orders/$id/manage",
-    loader: async ({
-        params,
-    }): Promise<ILoaderResult<Order, unknown>> => {
+    loader: async ({ params }): Promise<ILoaderResult<Order, unknown>> => {
         const id = parseInt(params.id);
         if (!Value.Check(Type.Integer(), id)) {
             return {
@@ -86,7 +86,7 @@ const manageOrderRoute = createRoute({
         }
 
         const { type, data } = result.error;
-        
+
         return {
             ok: false,
             data: type === "Exception" ? data : new UnknownError({}),

@@ -19,10 +19,12 @@ import UpdateProductCommand from "../../application/commands/products/updateProd
 import UpdateProductHandler from "../../application/commands/products/updateProduct/UpdateProductHandler";
 import UploadDraftImagesCommand from "../../application/commands/draftImages/uploadProductImages/UploadDraftImagesCommand";
 import UploadDraftImagesHandler from "../../application/commands/draftImages/uploadProductImages/UploadDraftImagesHandler";
-import { draftImageDataAccess, orderDataAccess, productDataAccess } from "./dataAccess";
+import { draftImageDataAccess, orderDataAccess, productDataAccess, productHistoryDataAccess } from "./dataAccess";
 import { productStateManager } from "./stateManagers";
 import DeleteProductHandler from "../../application/commands/products/deleteProduct/DeleteProductHandler";
 import DeleteProductCommand from "../../application/commands/products/deleteProduct/DeleteProductCommand";
+import ListProductHistoriesCommand from "../../application/commands/productHistories/list/ListProductHistoriesCommand";
+import ListProductHistoriesHandler from "../../application/commands/productHistories/list/ListProductHistoriesHandler";
 
 const commandDispatcher = new CommandDispatcher();
 commandDispatcher.registerHandler(
@@ -100,6 +102,13 @@ commandDispatcher.registerHandler(
     UploadDraftImagesCommand,
     new UploadDraftImagesHandler({
         draftImageDataAccess: draftImageDataAccess,
+    }),
+);
+
+commandDispatcher.registerHandler(
+    ListProductHistoriesCommand,
+    new ListProductHistoriesHandler({
+        productHistoryDataAccess: productHistoryDataAccess,
     }),
 );
 

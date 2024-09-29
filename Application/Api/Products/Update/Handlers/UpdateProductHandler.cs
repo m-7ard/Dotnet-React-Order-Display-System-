@@ -37,6 +37,18 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
             return errors;
         }
 
+        var latestProductHistory = await _productHistoryRepository.GetLatestByProductIdAsync(productUpdating.Id);
+        if (latestProductHistory is null)
+        {
+            errors.Add(new PlainApplicationError(
+                message: $"Product of Id \"{request.Id}\" lacks valid ProductHistory.",
+                path: ["_"],
+                code: ValidationErrorCodes.IntegrityError
+            ));
+
+            return errors;
+        }
+
         var newProductImageValue = new List<ProductImage>();
         var draftsUsed = new List<DraftImage>();
 
@@ -79,6 +91,10 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
         {
             await _draftImageRepository.DeleteByFileNameAsync(draftImage.FileName);
         }
+
+        // Invalidate old history
+        latestProductHistory.Invalidate();
+        await _productHistoryRepository.UpdateAsync(latestProductHistory);
 
         // Create new Product History
         var inputProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(productUpdating);

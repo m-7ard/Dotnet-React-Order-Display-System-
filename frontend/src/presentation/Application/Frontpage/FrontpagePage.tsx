@@ -33,6 +33,17 @@ export default function FrontpagePage() {
                                 Orders
                             </MixinButton>
                         </Link>
+                        <Link to={"/product_histories"} className="w-full">
+                            <MixinButton
+                                options={{
+                                    size: "mixin-button-base",
+                                    theme: "theme-button-generic-white",
+                                }}
+                                className="flex flex-row justify-center w-full"
+                            >
+                                Product Histories
+                            </MixinButton>
+                        </Link>
                 </div>
             </section>
         </div>

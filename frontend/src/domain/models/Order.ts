@@ -1,6 +1,6 @@
 import OrderStatus from "../valueObjects/Order/OrderStatus";
 import OrderItemStatus from "../valueObjects/OrderItem/OrderItemStatus";
-import IOrderItem from "./IOrderItem";
+import OrderItem from "./OrderItem";
 
 export default class Order {
     constructor(props: {
@@ -9,7 +9,7 @@ export default class Order {
         status: OrderStatus;
         dateCreated: Date;
         dateFinished: Date;
-        orderItems: IOrderItem[];
+        orderItems: OrderItem[];
     }) {
         this.id = props.id;
         this.total = props.total;
@@ -24,7 +24,7 @@ export default class Order {
     public status: OrderStatus;
     public dateCreated: Date;
     public dateFinished: Date;
-    public orderItems: IOrderItem[];
+    public orderItems: OrderItem[];
 
     canMarkFinished(): boolean {
         return this.orderItems.every((orderItem) => orderItem.status === OrderItemStatus.FINISHED);

@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Application.Api.Products.Update.DTOs;
 using Domain.Models;
+using Infrastructure.DbEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Tests.IntegrationTests.Products;
@@ -10,6 +11,7 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
 {
     private DraftImage _validImage = null!;
     private Product _product001 = null!;
+    private ProductHistoryDbEntity _product001History = null!;
     public async override Task InitializeAsync()
     {
         await base.InitializeAsync();
@@ -20,6 +22,7 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
             destinationFileName: "saved-valid-image"
         );
         _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: [_validImage]);
+        _product001History = await db.ProductHistory.SingleAsync(d => d.Id == _product001.Id);
     }
 
     [Fact]
@@ -45,6 +48,9 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
         var db = _factory.CreateDbContext();
         var productHistories = await db.ProductHistory.ToListAsync();
         Assert.StrictEqual(2, productHistories.Count);
+
+        var updatedProductHistory = await db.ProductHistory.SingleAsync(d => d.Id == _product001History.Id);
+        Assert.True(updatedProductHistory.ValidTo > updatedProductHistory.ValidFrom);        
     }
 
     [Fact]

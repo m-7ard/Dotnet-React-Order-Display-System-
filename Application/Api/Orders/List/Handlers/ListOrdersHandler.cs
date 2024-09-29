@@ -23,8 +23,9 @@ public class ListOrdersHandler : IRequestHandler<ListOrdersQuery, OneOf<ListOrde
             status: (request.Status is null || !OrderStatus.IsValid(request.Status)) ? null : new OrderStatus(name: request.Status),
             createdBefore: request.CreatedBefore,
             createdAfter: request.CreatedAfter,
+            id: request.Id,
             productId: request.ProductId,
-            id: request.Id
+            productHistoryId: request.ProductHistoryId
         );
 
         var result = new ListOrdersResult(orders: orders);

@@ -11,8 +11,7 @@ import IProduct from "../../domain/models/IProduct";
 import ILoaderResult from "../../application/interfaces/ILoaderResult";
 import ReadProductCommand from "../../application/commands/products/readProduct/ReadProductCommand";
 import UpdateProductRoute from "../Application/Products/Update/UpdateProductRoute";
-import listProductsSchema from "../schemas/listProductsSchema";
-import parseTypeboxSchemaOrNull from "../utils/parseTypeboxSchemaOrNull";
+import parseListProductsCommandParameters from "../../application/commands/products/listProducts/parseListProductsCommandParameters";
 
 const baseProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -31,15 +30,16 @@ const baseProductsRoute = createRoute({
         }
     }) => search,
     loader: async ({ deps }) => {
-        const command = new ListProductsCommand({
-            id: parseTypeboxSchemaOrNull(listProductsSchema.properties.id, deps.id),
-            minPrice: parseTypeboxSchemaOrNull(listProductsSchema.properties.minPrice, deps.minPrice),
-            maxPrice: parseTypeboxSchemaOrNull(listProductsSchema.properties.maxPrice, deps.maxPrice),
-            name: parseTypeboxSchemaOrNull(listProductsSchema.properties.name, deps.name),
-            createdAfter: parseTypeboxSchemaOrNull(listProductsSchema.properties.createdAfter, deps.createdAfter),
-            createdBefore: parseTypeboxSchemaOrNull(listProductsSchema.properties.createdBefore, deps.createdBefore),
-            description: parseTypeboxSchemaOrNull(listProductsSchema.properties.description, deps.description),
+        const params = parseListProductsCommandParameters({
+            id: deps.id,
+            minPrice: deps.minPrice,
+            maxPrice: deps.maxPrice,
+            name: deps.name,
+            createdAfter: deps.createdAfter,
+            createdBefore: deps.createdBefore,
+            description: deps.description,
         });
+        const command = new ListProductsCommand(params);
         const result = await commandDispatcher.dispatch(command);
 
         return {

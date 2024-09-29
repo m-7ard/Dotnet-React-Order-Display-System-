@@ -1,5 +1,5 @@
 import Order from "../../../../domain/models/Order";
-import IOrderItem from "../../../../domain/models/IOrderItem";
+import OrderItem from "../../../../domain/models/OrderItem";
 import ICommand from "../../ICommand";
 import MarkOrderItemFinishedResult from "./MarkOrderItemFinishedResult";
 
@@ -8,12 +8,12 @@ export default class MarkOrderItemFinishedCommand implements ICommand<MarkOrderI
 
     constructor(props: {
         orderId: Order["id"];
-        orderItemId: IOrderItem["id"];
+        orderItemId: OrderItem["id"];
     }) {
         this.orderId = props.orderId;
         this.orderItemId = props.orderItemId;
     }
 
     public orderId: Order["id"];
-    public orderItemId: IOrderItem["id"];
+    public orderItemId: OrderItem["id"];
 }

@@ -87,4 +87,14 @@ public class ProductHistoryRespository : IProductHistoryRepository
         var dbProducts = await query.ToListAsync();
         return dbProducts.Select(ProductHistoryMapper.ToDomain).ToList();
     }
+
+    public async Task UpdateAsync(ProductHistory productHistory)
+    {
+        var currentEntity = await _dbContext.ProductHistory.SingleAsync(d => d.Id == productHistory.Id);
+
+        var updatedEntity = ProductHistoryMapper.ToDbModel(productHistory);
+        _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
+
+        await _dbContext.SaveChangesAsync();
+    }
 }
