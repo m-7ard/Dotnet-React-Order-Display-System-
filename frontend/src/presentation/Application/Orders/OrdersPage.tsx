@@ -63,7 +63,7 @@ export default function OrdersPage() {
                 </div>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="flex flex-col overflow-auto  gap-4 p-4 bg-gray-100 border border-gray-900">
+            <section className="flex flex-col overflow-scroll gap-2 pr-4 pb-4 grow sm:flex-wrap sm:overflow-x-scroll sm:overflow-y-hidden sm:content-start">
                 {queryData.map((order) => (
                     <OrderElement order={order} key={order.id} />
                 ))}
@@ -80,7 +80,7 @@ function OrderElement(props: { order: Order }) {
     return (
         <MixinPrototypeCard
             options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}
-            className="overflow-hidden  shrink-0"
+            className="overflow-hidden shrink-0 max-w-72 w-full sm:max-h-full flex flex-col"
         >
             <MixinPrototypeCardSection className={`flex flex-col ${ORDER_STATUS_COLORS[order.status.value]}`}>
                 <div className="flex flex-row justify-between items-baseline">
@@ -92,8 +92,9 @@ function OrderElement(props: { order: Order }) {
                     <div className="text-sm">{order.total}$</div>
                 </div>
             </MixinPrototypeCardSection>
-            {order.orderItems.map((orderItem) => (
-                <MixinPrototypeCardSection className="flex flex-col gap-2" key={orderItem.id}>
+            <div className=" sm:overflow-auto">
+            {order.orderItems.map((orderItem, i) => (
+                <MixinPrototypeCardSection className={`flex flex-col gap-2 ${i === 0 ? "" : "border-gray-900 border-t"}`} key={orderItem.id}>
                     <div className="flex flex-col gap-1 overflow-hidden max-w-full">
                         <div className="flex flex-row gap-2 items-center text-base">
                             <div className="text-sm font-bold bg-gray-200 px-2 py-1/2 border border-gray-900">
@@ -108,13 +109,13 @@ function OrderElement(props: { order: Order }) {
                             >
                                 {orderItem.status.value}
                             </div>
-                            <div className="text-sm ml-auto">
-                                Total - {`${orderItem.getTotal()}$`}
-                            </div>
+                            <div className="text-sm ml-auto">Total - {`${orderItem.getTotal()}$`}</div>
                         </div>
                     </div>
                 </MixinPrototypeCardSection>
             ))}
+            </div>
+            
             <MixinPrototypeCardSection
                 as="a"
                 onClick={(e) => {
@@ -122,7 +123,7 @@ function OrderElement(props: { order: Order }) {
                     orderStateManager.setOrder(order);
                     navigate({ to: `/orders/${order.id}/manage` });
                 }}
-                className="flex flex-row bg-gray-100"
+                className="flex flex-row bg-gray-100 shrink-0"
             >
                 <MixinButton
                     options={{

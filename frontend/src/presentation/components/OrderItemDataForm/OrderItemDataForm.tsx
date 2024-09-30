@@ -38,7 +38,6 @@ export default function OrderItemDataForm(props: {
                 size: "mixin-Pcard-base",
                 theme: "theme-Pcard-generic-white",
             }}
-            className="shadow"
         >
             <MixinPrototypeCardSection className="flex flex-row gap-2">
                 <CoverImage

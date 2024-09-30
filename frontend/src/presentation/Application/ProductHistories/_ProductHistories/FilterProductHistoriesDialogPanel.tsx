@@ -38,7 +38,7 @@ export default function FilterProductHistoriesDialogPanel() {
                 theme: "theme-panel-generic-white",
             }}
         >
-            <header className="flex flex-row justify-between items-center">
+            <header className="flex flex-row justify-between items-center flex-wrap">
                 <Linkbox
                     parts={[
                         { isLink: false, label: "Product Histories" },
@@ -58,7 +58,7 @@ export default function FilterProductHistoriesDialogPanel() {
                 </MixinButton>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <fieldset className="flex flex-col gap-2 p-4 bg-gray-100 border border-gray-900">
+            <fieldset className="flex flex-col gap-2">
                 <FilterProductHistoriesFieldset
                     data={itemManager.items}
                     onChange={(field, value) => itemManager.updateItem(field, value)}

@@ -104,130 +104,134 @@ export default function CreateProductPage() {
     });
 
     return (
-        <form
-            className="mixin-page-like mixin-page-base"
-            onSubmit={async (e) => {
-                e.preventDefault();
-                errorManager.setAll(initialErrorState);
-                await createProductMutation.mutateAsync();
-            }}
-            onReset={(e) => {
-                e.preventDefault();
-                errorManager.setAll(initialErrorState);
-                itemManager.setAll(initialValueState);
-            }}
-        >
-            <header className="flex flex-row gap-2 items-center">
-                <Linkbox
-                    parts={[
-                        { isLink: true, to: "/products", label: "Products" },
-                        { isLink: true, to: `/products/create`, label: "Create" },
-                    ]}
-                />
-            </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <div className="flex flex-col gap-2">
-                <FormField name="name" errors={errorManager.items.name}>
-                    <StatelessCharField
-                        onChange={(value) => itemManager.updateItem("name", value)}
-                        value={itemManager.items.name}
-                        options={{
-                            size: "mixin-char-input-base",
-                            theme: "theme-input-generic-white",
-                        }}
+        <div className="mixin-page-like mixin-page-base">
+            <section className="flex flex-col gap-[inherit] max-w-3xl w-full mx-auto">
+                <header className="flex flex-row gap-2 items-center">
+                    <Linkbox
+                        parts={[
+                            { isLink: true, to: "/products", label: "Products" },
+                            { isLink: true, to: `/products/create`, label: "Create" },
+                        ]}
                     />
-                </FormField>
-                <FormField name="images" errors={errorManager.items.images?._}>
-                    <UploadImagesForm
-                        onSubmit={async (files) => {
-                            const ErrorState: string[] = [];
+                </header>
+                <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            </section>
+            <form
+                className="flex flex-col gap-[inherit] max-w-md w-full mx-auto"
+                onSubmit={async (e) => {
+                    e.preventDefault();
+                    errorManager.setAll(initialErrorState);
+                    await createProductMutation.mutateAsync();
+                }}
+                onReset={(e) => {
+                    e.preventDefault();
+                    errorManager.setAll(initialErrorState);
+                    itemManager.setAll(initialValueState);
+                }}
+            >
+                <div className="flex flex-col gap-2">
+                    <FormField name="name" errors={errorManager.items.name}>
+                        <StatelessCharField
+                            onChange={(value) => itemManager.updateItem("name", value)}
+                            value={itemManager.items.name}
+                            options={{
+                                size: "mixin-char-input-base",
+                                theme: "theme-input-generic-white",
+                            }}
+                        />
+                    </FormField>
+                    <FormField name="images" errors={errorManager.items.images?._}>
+                        <UploadImagesForm
+                            onSubmit={async (files) => {
+                                const ErrorState: string[] = [];
 
-                            for (let i = 0; i < files.length; i++) {
-                                const file = files[i];
-                                const command = new UploadDraftImagesCommand({ files: [file] });
-                                const result = await commandDispatcher.dispatch(command);
+                                for (let i = 0; i < files.length; i++) {
+                                    const file = files[i];
+                                    const command = new UploadDraftImagesCommand({ files: [file] });
+                                    const result = await commandDispatcher.dispatch(command);
 
-                                if (result.isOk()) {
-                                    const imageData = result.value.images[0];
-                                    const generatedFileName = imageData.fileName as GeneratedFileName;
+                                    if (result.isOk()) {
+                                        const imageData = result.value.images[0];
+                                        const generatedFileName = imageData.fileName as GeneratedFileName;
 
-                                    itemManager.updateItem("images", (prev) => {
-                                        const newState = { ...prev };
-                                        newState[generatedFileName] = {
-                                            generatedFileName: generatedFileName,
-                                            originalFileName: imageData.originalFileName,
-                                            url: imageData.url,
-                                        };
-                                        return newState;
-                                    });
-                                } else if (result.error.type === "Exception") {
-                                    dispatchException(result.error.data);
-                                } else if (result.error.type === "API") {
-                                    const uploadErrors = Object.values(
-                                        apiToDomainCompatibleFormError<Record<GeneratedFileName, string[]>>(
-                                            result.error.data,
-                                        ),
-                                    ).reduce((acc, cur) => [...acc, ...cur], []);
-                                    ErrorState.push(...uploadErrors);
+                                        itemManager.updateItem("images", (prev) => {
+                                            const newState = { ...prev };
+                                            newState[generatedFileName] = {
+                                                generatedFileName: generatedFileName,
+                                                originalFileName: imageData.originalFileName,
+                                                url: imageData.url,
+                                            };
+                                            return newState;
+                                        });
+                                    } else if (result.error.type === "Exception") {
+                                        dispatchException(result.error.data);
+                                    } else if (result.error.type === "API") {
+                                        const uploadErrors = Object.values(
+                                            apiToDomainCompatibleFormError<Record<GeneratedFileName, string[]>>(
+                                                result.error.data,
+                                            ),
+                                        ).reduce((acc, cur) => [...acc, ...cur], []);
+                                        ErrorState.push(...uploadErrors);
+                                    }
                                 }
-                            }
 
-                            if (ErrorState.length > 0) {
-                                errorManager.updateItem("images", {
-                                    _: ErrorState,
+                                if (ErrorState.length > 0) {
+                                    errorManager.updateItem("images", {
+                                        _: ErrorState,
+                                    });
+                                }
+                            }}
+                            onDelete={(originalFileName) => {
+                                itemManager.updateItem("images", (prev) => {
+                                    const newState = { ...prev };
+                                    delete newState[originalFileName];
+                                    return newState;
                                 });
-                            }
-                        }}
-                        onDelete={(originalFileName) => {
-                            itemManager.updateItem("images", (prev) => {
-                                const newState = { ...prev };
-                                delete newState[originalFileName];
-                                return newState;
-                            });
-                        }}
-                        errors={errorManager.items.images}
-                        value={itemManager.items.images}
-                    />
-                </FormField>
-                <FormField name="price" errors={errorManager.items.price}>
-                    <StatelessCharField
-                        onChange={(value) => itemManager.updateItem("price", value)}
-                        value={itemManager.items.price.toString()}
-                        options={{
-                            size: "mixin-char-input-base",
-                            theme: "theme-input-generic-white",
-                        }}
-                    />
-                </FormField>
-                <FormField name="description" errors={errorManager.items.description}>
-                    <StatelessTextArea
-                        onChange={(value) => itemManager.updateItem("description", value)}
-                        value={itemManager.items.description}
-                        options={{
-                            size: "mixin-textarea-any",
-                            theme: "theme-textarea-generic-white",
-                        }}
-                        rows={5}
-                        maxLength={1028}
-                    />
-                </FormField>
-            </div>
-            <footer className="flex flex-row gap-2">
-                <MixinButton
-                    className="  overflow-hidden basis-1/2 justify-center"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                    type="reset"
-                >
-                    Reset
-                </MixinButton>
-                <MixinButton
-                    className="  overflow-hidden basis-1/2 justify-center"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
-                    type="submit"
-                >
-                    Submit
-                </MixinButton>
-            </footer>
-        </form>
+                            }}
+                            errors={errorManager.items.images}
+                            value={itemManager.items.images}
+                        />
+                    </FormField>
+                    <FormField name="price" errors={errorManager.items.price}>
+                        <StatelessCharField
+                            onChange={(value) => itemManager.updateItem("price", value)}
+                            value={itemManager.items.price.toString()}
+                            options={{
+                                size: "mixin-char-input-base",
+                                theme: "theme-input-generic-white",
+                            }}
+                        />
+                    </FormField>
+                    <FormField name="description" errors={errorManager.items.description}>
+                        <StatelessTextArea
+                            onChange={(value) => itemManager.updateItem("description", value)}
+                            value={itemManager.items.description}
+                            options={{
+                                size: "mixin-textarea-any",
+                                theme: "theme-textarea-generic-white",
+                            }}
+                            rows={5}
+                            maxLength={1028}
+                        />
+                    </FormField>
+                </div>
+                <footer className="flex flex-row gap-2">
+                    <MixinButton
+                        className="  overflow-hidden basis-1/2 justify-center"
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                        type="reset"
+                    >
+                        Reset
+                    </MixinButton>
+                    <MixinButton
+                        className="  overflow-hidden basis-1/2 justify-center"
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
+                        type="submit"
+                    >
+                        Submit
+                    </MixinButton>
+                </footer>
+            </form>
+        </div>
     );
 }

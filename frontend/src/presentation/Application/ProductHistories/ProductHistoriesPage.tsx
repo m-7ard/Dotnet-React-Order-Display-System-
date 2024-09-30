@@ -26,27 +26,29 @@ export default function ProductHistoriesPage() {
 
     return (
         <div className="mixin-page-like mixin-page-base">
-            <header className="flex flex-row gap-2 items-center">
-                <Linkbox parts={[{ isLink: true, to: "/product_histories", label: "Product Histories" }]} />
-                <div className="flex flex-row gap-2 ml-auto">
-                    <GlobalDialog
-                        zIndex={10}
-                        Trigger={({ onToggle }) => (
-                            <MixinButton
-                                className="justify-center w-full basis-1/2"
-                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
-                                onClick={onToggle}
-                            >
-                                Filter
-                            </MixinButton>
-                        )}
-                        Panel={FilterProductHistoriesDialogPanel}
-                        panelProps={{}}
-                    />
-                </div>
-            </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="flex flex-col overflow-auto  gap-4 p-4 bg-gray-100 border border-gray-900">
+            <section className="flex flex-col gap-[inherit] max-w-3xl w-full mx-auto">
+                <header className="flex flex-row gap-2 items-center">
+                    <Linkbox parts={[{ isLink: true, to: "/product_histories", label: "Product Histories" }]} />
+                    <div className="flex flex-row gap-2 ml-auto">
+                        <GlobalDialog
+                            zIndex={10}
+                            Trigger={({ onToggle }) => (
+                                <MixinButton
+                                    className="justify-center w-full basis-1/2"
+                                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                    onClick={onToggle}
+                                >
+                                    Filter
+                                </MixinButton>
+                            )}
+                            Panel={FilterProductHistoriesDialogPanel}
+                            panelProps={{}}
+                        />
+                    </div>
+                </header>
+                <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            </section>
+            <section className="flex flex-col gap-[inherit] max-w-md w-full mx-auto">
                 {productHistories.map((productHistory) => (
                     <ProductHistory productHistory={productHistory} key={productHistory.id} />
                 ))}

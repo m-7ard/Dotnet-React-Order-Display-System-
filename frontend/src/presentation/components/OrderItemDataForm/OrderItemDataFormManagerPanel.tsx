@@ -129,7 +129,7 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                         </>
                     ),
                     result: (
-                        <section className="flex flex-col gap-4 overflow-scroll p-4 bg-gray-100 border border-gray-900">
+                        <section className="flex flex-col overflow-scroll gap-2 pr-4 pb-4 grow">
                             {searchResults.map((product) => (
                                 <Product
                                     key={product.id}

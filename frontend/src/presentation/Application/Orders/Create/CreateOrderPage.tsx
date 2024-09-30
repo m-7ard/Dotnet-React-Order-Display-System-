@@ -89,77 +89,81 @@ export default function CreateOrderPage() {
     });
 
     return (
-        <form
-            className="mixin-page-like mixin-page-base"
-            onSubmit={async (e) => {
-                e.preventDefault();
-                errorManager.setAll(initialErrorState);
-                await createOrderMutation.mutateAsync();
-            }}
-            onReset={(e) => {
-                e.preventDefault();
-                errorManager.setAll(initialErrorState);
-                itemManager.setAll(initialValueState);
-            }}
-        >
-            <header className="flex flex-row gap-2 items-center">
-                <Linkbox
-                    parts={[
-                        { isLink: true, to: "/orders", label: "Orders" },
-                        { isLink: true, to: "/orders/create", label: "Create" },
-                    ]}
-                />
-            </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <div className="flex flex-col gap-2">
-                <FormField name="orderItemData" errors={errorManager.items.orderItemData?._}>
-                    <OrderItemDataFormManager
-                        onDelete={(UID) => {
-                            itemManager.updateItem("orderItemData", (prev) => {
-                                const newState = { ...prev };
-                                delete newState[UID];
-                                return newState;
-                            });
-                        }}
-                        value={itemManager.items.orderItemData}
-                        onAdd={(product: IProduct) => {
-                            itemManager.updateItem("orderItemData", (prev) => {
-                                const newState = { ...prev };
-                                const UID = crypto.randomUUID();
-                                newState[UID] = {
-                                    productId: product.id,
-                                    quantity: 1,
-                                };
-                                return newState;
-                            });
-                        }}
-                        errors={errorManager.items.orderItemData}
-                        onUpdate={(UID, value) => {
-                            itemManager.updateItem("orderItemData", (prev) => {
-                                const newState = { ...prev };
-                                newState[UID] = value;
-                                return newState;
-                            });
-                        }}
+        <div className="mixin-page-like mixin-page-base">
+            <section className="flex flex-col gap-[inherit] max-w-3xl w-full mx-auto">
+                <header className="flex flex-row gap-2 items-center">
+                    <Linkbox
+                        parts={[
+                            { isLink: true, to: "/orders", label: "Orders" },
+                            { isLink: true, to: "/orders/create", label: "Create" },
+                        ]}
                     />
-                </FormField>
-            </div>
-            <footer className="flex flex-row gap-2">
-                <MixinButton
-                    className="  overflow-hidden basis-1/2 justify-center"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                    type="reset"
-                >
-                    Reset
-                </MixinButton>
-                <MixinButton
-                    className="  overflow-hidden basis-1/2 justify-center"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
-                    type="submit"
-                >
-                    Submit
-                </MixinButton>
-            </footer>
-        </form>
+                </header>
+                <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            </section>
+            <form
+                className="flex flex-col gap-[inherit] max-w-md w-full mx-auto"
+                onSubmit={async (e) => {
+                    e.preventDefault();
+                    errorManager.setAll(initialErrorState);
+                    await createOrderMutation.mutateAsync();
+                }}
+                onReset={(e) => {
+                    e.preventDefault();
+                    errorManager.setAll(initialErrorState);
+                    itemManager.setAll(initialValueState);
+                }}
+            >
+                <div className="flex flex-col gap-2">
+                    <FormField name="orderItemData" errors={errorManager.items.orderItemData?._}>
+                        <OrderItemDataFormManager
+                            onDelete={(UID) => {
+                                itemManager.updateItem("orderItemData", (prev) => {
+                                    const newState = { ...prev };
+                                    delete newState[UID];
+                                    return newState;
+                                });
+                            }}
+                            value={itemManager.items.orderItemData}
+                            onAdd={(product: IProduct) => {
+                                itemManager.updateItem("orderItemData", (prev) => {
+                                    const newState = { ...prev };
+                                    const UID = crypto.randomUUID();
+                                    newState[UID] = {
+                                        productId: product.id,
+                                        quantity: 1,
+                                    };
+                                    return newState;
+                                });
+                            }}
+                            errors={errorManager.items.orderItemData}
+                            onUpdate={(UID, value) => {
+                                itemManager.updateItem("orderItemData", (prev) => {
+                                    const newState = { ...prev };
+                                    newState[UID] = value;
+                                    return newState;
+                                });
+                            }}
+                        />
+                    </FormField>
+                </div>
+                <footer className="flex flex-row gap-2">
+                    <MixinButton
+                        className="  overflow-hidden basis-1/2 justify-center"
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                        type="reset"
+                    >
+                        Reset
+                    </MixinButton>
+                    <MixinButton
+                        className="  overflow-hidden basis-1/2 justify-center"
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
+                        type="submit"
+                    >
+                        Submit
+                    </MixinButton>
+                </footer>
+            </form>
+        </div>
     );
 }

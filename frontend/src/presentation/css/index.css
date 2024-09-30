@@ -50,7 +50,7 @@
     @apply flex flex-col grow max-h-full;
   }
   .mixin-panel-base {
-    @apply px-4 py-4 gap-y-4 max-w-72;
+    @apply px-4 py-4 gap-y-4 max-w-72 sm:max-w-prose;
   }
   .mixin-checkbox-like {
     @apply after:content-["."] 
@@ -78,7 +78,7 @@
   .mixin-Pcard-like {
     @apply divide-y border;
   }
-  .mixin-Pcard-base > [data-role=section] {
+  .mixin-Pcard-base [data-role=section] {
     @apply py-2 px-4;
   }
 }
@@ -144,7 +144,7 @@
     @apply border-gray-900;
   }
   .theme-Pcard-generic-white {
-    @apply bg-white divide-gray-900  border-gray-900;
+    @apply bg-white divide-gray-900 border-gray-900;
   }
   .theme-panel-generic-white {
     @apply bg-gray-50 border border-gray-900;
