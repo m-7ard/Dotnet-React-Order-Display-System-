@@ -5,14 +5,13 @@ import MixinButton from "../components/Resuables/MixinButton";
 
 function ApplicationHeader() {
     return (
-        <header className="py-2 px-4 flex flex-row gap-x-2 bg-green-100 items-center border-b border-gray-900">
+        <header className="py-2 px-4 flex flex-row gap-x-2 bg-gray-50 items-center border-b border-gray-900">
             <Link to="/">
                 <MixinButton
                     options={{
                         size: "mixin-button-base",
                         theme: "theme-button-generic-white",
                     }}
-                    className=" "
                 >
                     ☰
                 </MixinButton>
@@ -46,10 +45,9 @@ export default function ApplicationLayout() {
                 className="
                     flex
                     flex-col
-                    bg-white
+                    bg-gray-50
                     h-full
                     w-full 
-                    max-w-80 
                     mx-auto 
                     overflow-hidden 
                     border-x 

@@ -69,25 +69,23 @@ export default function OrderItemDataFormManager(props: {
                     },
                 }}
             />
-            <div className="flex flex-col gap-4 p-4 bg-gray-100 border border-gray-900">
-                {Object.entries(value).map(([UID, orderItem]) => (
-                    <OrderItemDataForm
-                        product={itemManager.items[orderItem.productId]}
-                        errors={errors?.[UID]}
-                        value={value[UID]}
-                        onUpdate={(fieldName, fieldValue) => {
-                            const newValue = { ...value[UID] };
-                            newValue[fieldName] = fieldValue;
-                            onUpdate(UID, newValue);
-                        }}
-                        onDelete={() => {
-                            itemManager.deleteItem(UID);
-                            onDelete(UID);
-                        }}
-                        key={UID}
-                    />
-                ))}
-            </div>
+            {Object.entries(value).map(([UID, orderItem]) => (
+                <OrderItemDataForm
+                    product={itemManager.items[orderItem.productId]}
+                    errors={errors?.[UID]}
+                    value={value[UID]}
+                    onUpdate={(fieldName, fieldValue) => {
+                        const newValue = { ...value[UID] };
+                        newValue[fieldName] = fieldValue;
+                        onUpdate(UID, newValue);
+                    }}
+                    onDelete={() => {
+                        itemManager.deleteItem(UID);
+                        onDelete(UID);
+                    }}
+                    key={UID}
+                />
+            ))}
         </div>
     );
 }

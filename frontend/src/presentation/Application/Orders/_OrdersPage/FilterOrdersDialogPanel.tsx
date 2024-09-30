@@ -25,7 +25,7 @@ export default function FilterProductsDialogPanel() {
 
     return (
         <form
-            className="  mixin-page-like mixin-page-base bg-gray-50 border border-gray-900 m-auto max-w-72"
+            className="mixin-panel-like mixin-panel-base bg-gray-50 border border-gray-900 m-auto"
             onSubmit={(e) => {
                 e.preventDefault();
                 navigate({ to: "/orders", search: itemManager.items });
