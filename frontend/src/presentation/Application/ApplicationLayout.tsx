@@ -5,7 +5,7 @@ import MixinButton from "../components/Resuables/MixinButton";
 
 function ApplicationHeader() {
     return (
-        <header className="py-2 px-4 flex flex-row gap-x-2 bg-gray-50 items-center border-b border-gray-900">
+        <header className="py-2 px-4 flex flex-row gap-2 bg-gray-50 items-center border-b border-gray-900">
             <Link to="/">
                 <MixinButton
                     options={{

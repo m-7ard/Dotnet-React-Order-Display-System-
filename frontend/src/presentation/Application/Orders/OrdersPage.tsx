@@ -34,7 +34,7 @@ export default function OrdersPage() {
     const queryData = ordersResult.isOk() ? ordersResult.value.orders : [];
 
     return (
-        <div className="mixin-page-like mixin-page-base">
+        <div className="mixin-page-like mixin-page-base max-w-full">
             <header className="flex flex-row gap-2 items-center">
                 <Linkbox parts={[{ isLink: true, to: "/orders", label: "Orders" }]} />
                 <div className="flex flex-row gap-2 ml-auto">

@@ -104,20 +104,18 @@ export default function CreateProductPage() {
     });
 
     return (
-        <div className="mixin-page-like mixin-page-base">
-            <section className="flex flex-col gap-[inherit] max-w-3xl w-full mx-auto">
-                <header className="flex flex-row gap-2 items-center">
-                    <Linkbox
-                        parts={[
-                            { isLink: true, to: "/products", label: "Products" },
-                            { isLink: true, to: `/products/create`, label: "Create" },
-                        ]}
-                    />
-                </header>
-                <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            </section>
+        <div className="mixin-page-like mixin-page-base mx-auto">
+            <header className="flex flex-row gap-2 items-center">
+                <Linkbox
+                    parts={[
+                        { isLink: true, to: "/products", label: "Products" },
+                        { isLink: true, to: `/products/create`, label: "Create" },
+                    ]}
+                />
+            </header>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <form
-                className="flex flex-col gap-[inherit] max-w-md w-full mx-auto"
+                className="mixin-page-content-like mixin-page-content-base"
                 onSubmit={async (e) => {
                     e.preventDefault();
                     errorManager.setAll(initialErrorState);

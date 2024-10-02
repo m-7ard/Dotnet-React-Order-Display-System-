@@ -77,7 +77,7 @@ export default function OrderItemDataForm(props: {
                     Panel={<OrderItemDataFormOptionMenu onDelete={() => onDelete()} />}
                     positioning={{ top: "100%", left: "0px" }}
                 />
-                <div className="flex flex-row gap-2 grow">
+                <div className="flex flex-row gap-2 grow max-w-72 ml-auto">
                     <MixinButton
                         options={{
                             size: "mixin-button-sm",

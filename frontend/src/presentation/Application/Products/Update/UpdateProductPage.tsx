@@ -1,9 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import UploadImagesForm, {
-    GeneratedFileName,
-    UploadImageFormValue,
-} from "../../../components/Forms/ImageUploadForm";
+import UploadImagesForm, { GeneratedFileName, UploadImageFormValue } from "../../../components/Forms/ImageUploadForm";
 import IFormError from "../../../../domain/models/IFormError";
 import useItemManager from "../../../hooks/useItemManager";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
@@ -122,7 +119,7 @@ export default function UpdateProductPage(props: { product: IProduct }) {
 
     return (
         <form
-            className="mixin-page-like mixin-page-base"
+            className="mixin-page-like mixin-page-base mx-auto"
             onSubmit={async (e) => {
                 e.preventDefault();
                 errorManager.setAll(initialErrorState);
@@ -144,7 +141,7 @@ export default function UpdateProductPage(props: { product: IProduct }) {
                 />
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <div className="flex flex-col gap-2">
+            <div className="mixin-page-content-like mixin-page-content-base">
                 <FormField name="name" errors={errorManager.items.name}>
                     <StatelessCharField
                         onChange={(value) => itemManager.updateItem("name", value)}
@@ -229,23 +226,23 @@ export default function UpdateProductPage(props: { product: IProduct }) {
                         maxLength={1028}
                     />
                 </FormField>
+                <footer className="flex flex-row gap-2 justify-end">
+                    <MixinButton
+                        className="  overflow-hidden"
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                        type="reset"
+                    >
+                        Reset
+                    </MixinButton>
+                    <MixinButton
+                        className="  overflow-hidden"
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
+                        type="submit"
+                    >
+                        Submit
+                    </MixinButton>
+                </footer>
             </div>
-            <footer className="flex flex-row gap-2">
-                <MixinButton
-                    className="  overflow-hidden basis-1/2 justify-center"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                    type="reset"
-                >
-                    Reset
-                </MixinButton>
-                <MixinButton
-                    className="  overflow-hidden basis-1/2 justify-center"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
-                    type="submit"
-                >
-                    Submit
-                </MixinButton>
-            </footer>
         </form>
     );
 }
