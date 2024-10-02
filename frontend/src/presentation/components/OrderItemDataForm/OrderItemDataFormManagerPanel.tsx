@@ -62,7 +62,7 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
     const searchResults = searchProductsMutation.data ?? [];
 
     return (
-        <div className="mixin-panel-like mixin-panel-base theme-panel-generic-white max-w-80 max-h-[80vh]">
+        <div className="mixin-panel-like mixin-panel-base theme-panel-generic-white max-h-[80vh]">
             <header className="flex flex-row gap-2 items-center justify-between">
                 <Linkbox
                     parts={[
@@ -98,19 +98,20 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                     Results
                 </button>
             </nav>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             {
                 {
                     form: (
                         <>
-                            <fieldset className="flex flex-col gap-2 p-4 bg-gray-100 border border-gray-900">
+                            <fieldset className="flex flex-col overflow-auto gap-2">
                                 <FilterProductsFieldset
                                     data={itemManager.items}
                                     onChange={(field, value) => itemManager.updateItem(field, value)}
                                 />
                             </fieldset>
-                            <footer className="flex flex-row gap-2">
+                            <footer className="flex flex-row gap-2 justify-end">
                                 <MixinButton
-                                    className="  overflow-hidden basis-1/2 justify-center"
+                                    className="  overflow-hidden"
                                     options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                                     onClick={() => itemManager.setAll(initialValueState)}
                                     type="button"
@@ -118,7 +119,7 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                                     Reset
                                 </MixinButton>
                                 <MixinButton
-                                    className="  overflow-hidden basis-1/2 justify-center"
+                                    className="  overflow-hidden"
                                     options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
                                     onClick={() => searchProductsMutation.mutate(itemManager.items)}
                                     type="button"

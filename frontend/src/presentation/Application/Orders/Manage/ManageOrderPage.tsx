@@ -53,20 +53,18 @@ export default function ManageOrderPage(props: { order: Order }) {
     });
 
     return (
-        <div className="mixin-page-like mixin-page-base">
-            <section className="flex flex-col gap-[inherit] max-w-3xl w-full mx-auto">
-                <header className="flex flex-row gap-2 items-center">
-                    <Linkbox
-                        parts={[
-                            { isLink: true, to: "/orders", label: "Orders" },
-                            { isLink: false, label: order.id },
-                            { isLink: true, to: `/orders/${order.id}/manage`, label: "Manage" },
-                        ]}
-                    />
-                </header>
-                <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            </section>
-            <section className="flex flex-col gap-[inherit] max-w-md w-full mx-auto">
+        <div className="mixin-page-like mixin-page-base mx-auto">
+            <header className="flex flex-row gap-2 items-center">
+                <Linkbox
+                    parts={[
+                        { isLink: true, to: "/orders", label: "Orders" },
+                        { isLink: false, label: order.id },
+                        { isLink: true, to: `/orders/${order.id}/manage`, label: "Manage" },
+                    ]}
+                />
+            </header>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            <section className="mixin-page-content-like mixin-page-content-base">
                 <MixinPrototypeCard
                     options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}
                     className=" "

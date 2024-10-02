@@ -28,38 +28,36 @@ export default function ProductsPage() {
     }, [dispatchException, productsResult]);
 
     return (
-        <div className="mixin-page-like mixin-page-base">
-            <section className="flex flex-col gap-[inherit] max-w-3xl w-full mx-auto">
-                <header className="flex flex-row gap-2 items-center">
-                    <Linkbox parts={[{ isLink: true, to: "/products", label: "Products" }]} />
-                    <div className="flex flex-row gap-2 ml-auto">
-                        <Link to="/products/create">
+        <div className="mixin-page-like mixin-page-base mx-auto">
+            <header className="flex flex-row gap-2 items-center">
+                <Linkbox parts={[{ isLink: true, to: "/products", label: "Products" }]} />
+                <div className="flex flex-row gap-2 ml-auto">
+                    <Link to="/products/create">
+                        <MixinButton
+                            className="justify-center w-full  "
+                            options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                        >
+                            Create
+                        </MixinButton>
+                    </Link>
+                    <GlobalDialog
+                        zIndex={10}
+                        Trigger={({ onToggle }) => (
                             <MixinButton
-                                className="justify-center w-full  "
+                                className="justify-center w-full   basis-1/2"
                                 options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                onClick={onToggle}
                             >
-                                Create
+                                Filter
                             </MixinButton>
-                        </Link>
-                        <GlobalDialog
-                            zIndex={10}
-                            Trigger={({ onToggle }) => (
-                                <MixinButton
-                                    className="justify-center w-full   basis-1/2"
-                                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
-                                    onClick={onToggle}
-                                >
-                                    Filter
-                                </MixinButton>
-                            )}
-                            Panel={FilterProductsDialogPanel}
-                            panelProps={{}}
-                        />
-                    </div>
-                </header>
-                <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            </section>
-            <section className="flex flex-col gap-[inherit] max-w-md w-full mx-auto">
+                        )}
+                        Panel={FilterProductsDialogPanel}
+                        panelProps={{}}
+                    />
+                </div>
+            </header>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            <section className="mixin-page-content-like mixin-page-content-base">
                 {products.map((product) => (
                     <Product product={product} key={product.id} />
                 ))}

@@ -1,17 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import Linkbox from "../../components/Resuables/LinkBox";
 import CoverImage from "../../components/Resuables/CoverImage";
+import MixinButton from "../../components/Resuables/MixinButton";
 
 export default function FrontpagePage() {
     return (
-        <div className="mixin-page-like mixin-page-base theme-page-generic-white">
-            <section className="flex flex-col gap-[inherit] max-w-3xl w-full mx-auto">
-                <header className="flex flex-row gap-2 items-center justify-between">
-                    <Linkbox parts={[]} />
-                </header>
-                <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            </section>
-            <ul className="flex flex-col gap-4 sm:grid sm:grid-cols-2 max-w-md w-full mx-auto">
+        <div className="mixin-page-like mixin-page-base mx-auto">
+            <header className="flex flex-row gap-2 items-center justify-between">
+                <Linkbox parts={[]} />
+            </header>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            <ul className="mixin-page-content-like mixin-page-content-base sm:grid sm:grid-cols-2">
                 <li className="p-4 bg-gray-50 border-gray-900 border flex flex-col gap-2 sm:max-w-full max-w-96 w-full mx-auto">
                     <div className="flex flex-row gap-2 items-center">
                         <CoverImage
@@ -26,17 +25,21 @@ export default function FrontpagePage() {
                         <div className="font-bold text-center mx-auto">Products</div>
                     </div>
                     <div className="flex flex-col gap-1">
-                        <Link
-                            to={"/products/create"}
-                            className="mixin-button-like w-full bg-gray-50 hover:bg-gray-200 hover:border-l-[16px] transition-all px-4 py-1 text-base border-l-8 border border-gray-900"
-                        >
-                            Create
+                        <Link to="/products/create">
+                            <MixinButton
+                                className="w-full"
+                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                            >
+                                Create
+                            </MixinButton>
                         </Link>
-                        <Link
-                            to={"/products"}
-                            className="mixin-button-like w-full bg-gray-50 hover:bg-gray-200 hover:border-l-[16px] transition-all px-4 py-1 text-base border-l-8 border border-gray-900"
-                        >
-                            List
+                        <Link to="/products">
+                            <MixinButton
+                                className="w-full"
+                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                            >
+                                List
+                            </MixinButton>
                         </Link>
                     </div>
                 </li>
@@ -54,17 +57,21 @@ export default function FrontpagePage() {
                         <div className="font-bold text-center mx-auto">Orders</div>
                     </div>
                     <div className="flex flex-col gap-1">
-                        <Link
-                            to={"/orders/create"}
-                            className="mixin-button-like w-full bg-gray-50 hover:bg-gray-200 hover:border-l-[16px] transition-all px-4 py-1 text-base border-l-8 border border-gray-900"
-                        >
-                            Create
+                        <Link to="/orders/create">
+                            <MixinButton
+                                className="w-full"
+                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                            >
+                                Create
+                            </MixinButton>
                         </Link>
-                        <Link
-                            to={"/orders"}
-                            className="mixin-button-like w-full bg-gray-50 hover:bg-gray-200 hover:border-l-[16px] transition-all px-4 py-1 text-base border-l-8 border border-gray-900"
-                        >
-                            List
+                        <Link to="/orders">
+                            <MixinButton
+                                className="w-full"
+                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                            >
+                                List
+                            </MixinButton>
                         </Link>
                     </div>
                 </li>
@@ -82,11 +89,13 @@ export default function FrontpagePage() {
                         <div className="font-bold text-center mx-auto">Product Histories</div>
                     </div>
                     <div className="flex flex-col gap-1">
-                        <Link
-                            to={"/product_histories"}
-                            className="mixin-button-like w-full bg-gray-50 hover:bg-gray-200 hover:border-l-[16px] transition-all px-4 py-1 text-base border-l-8 border border-gray-900"
-                        >
-                            List
+                        <Link to="/product_histories">
+                            <MixinButton
+                                className="w-full"
+                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                            >
+                                List
+                            </MixinButton>
                         </Link>
                     </div>
                 </li>
