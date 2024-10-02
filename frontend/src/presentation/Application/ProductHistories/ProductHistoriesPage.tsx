@@ -9,7 +9,7 @@ import AbstractTooltip, {
 } from "../../components/Resuables/AbstractTooltip";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
-import Linkbox from "../../components/Resuables/LinkBox";
+import LinkBox from "../../components/Resuables/LinkBox";
 import IProductHistory from "../../../domain/models/IProductHistory";
 import FilterProductHistoriesDialogPanel from "./_ProductHistories/FilterProductHistoriesDialogPanel";
 
@@ -27,7 +27,7 @@ export default function ProductHistoriesPage() {
     return (
         <div className="mixin-page-like mixin-page-base mx-auto">
             <header className="flex flex-row gap-2 items-center">
-                <Linkbox parts={[{ isLink: true, to: "/product_histories", label: "Product Histories" }]} />
+                <LinkBox parts={[{ isLink: true, to: "/product_histories", label: "Product Histories" }]} />
                 <div className="flex flex-row gap-2 ml-auto">
                     <GlobalDialog
                         zIndex={10}

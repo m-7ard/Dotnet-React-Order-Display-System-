@@ -1,13 +1,14 @@
 import { Link } from "@tanstack/react-router";
-import Linkbox from "../../components/Resuables/LinkBox";
+import LinkBox from "../../components/Resuables/LinkBox";
 import CoverImage from "../../components/Resuables/CoverImage";
 import MixinButton from "../../components/Resuables/MixinButton";
+import { getLocalUrl } from "../../../viteUtils";
 
 export default function FrontpagePage() {
     return (
         <div className="mixin-page-like mixin-page-base mx-auto">
             <header className="flex flex-row gap-2 items-center justify-between">
-                <Linkbox parts={[]} />
+                <LinkBox parts={[]} />
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <ul className="mixin-page-content-like mixin-page-content-base sm:grid sm:grid-cols-2">
@@ -16,10 +17,7 @@ export default function FrontpagePage() {
                         <CoverImage
                             className="h-20 w-20 border border-gray-900"
                             src={
-                                new URL(
-                                    "/src/presentation/images/_045d1801-1987-4ce3-abd9-1b8f56fcde24-removebg-preview.png",
-                                    import.meta.url,
-                                ).href
+                                getLocalUrl("/src/presentation/images/_045d1801-1987-4ce3-abd9-1b8f56fcde24-removebg-preview.png")
                             }
                         />
                         <div className="font-bold text-center mx-auto">Products</div>
@@ -48,10 +46,7 @@ export default function FrontpagePage() {
                         <CoverImage
                             className="h-20 w-20 border border-gray-900"
                             src={
-                                new URL(
-                                    "/src/presentation/images/_a8b86e0e-c47a-4490-89ed-e2b2a69dcc61-removebg-preview.png",
-                                    import.meta.url,
-                                ).href
+                                getLocalUrl("/src/presentation/images/_a8b86e0e-c47a-4490-89ed-e2b2a69dcc61-removebg-preview.png")
                             }
                         />
                         <div className="font-bold text-center mx-auto">Orders</div>
@@ -80,10 +75,7 @@ export default function FrontpagePage() {
                         <CoverImage
                             className="h-20 w-20 border border-gray-900"
                             src={
-                                new URL(
-                                    "/src/presentation/images/_4766e2d9-54f8-48b5-9366-11485ac2198b-removebg-preview.png",
-                                    import.meta.url,
-                                ).href
+                                getLocalUrl("/src/presentation/images/_4766e2d9-54f8-48b5-9366-11485ac2198b-removebg-preview.png")
                             }
                         />
                         <div className="font-bold text-center mx-auto">Product Histories</div>

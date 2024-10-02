@@ -9,7 +9,7 @@ import FilterProductsDialogPanel from "./_OrdersPage/FilterOrdersDialogPanel";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import OrderStatus from "../../../domain/valueObjects/Order/OrderStatus";
 import OrderItemStatus from "../../../domain/valueObjects/OrderItem/OrderItemStatus";
-import Linkbox from "../../components/Resuables/LinkBox";
+import LinkBox from "../../components/Resuables/LinkBox";
 
 const ORDER_ITEM_STATUS_COLORS = {
     [OrderItemStatus.FINISHED.value]: "bg-green-600/40",
@@ -36,7 +36,7 @@ export default function OrdersPage() {
     return (
         <div className="mixin-page-like mixin-page-base max-w-full">
             <header className="flex flex-row gap-2 items-center">
-                <Linkbox parts={[{ isLink: true, to: "/orders", label: "Orders" }]} />
+                <LinkBox parts={[{ isLink: true, to: "/orders", label: "Orders" }]} />
                 <div className="flex flex-row gap-2 ml-auto">
                     <Link to="/orders/create">
                         <MixinButton

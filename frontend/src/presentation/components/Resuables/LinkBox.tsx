@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import React from "react";
 
-export default function Linkbox(props: {
+export default function LinkBox(props: {
     parts: Array<
         | {
               label: React.ReactNode;
