@@ -14,7 +14,7 @@ import IProduct from "../../../../domain/models/IProduct";
 import OrderItemDataFormManager from "../../../components/OrderItemDataForm/OrderItemDataFormManager";
 import { IOrderItemDataFormValue } from "../../../components/OrderItemDataForm/OrderItemDataForm";
 import MixinButton from "../../../components/Resuables/MixinButton";
-import Linkbox from "../../../components/Resuables/LinkBox";
+import LinkBox from "../../../components/Resuables/LinkBox";
 
 const validatorSchema = Type.Object({
     orderItemData: Type.Record(
@@ -91,7 +91,7 @@ export default function CreateOrderPage() {
     return (
         <div className="mixin-page-like mixin-page-base mx-auto">
             <header className="flex flex-row gap-2 items-center">
-                <Linkbox
+                <LinkBox
                     parts={[
                         { isLink: true, to: "/orders", label: "Orders" },
                         { isLink: true, to: "/orders/create", label: "Create" },

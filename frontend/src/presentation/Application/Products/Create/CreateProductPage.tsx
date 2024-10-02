@@ -15,7 +15,7 @@ import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
 import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import UploadDraftImagesCommand from "../../../../application/commands/draftImages/uploadProductImages/UploadDraftImagesCommand";
-import Linkbox from "../../../components/Resuables/LinkBox";
+import LinkBox from "../../../components/Resuables/LinkBox";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -106,7 +106,7 @@ export default function CreateProductPage() {
     return (
         <div className="mixin-page-like mixin-page-base mx-auto">
             <header className="flex flex-row gap-2 items-center">
-                <Linkbox
+                <LinkBox
                     parts={[
                         { isLink: true, to: "/products", label: "Products" },
                         { isLink: true, to: `/products/create`, label: "Create" },

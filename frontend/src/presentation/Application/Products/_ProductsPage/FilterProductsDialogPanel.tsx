@@ -2,7 +2,7 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import useItemManager from "../../../hooks/useItemManager";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialogPanelContext";
-import Linkbox from "../../../components/Resuables/LinkBox";
+import LinkBox from "../../../components/Resuables/LinkBox";
 import MixinPanel from "../../../components/Resuables/MixinPanel";
 import FilterProductsFieldset, { FilterProductsFieldsetValueState } from "../../../components/Fieldsets/FilterProductFieldset";
 
@@ -39,7 +39,7 @@ export default function FilterProductsDialogPanel() {
             }}
         >
             <header className="flex flex-row justify-between items-center">
-                <Linkbox
+                <LinkBox
                     parts={[
                         { isLink: false, label: "Products" },
                         { isLink: false, label: "Filter" },

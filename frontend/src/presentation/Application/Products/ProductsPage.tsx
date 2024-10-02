@@ -14,7 +14,7 @@ import AbstractTooltip, {
 import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
-import Linkbox from "../../components/Resuables/LinkBox";
+import LinkBox from "../../components/Resuables/LinkBox";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -30,7 +30,7 @@ export default function ProductsPage() {
     return (
         <div className="mixin-page-like mixin-page-base mx-auto">
             <header className="flex flex-row gap-2 items-center">
-                <Linkbox parts={[{ isLink: true, to: "/products", label: "Products" }]} />
+                <LinkBox parts={[{ isLink: true, to: "/products", label: "Products" }]} />
                 <div className="flex flex-row gap-2 ml-auto">
                     <Link to="/products/create">
                         <MixinButton

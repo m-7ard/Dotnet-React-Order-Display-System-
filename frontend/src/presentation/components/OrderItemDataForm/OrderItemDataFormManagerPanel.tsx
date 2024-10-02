@@ -8,7 +8,7 @@ import ListProductsCommand from "../../../application/commands/products/listProd
 import CoverImage from "../Resuables/CoverImage";
 import { useState } from "react";
 import { useGlobalDialogPanelContext } from "../Dialog/GlobalDialogPanelContext";
-import Linkbox from "../Resuables/LinkBox";
+import LinkBox from "../Resuables/LinkBox";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 import FilterProductsFieldset, { FilterProductsFieldsetValueState } from "../Fieldsets/FilterProductFieldset";
 import parseListProductsCommandParameters from "../../../application/commands/products/listProducts/parseListProductsCommandParameters";
@@ -64,7 +64,7 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
     return (
         <div className="mixin-panel-like mixin-panel-base theme-panel-generic-white max-h-[80vh]">
             <header className="flex flex-row gap-2 items-center justify-between">
-                <Linkbox
+                <LinkBox
                     parts={[
                         { isLink: false, label: "Products" },
                         { isLink: false, label: "Filter" },

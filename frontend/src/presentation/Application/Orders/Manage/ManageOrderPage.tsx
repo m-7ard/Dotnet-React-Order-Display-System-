@@ -13,7 +13,7 @@ import MarkOrderFinishedCommand from "../../../../application/commands/orders/ma
 import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import OrderItemStatus from "../../../../domain/valueObjects/OrderItem/OrderItemStatus";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../../components/Resuables/MixinPrototypeCard";
-import Linkbox from "../../../components/Resuables/LinkBox";
+import LinkBox from "../../../components/Resuables/LinkBox";
 import Order from "../../../../domain/models/Order";
 
 const ORDER_ITEM_STATUS_COLORS = {
@@ -55,7 +55,7 @@ export default function ManageOrderPage(props: { order: Order }) {
     return (
         <div className="mixin-page-like mixin-page-base mx-auto">
             <header className="flex flex-row gap-2 items-center">
-                <Linkbox
+                <LinkBox
                     parts={[
                         { isLink: true, to: "/orders", label: "Orders" },
                         { isLink: false, label: order.id },

@@ -8,7 +8,7 @@ import { useApplicationExceptionContext } from "../../../contexts/ApplicationExc
 import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcherContext";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialogPanelContext";
 import MixinPanel from "../../../components/Resuables/MixinPanel";
-import Linkbox from "../../../components/Resuables/LinkBox";
+import LinkBox from "../../../components/Resuables/LinkBox";
 
 export default function DeleteProductDialogPanel(props: { product: IProduct }) {
     const { product } = props;
@@ -52,7 +52,7 @@ export default function DeleteProductDialogPanel(props: { product: IProduct }) {
             }}
         >
             <header className="flex flex-row justify-between items-center">
-                <Linkbox
+                <LinkBox
                     parts={[
                         { isLink: false, label: "Products" },
                         { isLink: false, label: "Delete" },

@@ -16,7 +16,7 @@ import StatelessTextArea from "../../../components/StatelessFields/StatelessText
 import MixinButton from "../../../components/Resuables/MixinButton";
 import IProduct from "../../../../domain/models/IProduct";
 import UpdateProductCommand from "../../../../application/commands/products/updateProduct/UpdateProductCommand";
-import Linkbox from "../../../components/Resuables/LinkBox";
+import LinkBox from "../../../components/Resuables/LinkBox";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -132,7 +132,7 @@ export default function UpdateProductPage(props: { product: IProduct }) {
             }}
         >
             <header className="flex flex-row gap-2 items-center">
-                <Linkbox
+                <LinkBox
                     parts={[
                         { isLink: true, to: "/products", label: "Products" },
                         { isLink: false, label: product.id },
