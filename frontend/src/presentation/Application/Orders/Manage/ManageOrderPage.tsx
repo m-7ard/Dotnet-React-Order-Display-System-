@@ -15,6 +15,7 @@ import OrderItemStatus from "../../../../domain/valueObjects/OrderItem/OrderItem
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../../components/Resuables/MixinPrototypeCard";
 import LinkBox from "../../../components/Resuables/LinkBox";
 import Order from "../../../../domain/models/Order";
+import { getApiUrl } from "../../../../viteUtils";
 
 const ORDER_ITEM_STATUS_COLORS = {
     [OrderItemStatus.FINISHED.value]: "bg-green-600/50",
@@ -169,7 +170,7 @@ function OrderItemElement(props: { orderItem: OrderItem }) {
                             src={
                                 orderItem.productHistory.images[i] == null
                                     ? undefined
-                                    : `${import.meta.env.VITE_API_URL}/Media/${orderItem.productHistory.images[i]}`
+                                    : `${getApiUrl()}/Media/${orderItem.productHistory.images[i]}`
                             }
                             key={i}
                         />

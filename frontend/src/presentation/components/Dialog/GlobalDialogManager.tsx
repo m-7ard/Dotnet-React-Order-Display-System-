@@ -82,6 +82,7 @@ function DialogBackdrop(props: PropsWithChildren<{ zIndex: number }>) {
 
     return (
         <div
+            role="backdrop"
             className={`fixed inset-0 flex flex-row justify-center items-center bg-black/30 p-4`}
             style={{ zIndex: zIndex }}
             onMouseDown={(e) => {

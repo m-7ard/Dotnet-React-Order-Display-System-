@@ -4,3 +4,7 @@ export const getLocalUrl = (path: string) => {
         import.meta.url,
     ).href
 }
+
+export const getApiUrl = () => {
+    return import.meta.env.VITE_API_URL;
+};

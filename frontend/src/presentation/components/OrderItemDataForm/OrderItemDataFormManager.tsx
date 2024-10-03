@@ -4,7 +4,6 @@ import IProduct from "../../../domain/models/IProduct";
 import OrderItemDataFormManagerPanel, { OrderItemDataFormManagerPanelProps } from "./OrderItemDataFormManagerPanel";
 import useItemManager from "../../hooks/useItemManager";
 import OrderItemDataForm, { IOrderItemDataFormError, IOrderItemDataFormValue } from "./OrderItemDataForm";
-import { useState } from "react";
 import GlobalDialog from "../Dialog/GlobalDialog";
 
 type OrderItemDataFormManagerError = IFormError<{
@@ -39,8 +38,6 @@ export default function OrderItemDataFormManager(props: {
         {},
     );
 
-    const [count, setCount] = useState(0);
-
     return (
         <div className="flex flex-col gap-2">
             <GlobalDialog
@@ -60,12 +57,10 @@ export default function OrderItemDataFormManager(props: {
                 )}
                 Panel={OrderItemDataFormManagerPanel}
                 panelProps={{
-                    count: count,
                     existingProducts: searchPanelProducts,
                     onAdd: (product) => {
                         itemManager.addItem(product.id.toString(), product);
                         onAdd(product);
-                        setCount((prev) => prev + 1);
                     },
                 }}
             />

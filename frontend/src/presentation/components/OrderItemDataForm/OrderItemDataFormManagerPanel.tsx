@@ -12,6 +12,7 @@ import LinkBox from "../Resuables/LinkBox";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 import FilterProductsFieldset, { FilterProductsFieldsetValueState } from "../Fieldsets/FilterProductFieldset";
 import parseListProductsCommandParameters from "../../../application/commands/products/listProducts/parseListProductsCommandParameters";
+import { getApiUrl } from "../../../viteUtils";
 
 export type OrderItemDataFormManagerPanelProps = {
     existingProducts: {
@@ -163,7 +164,7 @@ function Product(props: { product: IProduct; count: number; onAdd: () => void })
                     src={
                         product.images[0] == null
                             ? undefined
-                            : `${import.meta.env.VITE_API_URL}/Media/${product.images[0].fileName}`
+                            : `${getApiUrl()}/Media/${product.images[0].fileName}`
                     }
                 />
                 <div className="flex flex-col gap-1 grow">

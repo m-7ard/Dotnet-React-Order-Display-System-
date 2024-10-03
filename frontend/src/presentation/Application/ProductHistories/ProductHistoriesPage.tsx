@@ -12,6 +12,7 @@ import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
 import IProductHistory from "../../../domain/models/IProductHistory";
 import FilterProductHistoriesDialogPanel from "./_ProductHistories/FilterProductHistoriesDialogPanel";
+import { getApiUrl } from "../../../viteUtils";
 
 export default function ProductHistoriesPage() {
     const { result } = useLoaderData({ from: "/product_histories" });
@@ -57,7 +58,7 @@ export default function ProductHistoriesPage() {
 
 function ProductHistory(props: { productHistory: IProductHistory }) {
     const { productHistory } = props;
-    const productImages = productHistory.images.map((image) => `${import.meta.env.VITE_API_URL}/Media/${image}`);
+    const productImages = productHistory.images.map((image) => `${getApiUrl()}/Media/${image}`);
     const navigate = useNavigate();
 
     return (

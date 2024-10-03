@@ -7,6 +7,7 @@ import StatelessCharField from "../StatelessFields/StatelessCharField";
 import { Value } from "@sinclair/typebox/value";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 import AbstractTooltip, { AbstractTooltipDefaultPanel, AbstractTooltipTrigger } from "../Resuables/AbstractTooltip";
+import { getApiUrl } from "../../../viteUtils";
 
 export type IOrderItemDataFormValue = {
     productId: number;
@@ -45,7 +46,7 @@ export default function OrderItemDataForm(props: {
                     src={
                         product.images[0] == null
                             ? undefined
-                            : `${import.meta.env.VITE_API_URL}/Media/${product.images[0].fileName}`
+                            : `${getApiUrl()}/Media/${product.images[0].fileName}`
                     }
                 />
                 <div className="flex flex-col gap-1 grow">
