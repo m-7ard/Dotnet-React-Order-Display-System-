@@ -15,6 +15,7 @@ import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
+import { getApiUrl } from "../../../viteUtils";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -68,7 +69,7 @@ export default function ProductsPage() {
 
 function Product(props: { product: IProduct }) {
     const { product } = props;
-    const productImages = product.images.map((image) => `${import.meta.env.VITE_API_URL}/Media/${image.fileName}`);
+    const productImages = product.images.map((image) => `${getApiUrl()}/Media/${image.fileName}`);
     const navigate = useNavigate();
 
     return (

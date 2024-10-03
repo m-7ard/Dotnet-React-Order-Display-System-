@@ -1,4 +1,5 @@
 import IFormError from "../../../domain/models/IFormError";
+import { getApiUrl } from "../../../viteUtils";
 import CoverImage from "../Resuables/CoverImage";
 import MixinButton from "../Resuables/MixinButton";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
@@ -41,6 +42,7 @@ export default function UploadImagesForm(props: {
                 >
                     <div className="pointer-events-none ">Add Image</div>
                     <input
+                        role="addImage"
                         type="file"
                         multiple
                         className="opacity-0 absolute inset-0 cursor-pointer file:cursor-pointer h-full w-full"
@@ -79,7 +81,7 @@ function Image(props: {
             <div className="flex flex-row gap-2">
                 <CoverImage
                     className="w-16 h-16 min-w-16 min-h-16 border border-gray-900  overflow-hidden"
-                    src={`${import.meta.env.VITE_API_URL}/${url}`}
+                    src={`${getApiUrl()}/${url}`}
                 />
                 <div className="flex flex-col gap-1 overflow-hidden grow">
                     <div className="text-sm text-medium truncate">{originalFileName}</div>

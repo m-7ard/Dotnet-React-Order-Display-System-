@@ -1,11 +1,12 @@
-import React, { ComponentType, useEffect, useId, useRef } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { ComponentProps, useEffect, useId, useRef } from "react";
 import { useGlobalDialogContext } from "./GlobalDialogContext";
 import deepEqual from "../../utils/deepEqual";
 
-export default function GlobalDialog<T>(props: {
+export default function GlobalDialog<T extends React.FunctionComponent<any>>(props: {
     Trigger: React.FunctionComponent<{ onToggle: () => void; }>;
-    Panel: ComponentType<T>;
-    panelProps: T;
+    Panel: T;
+    panelProps: ComponentProps<T>;
     zIndex: number;
 }) {
     const ID = useId();
