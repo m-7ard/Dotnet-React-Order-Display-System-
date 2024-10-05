@@ -18,7 +18,6 @@ export default class MarkOrderFinishedHandler
             const result = await this._orderDataAccess.markOrderFinished({
                 orderId: request.orderId,
             });
-            console.log(result.isOk())
 
             if (result.isErr()) {
                 return err({ type: "API", data: result.error });
