@@ -145,16 +145,14 @@ export default function CreateOrderPage() {
                         />
                     </FormField>
                 </div>
-                <footer className="flex flex-row gap-2">
+                <footer className="flex flex-row gap-2 justify-end">
                     <MixinButton
-                        className="  overflow-hidden basis-1/2 justify-center"
                         options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                         type="reset"
                     >
                         Reset
                     </MixinButton>
                     <MixinButton
-                        className="  overflow-hidden basis-1/2 justify-center"
                         options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
                         type="submit"
                     >

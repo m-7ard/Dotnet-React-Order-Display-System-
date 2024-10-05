@@ -2,12 +2,11 @@ import { err, ok } from "neverthrow";
 import IProduct from "../../../../domain/models/IProduct";
 import { mockOrderDataAccess } from "../../../../__mocks__/dataAccess";
 import Order from "../../../../domain/models/Order";
-import createOrder from "../../../../__utils__/createOrder";
 import IPlainApiError from "../../../../application/interfaces/IPlainApiError";
 import MarkOrderFinishedHandler from "../../../../application/commands/orders/markFinished/MarkOrderFinishedHandler";
-import OrderItemStatus from "../../../../domain/valueObjects/OrderItem/OrderItemStatus";
 import MarkOrderFinishedCommand from "../../../../application/commands/orders/markFinished/MarkOrderFinishedCommand";
-import { createProduct } from "../../../../__utils__/mixins";
+import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
+import { createOrder, createProduct } from "../../../../__utils__/mixins";
 
 describe("MarkOrderFinishedHandler", () => {
     let handler: MarkOrderFinishedHandler;
@@ -21,7 +20,7 @@ describe("MarkOrderFinishedHandler", () => {
     });
 
     it("Mark order finished; Valid data; Success;", async () => {
-        mockOrder.status = OrderItemStatus.FINISHED;
+        mockOrder.status = OrderStatus.FINISHED;
         mockOrder.dateFinished = new Date();
         mockOrderDataAccess.markOrderFinished.mockResolvedValue(ok(mockOrder));
 

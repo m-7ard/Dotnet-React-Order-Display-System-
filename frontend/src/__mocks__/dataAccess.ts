@@ -1,3 +1,4 @@
+import IDraftImageDataAccess from "../application/interfaces/dataAccess/IDraftImageDataAccess";
 import IOrderDataAccess from "../application/interfaces/dataAccess/IOrderDataAccess";
 import IProductDataAccess from "../application/interfaces/dataAccess/IProductDataAccess";
 import IProductHistoryDataAccess from "../application/interfaces/dataAccess/IProductHistoryDataAccess";
@@ -20,4 +21,8 @@ export const mockOrderDataAccess: jest.Mocked<IOrderDataAccess> = {
 
 export const mockProductHistoryDataAccess: jest.Mocked<IProductHistoryDataAccess> = {
     listProductHistories: jest.fn(),
+};
+
+export const mockDraftImageDataAccess: jest.Mocked<IDraftImageDataAccess> = {
+    uploadImages: jest.fn(),
 };

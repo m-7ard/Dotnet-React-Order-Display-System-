@@ -3,10 +3,9 @@ import IProduct from "../../../../domain/models/IProduct";
 import { mockOrderDataAccess } from "../../../../__mocks__/dataAccess";
 import CreateOrderHandler from "../../../../application/commands/orders/createOrder/CreateOrderHandler";
 import Order from "../../../../domain/models/Order";
-import createOrder from "../../../../__utils__/createOrder";
 import CreateOrderCommand from "../../../../application/commands/orders/createOrder/CreateOrderCommand";
 import IPlainApiError from "../../../../application/interfaces/IPlainApiError";
-import { createProduct } from "../../../../__utils__/mixins";
+import { createOrder, createProduct } from "../../../../__utils__/mixins";
 
 describe("CreateOrderHandler", () => {
     let handler: CreateOrderHandler;

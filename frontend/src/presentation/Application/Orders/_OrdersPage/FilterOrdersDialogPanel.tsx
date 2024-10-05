@@ -6,6 +6,7 @@ import LinkBox from "../../../components/Resuables/LinkBox";
 import FilterOrdersFieldset, {
     FilterOrdersFieldsetValueState,
 } from "../../../components/Fieldsets/FilterOrdersFieldset";
+import MixinPanel from "../../../components/Resuables/MixinPanel";
 
 export default function FilterProductsDialogPanel() {
     const searchParams: Record<string, string> = useSearch({ strict: false });
@@ -24,18 +25,10 @@ export default function FilterProductsDialogPanel() {
     const navigate = useNavigate();
 
     return (
-        <form
-            className="mixin-panel-like mixin-panel-base bg-gray-50 border border-gray-900 m-auto"
-            onSubmit={(e) => {
-                e.preventDefault();
-                navigate({ to: "/orders", search: itemManager.items });
-                onClose();
-            }}
-            onReset={(e) => {
-                e.preventDefault();
-                itemManager.setAll(initialValueState);
-            }}
-        >
+        <MixinPanel options={{
+            size: "mixin-panel-base",
+            theme: "theme-panel-generic-white"
+        }}>
             <header className="flex flex-row justify-between items-center">
                 <LinkBox
                     parts={[
@@ -56,28 +49,39 @@ export default function FilterProductsDialogPanel() {
                 </MixinButton>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <fieldset className="flex flex-col gap-2 p-4 bg-gray-100 border border-gray-900">
-                <FilterOrdersFieldset
-                    data={itemManager.items}
-                    onChange={(field, value) => itemManager.updateItem(field, value)}
-                />
-            </fieldset>
-            <footer className="flex flex-row gap-2">
-                <MixinButton
-                    className="  overflow-hidden basis-1/2 justify-center"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                    type="reset"
-                >
-                    Reset
-                </MixinButton>
-                <MixinButton
-                    className="  overflow-hidden basis-1/2 justify-center"
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
-                    type="submit"
-                >
-                    Filter
-                </MixinButton>
-            </footer>
-        </form>
+            <form
+                className="flex flex-col gap-[inherit]"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    navigate({ to: "/orders", search: itemManager.items });
+                    onClose();
+                }}
+                onReset={(e) => {
+                    e.preventDefault();
+                    itemManager.setAll(initialValueState);
+                }}
+            >
+                <div className="flex flex-col gap-2">
+                    <FilterOrdersFieldset
+                        data={itemManager.items}
+                        onChange={(field, value) => itemManager.updateItem(field, value)}
+                    />
+                </div>
+                <footer className="flex flex-row gap-2 justify-end">
+                    <MixinButton
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                        type="reset"
+                    >
+                        Reset
+                    </MixinButton>
+                    <MixinButton
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
+                        type="submit"
+                    >
+                        Filter
+                    </MixinButton>
+                </footer>
+            </form>
+        </MixinPanel>
     );
 }
