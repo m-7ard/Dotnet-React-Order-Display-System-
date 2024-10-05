@@ -2,12 +2,11 @@ import { err, ok } from "neverthrow";
 import IProduct from "../../../../domain/models/IProduct";
 import { mockOrderDataAccess } from "../../../../__mocks__/dataAccess";
 import Order from "../../../../domain/models/Order";
-import createOrder from "../../../../__utils__/createOrder";
 import IPlainApiError from "../../../../application/interfaces/IPlainApiError";
 import ReadOrderHandler from "../../../../application/commands/orders/readOrder/ReadOrderHandler";
 import ReadOrderCommand from "../../../../application/commands/orders/readOrder/ReadOrderCommand";
 import { MockOrderStateManager } from "../../../../__mocks__/stateManagers";
-import { createProduct } from "../../../../__utils__/mixins";
+import { createOrder, createProduct } from "../../../../__utils__/mixins";
 
 describe("ReadOrderHandler", () => {
     let handler: ReadOrderHandler;

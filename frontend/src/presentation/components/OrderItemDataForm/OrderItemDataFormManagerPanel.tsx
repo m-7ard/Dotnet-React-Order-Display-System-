@@ -13,6 +13,7 @@ import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/Mixi
 import FilterProductsFieldset, { FilterProductsFieldsetValueState } from "../Fieldsets/FilterProductFieldset";
 import parseListProductsCommandParameters from "../../../application/commands/products/listProducts/parseListProductsCommandParameters";
 import { getApiUrl } from "../../../viteUtils";
+import MixinPanel from "../Resuables/MixinPanel";
 
 export type OrderItemDataFormManagerPanelProps = {
     existingProducts: {
@@ -63,7 +64,13 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
     const searchResults = searchProductsMutation.data ?? [];
 
     return (
-        <div className="mixin-panel-like mixin-panel-base theme-panel-generic-white max-h-[80vh]">
+        <MixinPanel
+            options={{
+                size: "mixin-panel-base",
+                theme: "theme-panel-generic-white",
+            }}
+            className="overflow-auto"
+        >
             <header className="flex flex-row gap-2 items-center justify-between">
                 <LinkBox
                     parts={[
@@ -103,32 +110,40 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
             {
                 {
                     form: (
-                        <>
-                            <fieldset className="flex flex-col overflow-auto gap-2">
+                        <form
+                            className="flex flex-col gap-[inherit]"
+                            onReset={(e) => {
+                                e.preventDefault();
+                                itemManager.setAll(initialValueState);
+                            }}
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                searchProductsMutation.mutate(itemManager.items);
+                            }}
+                        >
+                            <div className="flex flex-col gap-2">
                                 <FilterProductsFieldset
                                     data={itemManager.items}
                                     onChange={(field, value) => itemManager.updateItem(field, value)}
                                 />
-                            </fieldset>
-                            <footer className="flex flex-row gap-2 justify-end">
+                            </div>
+                            <footer className="flex flex-row gap-2 justify-end shrink-0">
                                 <MixinButton
                                     className="  overflow-hidden"
                                     options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                                    onClick={() => itemManager.setAll(initialValueState)}
-                                    type="button"
+                                    type="reset"
                                 >
                                     Reset
                                 </MixinButton>
                                 <MixinButton
                                     className="  overflow-hidden"
                                     options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
-                                    onClick={() => searchProductsMutation.mutate(itemManager.items)}
-                                    type="button"
+                                    type="submit"
                                 >
                                     Submit
                                 </MixinButton>
                             </footer>
-                        </>
+                        </form>
                     ),
                     result: (
                         <section className="flex flex-col overflow-scroll gap-2 pr-4 pb-4 grow">
@@ -144,7 +159,7 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                     ),
                 }[route]
             }
-        </div>
+        </MixinPanel>
     );
 }
 
@@ -161,11 +176,7 @@ function Product(props: { product: IProduct; count: number; onAdd: () => void })
             <MixinPrototypeCardSection className="flex flex-row gap-2">
                 <CoverImage
                     className="w-16 h-16 border border-gray-900  overflow-hidden"
-                    src={
-                        product.images[0] == null
-                            ? undefined
-                            : `${getApiUrl()}/Media/${product.images[0].fileName}`
-                    }
+                    src={product.images[0] == null ? undefined : `${getApiUrl()}/Media/${product.images[0].fileName}`}
                 />
                 <div className="flex flex-col gap-1 grow">
                     <div className="text-sm font-bold">{product.name}</div>

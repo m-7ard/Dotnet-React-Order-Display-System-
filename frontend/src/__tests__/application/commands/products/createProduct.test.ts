@@ -58,9 +58,8 @@ describe("CreateProductHandler", () => {
         }
     });
 
-    it("Create product; Valid id; Success;", async () => {
+    it("Create product; Data Access Error; Failure;", async () => {
         const mockError = new Error("Unexpected error");
-
         mockProductDataAccess.createProduct.mockRejectedValue(mockError);
 
         const command = new CreateProductCommand({

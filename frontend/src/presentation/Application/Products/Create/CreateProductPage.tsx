@@ -115,7 +115,7 @@ export default function CreateProductPage() {
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <form
-                className="mixin-page-content-like mixin-page-content-base"
+                className="flex flex-col gap-[inherit]"
                 onSubmit={async (e) => {
                     e.preventDefault();
                     errorManager.setAll(initialErrorState);
@@ -213,16 +213,14 @@ export default function CreateProductPage() {
                         />
                     </FormField>
                 </div>
-                <footer className="flex flex-row gap-2">
+                <footer className="flex flex-row gap-2 justify-end">
                     <MixinButton
-                        className="  overflow-hidden basis-1/2 justify-center"
                         options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                         type="reset"
                     >
                         Reset
                     </MixinButton>
                     <MixinButton
-                        className="  overflow-hidden basis-1/2 justify-center"
                         options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
                         type="submit"
                     >

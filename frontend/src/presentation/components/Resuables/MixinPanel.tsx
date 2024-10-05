@@ -18,18 +18,3 @@ export default function MixinPanel<T extends ElementType = "div">(props: PropsWi
         </Component>
     );
 }
-
-type MixinPanelSectionProps<E extends ElementType> = PolymorphicProps<E> & {};
-
-export function MixinPanelSectionSection<T extends ElementType = "section">(
-    props: PropsWithChildren<MixinPanelSectionProps<T>>,
-) {
-    const { as, className, ...HTMLattrs } = props;
-    const Component = as ?? "div";
-
-    return (
-        <Component className={[className].join(" ")} {...HTMLattrs} data-role="section">
-            {props.children}
-        </Component>
-    );
-}
