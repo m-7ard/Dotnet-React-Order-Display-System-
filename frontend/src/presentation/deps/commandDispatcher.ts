@@ -20,7 +20,7 @@ import UpdateProductHandler from "../../application/commands/products/updateProd
 import UploadDraftImagesCommand from "../../application/commands/draftImages/uploadProductImages/UploadDraftImagesCommand";
 import UploadDraftImagesHandler from "../../application/commands/draftImages/uploadProductImages/UploadDraftImagesHandler";
 import { draftImageDataAccess, orderDataAccess, productDataAccess, productHistoryDataAccess } from "./dataAccess";
-import { productStateManager } from "./stateManagers";
+import { orderStateManager, productStateManager } from "./stateManagers";
 import DeleteProductHandler from "../../application/commands/products/deleteProduct/DeleteProductHandler";
 import DeleteProductCommand from "../../application/commands/products/deleteProduct/DeleteProductCommand";
 import ListProductHistoriesCommand from "../../application/commands/productHistories/list/ListProductHistoriesCommand";
@@ -59,6 +59,7 @@ commandDispatcher.registerHandler(
     ReadOrderCommand,
     new ReadOrderHandler({
         orderDataAccess: orderDataAccess,
+        orderStateManager: orderStateManager
     }),
 );
 

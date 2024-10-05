@@ -21,7 +21,7 @@ export default class DeleteProductHandler implements ICommandHandler<DeleteProdu
                 return err({ type: "API", data: result.error });
             }
 
-            return ok({ product: result.value });
+            return ok(null);
         } catch (error: unknown) {
             return err({ type: "Exception", data: error });
         }
