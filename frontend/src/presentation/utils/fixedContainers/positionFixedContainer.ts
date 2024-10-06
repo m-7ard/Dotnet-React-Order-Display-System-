@@ -7,7 +7,7 @@ export default function positionFixedContainer(
 
     const parsedPositioning = { ...positioning };
     const elementWidth = element.offsetWidth;
-    element.style.width = `${elementWidth}px`
+    element.style.minWidth = `${elementWidth}px`
 
     //
     Object.entries(positioning).forEach(([key, value]) => {

@@ -90,21 +90,31 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                 </MixinButton>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <nav className="flex flex-row divide-x divide-gray-900 border border-gray-900 text-sm overflow-hidden shrink-0">
-                <button
+            <nav className="flex flex-row gap-2">
+                <MixinButton
+                    options={{
+                        size: "mixin-button-base",
+                        theme: "theme-button-generic-white",
+                    }}
                     type="button"
                     onClick={() => setRoute("form")}
-                    className={`mixin-button-like basis-1/2 justify-center py-1 px-2 shrink-0 ${route === "form" ? "bg-gray-200 " : "bg-white hover:bg-gray-200"}`}
+                    active={route === "form"}
+                    className="basis-1/2 justify-center"
                 >
                     Form
-                </button>
-                <button
+                </MixinButton>
+                <MixinButton
+                    options={{
+                        size: "mixin-button-base",
+                        theme: "theme-button-generic-white",
+                    }}
                     type="button"
                     onClick={() => setRoute("result")}
-                    className={`mixin-button-like basis-1/2 justify-center py-1 px-2 shrink-0 ${route === "result" ? "bg-gray-200 " : "bg-white hover:bg-gray-200"}`}
+                    active={route === "result"}
+                    className="basis-1/2 justify-center"
                 >
                     Results
-                </button>
+                </MixinButton>
             </nav>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             {
@@ -146,7 +156,7 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
                         </form>
                     ),
                     result: (
-                        <section className="flex flex-col overflow-scroll gap-2 pr-4 pb-4 grow">
+                        <section className="flex flex-col sm:grid sm:grid-cols-2 gap-x-2 gap-y-4 grow">
                             {searchResults.map((product) => (
                                 <Product
                                     key={product.id}
@@ -165,37 +175,31 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
 
 function Product(props: { product: IProduct; count: number; onAdd: () => void }) {
     const { product, count, onAdd } = props;
+    const productImages = product.images;
 
     return (
-        <MixinPrototypeCard
-            options={{
-                size: "mixin-Pcard-base",
-                theme: "theme-Pcard-generic-white",
-            }}
-        >
-            <MixinPrototypeCardSection className="flex flex-row gap-2">
+        <div className="flex flex-col gap-2">
+            <div className="flex flex-row gap-2">
                 <CoverImage
-                    className="w-16 h-16 border border-gray-900  overflow-hidden"
-                    src={product.images[0] == null ? undefined : `${getApiUrl()}/Media/${product.images[0].fileName}`}
+                    className="h-16 aspect-square border border-gray-900 overflow-hidden"
+                    src={productImages[0] == null ? undefined : `${getApiUrl()}/${productImages[0].url}`}
                 />
-                <div className="flex flex-col gap-1 grow">
-                    <div className="text-sm font-bold">{product.name}</div>
+                <div className="flex flex-col gap-px">
+                    <div className="text-sm font-bold truncate">{product.name}</div>
                     <div className="text-sm">${product.price}</div>
                     <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>
-            </MixinPrototypeCardSection>
-            <MixinPrototypeCardSection className="flex flex-row gap-1 justify-between bg-gray-100">
-                <div className="flex flex-row gap-2 items-center text-sm px-2 py-px bg-gray-200  border border-gray-900">
-                    x{count}
-                </div>
+            </div>
+            <footer className="flex flex-row gap-2">
+                <div className="mixin-button-like mixin-button-base bg-gray-200 border border-gray-900">x{count}</div>
                 <MixinButton
-                    className="basis-1/2 justify-center  "
-                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-yellow" }}
+                    className="grow justify-center  "
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}
                     onClick={onAdd}
                 >
                     Add Item
                 </MixinButton>
-            </MixinPrototypeCardSection>
-        </MixinPrototypeCard>
+            </footer>
+        </div>
     );
 }

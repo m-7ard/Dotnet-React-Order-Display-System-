@@ -29,6 +29,7 @@ export default function GlobalDialogManager(props: React.PropsWithChildren<{ loc
         }
 
         closeAllDialogs();
+        currentLocation.current = location;
     }, [closeAllDialogs, location]);
 
     const dispatchDialog = useCallback(

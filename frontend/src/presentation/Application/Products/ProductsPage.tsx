@@ -12,12 +12,10 @@ import AbstractTooltip, {
     AbstractTooltipTrigger,
 } from "../../components/Resuables/AbstractTooltip";
 import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
-import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
 import { getApiUrl } from "../../../viteUtils";
 import MixinPanel from "../../components/Resuables/MixinPanel";
-import { XMarkIcon } from "@heroicons/react/24/solid";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -60,7 +58,7 @@ export default function ProductsPage() {
                 </div>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="grid grid-cols-4 max-[576px]:grid-cols-2 gap-2">
+            <section className="grid grid-cols-4 max-[576px]:grid-cols-3 max-[425px]:grid-cols-2 gap-x-2 gap-y-4">
                 {products.map((product) => (
                     <Product product={product} key={product.id} />
                 ))}
