@@ -12,86 +12,60 @@ export default function FrontpagePage() {
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <ul className="mixin-page-content-like mixin-page-content-base sm:grid sm:grid-cols-2">
-                <li className="p-4 bg-gray-50 border-gray-900 border flex flex-col gap-2 sm:max-w-full max-w-96 w-full mx-auto">
-                    <div className="flex flex-row gap-2 items-center">
-                        <CoverImage
-                            className="h-20 w-20 border border-gray-900"
-                            src={
-                                getLocalUrl("/src/presentation/images/_045d1801-1987-4ce3-abd9-1b8f56fcde24-removebg-preview.png")
-                            }
-                        />
-                        <div className="font-bold text-center mx-auto">Products</div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                        <Link to="/products/create">
-                            <MixinButton
-                                className="w-full"
-                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                            >
-                                Create
-                            </MixinButton>
-                        </Link>
-                        <Link to="/products">
-                            <MixinButton
-                                className="w-full"
-                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                            >
-                                List
-                            </MixinButton>
-                        </Link>
-                    </div>
-                </li>
-                <li className="p-4 bg-gray-50 border-gray-900 border flex flex-col gap-2 sm:max-w-full max-w-96 w-full mx-auto">
-                    <div className="flex flex-row gap-2 items-center">
-                        <CoverImage
-                            className="h-20 w-20 border border-gray-900"
-                            src={
-                                getLocalUrl("/src/presentation/images/_a8b86e0e-c47a-4490-89ed-e2b2a69dcc61-removebg-preview.png")
-                            }
-                        />
-                        <div className="font-bold text-center mx-auto">Orders</div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                        <Link to="/orders/create">
-                            <MixinButton
-                                className="w-full"
-                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                            >
-                                Create
-                            </MixinButton>
-                        </Link>
-                        <Link to="/orders">
-                            <MixinButton
-                                className="w-full"
-                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                            >
-                                List
-                            </MixinButton>
-                        </Link>
-                    </div>
-                </li>
-                <li className="p-4 bg-gray-50 border-gray-900 border flex flex-col gap-2 sm:max-w-full max-w-96 w-full mx-auto">
-                    <div className="flex flex-row gap-2 items-center">
-                        <CoverImage
-                            className="h-20 w-20 border border-gray-900"
-                            src={
-                                getLocalUrl("/src/presentation/images/_4766e2d9-54f8-48b5-9366-11485ac2198b-removebg-preview.png")
-                            }
-                        />
-                        <div className="font-bold text-center mx-auto">Product Histories</div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                        <Link to="/product_histories">
-                            <MixinButton
-                                className="w-full"
-                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                            >
-                                List
-                            </MixinButton>
-                        </Link>
-                    </div>
-                </li>
+                <Navigator
+                    title="Products"
+                    imageUrl={getLocalUrl(
+                        "/src/presentation/images/_045d1801-1987-4ce3-abd9-1b8f56fcde24-removebg-preview.png",
+                    )}
+                    buttons={[
+                        { label: "Create", href: "/products/create" },
+                        { label: "List", href: "/products" },
+                    ]}
+                />
+                <Navigator
+                    title="Orders"
+                    imageUrl={getLocalUrl(
+                        "/src/presentation/images/_a8b86e0e-c47a-4490-89ed-e2b2a69dcc61-removebg-preview.png",
+                    )}
+                    buttons={[
+                        { label: "Create", href: "/orders/create" },
+                        { label: "List", href: "/orders" },
+                    ]}
+                />
+                <Navigator
+                    title="Product Histories"
+                    imageUrl={getLocalUrl(
+                        "/src/presentation/images/_4766e2d9-54f8-48b5-9366-11485ac2198b-removebg-preview.png",
+                    )}
+                    buttons={[{ label: "List", href: "/product_histories" }]}
+                />
             </ul>
         </div>
+    );
+}
+
+function Navigator(props: { title: string; imageUrl: string; buttons: Array<{ label: string; href: string }> }) {
+    const { title, imageUrl, buttons } = props;
+
+    return (
+        <li className="flex flex-col gap-2 sm:max-w-full max-w-96 w-full">
+            <div className="flex flex-row gap-4 items-center relative">
+                <div className="font-bold">{title}</div>
+            </div>
+            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            <div className="flex flex-col gap-1">
+                {buttons.map(({ label, href }) => (
+                    <Link to={href}>
+                        <MixinButton
+                            className="w-full justify-between"
+                            options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                        >
+                            <div>{label}</div>
+                            <div>››</div>
+                        </MixinButton>
+                    </Link>
+                ))}
+            </div>
+        </li>
     );
 }

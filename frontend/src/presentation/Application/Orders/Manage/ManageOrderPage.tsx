@@ -118,9 +118,11 @@ export default function ManageOrderPage(props: { order: Order }) {
                         </div>
                     </MixinPrototypeCardSection>
                 </MixinPrototypeCard>
-                {order.orderItems.map((orderItem) => (
-                    <OrderItemElement orderItem={orderItem} key={orderItem.id} />
-                ))}
+                <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2">
+                    {order.orderItems.map((orderItem) => (
+                        <OrderItemElement orderItem={orderItem} key={orderItem.id} />
+                    ))}
+                </div>
             </section>
         </div>
     );
