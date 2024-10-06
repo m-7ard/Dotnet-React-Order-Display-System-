@@ -1,7 +1,12 @@
 export default function fitFixedContainer(element: HTMLElement) {
-    let elementDimensions = element.getBoundingClientRect();
+    const elementDimensions = element.getBoundingClientRect();
 
-    if (elementDimensions.bottom > document.body.clientHeight) {
+    const bottomOverflow = elementDimensions.bottom > document.body.clientHeight;
+    const topOverflow = elementDimensions.top < 0;
+    const rightOverflow = elementDimensions.right > document.body.clientWidth;
+    const leftOverflow = elementDimensions.left < 0;
+
+    if (bottomOverflow) {
         element.style.bottom = "0px";
         element.style.top =
             element.offsetHeight >= document.body.offsetHeight
@@ -9,8 +14,7 @@ export default function fitFixedContainer(element: HTMLElement) {
                 : `${document.body.offsetHeight - elementDimensions.height}px`;
     }
 
-    elementDimensions = element.getBoundingClientRect();
-    if (elementDimensions.top < 0) {
+    if (topOverflow) {
         element.style.top = "0px";
         element.style.bottom =
             element.offsetHeight >= document.body.offsetHeight
@@ -18,13 +22,15 @@ export default function fitFixedContainer(element: HTMLElement) {
                 : `${document.body.offsetHeight - elementDimensions.height}px`;
     }
 
-    elementDimensions = element.getBoundingClientRect();
-    if (elementDimensions.right > document.body.clientWidth) {
+    if (rightOverflow) {
         element.style.right = "0px";
+        element.style.left =
+            element.offsetWidth >= document.body.offsetWidth
+                ? "0px"
+                : `${document.body.offsetWidth - elementDimensions.width}px`;
     }
 
-    elementDimensions = element.getBoundingClientRect();
-    if (elementDimensions.left < 0) {
+    if (leftOverflow) {
         element.style.left = "0px";
     }
 }
