@@ -3,10 +3,11 @@ export default function positionFixedContainer(
     reference: HTMLElement,
     positioning: Record<string, string>,
 ) {
-    // positioning arg needs to be a dict / object.
     const referenceDimensions = reference.getBoundingClientRect();
 
     const parsedPositioning = { ...positioning };
+    const elementWidth = element.offsetWidth;
+    element.style.width = `${elementWidth}px`
 
     //
     Object.entries(positioning).forEach(([key, value]) => {
@@ -18,7 +19,6 @@ export default function positionFixedContainer(
     });
 
     //
-    // console.log(`calc(${referenceDimensions.top}px + calc(${parsedPositioning.top}))`);
     if (parsedPositioning.top != undefined) {
         element.style.top = `calc(${referenceDimensions.top}px + calc(${parsedPositioning.top}))`;
     } else {

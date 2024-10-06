@@ -16,6 +16,8 @@ import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
 import { getApiUrl } from "../../../viteUtils";
+import MixinPanel from "../../components/Resuables/MixinPanel";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -58,7 +60,7 @@ export default function ProductsPage() {
                 </div>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="mixin-page-content-like mixin-page-content-base">
+            <section className="grid grid-cols-4 max-[576px]:grid-cols-2 gap-2">
                 {products.map((product) => (
                     <Product product={product} key={product.id} />
                 ))}
@@ -73,24 +75,17 @@ function Product(props: { product: IProduct }) {
     const navigate = useNavigate();
 
     return (
-        <MixinPrototypeCard
-            options={{
-                size: "mixin-Pcard-base",
-                theme: "theme-Pcard-generic-white",
-            }}
-        >
-            <MixinPrototypeCardSection className="flex flex-row gap-2">
-                <CoverImage
-                    className="w-16 h-16 border border-gray-900   overflow-hidden"
-                    src={productImages[0] == null ? undefined : productImages[0]}
-                />
-                <div className="flex flex-col gap-1 grow overflow-hidden">
-                    <div className="text-sm font-bold truncate">{product.name}</div>
-                    <div className="text-sm">${product.price}</div>
-                    <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
-                </div>
-            </MixinPrototypeCardSection>
-            <footer className="flex flex-row gap-2 bg-gray-100" data-role="section">
+        <div className="flex flex-col gap-2">
+            <CoverImage
+                className="w-full aspect-square border border-gray-900   overflow-hidden"
+                src={productImages[0] == null ? undefined : productImages[0]}
+            />
+            <div className="flex flex-col gap-px">
+                <div className="text-sm font-bold truncate">{product.name}</div>
+                <div className="text-sm">${product.price}</div>
+                <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
+            </div>
+            <footer className="flex flex-col gap-2 bg-gray-100" data-role="section">
                 <a
                     className="w-full"
                     onClick={(e) => {
@@ -99,7 +94,7 @@ function Product(props: { product: IProduct }) {
                     }}
                 >
                     <MixinButton
-                        className="w-full justify-center  "
+                        className="w-full justify-center truncate  "
                         type="button"
                         options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}
                     >
@@ -110,21 +105,21 @@ function Product(props: { product: IProduct }) {
                     Trigger={({ open, onToggle }) => (
                         <AbstractTooltipTrigger>
                             <MixinButton
-                                className="justify-center  "
+                                className="justify-center truncate items-center w-full"
                                 type="button"
                                 options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                                 onClick={onToggle}
                                 active={open}
                             >
-                                ...
+                                Other
                             </MixinButton>
                         </AbstractTooltipTrigger>
                     )}
                     Panel={<ProductOptionMenu product={product} />}
-                    positioning={{ top: "100%", right: "0px" }}
+                    positioning={{ top: "100%", left: "0px" }}
                 />
             </footer>
-        </MixinPrototypeCard>
+        </div>
     );
 }
 
@@ -135,12 +130,31 @@ function ProductOptionMenu(props: { product: IProduct }) {
     const navigate = useNavigate();
 
     return (
-        <AbstractTooltipDefaultPanel className={`z-10 fixed mt-1 shadow`}>
-            <MixinPrototypeCard
-                className="  "
-                options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}
+        <AbstractTooltipDefaultPanel className={`z-10 fixed mt-1`}>
+            <MixinPanel
+                options={{
+                    size: "mixin-panel-base",
+                    theme: "theme-panel-generic-white",
+                }}
             >
-                <MixinPrototypeCardSection className="flex flex-col gap-2">
+                <header className="flex flex-row items-center justify-between">
+                    <div className="text-sm">
+                        Other Options
+                    </div>
+                    <MixinButton
+                        options={{
+                            size: "mixin-button-sm",
+                            theme: "theme-button-generic-white",
+                        }}
+                        onClick={onClose}
+                        className=" "
+                        type="button"
+                    >
+                        Close
+                    </MixinButton>
+                </header>
+                <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+                <div className="flex flex-col gap-2">
                     <a
                         className="w-full"
                         onClick={(e) => {
@@ -150,7 +164,7 @@ function ProductOptionMenu(props: { product: IProduct }) {
                         }}
                     >
                         <MixinButton
-                            className="justify-center w-full"
+                            className="justify-center truncate w-full"
                             type="button"
                             options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
                         >
@@ -176,22 +190,22 @@ function ProductOptionMenu(props: { product: IProduct }) {
                         panelProps={{ product: product }}
                     />
                     <a
-                        className="w-full"
+                        className="w-full truncate"
                         onClick={(e) => {
                             e.preventDefault();
                             navigate({ to: "/product_histories", search: { productId: product.id } });
                         }}
                     >
                         <MixinButton
-                            className="justify-center  "
+                            className="justify-center w-full"
                             type="button"
-                            options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                            options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}
                         >
                             See Product History
                         </MixinButton>
                     </a>
-                </MixinPrototypeCardSection>
-            </MixinPrototypeCard>
+                </div>
+            </MixinPanel>
         </AbstractTooltipDefaultPanel>
     );
 }
