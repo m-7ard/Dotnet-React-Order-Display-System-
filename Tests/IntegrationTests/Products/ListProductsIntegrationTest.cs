@@ -32,7 +32,8 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
             maxPrice: null,
             description: null,
             createdBefore: null,
-            createdAfter: null
+            createdAfter: null,
+            orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -57,7 +58,8 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
             maxPrice: null,
             description: null,
             createdBefore: null,
-            createdAfter: null
+            createdAfter: null,
+            orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -82,7 +84,8 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
             maxPrice: null,
             description: null,
             createdBefore: null,
-            createdAfter: null
+            createdAfter: null,
+            orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -107,7 +110,8 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
             maxPrice: null,
             description: null,
             createdBefore: _price2_NameDescProduct2.DateCreated,
-            createdAfter: null
+            createdAfter: null,
+            orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -119,5 +123,65 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
         Assert.NotNull(content);
         Assert.NotNull(content.Products);
         Assert.StrictEqual(2, content.Products.Count);
+    }
+
+    [Fact]
+    public async Task ListAllProduct_OrderByNewest_Success()
+    {
+        var request = new ListProductsRequestDTO
+        (
+            id: null,
+            name: null,
+            minPrice: null,
+            maxPrice: null,
+            description: null,
+            createdBefore: null,
+            createdAfter: null,
+            orderBy: "newest"
+        );
+        var queryString = ObjToQueryString.Convert(request);
+        var response = await _client.GetAsync($"{_route}/list?{queryString}");
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var content = await response.Content.ReadFromJsonAsync<ListProductsResponseDTO>();
+        Assert.NotNull(content);
+        Assert.NotNull(content.Products);
+        Assert.StrictEqual(3, content.Products.Count);
+
+        Assert.StrictEqual(_price3_NameDescProduct3.Id, content.Products[0].Id);
+        Assert.StrictEqual(_price2_NameDescProduct2.Id, content.Products[1].Id);
+        Assert.StrictEqual(_price1_NameDescProduct1.Id, content.Products[2].Id);
+    }
+
+    [Fact]
+    public async Task ListAllProduct_OrderByOldest_Success()
+    {
+        var request = new ListProductsRequestDTO
+        (
+            id: null,
+            name: null,
+            minPrice: null,
+            maxPrice: null,
+            description: null,
+            createdBefore: null,
+            createdAfter: null,
+            orderBy: "oldest"
+        );
+        var queryString = ObjToQueryString.Convert(request);
+        var response = await _client.GetAsync($"{_route}/list?{queryString}");
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var content = await response.Content.ReadFromJsonAsync<ListProductsResponseDTO>();
+        Assert.NotNull(content);
+        Assert.NotNull(content.Products);
+        Assert.StrictEqual(3, content.Products.Count);
+
+        Assert.StrictEqual(_price1_NameDescProduct1.Id, content.Products[0].Id);
+        Assert.StrictEqual(_price2_NameDescProduct2.Id, content.Products[1].Id);
+        Assert.StrictEqual(_price3_NameDescProduct3.Id, content.Products[2].Id);
     }
 }

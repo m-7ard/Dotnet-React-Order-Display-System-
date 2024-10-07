@@ -1,4 +1,3 @@
-using Application.Api.ProductHistories.List.DTOs;
 using Application.Api.Products.Create.DTOs;
 using Application.Api.Products.Create.Handlers;
 using Application.Api.Products.Delete.DTOs;
@@ -13,7 +12,6 @@ using Application.ErrorHandling.Api;
 using Application.ErrorHandling.Other;
 using Application.Interfaces.Services;
 using FluentValidation;
-using Infrastructure.Mappers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -93,7 +91,8 @@ public class ProductsController : ControllerBase
         [FromQuery] decimal? maxPrice, 
         [FromQuery] string? description, 
         [FromQuery] DateTime? createdBefore, 
-        [FromQuery] DateTime? createdAfter)
+        [FromQuery] DateTime? createdAfter,
+        [FromQuery] string? orderBy)
     {
         if (id is not null && id <= 0)
         {
@@ -134,7 +133,8 @@ public class ProductsController : ControllerBase
             maxPrice: maxPrice,
             description: description,
             createdBefore: createdBefore,
-            createdAfter: createdAfter
+            createdAfter: createdAfter,
+            orderBy: orderBy
         );
         var result = await _mediator.Send(query);
 
