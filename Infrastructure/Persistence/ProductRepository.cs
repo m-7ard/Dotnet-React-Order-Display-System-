@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
 using Domain.Models;
@@ -32,7 +33,15 @@ public class ProductRepository : IProductRepository
         return productDbEntity is null ? null : ProductMapper.FromDbEntityToDomain(productDbEntity);
     }
 
-    public async Task<List<Product>> FindAllAsync(int? id, string? name, decimal? minPrice, decimal? maxPrice, string? description, DateTime? createdBefore, DateTime? createdAfter)
+    public async Task<List<Product>> FindAllAsync(
+        int? id,
+        string? name,
+        decimal? minPrice,
+        decimal? maxPrice,
+        string? description,
+        DateTime? createdBefore,
+        DateTime? createdAfter,
+        Tuple<string, bool>? orderBy)
     {
         IQueryable<ProductDbEntity> query = _dbContext.Product.Include(d => d.Images);
 
@@ -79,6 +88,20 @@ public class ProductRepository : IProductRepository
         if (maxPrice.HasValue)
         {
             query = query.Where(item => item.Price <= maxPrice.Value);
+        }
+
+        if (orderBy is not null)
+        {
+            Dictionary<string, Expression<Func<ProductDbEntity, object>>> fieldMappings = new()
+            {
+                { "Price", p => p.Price },
+                { "DateCreated", p => p.DateCreated },
+            };
+
+            if (fieldMappings.TryGetValue(orderBy.Item1, out var orderByExpression))
+            {
+                query = orderBy.Item2 ? query.OrderBy(orderByExpression) : query.OrderByDescending(orderByExpression);
+            }
         }
 
         var dbProducts = await query.ToListAsync();

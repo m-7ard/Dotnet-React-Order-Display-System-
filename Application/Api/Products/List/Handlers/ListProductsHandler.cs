@@ -16,6 +16,24 @@ public class ListProductsHandler : IRequestHandler<ListProductsQuery, OneOf<List
 
     public async Task<OneOf<ListProductsResult, List<PlainApplicationError>>> Handle(ListProductsQuery request, CancellationToken cancellationToken)
     {
+        Tuple<string, bool>? orderBy = new Tuple<string, bool>("DateCreated", false);
+        if (request.OrderBy == "newest")
+        {
+            orderBy = new Tuple<string, bool>("DateCreated", false);
+        } 
+        else if (request.OrderBy == "oldest")
+        {
+            orderBy = new Tuple<string, bool>("DateCreated", true);
+        }
+        else if (request.OrderBy == "price desc")
+        {
+            orderBy = new Tuple<string, bool>("Price", false);
+        }
+        else if (request.OrderBy == "price asc")
+        {
+            orderBy = new Tuple<string, bool>("Price", true);
+        }
+
         var products = await _productRepository.FindAllAsync(
             id: request.Id,
             name: request.Name,
@@ -23,7 +41,8 @@ public class ListProductsHandler : IRequestHandler<ListProductsQuery, OneOf<List
             maxPrice: request.MaxPrice,
             description: request.Description,
             createdBefore: request.CreatedBefore,
-            createdAfter: request.CreatedAfter
+            createdAfter: request.CreatedAfter,
+            orderBy: orderBy
         );
 
         var result = new ListProductsResult(products: products);

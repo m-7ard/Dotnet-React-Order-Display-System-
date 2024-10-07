@@ -9,7 +9,8 @@ public class ListProductsRequestDTO
         string? description,
         DateTime? createdBefore,
         DateTime? createdAfter,
-        int? id)
+        int? id,
+        string? orderBy)
     {
         Name = name;
         MinPrice = minPrice;
@@ -18,6 +19,7 @@ public class ListProductsRequestDTO
         CreatedBefore = createdBefore;
         CreatedAfter = createdAfter;
         Id = id;
+        OrderBy = orderBy;
     }
 
     public int? Id { get; set; }
@@ -27,4 +29,5 @@ public class ListProductsRequestDTO
     public string? Description { get; set; }
     public DateTime? CreatedBefore { get; set; }
     public DateTime? CreatedAfter { get; set; }
+    public string? OrderBy { get; set; }
 }
