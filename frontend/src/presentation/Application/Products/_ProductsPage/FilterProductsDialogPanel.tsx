@@ -7,6 +7,7 @@ import MixinPanel from "../../../components/Resuables/MixinPanel";
 import FilterProductsFieldset, {
     FilterProductsFieldsetValueState,
 } from "../../../components/Fieldsets/FilterProductFieldset";
+import routeData from "../../../routes/_routeData";
 
 export default function FilterProductsDialogPanel() {
     const searchParams: Record<string, string> = useSearch({ strict: false });
@@ -33,7 +34,7 @@ export default function FilterProductsDialogPanel() {
             <header className="flex flex-row justify-between items-center">
                 <LinkBox
                     parts={[
-                        { isLink: false, label: "Products" },
+                        { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
                         { isLink: false, label: "Filter" },
                     ]}
                 />

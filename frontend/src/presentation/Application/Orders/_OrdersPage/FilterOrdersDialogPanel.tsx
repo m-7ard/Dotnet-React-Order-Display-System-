@@ -7,6 +7,7 @@ import FilterOrdersFieldset, {
     FilterOrdersFieldsetValueState,
 } from "../../../components/Fieldsets/FilterOrdersFieldset";
 import MixinPanel from "../../../components/Resuables/MixinPanel";
+import routeData from "../../../routes/_routeData";
 
 export default function FilterProductsDialogPanel() {
     const searchParams: Record<string, string> = useSearch({ strict: false });
@@ -32,7 +33,7 @@ export default function FilterProductsDialogPanel() {
             <header className="flex flex-row justify-between items-center">
                 <LinkBox
                     parts={[
-                        { isLink: true, to: "/orders", label: "Orders" },
+                        { isLink: true, to: routeData.listOrders.build({}), label: "Orders" },
                         { isLink: false, label: "Filter" },
                     ]}
                 />
@@ -53,7 +54,7 @@ export default function FilterProductsDialogPanel() {
                 className="flex flex-col gap-[inherit]"
                 onSubmit={(e) => {
                     e.preventDefault();
-                    navigate({ to: "/orders", search: itemManager.items });
+                    navigate({ to: routeData.listOrders.build({}), search: itemManager.items });
                     onClose();
                 }}
                 onReset={(e) => {

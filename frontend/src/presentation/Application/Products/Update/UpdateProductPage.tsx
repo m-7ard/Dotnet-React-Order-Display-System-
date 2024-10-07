@@ -17,6 +17,7 @@ import MixinButton from "../../../components/Resuables/MixinButton";
 import IProduct from "../../../../domain/models/IProduct";
 import UpdateProductCommand from "../../../../application/commands/products/updateProduct/UpdateProductCommand";
 import LinkBox from "../../../components/Resuables/LinkBox";
+import routeData from "../../../routes/_routeData";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -122,9 +123,9 @@ export default function UpdateProductPage(props: { product: IProduct }) {
             <header className="flex flex-row gap-2 items-center">
                 <LinkBox
                     parts={[
-                        { isLink: true, to: "/products", label: "Products" },
+                        { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
                         { isLink: false, label: product.id },
-                        { isLink: true, to: `/products/${product.id}/update`, label: "Update" },
+                        { isLink: true, to: routeData.updateProduct.build({ id: product.id }), label: "Update" },
                     ]}
                 />
             </header>

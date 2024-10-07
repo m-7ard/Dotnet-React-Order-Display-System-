@@ -7,7 +7,6 @@ import AbstractTooltip, {
     AbstractTooltipDefaultPanel,
     AbstractTooltipTrigger,
 } from "../../components/Resuables/AbstractTooltip";
-import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
 import IProductHistory from "../../../domain/models/IProductHistory";
@@ -15,6 +14,7 @@ import FilterProductHistoriesDialogPanel from "./_ProductHistories/FilterProduct
 import { getApiUrl } from "../../../viteUtils";
 import MixinPanel from "../../components/Resuables/MixinPanel";
 import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
+import routeData from "../../routes/_routeData";
 
 export default function ProductHistoriesPage() {
     const { result } = useLoaderData({ from: "/product_histories" });
@@ -30,7 +30,7 @@ export default function ProductHistoriesPage() {
     return (
         <div className="mixin-page-like mixin-page-base mx-auto">
             <header className="flex flex-row gap-2 items-center">
-                <LinkBox parts={[{ isLink: true, to: "/product_histories", label: "Product Histories" }]} />
+                <LinkBox parts={[{ isLink: true, to: routeData.listProductHistories.build({}), label: "Product Histories" }]} />
                 <div className="flex flex-row gap-2 ml-auto">
                     <GlobalDialog
                         zIndex={10}
@@ -93,7 +93,6 @@ function ProductHistory(props: { productHistory: IProductHistory }) {
                     </div>
                 </div>
             </div>
-
             <footer className="flex flex-col gap-2 bg-gray-100" data-role="section">
                 <a
                     className="w-full"

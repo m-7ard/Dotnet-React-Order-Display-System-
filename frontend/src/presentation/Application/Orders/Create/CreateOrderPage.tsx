@@ -15,6 +15,7 @@ import OrderItemDataFormManager from "../../../components/OrderItemDataForm/Orde
 import { IOrderItemDataFormValue } from "../../../components/OrderItemDataForm/OrderItemDataForm";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import LinkBox from "../../../components/Resuables/LinkBox";
+import routeData from "../../../routes/_routeData";
 
 const validatorSchema = Type.Object({
     orderItemData: Type.Record(
@@ -78,7 +79,7 @@ export default function CreateOrderPage() {
             const result = await commandDispatcher.dispatch(command);
 
             if (result.isOk()) {
-                navigate({ to: "/orders" });
+                navigate({ to: routeData.listOrders.build({}) });
             } else if (result.error.type === "Exception") {
                 dispatchException(result.error.data);
             } else if (result.error.type === "API") {
@@ -93,8 +94,8 @@ export default function CreateOrderPage() {
             <header className="flex flex-row gap-2 items-center">
                 <LinkBox
                     parts={[
-                        { isLink: true, to: "/orders", label: "Orders" },
-                        { isLink: true, to: "/orders/create", label: "Create" },
+                        { isLink: true, to: routeData.listOrders.build({}), label: "Orders" },
+                        { isLink: true, to: routeData.createOrder.build({}), label: "Create" },
                     ]}
                 />
             </header>

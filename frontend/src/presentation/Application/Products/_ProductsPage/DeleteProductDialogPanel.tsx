@@ -9,6 +9,7 @@ import { useCommandDispatcherContext } from "../../../contexts/CommandDispatcher
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialogPanelContext";
 import MixinPanel from "../../../components/Resuables/MixinPanel";
 import LinkBox from "../../../components/Resuables/LinkBox";
+import routeData from "../../../routes/_routeData";
 
 export default function DeleteProductDialogPanel(props: { product: IProduct }) {
     const { product } = props;
@@ -54,7 +55,7 @@ export default function DeleteProductDialogPanel(props: { product: IProduct }) {
             <header className="flex flex-row justify-between items-center">
                 <LinkBox
                     parts={[
-                        { isLink: false, label: "Products" },
+                        { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
                         { isLink: false, label: "Delete" },
                     ]}
                 />

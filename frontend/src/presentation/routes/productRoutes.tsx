@@ -12,10 +12,11 @@ import ILoaderResult from "../../application/interfaces/ILoaderResult";
 import ReadProductCommand from "../../application/commands/products/readProduct/ReadProductCommand";
 import UpdateProductRoute from "../Application/Products/Update/UpdateProductRoute";
 import parseListProductsCommandParameters from "../../application/commands/products/listProducts/parseListProductsCommandParameters";
+import routeData from "./_routeData";
 
 const baseProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: "/products",
+    path: routeData.listProducts.pattern,
     loaderDeps: ({
         search,
     }: {
@@ -27,7 +28,7 @@ const baseProductsRoute = createRoute({
             createdAfter?: string;
             createdBefore?: string;
             description?: string;
-        }
+        };
     }) => search,
     loader: async ({ deps }) => {
         const params = parseListProductsCommandParameters({
@@ -51,13 +52,13 @@ const baseProductsRoute = createRoute({
 
 const createProductRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: "/products/create",
+    path: routeData.createProduct.pattern,
     component: CreateProductPage,
 });
 
 const updateProductRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: "/products/$id/update",
+    path: routeData.updateProduct.pattern,
     component: UpdateProductRoute,
     loader: async ({ params }): Promise<ILoaderResult<IProduct, unknown>> => {
         const id = parseInt(params.id);

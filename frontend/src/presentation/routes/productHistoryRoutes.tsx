@@ -4,10 +4,11 @@ import commandDispatcher from "../deps/commandDispatcher";
 import parseListProductHistoriesCommandParameters from "../../application/commands/productHistories/list/parseListProductHistoriesCommandParameters";
 import ListProductHistoriesCommand from "../../application/commands/productHistories/list/ListProductHistoriesCommand";
 import ProductHistoriesPage from "../Application/ProductHistories/ProductHistoriesPage";
+import routeData from "./_routeData";
 
 const listProductHistoriesRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: "/product_histories",
+    path: routeData.listProductHistories.pattern,
     loaderDeps: ({
         search,
     }: {

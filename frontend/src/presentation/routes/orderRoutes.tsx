@@ -13,10 +13,11 @@ import UnknownError from "../../application/errors/UnkownError";
 import ILoaderResult from "../../application/interfaces/ILoaderResult";
 import ManageOrderRoute from "../Application/Orders/Manage/ManageOrderRoute";
 import parseListOrdersCommandParameters from "../../application/commands/orders/listOrders/parseListOrdersCommandParameters";
+import routeData from "./_routeData";
 
 const baseOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: "/orders",
+    path: routeData.listOrders.pattern,
     loaderDeps: ({
         search,
     }: {
@@ -54,13 +55,13 @@ const baseOrdersRoute = createRoute({
 
 const createOrderRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: "/orders/create",
+    path: routeData.createOrder.pattern,
     component: CreateOrderPage,
 });
 
 const manageOrderRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: "/orders/$id/manage",
+    path: routeData.manageOrder.pattern,
     loader: async ({ params }): Promise<ILoaderResult<Order, unknown>> => {
         const id = parseInt(params.id);
         if (!Value.Check(Type.Integer(), id)) {
