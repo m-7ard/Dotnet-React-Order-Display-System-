@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import LinkBox from "../../components/Resuables/LinkBox";
-import CoverImage from "../../components/Resuables/CoverImage";
 import MixinButton from "../../components/Resuables/MixinButton";
 import { getLocalUrl } from "../../../viteUtils";
 
@@ -58,7 +57,7 @@ function Navigator(props: { title: string; imageUrl: string; buttons: Array<{ la
                     <Link to={href}>
                         <MixinButton
                             className="w-full justify-between"
-                            options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                            options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                         >
                             <div>{label}</div>
                             <div>››</div>

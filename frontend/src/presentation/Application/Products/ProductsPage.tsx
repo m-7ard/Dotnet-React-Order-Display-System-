@@ -16,6 +16,7 @@ import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
 import { getApiUrl } from "../../../viteUtils";
 import MixinPanel from "../../components/Resuables/MixinPanel";
+import routeData from "../../routes/_routeData";
 
 export default function ProductsPage() {
     const { productsResult } = useLoaderData({ from: "/products" });
@@ -31,7 +32,7 @@ export default function ProductsPage() {
     return (
         <div className="mixin-page-like mixin-page-base mx-auto">
             <header className="flex flex-row gap-2 items-center">
-                <LinkBox parts={[{ isLink: true, to: "/products", label: "Products" }]} />
+                <LinkBox parts={[{ isLink: true, to: routeData.createProduct.build({}), label: "Products" }]} />
                 <div className="flex flex-row gap-2 ml-auto">
                     <Link to="/products/create">
                         <MixinButton

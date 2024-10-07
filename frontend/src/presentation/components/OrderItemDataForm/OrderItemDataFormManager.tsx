@@ -64,7 +64,7 @@ export default function OrderItemDataFormManager(props: {
                     },
                 }}
             />
-            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 max-[425px]:grid-cols-1 gap-x-2 gap-y-4">
                 {Object.entries(value).map(([UID, orderItem]) => (
                     <OrderItemDataForm
                         product={itemManager.items[orderItem.productId]}

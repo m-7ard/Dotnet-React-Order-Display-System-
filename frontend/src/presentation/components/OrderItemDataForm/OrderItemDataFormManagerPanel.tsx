@@ -181,7 +181,7 @@ function Product(props: { product: IProduct; count: number; onAdd: () => void })
         <div className="flex flex-col gap-2">
             <div className="flex flex-row gap-2">
                 <CoverImage
-                    className="h-16 aspect-square border border-gray-900 overflow-hidden"
+                    className="h-20 w-20 border border-gray-900 overflow-hidden"
                     src={productImages[0] == null ? undefined : `${getApiUrl()}/${productImages[0].url}`}
                 />
                 <div className="flex flex-col gap-px">

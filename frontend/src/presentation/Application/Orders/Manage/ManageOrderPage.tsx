@@ -16,6 +16,7 @@ import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../../componen
 import LinkBox from "../../../components/Resuables/LinkBox";
 import Order from "../../../../domain/models/Order";
 import { getApiUrl } from "../../../../viteUtils";
+import routeData from "../../../routes/_routeData";
 
 const ORDER_ITEM_STATUS_COLORS = {
     [OrderItemStatus.FINISHED.value]: "bg-green-600/50",
@@ -58,9 +59,9 @@ export default function ManageOrderPage(props: { order: Order }) {
             <header className="flex flex-row gap-2 items-center">
                 <LinkBox
                     parts={[
-                        { isLink: true, to: "/orders", label: "Orders" },
+                        { isLink: true, to: routeData.listOrders.build({}), label: "Orders" },
                         { isLink: false, label: order.id },
-                        { isLink: true, to: `/orders/${order.id}/manage`, label: "Manage" },
+                        { isLink: true, to: routeData.manageOrder.build({ id: order.id }), label: "Manage" },
                     ]}
                 />
             </header>
