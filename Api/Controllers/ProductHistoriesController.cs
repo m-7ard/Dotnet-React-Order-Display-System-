@@ -28,51 +28,62 @@ public class ProductHistoryController : ControllerBase
     }
 
     [HttpGet("list")]
-    public async Task<ActionResult<ListProductsResponseDTO>> List(
+    public async Task<ActionResult<ListProductHistoriesResponseDTO>> List(
         [FromQuery] string? name, 
         [FromQuery] decimal? minPrice, 
         [FromQuery] decimal? maxPrice, 
         [FromQuery] string? description, 
         [FromQuery] DateTime? validTo, 
         [FromQuery] DateTime? validFrom,
-        [FromQuery] int? productId)
+        [FromQuery] int? productId,
+        [FromQuery] string? orderBy)
     {
-    
-        if (name is not null && name.Length == 0)
-        {
-            name = null;
-        }
-
-        if (minPrice is not null && minPrice < 0)
-        {
-            minPrice = null;
-        }
-
-        if (maxPrice is not null && minPrice is not null && minPrice > maxPrice)
-        {
-            minPrice = null;
-            maxPrice = null;
-        }
-
-        if (description is not null && description.Length == 0)
-        {
-            description = null;
-        }
-
-        if (validTo is not null && validFrom is not null && validTo < validFrom)
-        {
-            validTo = null;
-            validFrom = null;
-        }
-
-        var query = new ListProductHistoriesQuery(
+        var parameters = new ListProductHistoriesRequestDTO(
             name: name,
             minPrice: minPrice,
             maxPrice: maxPrice,
             description: description,
             validTo: validTo,
             validFrom: validFrom,
-            productId: productId
+            productId: productId,
+            orderBy: orderBy
+        );
+        if (parameters.Name is not null && parameters.Name.Length == 0)
+        {
+            parameters.Name = null;
+        }
+
+        if (parameters.MinPrice is not null && parameters.MinPrice < 0)
+        {
+            parameters.MinPrice = null;
+        }
+
+        if (parameters.MaxPrice is not null && parameters.MinPrice is not null && parameters.MinPrice > parameters.MaxPrice)
+        {
+            parameters.MinPrice = null;
+            parameters.MaxPrice = null;
+        }
+
+        if (parameters.Description is not null && parameters.Description.Length == 0)
+        {
+            parameters.Description = null;
+        }
+
+        if (parameters.ValidTo is not null && parameters.ValidFrom is not null && parameters.ValidTo < parameters.ValidFrom)
+        {
+            parameters.ValidTo = null;
+            parameters.ValidFrom = null;
+        }
+
+        var query = new ListProductHistoriesQuery(
+            name: parameters.Name,
+            minPrice: parameters.MinPrice,
+            maxPrice: parameters.MaxPrice,
+            description: parameters.Description,
+            validTo: parameters.ValidTo,
+            validFrom: parameters.ValidFrom,
+            productId: parameters.ProductId,
+            orderBy: parameters.OrderBy
         );
         var result = await _mediator.Send(query);
 

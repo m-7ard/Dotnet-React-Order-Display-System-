@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Application.Interfaces.Persistence;
 using Domain.Models;
 using Infrastructure.DbEntities;
@@ -35,7 +36,15 @@ public class ProductHistoryRespository : IProductHistoryRepository
         return productHistoryDbEntity is null ? null : ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 
-    public async Task<List<ProductHistory>> FindAllAsync(string? name, decimal? minPrice, decimal? maxPrice, string? description, DateTime? validTo, DateTime? validFrom, int? productId)
+    public async Task<List<ProductHistory>> FindAllAsync(
+        string? name,
+        decimal? minPrice,
+        decimal? maxPrice,
+        string? description,
+        DateTime? validFrom,
+        DateTime? validTo,
+        int? productId,
+        Tuple<string, bool>? orderBy)
     {
         IQueryable<ProductHistoryDbEntity> query = _dbContext.ProductHistory;
 
@@ -82,6 +91,21 @@ public class ProductHistoryRespository : IProductHistoryRepository
         if (productId is not null)
         {
             query = query.Where(item => item.OriginalProductId == productId);
+        }
+
+        if (orderBy is not null)
+        {
+            Dictionary<string, Expression<Func<ProductHistoryDbEntity, object>>> fieldMappings = new()
+            {
+                { "Price", p => p.Price },
+                { "ValidFrom", p => p.ValidFrom },
+                { "OriginalProductId", p => p.OriginalProductId }
+            };
+
+            if (fieldMappings.TryGetValue(orderBy.Item1, out var orderByExpression))
+            {
+                query = orderBy.Item2 ? query.OrderBy(orderByExpression) : query.OrderByDescending(orderByExpression);
+            }
         }
 
         var dbProducts = await query.ToListAsync();
