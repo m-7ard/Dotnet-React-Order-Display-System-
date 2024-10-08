@@ -9,7 +9,8 @@ public class ListProductHistoriesRequestDTO
         string? description,
         DateTime? validTo,
         DateTime? validFrom,
-        int? productId)
+        int? productId,
+        string? orderBy)
     {
         Name = name;
         MinPrice = minPrice;
@@ -18,6 +19,7 @@ public class ListProductHistoriesRequestDTO
         ValidTo = validTo;
         ValidFrom = validFrom;
         ProductId = productId;
+        OrderBy = orderBy;
     }
 
     public string? Name { get; set; }
@@ -27,4 +29,5 @@ public class ListProductHistoriesRequestDTO
     public DateTime? ValidTo { get; set; }
     public DateTime? ValidFrom { get; set; }
     public int? ProductId { get; set; }
+    public string? OrderBy { get; set; }
 }

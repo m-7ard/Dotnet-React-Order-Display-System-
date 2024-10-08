@@ -39,7 +39,8 @@ public class ListProductHistoriesIntegrationTest : ProductHistoriesIntegrationTe
             description: null,
             validFrom: null,
             validTo: null,
-            productId: null
+            productId: null,
+            orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -64,7 +65,8 @@ public class ListProductHistoriesIntegrationTest : ProductHistoriesIntegrationTe
             description: null,
             validFrom: null,
             validTo: null,
-            productId: null
+            productId: null,
+            orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -89,7 +91,8 @@ public class ListProductHistoriesIntegrationTest : ProductHistoriesIntegrationTe
             description: null,
             validFrom: null,
             validTo: null,
-            productId: null
+            productId: null,
+            orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -114,7 +117,8 @@ public class ListProductHistoriesIntegrationTest : ProductHistoriesIntegrationTe
             description: null,
             validFrom: null,
             validTo: null,
-            productId: _price2_NameDescProduct2.Id
+            productId: _price2_NameDescProduct2.Id,
+            orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -126,5 +130,63 @@ public class ListProductHistoriesIntegrationTest : ProductHistoriesIntegrationTe
         Assert.NotNull(content);
         Assert.NotNull(content.ProductHistories);
         Assert.StrictEqual(1, content.ProductHistories.Count);
+    }
+
+    [Fact]
+    public async Task ListAllProductHistories_OrderByNewest_Success()
+    {
+        var request = new ListProductHistoriesRequestDTO
+        (
+            name: null,
+            minPrice: null,
+            maxPrice: null,
+            description: null,
+            validFrom: null,
+            validTo: null,
+            productId: null,
+            orderBy: "newest"
+        );
+        var queryString = ObjToQueryString.Convert(request);
+        var response = await _client.GetAsync($"{_route}/list?{queryString}");
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var content = await response.Content.ReadFromJsonAsync<ListProductHistoriesResponseDTO>();
+        Assert.NotNull(content);
+        Assert.NotNull(content.ProductHistories);
+
+        Assert.Equal(_price1_NameDescProduct1.Id, content.ProductHistories[2].ProductId);
+        Assert.Equal(_price2_NameDescProduct2.Id, content.ProductHistories[1].ProductId);
+        Assert.Equal(_price3_NameDescProduct3.Id, content.ProductHistories[0].ProductId);
+    }
+
+    [Fact]
+    public async Task ListAllProductHistories_OrderByOldest_Success()
+    {
+        var request = new ListProductHistoriesRequestDTO
+        (
+            name: null,
+            minPrice: null,
+            maxPrice: null,
+            description: null,
+            validFrom: null,
+            validTo: null,
+            productId: null,
+            orderBy: "oldest"
+        );
+        var queryString = ObjToQueryString.Convert(request);
+        var response = await _client.GetAsync($"{_route}/list?{queryString}");
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var content = await response.Content.ReadFromJsonAsync<ListProductHistoriesResponseDTO>();
+        Assert.NotNull(content);
+        Assert.NotNull(content.ProductHistories);
+
+        Assert.Equal(_price1_NameDescProduct1.Id, content.ProductHistories[0].ProductId);
+        Assert.Equal(_price2_NameDescProduct2.Id, content.ProductHistories[1].ProductId);
+        Assert.Equal(_price3_NameDescProduct3.Id, content.ProductHistories[2].ProductId);
     }
 }
