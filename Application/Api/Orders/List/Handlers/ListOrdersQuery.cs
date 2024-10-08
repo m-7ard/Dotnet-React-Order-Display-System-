@@ -7,14 +7,15 @@ namespace Application.Api.Orders.List.Handlers;
 public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<PlainApplicationError>>>
 {
     public ListOrdersQuery(
-        decimal? minTotal, 
-        decimal? maxTotal, 
-        string? status, 
-        DateTime? createdBefore, 
-        DateTime? createdAfter, 
-        int? id, 
-        int? productId, 
-        int? productHistoryId)
+        decimal? minTotal,
+        decimal? maxTotal,
+        string? status,
+        DateTime? createdBefore,
+        DateTime? createdAfter,
+        int? id,
+        int? productId,
+        int? productHistoryId,
+        string? orderBy)
     {
         MinTotal = minTotal;
         MaxTotal = maxTotal;
@@ -24,6 +25,7 @@ public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<PlainApplic
         Id = id;
         ProductId = productId;
         ProductHistoryId = productHistoryId;
+        OrderBy = orderBy;
     }
 
     public decimal? MinTotal { get; set; }
@@ -34,4 +36,5 @@ public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<PlainApplic
     public int? Id { get; set; }
     public int? ProductId { get; set; }
     public int? ProductHistoryId { get; set; }
+    public string? OrderBy { get; set; }
 }

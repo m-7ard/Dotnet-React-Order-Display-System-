@@ -17,6 +17,7 @@ public interface IOrderRepository
         DateTime? createdAfter, 
         int? productId, 
         int? id, 
-        int? productHistoryId);
+        int? productHistoryId,
+        Tuple<string, bool>? orderBy);
     Task UpdateAsync(Order order);
 }

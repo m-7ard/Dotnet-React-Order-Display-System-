@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Application.Interfaces.Persistence;
 using Domain.Models;
 using Domain.ValueObjects.Order;
@@ -59,7 +60,8 @@ public class OrderRepository : IOrderRepository
         DateTime? createdAfter, 
         int? productId, 
         int? id, 
-        int? productHistoryId)
+        int? productHistoryId,
+        Tuple<string, bool>? orderBy)
     {
         IQueryable<OrderDbEntity> query = _dbContext.Order.Include(d => d.OrderItems);
 
@@ -101,6 +103,20 @@ public class OrderRepository : IOrderRepository
         if (productHistoryId is not null)
         {
             query = query.Where(order => order.OrderItems.Any((item) => item.ProductHistoryId == productHistoryId));
+        }
+
+        if (orderBy is not null)
+        {
+            Dictionary<string, Expression<Func<OrderDbEntity, object>>> fieldMappings = new()
+            {
+                { "Total", p => p.Total },
+                { "DateCreated", p => p.DateCreated },
+            };
+
+            if (fieldMappings.TryGetValue(orderBy.Item1, out var orderByExpression))
+            {
+                query = orderBy.Item2 ? query.OrderBy(orderByExpression) : query.OrderByDescending(orderByExpression);
+            }
         }
 
         var dbOrders = await query.ToListAsync();
