@@ -3,14 +3,15 @@ namespace Application.Api.Orders.List.DTOs;
 public class ListOrdersRequestDTO
 {
     public ListOrdersRequestDTO(
-        decimal? minTotal, 
-        decimal? maxTotal, 
-        string? status, 
-        DateTime? createdBefore, 
-        DateTime? createdAfter, 
-        int? id, 
-        int? productId, 
-        int? productHistoryId)
+        decimal? minTotal,
+        decimal? maxTotal,
+        string? status,
+        DateTime? createdBefore,
+        DateTime? createdAfter,
+        int? id,
+        int? productId,
+        int? productHistoryId,
+        string? orderBy)
     {
         MinTotal = minTotal;
         MaxTotal = maxTotal;
@@ -20,6 +21,7 @@ public class ListOrdersRequestDTO
         Id = id;
         ProductId = productId;
         ProductHistoryId = productHistoryId;
+        OrderBy = orderBy;
     }
 
     public decimal? MinTotal { get; set; }
@@ -30,4 +32,5 @@ public class ListOrdersRequestDTO
     public int? Id { get; set; }
     public int? ProductId { get; set; }
     public int? ProductHistoryId { get; set; }
+    public string? OrderBy { get; set; }
 }

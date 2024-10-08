@@ -38,7 +38,7 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
             orderStatus: OrderStatus.Finished,
             orderItemStatus: OrderItemStatus.Finished
         );
-        _order002 = await mixins.CreateOrder(
+        _order003 = await mixins.CreateOrder(
             products: new List<Product>() { _product003 },
             number: 100,
             orderStatus: OrderStatus.Pending,
@@ -58,7 +58,8 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
                createdAfter: null,
                id: null,
                productId: null,
-               productHistoryId: null
+               productHistoryId: null,
+               orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -84,7 +85,8 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
                createdAfter: null,
                id: null,
                productId: null,
-               productHistoryId: null
+               productHistoryId: null,
+               orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -110,7 +112,8 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
                createdAfter: null,
                id: null,
                productId: null,
-               productHistoryId: null
+               productHistoryId: null,
+               orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -136,7 +139,8 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
                createdAfter: null,
                id: null,
                productId: null,
-               productHistoryId: null
+               productHistoryId: null,
+               orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -162,7 +166,8 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
                createdAfter: null,
                id: _order001.Id,
                productId: null,
-               productHistoryId: null
+               productHistoryId: null,
+               orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -188,7 +193,8 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
                createdAfter: null,
                id: null,
                productId: _product001.Id,
-               productHistoryId: null
+               productHistoryId: null,
+               orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -216,7 +222,8 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
                createdAfter: null,
                id: null,
                productId: null,
-               productHistoryId: product001History.Id
+               productHistoryId: product001History.Id,
+               orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -228,5 +235,65 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
         Assert.NotNull(content);
         Assert.NotNull(content.Orders);
         Assert.StrictEqual(2, content.Orders.Count);
+    }
+    
+    [Fact]
+    public async Task ListAllOrders_OrderByNewest_Success()
+    {
+        var request = new ListOrdersRequestDTO
+        (
+               minTotal: null,
+               maxTotal: null,
+               status: null,
+               createdBefore: null,
+               createdAfter: null,
+               id: null,
+               productId: null,
+               productHistoryId: null,
+               orderBy: "newest"
+        );
+        var queryString = ObjToQueryString.Convert(request);
+        var response = await _client.GetAsync($"{_route}/list?{queryString}");
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var content = await response.Content.ReadFromJsonAsync<ListOrdersResponseDTO>();
+        Assert.NotNull(content);
+        Assert.NotNull(content.Orders);
+
+        Assert.StrictEqual(_order003.Id, content.Orders[0].Id);
+        Assert.StrictEqual(_order002.Id, content.Orders[1].Id);
+        Assert.StrictEqual(_order001.Id, content.Orders[2].Id);
+    }
+
+    [Fact]
+    public async Task ListAllOrders_OrderByOldest_Success()
+    {
+        var request = new ListOrdersRequestDTO
+        (
+               minTotal: null,
+               maxTotal: null,
+               status: null,
+               createdBefore: null,
+               createdAfter: null,
+               id: null,
+               productId: null,
+               productHistoryId: null,
+               orderBy: "oldest"
+        );
+        var queryString = ObjToQueryString.Convert(request);
+        var response = await _client.GetAsync($"{_route}/list?{queryString}");
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var content = await response.Content.ReadFromJsonAsync<ListOrdersResponseDTO>();
+        Assert.NotNull(content);
+        Assert.NotNull(content.Orders);
+
+        Assert.StrictEqual(_order003.Id, content.Orders[2].Id);
+        Assert.StrictEqual(_order002.Id, content.Orders[1].Id);
+        Assert.StrictEqual(_order001.Id, content.Orders[0].Id);
     }
 }

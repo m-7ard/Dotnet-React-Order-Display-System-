@@ -95,7 +95,8 @@ public class OrdersController : ControllerBase
         [FromQuery] DateTime? createdBefore,
         [FromQuery] DateTime? createdAfter,
         [FromQuery] int? productId,
-        [FromQuery] int? productHistoryId)
+        [FromQuery] int? productHistoryId,
+        [FromQuery] string? orderBy)
     {
         var parameters = new ListOrdersRequestDTO(
             id: id,
@@ -105,50 +106,52 @@ public class OrdersController : ControllerBase
             createdBefore: createdBefore,
             createdAfter: createdAfter,
             productId: productId,
-            productHistoryId: productHistoryId
+            productHistoryId: productHistoryId,
+            orderBy: orderBy
         );
 
-        if (id is not null && id <= 0)
+        if (parameters.Id is not null && parameters.Id <= 0)
         {
-            id = null;
+            parameters.Id = null;
         }
 
-        if (productId is not null && productId <= 0)
+        if (parameters.ProductId is not null && parameters.ProductId <= 0)
         {
-            productId = null;
+            parameters.ProductId = null;
         }
 
-        if (productHistoryId is not null && productHistoryId <= 0)
+        if (parameters.ProductHistoryId is not null && parameters.ProductHistoryId <= 0)
         {
-            productHistoryId = null;
+            parameters.ProductHistoryId = null;
         }
 
-        if (minTotal is not null && minTotal < 0)
+        if (parameters.MinTotal is not null && parameters.MinTotal < 0)
         {
-            minTotal = null;
+            parameters.MinTotal = null;
         }
 
-        if (maxTotal is not null && minTotal is not null && minTotal > maxTotal)
+        if (parameters.MaxTotal is not null && parameters.MinTotal is not null && parameters.MinTotal > parameters.MaxTotal)
         {
-            minTotal = null;
-            maxTotal = null;
+            parameters.MinTotal = null;
+            parameters.MaxTotal = null;
         }
 
-        if (createdBefore is not null && createdAfter is not null && createdBefore > createdAfter)
+        if (parameters.CreatedBefore is not null && parameters.CreatedAfter is not null && parameters.CreatedBefore > parameters.CreatedAfter)
         {
-            createdBefore = null;
-            createdAfter = null;
+            parameters.CreatedBefore = null;
+            parameters.CreatedAfter = null;
         }
 
         var query = new ListOrdersQuery(
-            minTotal: minTotal,
-            maxTotal: maxTotal,
-            status: status,
-            createdBefore: createdBefore,
-            createdAfter: createdAfter,
-            id: id,
-            productId: productId,
-            productHistoryId: productHistoryId
+            minTotal: parameters.MinTotal,
+            maxTotal: parameters.MaxTotal,
+            status: parameters.Status,
+            createdBefore: parameters.CreatedBefore,
+            createdAfter: parameters.CreatedAfter,
+            id: parameters.Id,
+            productId: parameters.ProductId,
+            productHistoryId: parameters.ProductHistoryId,
+            orderBy: parameters.OrderBy
         );
 
         var result = await _mediator.Send(query);
