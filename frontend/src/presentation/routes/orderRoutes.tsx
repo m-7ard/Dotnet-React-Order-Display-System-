@@ -14,35 +14,14 @@ import ILoaderResult from "../../application/interfaces/ILoaderResult";
 import ManageOrderRoute from "../Application/Orders/Manage/ManageOrderRoute";
 import parseListOrdersCommandParameters from "../../application/commands/orders/listOrders/parseListOrdersCommandParameters";
 import routeData from "./_routeData";
+import IListOrdersRequestDTO from "../../application/contracts/orders/list/IListOrdersRequestDTO";
 
 const baseOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: routeData.listOrders.pattern,
-    loaderDeps: ({
-        search,
-    }: {
-        search: {
-            id?: string;
-            minTotal?: string;
-            maxTotal?: string;
-            status?: string;
-            createdBefore?: string;
-            createdAfter?: string;
-            productId?: string;
-            productHistoryId?: string;
-        };
-    }) => search,
+    loaderDeps: ({ search }: { search: Partial<Record<keyof IListOrdersRequestDTO, string>> }) => search,
     loader: async ({ deps }) => {
-        const parsedParams = parseListOrdersCommandParameters({
-            id: deps.id,
-            minTotal: deps.minTotal,
-            maxTotal: deps.maxTotal,
-            status: deps.status,
-            createdBefore: deps.createdBefore,
-            createdAfter: deps.createdAfter,
-            productId: deps.productId,
-            productHistoryId: deps.productHistoryId,
-        });
+        const parsedParams = parseListOrdersCommandParameters(deps);
         const command = new ListOrdersCommand(parsedParams);
         const result = await commandDispatcher.dispatch(command);
 

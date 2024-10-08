@@ -44,8 +44,8 @@
   .theme-checkbox-generic-white {
     @apply border border-gray-900 bg-white hover:bg-gray-200;
   }
-  .theme-checkbox-generic-white--active, .theme-checkbox-generic-white:has(:checked) {
-    @apply bg-blue-400;
+  .theme-checkbox-generic-white--active [data-role=inner-part], .theme-checkbox-generic-white:has(:checked) [data-role=inner-part] {
+    @apply bg-gray-900;
   }
   .theme-textarea-generic-white {
     @apply border border-gray-900 text-gray-900 bg-white;

@@ -9,7 +9,6 @@ import CoverImage from "../Resuables/CoverImage";
 import { useState } from "react";
 import { useGlobalDialogPanelContext } from "../Dialog/GlobalDialogPanelContext";
 import LinkBox from "../Resuables/LinkBox";
-import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 import FilterProductsFieldset, { FilterProductsFieldsetValueState } from "../Fieldsets/FilterProductFieldset";
 import parseListProductsCommandParameters from "../../../application/commands/products/listProducts/parseListProductsCommandParameters";
 import { getApiUrl } from "../../../viteUtils";
@@ -45,10 +44,11 @@ export default function OrderItemDataFormManagerPanel(props: OrderItemDataFormMa
     const itemManager = useItemManager<FilterProductsFieldsetValueState>(initialValueState);
 
     const searchProductsMutation = useMutation({
-        mutationKey: ["products"],
-        gcTime: 1000 * 60,
         mutationFn: async (variables: FilterProductsFieldsetValueState) => {
-            const parsedParams = parseListProductsCommandParameters(variables);
+            const parsedParams = parseListProductsCommandParameters({
+                ...variables,
+                orderBy: "newest"
+            });
             const command = new ListProductsCommand(parsedParams);
             const result = await commandDispatcher.dispatch(command);
 

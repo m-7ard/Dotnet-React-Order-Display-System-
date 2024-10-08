@@ -21,6 +21,7 @@ export default class ListProductsHandler implements ICommandHandler<IListProduct
                 description: request.description,
                 createdBefore: request.createdBefore,
                 createdAfter: request.createdAfter,
+                orderBy: request.orderBy
             });
 
             if (result.isErr()) {

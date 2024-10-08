@@ -6,4 +6,5 @@ export default interface IListProductsRequestDTO {
     description: string | null;
     createdBefore: Date | null;
     createdAfter: Date | null;
+    orderBy: string | null;
 }
