@@ -1,7 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import parseTypeboxSchemaOrNull from "../../../../presentation/utils/parseTypeboxSchemaOrNull";
 
-const listOrdersSchema = Type.Object({
+const schema = Type.Object({
     id: Type.Number({ minimum: 0 }),
     minTotal: Type.Number({ minimum: 0 }),
     maxTotal: Type.Number({ minimum: 0 }),
@@ -12,21 +12,17 @@ const listOrdersSchema = Type.Object({
     productHistoryId: Type.Number({ minimum: 0 }),
 });
 
-type Schema = Static<typeof listOrdersSchema>;
-type K = keyof Schema;
-type ParsedParams = {
-    [key in K]: Schema[key] | null;
-};
+type Schema = Static<typeof schema>;
 
-export default function parseListOrdersCommandParameters(data: Record<K, unknown>): ParsedParams {
+export default function parseListOrdersCommandParameters(data: Partial<Record<keyof Schema, unknown>>) {
     return {
-        id: parseTypeboxSchemaOrNull(listOrdersSchema.properties.id, data.id),
-        minTotal: parseTypeboxSchemaOrNull(listOrdersSchema.properties.minTotal, data.minTotal),
-        maxTotal: parseTypeboxSchemaOrNull(listOrdersSchema.properties.maxTotal, data.maxTotal),
-        status: parseTypeboxSchemaOrNull(listOrdersSchema.properties.status, data.status),
-        createdAfter: parseTypeboxSchemaOrNull(listOrdersSchema.properties.createdAfter, data.createdAfter),
-        createdBefore: parseTypeboxSchemaOrNull(listOrdersSchema.properties.createdBefore, data.createdBefore),
-        productId: parseTypeboxSchemaOrNull(listOrdersSchema.properties.productId, data.productId),
-        productHistoryId: parseTypeboxSchemaOrNull(listOrdersSchema.properties.productHistoryId, data.productHistoryId),
+        id: parseTypeboxSchemaOrNull(schema.properties.id, data.id),
+        minTotal: parseTypeboxSchemaOrNull(schema.properties.minTotal, data.minTotal),
+        maxTotal: parseTypeboxSchemaOrNull(schema.properties.maxTotal, data.maxTotal),
+        status: parseTypeboxSchemaOrNull(schema.properties.status, data.status),
+        createdAfter: parseTypeboxSchemaOrNull(schema.properties.createdAfter, data.createdAfter),
+        createdBefore: parseTypeboxSchemaOrNull(schema.properties.createdBefore, data.createdBefore),
+        productId: parseTypeboxSchemaOrNull(schema.properties.productId, data.productId),
+        productHistoryId: parseTypeboxSchemaOrNull(schema.properties.productHistoryId, data.productHistoryId),
     };
 }

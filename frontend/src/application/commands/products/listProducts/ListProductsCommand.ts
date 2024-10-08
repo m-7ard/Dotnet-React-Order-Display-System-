@@ -12,6 +12,7 @@ export default class ListProductsCommand implements ICommand<IListProductsResult
         description: string | null;
         createdBefore: Date | null;
         createdAfter: Date | null;
+        orderBy: string | null;
     }) {
         this.id = props.id;
         this.name = props.name;
@@ -20,6 +21,7 @@ export default class ListProductsCommand implements ICommand<IListProductsResult
         this.description = props.description;
         this.createdBefore = props.createdBefore;
         this.createdAfter = props.createdAfter;
+        this.orderBy = props.orderBy;
     }
 
     public id: number | null;
@@ -29,4 +31,5 @@ export default class ListProductsCommand implements ICommand<IListProductsResult
     public description: string | null;
     public createdBefore: Date | null;
     public createdAfter: Date | null;
+    public orderBy: string | null;
 }

@@ -13,6 +13,7 @@ import ReadProductCommand from "../../application/commands/products/readProduct/
 import UpdateProductRoute from "../Application/Products/Update/UpdateProductRoute";
 import parseListProductsCommandParameters from "../../application/commands/products/listProducts/parseListProductsCommandParameters";
 import routeData from "./_routeData";
+import IListProductsRequestDTO from "../../application/contracts/products/list/IListProductsRequestDTO";
 
 const baseProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -20,26 +21,10 @@ const baseProductsRoute = createRoute({
     loaderDeps: ({
         search,
     }: {
-        search: {
-            id?: string;
-            minPrice?: string;
-            maxPrice?: string;
-            name?: string;
-            createdAfter?: string;
-            createdBefore?: string;
-            description?: string;
-        };
+        search: Partial<Record<keyof IListProductsRequestDTO, string>>
     }) => search,
     loader: async ({ deps }) => {
-        const params = parseListProductsCommandParameters({
-            id: deps.id,
-            minPrice: deps.minPrice,
-            maxPrice: deps.maxPrice,
-            name: deps.name,
-            createdAfter: deps.createdAfter,
-            createdBefore: deps.createdBefore,
-            description: deps.description,
-        });
+        const params = parseListProductsCommandParameters(deps);
         const command = new ListProductsCommand(params);
         const result = await commandDispatcher.dispatch(command);
 

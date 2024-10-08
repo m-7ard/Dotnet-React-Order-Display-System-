@@ -9,11 +9,12 @@ const schema = Type.Object({
     createdBefore: Type.Date(),
     createdAfter: Type.Date(),
     description: Type.String({ minLength: 1 }),
+    orderBy: Type.String({ minLength: 1 }),
 });
 
 type Schema = Static<typeof schema>;
 
-export default function parseListProductsCommandParameters(data: Record<keyof Schema, unknown>) {
+export default function parseListProductsCommandParameters(data: Partial<Record<keyof Schema, unknown>>) {
     return {
         id: parseTypeboxSchemaOrNull(schema.properties.id, data.id),
         minPrice: parseTypeboxSchemaOrNull(schema.properties.minPrice, data.minPrice),
@@ -22,5 +23,6 @@ export default function parseListProductsCommandParameters(data: Record<keyof Sc
         createdAfter: parseTypeboxSchemaOrNull(schema.properties.createdAfter, data.createdAfter),
         createdBefore: parseTypeboxSchemaOrNull(schema.properties.createdBefore, data.createdBefore),
         description: parseTypeboxSchemaOrNull(schema.properties.description, data.description),
+        orderBy: parseTypeboxSchemaOrNull(schema.properties.orderBy, data.orderBy),
     }
 }

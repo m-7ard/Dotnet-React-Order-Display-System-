@@ -13,7 +13,7 @@ const schema = Type.Object({
 
 type Schema = Static<typeof schema>;
 
-export default function parseListProductHistoriesCommandParameters(data: Record<keyof Schema, unknown>) {
+export default function parseListProductHistoriesCommandParameters(data: Partial<Record<keyof Schema, unknown>>) {
     return {
         minPrice: parseTypeboxSchemaOrNull(schema.properties.minPrice, data.minPrice),
         maxPrice: parseTypeboxSchemaOrNull(schema.properties.maxPrice, data.maxPrice),

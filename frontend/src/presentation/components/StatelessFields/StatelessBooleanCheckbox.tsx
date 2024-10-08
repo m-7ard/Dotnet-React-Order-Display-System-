@@ -1,9 +1,9 @@
-type IStatelessCheckboxProps = {
+type IStatelessBooleanCheckboxProps = {
     value: boolean;
     onChange: (value: boolean) => void;
 }
 
-function StatelessCheckbox (props: IStatelessCheckboxProps) {
+function StatelessBooleanCheckbox (props: IStatelessBooleanCheckboxProps) {
     const { value, onChange } = props;
 
     return (
@@ -19,4 +19,4 @@ function StatelessCheckbox (props: IStatelessCheckboxProps) {
     );
 }
 
-export default StatelessCheckbox;
+export default StatelessBooleanCheckbox;

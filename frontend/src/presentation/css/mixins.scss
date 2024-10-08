@@ -12,7 +12,6 @@
     }
 
     .mixin-textarea-any {
-        
         > textarea {
             @apply block w-full transition-colors leading-none resize-none p-2;
         }
@@ -63,7 +62,7 @@
     }
 
     .mixin-page-content-like {
-        @apply  flex flex-col;
+        @apply flex flex-col;
     }
 
     .mixin-page-content-base {
@@ -79,31 +78,33 @@
     }
 
     .mixin-checkbox-like {
-        @apply 
-            after:content-['.'] 
-            after:flex 
-            after:opacity-0
-            after:aspect-square
-            after:h-full
-            after:w-full
-            after:pointer-events-none
-            transition-colors 
-            relative;
+        @apply cursor-pointer relative rounded-full;
+
+        [data-role="inner-part"] {
+            @apply after:content-['.'] 
+                after:flex 
+                after:opacity-0
+                after:aspect-square
+                after:h-2
+                after:w-2
+                after:pointer-events-none
+                transition-colors 
+                rounded-full;
+        }
 
         > input {
-            @apply 
-                absolute 
-                inset-0 
-                opacity-0 
-                cursor-pointer;
+            @apply absolute 
+            inset-0 
+            opacity-0 
+            cursor-pointer;
         }
     }
 
     .mixin-checkbox-sm {
-        @apply p-2 text-sm leading-none;
+        @apply p-1 text-sm leading-none;
 
         > input {
-            @apply p-2 text-sm leading-none absolute inset-0 transition-colors;
+            @apply p-1 text-sm leading-none absolute inset-0 transition-colors;
         }
     }
 

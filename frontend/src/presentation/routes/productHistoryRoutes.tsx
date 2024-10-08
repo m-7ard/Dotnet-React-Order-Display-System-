@@ -5,33 +5,14 @@ import parseListProductHistoriesCommandParameters from "../../application/comman
 import ListProductHistoriesCommand from "../../application/commands/productHistories/list/ListProductHistoriesCommand";
 import ProductHistoriesPage from "../Application/ProductHistories/ProductHistoriesPage";
 import routeData from "./_routeData";
+import IListProductHistoriesRequestDTO from "../../application/contracts/productHistories/list/IListProductHistoriesRequestDTO";
 
 const listProductHistoriesRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: routeData.listProductHistories.pattern,
-    loaderDeps: ({
-        search,
-    }: {
-        search: {
-            minPrice?: string;
-            maxPrice?: string;
-            name?: string;
-            validTo?: string;
-            validFrom?: string;
-            description?: string;
-            productId?: string;
-        }
-    }) => search,
+    loaderDeps: ({ search }: { search: Partial<Record<keyof IListProductHistoriesRequestDTO, string>> }) => search,
     loader: async ({ deps }) => {
-        const params = parseListProductHistoriesCommandParameters({
-            maxPrice: deps.maxPrice,
-            minPrice: deps.minPrice,
-            name: deps.name,
-            validTo: deps.validTo,
-            validFrom: deps.validFrom,
-            description: deps.description,
-            productId: deps.productId,
-        });
+        const params = parseListProductHistoriesCommandParameters(deps);
         const command = new ListProductHistoriesCommand(params);
         const result = await commandDispatcher.dispatch(command);
 
@@ -40,8 +21,6 @@ const listProductHistoriesRoute = createRoute({
         };
     },
     component: ProductHistoriesPage,
-})
+});
 
-export default [
-    listProductHistoriesRoute
-]
+export default [listProductHistoriesRoute];

@@ -63,8 +63,8 @@
         $root: &;
         @apply border border-gray-900 bg-white hover:bg-gray-200;
         
-        &--active, &:has(:checked) {
-            @apply bg-blue-400;
+        &--active [data-role="inner-part"], &:has(:checked) [data-role="inner-part"] {
+            @apply bg-gray-900;
         }
     }
 
