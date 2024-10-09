@@ -8,6 +8,7 @@ using Domain.ValueObjects.OrderItem;
 
 namespace Tests.IntegrationTests.Orders;
 
+[Collection("Sequential")]
 public class CreateOrderIntegrationTest : OrdersIntegrationTest
 {
     private Product _productOne = null!;

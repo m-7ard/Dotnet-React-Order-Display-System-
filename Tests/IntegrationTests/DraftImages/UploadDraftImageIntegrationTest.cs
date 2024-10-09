@@ -5,6 +5,7 @@ using Application.Common;
 
 namespace Tests.IntegrationTests.DraftImages;
 
+[Collection("Sequential")]
 public class UploadDraftImageIntegrationTest : DraftImageIntegrationTest
 {
     [Fact]

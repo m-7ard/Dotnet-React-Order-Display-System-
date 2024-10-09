@@ -5,11 +5,11 @@ using Application.Common;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
-using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Tests.IntegrationTests.Orders;
 
+[Collection("Sequential")]
 public class ListOrdersIntegrationTest : OrdersIntegrationTest
 {
     private Product _product001 = null!;

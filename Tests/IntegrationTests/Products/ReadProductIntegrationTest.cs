@@ -5,6 +5,7 @@ using Domain.Models;
 
 namespace Tests.IntegrationTests.Products;
 
+[Collection("Sequential")]
 public class ReadProductIntegrationTest : ProductsIntegrationTest
 {
     private Product _product001 = null!;

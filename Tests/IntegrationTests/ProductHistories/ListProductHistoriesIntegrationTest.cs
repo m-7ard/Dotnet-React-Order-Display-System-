@@ -1,13 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
 using Application.Api.ProductHistories.List.DTOs;
-using Application.Api.Products.List.DTOs;
 using Application.Common;
 using Domain.Models;
-using Tests.IntegrationTests.Products;
 
 namespace Tests.IntegrationTests.ProductHistories;
 
+[Collection("Sequential")]
 public class ListProductHistoriesIntegrationTest : ProductHistoriesIntegrationTest
 {
     private Product _price1_NameDescProduct1 = null!;

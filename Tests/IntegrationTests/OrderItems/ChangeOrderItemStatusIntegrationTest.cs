@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Tests.IntegrationTests.OrderItems;
 
+[Collection("Sequential")]
 public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
 {
     private Product _product001 = null!;

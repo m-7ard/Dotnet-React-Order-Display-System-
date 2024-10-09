@@ -6,6 +6,7 @@ using Domain.Models;
 
 namespace Tests.IntegrationTests.Products;
 
+[Collection("Sequential")]
 public class ListProductsIntegrationTest : ProductsIntegrationTest
 {
     private Product _price1_NameDescProduct1 = null!;
