@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Tests.IntegrationTests.Products;
 
+[Collection("Sequential")]
 public class UpdateProductIntegrationTest : ProductsIntegrationTest
 {
     private DraftImage _validImage = null!;

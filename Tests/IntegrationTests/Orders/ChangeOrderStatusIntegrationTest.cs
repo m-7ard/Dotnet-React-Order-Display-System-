@@ -11,6 +11,7 @@ using Tests.IntegrationTests.OrderItems;
 
 namespace Tests.IntegrationTests.Orders;
 
+[Collection("Sequential")]
 public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
 {
     private Product _product001 = null!;
