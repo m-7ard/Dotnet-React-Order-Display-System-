@@ -51,12 +51,13 @@ export default function ProductsPage() {
                         panelProps={{}}
                     />
                     <AbstractTooltip
-                        Trigger={({ onToggle }) => (
+                        Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
                                 <MixinButton
                                     className="w-full truncate"
                                     options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
                                     onClick={onToggle}
+                                    active={open}
                                 >
                                     Order By
                                 </MixinButton>

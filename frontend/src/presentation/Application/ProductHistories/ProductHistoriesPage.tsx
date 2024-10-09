@@ -30,7 +30,7 @@ export default function ProductHistoriesPage() {
 
     return (
         <div className="mixin-page-like mixin-page-base mx-auto">
-            <header className="flex flex-row gap-2 items-center">
+            <header className="flex flex-row gap-2 items-center overflow-x-auto shrink-0">
                 <LinkBox
                     parts={[{ isLink: true, to: routeData.listProductHistories.build({}), label: "Product Histories" }]}
                 />
@@ -50,12 +50,13 @@ export default function ProductHistoriesPage() {
                         panelProps={{}}
                     />
                     <AbstractTooltip
-                        Trigger={({ onToggle }) => (
+                        Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
                                 <MixinButton
                                     className="w-full truncate"
                                     options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
                                     onClick={onToggle}
+                                    active={open}
                                 >
                                     Order By
                                 </MixinButton>
@@ -67,7 +68,7 @@ export default function ProductHistoriesPage() {
                 </div>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 gap-2">
+            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[425px]:grid-cols-1 gap-2">
                 {productHistories.map((productHistory) => (
                     <ProductHistory productHistory={productHistory} key={productHistory.id} />
                 ))}{" "}
