@@ -6,4 +6,5 @@ export default interface IListProductHistoriesRequestDTO {
     validTo: Date | null;
     validFrom: Date | null;
     productId: number | null;
+    orderBy: string | null;
 }

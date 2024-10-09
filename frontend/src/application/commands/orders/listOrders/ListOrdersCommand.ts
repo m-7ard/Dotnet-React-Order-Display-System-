@@ -16,6 +16,7 @@ export default class ListOrdersCommand implements ICommand<IListOrdersResult> {
         id: Order["id"] | null;
         productId: IProduct["id"] | null;
         productHistoryId: IProductHistory["id"] | null;
+        orderBy: string | null;
     }) {
         this.status = props.status;
         this.minTotal = props.minTotal;
@@ -25,6 +26,7 @@ export default class ListOrdersCommand implements ICommand<IListOrdersResult> {
         this.id = props.id;
         this.productId = props.productId;
         this.productHistoryId = props.productHistoryId;
+        this.orderBy = props.orderBy;
     }
 
     public minTotal: number | null;
@@ -35,4 +37,5 @@ export default class ListOrdersCommand implements ICommand<IListOrdersResult> {
     public id: Order["id"] | null;
     public productId: IProduct["id"] | null;
     public productHistoryId: IProductHistory["id"] | null;
+    public orderBy: string | null;
 }

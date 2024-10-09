@@ -14,23 +14,23 @@ type DialogStore = {
     [ID: string]: DialogData;
 };
 
-export default function GlobalDialogManager(props: React.PropsWithChildren<{ location: string }>) {
-    const { children, location } = props;
+export default function GlobalDialogManager(props: React.PropsWithChildren<{ href: string }>) {
+    const { children, href } = props;
     const [dialogs, setDialogs] = useState<DialogStore>({});
-    const currentLocation = useRef(location);
+    const currentHref = useRef(href);
 
     const closeAllDialogs = useCallback(() => {
         setDialogs({});
     }, []);
 
     useEffect(() => {
-        if (currentLocation.current === location) {
+        if (currentHref.current === href) {
             return;
         }
 
         closeAllDialogs();
-        currentLocation.current = location;
-    }, [closeAllDialogs, location]);
+        currentHref.current = href;
+    }, [closeAllDialogs, href]);
 
     const dispatchDialog = useCallback(
         (ID: string, data: DialogData) =>

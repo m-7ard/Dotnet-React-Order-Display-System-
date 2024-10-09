@@ -21,6 +21,7 @@ export default class ListProductHistoriesHandler implements ICommandHandler<List
                 validTo: request.validTo,
                 validFrom: request.validFrom,
                 productId: request.productId,
+                orderBy: request.orderBy
             });
 
             if (result.isErr()) {

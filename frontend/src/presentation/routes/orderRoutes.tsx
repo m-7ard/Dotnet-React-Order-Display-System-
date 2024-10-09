@@ -14,12 +14,11 @@ import ILoaderResult from "../../application/interfaces/ILoaderResult";
 import ManageOrderRoute from "../Application/Orders/Manage/ManageOrderRoute";
 import parseListOrdersCommandParameters from "../../application/commands/orders/listOrders/parseListOrdersCommandParameters";
 import routeData from "./_routeData";
-import IListOrdersRequestDTO from "../../application/contracts/orders/list/IListOrdersRequestDTO";
 
 const baseOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: routeData.listOrders.pattern,
-    loaderDeps: ({ search }: { search: Partial<Record<keyof IListOrdersRequestDTO, string>> }) => search,
+    loaderDeps: ({ search }: { search: Record<string, string> }) => search,
     loader: async ({ deps }) => {
         const parsedParams = parseListOrdersCommandParameters(deps);
         const command = new ListOrdersCommand(parsedParams);

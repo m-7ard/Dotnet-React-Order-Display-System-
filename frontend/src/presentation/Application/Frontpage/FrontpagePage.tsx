@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import LinkBox from "../../components/Resuables/LinkBox";
 import MixinButton from "../../components/Resuables/MixinButton";
 import { getLocalUrl } from "../../../viteUtils";
+import CoverImage from "../../components/Resuables/CoverImage";
 
 export default function FrontpagePage() {
     return (
@@ -17,8 +18,8 @@ export default function FrontpagePage() {
                         "/src/presentation/images/_045d1801-1987-4ce3-abd9-1b8f56fcde24-removebg-preview.png",
                     )}
                     buttons={[
-                        { label: "Create", href: "/products/create" },
                         { label: "List", href: "/products" },
+                        { label: "Create", href: "/products/create" },
                     ]}
                 />
                 <Navigator
@@ -27,8 +28,8 @@ export default function FrontpagePage() {
                         "/src/presentation/images/_a8b86e0e-c47a-4490-89ed-e2b2a69dcc61-removebg-preview.png",
                     )}
                     buttons={[
-                        { label: "Create", href: "/orders/create" },
                         { label: "List", href: "/orders" },
+                        { label: "Create", href: "/orders/create" },
                     ]}
                 />
                 <Navigator
@@ -47,24 +48,19 @@ function Navigator(props: { title: string; imageUrl: string; buttons: Array<{ la
     const { title, imageUrl, buttons } = props;
 
     return (
-        <li className="flex flex-col gap-2 sm:max-w-full max-w-96 w-full">
-            <div className="flex flex-row gap-4 items-center relative">
-                <div className="font-bold">{title}</div>
-            </div>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <div className="flex flex-col gap-1">
-                {buttons.map(({ label, href }) => (
-                    <Link to={href}>
-                        <MixinButton
-                            className="w-full justify-between"
-                            options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
-                        >
-                            <div>{label}</div>
-                            <div>››</div>
-                        </MixinButton>
-                    </Link>
-                ))}
-            </div>
+        <li className="grid gap-2 w-full items-center" style={{ gridTemplateColumns: "auto 1fr" }}>
+            <CoverImage src={imageUrl} className="h-full aspect-square aspect-square border border-gray-900 bg-gray-100" />
+            <div className="mixin-button-base flex justify-center items-center border border-gray-900 bg-gray-100">{title}</div>
+            {buttons.map(({ label, href }) => (
+                <Link to={href} className="col-start-2" key={href}>
+                    <MixinButton
+                        className="w-full justify-center"
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}
+                    >
+                        {label}
+                    </MixinButton>
+                </Link>
+            ))}
         </li>
     );
 }

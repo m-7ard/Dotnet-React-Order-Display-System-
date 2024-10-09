@@ -9,6 +9,7 @@ const schema = Type.Object({
     validFrom: Type.Date(),
     description: Type.String({ minLength: 1 }),
     productId: Type.Number({ minimum: 0 }),
+    orderBy: Type.String({ minLength: 1 }),
 });
 
 type Schema = Static<typeof schema>;
@@ -22,5 +23,6 @@ export default function parseListProductHistoriesCommandParameters(data: Partial
         validTo: parseTypeboxSchemaOrNull(schema.properties.validTo, data.validTo),
         description: parseTypeboxSchemaOrNull(schema.properties.description, data.description),
         productId: parseTypeboxSchemaOrNull(schema.properties.productId, data.productId),
+        orderBy: parseTypeboxSchemaOrNull(schema.properties.orderBy, data.orderBy),
     }
 }

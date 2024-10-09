@@ -12,6 +12,7 @@ export default class ListProductHistoriesCommand implements ICommand<IListProduc
         validFrom: Date | null;
         validTo: Date | null;
         productId: number | null;
+        orderBy: string | null;
     }) {
         this.name = props.name;
         this.minPrice = props.minPrice;
@@ -20,6 +21,7 @@ export default class ListProductHistoriesCommand implements ICommand<IListProduc
         this.validFrom = props.validFrom;
         this.validTo = props.validTo;
         this.productId = props.productId;
+        this.orderBy = props.orderBy;
     }
 
     public name: string | null;
@@ -29,4 +31,5 @@ export default class ListProductHistoriesCommand implements ICommand<IListProduc
     public validFrom: Date | null;
     public validTo: Date | null;
     public productId: number | null;
+    public orderBy: string | null;
 }
