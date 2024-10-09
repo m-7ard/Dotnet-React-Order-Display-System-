@@ -39,8 +39,8 @@ export default function OrdersPage() {
     const queryData = ordersResult.isOk() ? ordersResult.value.orders : [];
 
     return (
-        <div className="mixin-page-like mixin-page-base max-w-full">
-            <header className="flex flex-row gap-2 items-center">
+        <div className="mixin-page-like mixin-page-base max-w-full border-x-0">
+            <header className="flex flex-row gap-2 items-center overflow-x-auto shrink-0">
                 <LinkBox parts={[{ isLink: true, to: "/orders", label: "Orders" }]} />
                 <div className="flex flex-row gap-2 ml-auto">
                     <Link to="/orders/create">
@@ -66,12 +66,13 @@ export default function OrdersPage() {
                         panelProps={{}}
                     />
                     <AbstractTooltip
-                        Trigger={({ onToggle }) => (
+                        Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
                                 <MixinButton
                                     className="w-full truncate"
                                     options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
                                     onClick={onToggle}
+                                    active={open}
                                 >
                                     Order By
                                 </MixinButton>

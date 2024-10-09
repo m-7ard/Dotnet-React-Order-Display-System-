@@ -49,8 +49,8 @@ function Navigator(props: { title: string; imageUrl: string; buttons: Array<{ la
 
     return (
         <li className="grid gap-2 w-full items-center" style={{ gridTemplateColumns: "auto 1fr" }}>
-            <CoverImage src={imageUrl} className="h-full aspect-square aspect-square border border-gray-900 bg-gray-100" />
-            <div className="mixin-button-base flex justify-center items-center border border-gray-900 bg-gray-100">{title}</div>
+            <CoverImage src={imageUrl} className="h-full aspect-square aspect-square border border-gray-900 bg-white" />
+            <div className="mixin-button-base flex justify-center items-center border border-gray-900 bg-white">{title}</div>
             {buttons.map(({ label, href }) => (
                 <Link to={href} className="col-start-2" key={href}>
                     <MixinButton
