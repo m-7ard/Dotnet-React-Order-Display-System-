@@ -1,7 +1,7 @@
-import { useLoaderData, useNavigate } from "@tanstack/react-router";
+import { useLoaderData, useNavigate, useSearch } from "@tanstack/react-router";
 import MixinButton from "../../components/Resuables/MixinButton";
 import { useApplicationExceptionContext } from "../../contexts/ApplicationExceptionHandlerContext";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import CoverImage from "../../components/Resuables/CoverImage";
 import AbstractTooltip, {
     AbstractTooltipDefaultPanel,
@@ -15,6 +15,7 @@ import { getApiUrl } from "../../../viteUtils";
 import MixinPanel from "../../components/Resuables/MixinPanel";
 import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
 import routeData from "../../routes/_routeData";
+import StatelessRadioCheckboxField from "../../components/StatelessFields/StatelessRadioCheckboxField";
 
 export default function ProductHistoriesPage() {
     const { result } = useLoaderData({ from: "/product_histories" });
@@ -30,7 +31,9 @@ export default function ProductHistoriesPage() {
     return (
         <div className="mixin-page-like mixin-page-base mx-auto">
             <header className="flex flex-row gap-2 items-center">
-                <LinkBox parts={[{ isLink: true, to: routeData.listProductHistories.build({}), label: "Product Histories" }]} />
+                <LinkBox
+                    parts={[{ isLink: true, to: routeData.listProductHistories.build({}), label: "Product Histories" }]}
+                />
                 <div className="flex flex-row gap-2 ml-auto">
                     <GlobalDialog
                         zIndex={10}
@@ -46,13 +49,28 @@ export default function ProductHistoriesPage() {
                         Panel={FilterProductHistoriesDialogPanel}
                         panelProps={{}}
                     />
+                    <AbstractTooltip
+                        Trigger={({ onToggle }) => (
+                            <AbstractTooltipTrigger>
+                                <MixinButton
+                                    className="w-full truncate"
+                                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                    onClick={onToggle}
+                                >
+                                    Order By
+                                </MixinButton>
+                            </AbstractTooltipTrigger>
+                        )}
+                        Panel={<OrderByMenu />}
+                        positioning={{ top: "100%", right: "0px" }}
+                    />
                 </div>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <section className="grid grid-cols-2 max-[576px]:grid-cols-2 gap-2">
                 {productHistories.map((productHistory) => (
                     <ProductHistory productHistory={productHistory} key={productHistory.id} />
-                ))}
+                ))}{" "}
             </section>
         </div>
     );
@@ -180,6 +198,80 @@ function OptionMenu(props: { productHistory: IProductHistory }) {
                             See Products
                         </MixinButton>
                     </a>
+                </div>
+            </MixinPanel>
+        </AbstractTooltipDefaultPanel>
+    );
+}
+
+function OrderByMenu() {
+    const { onClose } = useAbstractTooltipContext();
+    const navigate = useNavigate();
+    const searchParams: Record<string, string> = useSearch({ strict: false });
+
+    const orderBy = searchParams.orderBy;
+    const onChange = useCallback(
+        (value: string) => {
+            navigate({ to: routeData.listProductHistories.pattern, search: { ...searchParams, orderBy: value } });
+            onClose();
+        },
+        [navigate, searchParams, onClose],
+    );
+
+    return (
+        <AbstractTooltipDefaultPanel className={`z-10 fixed mt-1`}>
+            <MixinPanel
+                options={{
+                    size: "mixin-panel-base",
+                    theme: "theme-panel-generic-white",
+                }}
+            >
+                <div className="flex flex-col gap-2">
+                    <div className="flex flex-row gap-4 items-center justify-between">
+                        <div className="text-sm">Newest</div>
+                        <StatelessRadioCheckboxField
+                            name={"orderBy"}
+                            onChange={onChange}
+                            value={"newest"}
+                            checked={orderBy === "newest"}
+                        />
+                    </div>
+                    <div className="flex flex-row gap-4 items-center justify-between">
+                        <div className="text-sm">Oldest</div>
+                        <StatelessRadioCheckboxField
+                            name={"orderBy"}
+                            onChange={onChange}
+                            value={"oldest"}
+                            checked={orderBy === "oldest"}
+                        />
+                    </div>
+                    <div className="flex flex-row gap-4 items-center justify-between">
+                        <div className="text-sm">Price - Lowest to Highest</div>
+                        <StatelessRadioCheckboxField
+                            name={"orderBy"}
+                            onChange={onChange}
+                            value={"price asc"}
+                            checked={orderBy === "price asc"}
+                        />
+                    </div>
+                    <div className="flex flex-row gap-4 items-center justify-between">
+                        <div className="text-sm">Product Id - Highest to Lowest</div>
+                        <StatelessRadioCheckboxField
+                            name={"orderBy"}
+                            onChange={onChange}
+                            value={"product id desc"}
+                            checked={orderBy === "product id desc"}
+                        />
+                    </div>
+                    <div className="flex flex-row gap-4 items-center justify-between">
+                        <div className="text-sm">Product Id - Highest to Lowest</div>
+                        <StatelessRadioCheckboxField
+                            name={"orderBy"}
+                            onChange={onChange}
+                            value={"product id asc"}
+                            checked={orderBy === "product id asc"}
+                        />
+                    </div>
                 </div>
             </MixinPanel>
         </AbstractTooltipDefaultPanel>

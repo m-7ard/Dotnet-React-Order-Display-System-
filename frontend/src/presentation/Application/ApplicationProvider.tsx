@@ -14,7 +14,7 @@ export default function ApplicationProvider({ children }: PropsWithChildren) {
         <ApplicationExceptionProvider>
             <CommandDispatcherContext.Provider value={{ commandDispatcher: commandDispatcher }}>
                 <StateManagersContext.Provider value={{ orderStateManager: orderStateManager, productStateManager: productStateManager }}>
-                    <GlobalDialogManager location={location.pathname}>
+                    <GlobalDialogManager href={location.href}>
                         {children}
                     </GlobalDialogManager>
                 </StateManagersContext.Provider>

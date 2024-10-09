@@ -20,6 +20,8 @@ export default class ListOrdersHandler implements ICommandHandler<IListProductsC
                 request.status = null;
             }
 
+            console.log('deez: ', request.orderBy)
+
             const result = await this._orderDataAccess.listOrders({
                 id: request.id,
                 createdAfter: request.createdAfter,
@@ -28,7 +30,8 @@ export default class ListOrdersHandler implements ICommandHandler<IListProductsC
                 minTotal: request.minTotal,
                 status: request.status,
                 productId: request.productId,
-                productHistoryId: request.productHistoryId
+                productHistoryId: request.productHistoryId,
+                orderBy: request.orderBy
             });
 
             if (result.isErr()) {

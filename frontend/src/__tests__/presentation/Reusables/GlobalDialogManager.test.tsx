@@ -16,7 +16,7 @@ describe('GlobalDialogManager', () => {
 
     test('GlobalDialogManager open; On trigger click; Success;', () => {
         render(
-            <GlobalDialogManager location='/'>
+            <GlobalDialogManager href='/'>
                 <GlobalDialog
                     Trigger={MockTrigger}
                     Panel={MockPanel}
@@ -32,7 +32,7 @@ describe('GlobalDialogManager', () => {
 
     test('GlobalDialogManager closes; On backdrop click; Success;', () => {
         render(
-            <GlobalDialogManager location='/'>
+            <GlobalDialogManager href='/'>
                 <GlobalDialog
                     Trigger={MockTrigger}
                     Panel={MockPanel}
@@ -50,7 +50,7 @@ describe('GlobalDialogManager', () => {
 
     test('GlobalDialogManager updates props; New props; Success;', () => {
         const TestComponent = ({ message }: { message: string }) => (
-            <GlobalDialogManager location='/'>
+            <GlobalDialogManager href='/'>
                 <GlobalDialog
                     Trigger={MockTrigger}
                     Panel={MockPanel}
@@ -80,7 +80,7 @@ describe('GlobalDialogManager', () => {
     
     test('GlobalDialogManager updates props; Same props; Failure;', () => {
         const TestComponent = ({ message }: { message: string }) => (
-            <GlobalDialogManager location='/'>
+            <GlobalDialogManager href='/'>
                 <GlobalDialog
                     Trigger={MockTrigger}
                     Panel={MockPanel}
@@ -108,7 +108,7 @@ describe('GlobalDialogManager', () => {
 
     test('GlobalDialogManager closes all dialogs; Different location; Success;', async () => {
         const TestComponent = ({ location }: { location: string }) => (
-            <GlobalDialogManager location={location}>
+            <GlobalDialogManager href={location}>
                 <GlobalDialog
                     Trigger={MockTrigger}
                     Panel={MockPanel}
@@ -127,7 +127,7 @@ describe('GlobalDialogManager', () => {
 
     test('GlobalDialogManager closes all dialogs; Same location; Failure;', () => {
         const TestComponent = ({ location }: { location: string }) => (
-            <GlobalDialogManager location={location}>
+            <GlobalDialogManager href={location}>
                 <GlobalDialog
                     Trigger={MockTrigger}
                     Panel={MockPanel}

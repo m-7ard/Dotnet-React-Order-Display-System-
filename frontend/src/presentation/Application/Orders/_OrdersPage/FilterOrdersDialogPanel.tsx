@@ -26,10 +26,12 @@ export default function FilterProductsDialogPanel() {
     const navigate = useNavigate();
 
     return (
-        <MixinPanel options={{
-            size: "mixin-panel-base",
-            theme: "theme-panel-generic-white"
-        }}>
+        <MixinPanel
+            options={{
+                size: "mixin-panel-base",
+                theme: "theme-panel-generic-white",
+            }}
+        >
             <header className="flex flex-row justify-between items-center">
                 <LinkBox
                     parts={[
@@ -68,10 +70,22 @@ export default function FilterProductsDialogPanel() {
                         onChange={(field, value) => itemManager.updateItem(field, value)}
                     />
                 </div>
-                <footer className="flex flex-row gap-2 justify-end">
+                <footer className="flex flex-row gap-2">
+                    <MixinButton
+                        options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                        type="button"
+                        onClick={() => {
+                            Object.keys(itemManager.items).forEach((field) =>
+                                itemManager.updateItem(field as keyof FilterOrdersFieldsetValueState, ""),
+                            );
+                        }}
+                    >
+                        Clear
+                    </MixinButton>
                     <MixinButton
                         options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
                         type="reset"
+                        className="ml-auto"
                     >
                         Reset
                     </MixinButton>

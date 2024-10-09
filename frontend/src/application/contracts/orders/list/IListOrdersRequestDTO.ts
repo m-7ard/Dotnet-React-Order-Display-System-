@@ -11,4 +11,5 @@ export default interface IListOrdersRequestDTO {
     id: Order["id"] | null;
     productId: IProduct["id"] | null;
     productHistoryId: IProductHistory["id"] | null;
+    orderBy: string | null;
 }

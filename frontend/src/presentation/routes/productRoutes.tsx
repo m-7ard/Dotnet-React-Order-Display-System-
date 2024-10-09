@@ -13,7 +13,6 @@ import ReadProductCommand from "../../application/commands/products/readProduct/
 import UpdateProductRoute from "../Application/Products/Update/UpdateProductRoute";
 import parseListProductsCommandParameters from "../../application/commands/products/listProducts/parseListProductsCommandParameters";
 import routeData from "./_routeData";
-import IListProductsRequestDTO from "../../application/contracts/products/list/IListProductsRequestDTO";
 
 const baseProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -21,7 +20,7 @@ const baseProductsRoute = createRoute({
     loaderDeps: ({
         search,
     }: {
-        search: Partial<Record<keyof IListProductsRequestDTO, string>>
+        search: Record<string, string>
     }) => search,
     loader: async ({ deps }) => {
         const params = parseListProductsCommandParameters(deps);
