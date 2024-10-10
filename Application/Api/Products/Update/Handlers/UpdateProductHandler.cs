@@ -14,9 +14,9 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
     private readonly IProductHistoryRepository _productHistoryRepository;
     private readonly IDraftImageRepository _draftImageRepository;
 
-    public UpdateProductHandler(IProductRepository productRespository, IProductHistoryRepository productHistoryRepository, IDraftImageRepository draftImageRepository)
+    public UpdateProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IDraftImageRepository draftImageRepository)
     {
-        _productRepository = productRespository;
+        _productRepository = productRepository;
         _productHistoryRepository = productHistoryRepository;
         _draftImageRepository = draftImageRepository;
     }
@@ -98,7 +98,7 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
 
         // Create new Product History
         var inputProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(productUpdating);
-        var productHistory = await _productHistoryRepository.CreateAsync(inputProductHistory);
+        await _productHistoryRepository.CreateAsync(inputProductHistory);
 
         return new UpdateProductResult
         (
