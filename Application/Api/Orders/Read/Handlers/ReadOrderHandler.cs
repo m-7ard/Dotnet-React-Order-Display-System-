@@ -6,11 +6,11 @@ using OneOf;
 
 namespace Application.Api.Orders.Read.Handlers;
 
-public class ReadProductHandler : IRequestHandler<ReadOrderQuery, OneOf<ReadOrderResult, List<PlainApplicationError>>>
+public class ReadOrderHandler : IRequestHandler<ReadOrderQuery, OneOf<ReadOrderResult, List<PlainApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
 
-    public ReadProductHandler(IOrderRepository orderRepository)
+    public ReadOrderHandler(IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
     }

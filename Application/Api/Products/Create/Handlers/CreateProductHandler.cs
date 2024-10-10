@@ -14,9 +14,9 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
     private readonly IDraftImageRepository _draftImageRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
 
-    public CreateProductHandler(IProductRepository productRespository, IDraftImageRepository draftImageRepository, IProductHistoryRepository productHistoryRepository)
+    public CreateProductHandler(IProductRepository productRepository, IDraftImageRepository draftImageRepository, IProductHistoryRepository productHistoryRepository)
     {
-        _productRepository = productRespository;
+        _productRepository = productRepository;
         _draftImageRepository = draftImageRepository;
         _productHistoryRepository = productHistoryRepository;
     }

@@ -6,7 +6,6 @@ using Moq;
 
 namespace Tests.UnitTests.Application.Api.Products;
 
-[Collection("Sequential")]
 public class CreateProductHandlerUnitTest
 {
     private readonly Mock<IProductRepository> _mockProductRepository;
@@ -20,7 +19,7 @@ public class CreateProductHandlerUnitTest
         _mockDraftImageRepository = new Mock<IDraftImageRepository>();
         _mockProductHistoryRepository = new Mock<IProductHistoryRepository>();
         _handler = new CreateProductHandler(
-            productRespository: _mockProductRepository.Object,
+            productRepository: _mockProductRepository.Object,
             draftImageRepository: _mockDraftImageRepository.Object,
             productHistoryRepository: _mockProductHistoryRepository.Object
         );
@@ -44,7 +43,9 @@ public class CreateProductHandlerUnitTest
             images: []
         );
 
-        _mockProductRepository.Setup(repo => repo.CreateAsync(It.IsAny<Product>())).ReturnsAsync(mockProduct);
+        _mockProductRepository
+            .Setup(repo => repo.CreateAsync(It.IsAny<Product>()))
+            .ReturnsAsync(mockProduct);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -81,7 +82,7 @@ public class CreateProductHandlerUnitTest
             originalFileName: "originalFileName", 
             url: "url"
         ));
-        _mockProductRepository.Setup(repo => repo.CreateAsync(It.Is<Product>(product => product.Images.Count == 2)))).ReturnsAsync(mockProduct);
+        _mockProductRepository.Setup(repo => repo.CreateAsync(It.Is<Product>(product => product.Images.Count == 2))).ReturnsAsync(mockProduct);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
