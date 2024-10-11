@@ -8,6 +8,7 @@ using Application.Interfaces.Services;
 using FluentValidation;
 using Infrastructure;
 using Infrastructure.ApiModel;
+using Infrastructure.Files;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -101,6 +102,7 @@ builder.Services.AddScoped<IDraftImageRepository, DraftImageRepository>();
 
 builder.Services.AddScoped<IPlainErrorHandlingService, PlainApiErrorHandlingService>();
 builder.Services.AddScoped<IApiModelService, ApiModelService>();
+builder.Services.AddSingleton<IFileStorage, FileStorage>();
 //
 // builder.Services.AddSingleton<INewErrorHandlingService<ApiError>, ApiErrorHandlingService>();
 
