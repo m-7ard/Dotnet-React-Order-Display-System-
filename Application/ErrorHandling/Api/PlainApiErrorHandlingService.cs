@@ -27,9 +27,7 @@ public class PlainApiErrorHandlingService : IPlainErrorHandlingService
             var camelCaseFieldName = StringCaseConverter.ToCamelCase(error.PropertyName);
             var fullPath = path.Count == 0
                 ? camelCaseFieldName
-                : string.Join(
-                    "/", camelCaseFieldName, string.Join("/", path)
-                );
+                : $"/{camelCaseFieldName}/{string.Join("/", path)}";
 
             return new PlainApiError(
                 fieldName: camelCaseFieldName,

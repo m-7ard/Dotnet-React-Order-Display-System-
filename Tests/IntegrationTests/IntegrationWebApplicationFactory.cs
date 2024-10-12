@@ -15,6 +15,12 @@ public class IntegrationWebApplicationFactory<TProgram>
     {
         builder.ConfigureServices(services =>
         {
+            /*
+            
+                Sets up test database
+
+            */
+
             var descriptor = services.SingleOrDefault(
                 d => d.ServiceType ==
                     typeof(DbContextOptions<SimpleProductOrderServiceDbContext>));
@@ -38,8 +44,6 @@ public class IntegrationWebApplicationFactory<TProgram>
                 var db = scopedServices.GetRequiredService<SimpleProductOrderServiceDbContext>();
                 db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
-
-                // Here you can add any seed data for your tests
             }
 
             var projectRoot = DirectoryService.GetMediaDirectory();

@@ -5,8 +5,6 @@ import CoverImage from "../Resuables/CoverImage";
 import MixinButton from "../Resuables/MixinButton";
 import StatelessCharField from "../StatelessFields/StatelessCharField";
 import { Value } from "@sinclair/typebox/value";
-import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
-import AbstractTooltip, { AbstractTooltipDefaultPanel, AbstractTooltipTrigger } from "../Resuables/AbstractTooltip";
 import { getApiUrl } from "../../../viteUtils";
 
 export type IOrderItemDataFormValue = {
@@ -37,11 +35,11 @@ export default function OrderItemDataForm(props: {
         <div className="flex flex-col gap-2">
             <div className="flex flex-row gap-2">
                 <CoverImage
-                    className="h-20 w-20 border border-gray-900 overflow-hidden"
+                    className="h-20 w-20 border border-gray-900 overflow-hidden shrink-0"
                     src={product.images[0] == null ? undefined : `${getApiUrl()}/Media/${product.images[0].fileName}`}
                 />
-                <div className="flex flex-col gap-px">
-                    <div className="text-sm font-bold">{product.name}</div>
+                <div className="flex flex-col gap-px overflow-hidden">
+                    <div className="text-sm font-bold truncate" title={product.name}>{product.name}</div>
                     <div className="text-sm">${product.price}</div>
                     <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>

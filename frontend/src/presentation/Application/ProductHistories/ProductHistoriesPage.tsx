@@ -68,10 +68,10 @@ export default function ProductHistoriesPage() {
                 </div>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[425px]:grid-cols-1 gap-2">
+            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[425px]:grid-cols-1 gap-x-2 gap-y-4">
                 {productHistories.map((productHistory) => (
                     <ProductHistory productHistory={productHistory} key={productHistory.id} />
-                ))}{" "}
+                ))}
             </section>
         </div>
     );
@@ -86,11 +86,11 @@ function ProductHistory(props: { productHistory: IProductHistory }) {
         <div className="flex flex-col gap-2">
             <div className="flex flex-row gap-2">
                 <CoverImage
-                    className="w-full aspect-square basis-1/3 border border-gray-900 overflow-hidden"
+                    className="aspect-square basis-1/3 border border-gray-900 overflow-hidden shrink-0"
                     src={productImages[0] == null ? undefined : productImages[0]}
                 />
                 <div className="flex flex-col gap-1 grow overflow-hidden">
-                    <div className="text-sm font-bold truncate">{productHistory.name}</div>
+                    <div className="text-sm font-bold truncate" title={productHistory.name}>{productHistory.name}</div>
                     <div className="text-sm">${productHistory.price}</div>
                 </div>
             </div>
@@ -112,7 +112,7 @@ function ProductHistory(props: { productHistory: IProductHistory }) {
                     </div>
                 </div>
             </div>
-            <footer className="flex flex-col gap-2 bg-gray-100" data-role="section">
+            <footer className="flex flex-col gap-2 bg-gray-100">
                 <a
                     className="w-full"
                     onClick={(e) => {
