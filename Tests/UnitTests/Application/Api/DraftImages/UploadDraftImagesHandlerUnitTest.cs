@@ -1,36 +1,25 @@
 using Application.Api.DraftImages.UploadImages.Handlers;
+using Application.Common;
+using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
-using Domain.DomainFactories;
-using Domain.Models;
-using Domain.ValueObjects.Order;
-using Infrastructure.Persistence;
+using Microsoft.AspNetCore.Http;
 using Moq;
 
 namespace Tests.UnitTests.Application.Api.DraftImages;
 
 public class UploadDraftImagesHandlerUnitTest
 {
-    private readonly Mock<DraftImageRepository> _mockDraftImageRepository;
+    private readonly Mock<IDraftImageRepository> _mockDraftImageRepository;
     private readonly Mock<IFileStorage> _mockFileStorage;
-    private readonly Order _mockOrder;
     private readonly UploadDraftImagesHandler _handler;
 
     public UploadDraftImagesHandlerUnitTest()
     {
-        _mockDraftImageRepository = new Mock<DraftImageRepository>();
+        _mockDraftImageRepository = new Mock<IDraftImageRepository>();
         _mockFileStorage = new Mock<IFileStorage>();
         _handler = new UploadDraftImagesHandler(
             draftImageRepository: _mockDraftImageRepository.Object,
             fileStorage: _mockFileStorage.Object
-        );
-
-        _mockOrder = OrderFactory.BuildExistingOrder(
-            id: 1,
-            total: 100,
-            dateCreated: DateTime.Today,
-            dateFinished: DateTime.MinValue,
-            orderItems: [],
-            status: OrderStatus.Pending
         );
     }
 
@@ -38,8 +27,11 @@ public class UploadDraftImagesHandlerUnitTest
     public async Task UploadDraftImages_ValidData_Success()
     {
         // ARRANGE
+        var mockFile = new Mock<IFormFile>();
+        mockFile.Setup(d => d.FileName).Returns("filename.png");
+
         var command = new UploadDraftImagesCommand(
-            files: []
+            files: [mockFile.Object]
         );
 
         // ACT
@@ -47,5 +39,10 @@ public class UploadDraftImagesHandlerUnitTest
 
         // ASSERT
         Assert.True(result.IsT0);
+        _mockFileStorage.Verify(storage => storage.SaveFile(
+            mockFile.Object, 
+            It.Is<string>(d => d.StartsWith(DirectoryService.GetMediaDirectory())),
+            CancellationToken.None
+        ), Times.Once);
     }
 }
