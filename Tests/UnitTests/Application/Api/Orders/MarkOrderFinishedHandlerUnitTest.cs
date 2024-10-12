@@ -55,6 +55,23 @@ public class MarkOrderFinishedHandlerUnitTest
     }
 
     [Fact]
+    public async Task MarkOrderFinished_OrderDoesNotExist_Failure()
+    {
+        // ARRANGE
+        var command = new MarkOrderFinishedCommand(
+            orderId: _mockOrder.Id
+        );
+
+        _mockOrder.OrderItems = [new OrderItem(id: 1, quantity: 1, status: OrderItemStatus.Finished, dateCreated: _mockOrder.DateCreated, dateFinished: DateTime.MinValue, orderId: _mockOrder.Id, productHistoryId: 1, productId: 1)];
+
+        // ACT
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // ASSERT
+        Assert.True(result.IsT1);
+    }
+
+    [Fact]
     public async Task MarkOrderFinished_UnfinishedOrderItems_Failure()
     {
         // ARRANGE
