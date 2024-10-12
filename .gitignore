@@ -1,11 +1,5 @@
 API/.env
 **/Debug/**
 
-# Ignore everything in Files/Media
-Files/Media/*
-
-# Except the Tests folder
-!Files/Media/Tests/
-
 # Allow everything inside the Tests folder
 Files/Media/Tests/*
