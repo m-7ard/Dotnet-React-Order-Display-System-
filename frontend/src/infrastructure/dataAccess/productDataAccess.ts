@@ -14,9 +14,10 @@ import IUpdateProductRequestDTO from "../../application/contracts/products/updat
 import IUpdateProductRespnseDTO from "../../application/contracts/products/update/IUpdateProductRespnseDTO";
 import IDeleteProductRequestDTO from "../../application/contracts/products/delete/IDeleteProductRequestDTO";
 import IDeleteProductRespnseDTO from "../../application/contracts/products/delete/IDeleteProductRespnseDTO";
+import { getApiUrl } from "../../viteUtils";
 
 export default class ProductDataAccess implements IProductDataAccess {
-    private readonly _apiRoute = "http://localhost:5102/api/products";
+    private readonly _apiRoute = `${getApiUrl()}/api/products`;
     
     async listProducts(request: IListProductsRequestDTO): Promise<Result<IProduct[], IPlainApiError>> {
         const urlParams = new URLSearchParams();

@@ -14,9 +14,10 @@ import IMarkOrderItemFinishedRequestDTO from "../../application/contracts/orderI
 import IMarkOrderItemFinishedResponseDTO from "../../application/contracts/orderItems/markFinished/IMarkOrderItemFinishedResponseDTO";
 import IMarkOrderFinishedRequestDTO from "../../application/contracts/orders/markFinished/IMarkOrderFinishedRequestDTO";
 import IMarkOrderFinishedResponseDTO from "../../application/contracts/orders/markFinished/IMarkOrderFinishedResponseDTO";
+import { getApiUrl } from "../../viteUtils";
 
 export default class OrderDataAccess implements IOrderDataAccess {
-    private readonly _apiRoute = "http://localhost:5102/api/orders";
+    private readonly _apiRoute = `${getApiUrl()}/api/orders`;
 
     async listOrders(request: IListOrdersRequestDTO): Promise<Result<Order[], IPlainApiError>> {
         const urlParams = new URLSearchParams();
