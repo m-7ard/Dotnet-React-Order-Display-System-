@@ -6,9 +6,10 @@ import IPlainApiError from "../../application/interfaces/IPlainApiError";
 import IDraftImageDataAccess from "../../application/interfaces/dataAccess/IDraftImageDataAccess";
 import IImageData from "../../domain/models/IImageData";
 import ImageDataMapper from "../mappers/productImageMapper";
+import { getApiUrl } from "../../viteUtils";
 
 export default class DraftImageDataAccess implements IDraftImageDataAccess {
-    private readonly _apiRoute = "http://localhost:5102/api/draft_images";
+    private readonly _apiRoute = `${getApiUrl()}/api/draft_images`;
     
     async uploadImages(request: IUploadDraftImagesRequestDTO): Promise<Result<IImageData[], IPlainApiError>> {
         const formData = new FormData();

@@ -6,9 +6,10 @@ import productHistoryMapper from "../mappers/productHistoryMapper";
 import IProductHistoryDataAccess from "../../application/interfaces/dataAccess/IProductHistoryDataAccess";
 import IListProductHistoriesRequestDTO from "../../application/contracts/productHistories/list/IListProductHistoriesRequestDTO";
 import IListProductHistoriesResponseDTO from "../../application/contracts/productHistories/list/IListProductsResponseDTO";
+import { getApiUrl } from "../../viteUtils";
 
 export default class ProductHistoryDataAccess implements IProductHistoryDataAccess {
-    private readonly _apiRoute = "http://localhost:5102/api/product_histories";
+    private readonly _apiRoute = `${getApiUrl()}/api/product_histories`;
     
     async listProductHistories(request: IListProductHistoriesRequestDTO): Promise<Result<IProductHistory[], IPlainApiError>> {
         const urlParams = new URLSearchParams();
