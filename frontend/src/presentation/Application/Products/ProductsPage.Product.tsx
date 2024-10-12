@@ -18,11 +18,11 @@ export default function Product(props: { product: IProduct }) {
                 src={productImages[0] == null ? undefined : productImages[0]}
             />
             <div className="flex flex-col gap-px">
-                <div className="text-sm font-bold truncate">{product.name}</div>
+                <div className="text-sm font-bold truncate" title={product.name}>{product.name}</div>
                 <div className="text-sm">${product.price}</div>
                 <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
             </div>
-            <footer className="flex flex-col gap-2 bg-gray-100" data-role="section">
+            <footer className="flex flex-col gap-2 bg-gray-100">
                 <a
                     className="w-full"
                     onClick={(e) => {

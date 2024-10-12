@@ -103,8 +103,6 @@ builder.Services.AddScoped<IDraftImageRepository, DraftImageRepository>();
 builder.Services.AddScoped<IPlainErrorHandlingService, PlainApiErrorHandlingService>();
 builder.Services.AddScoped<IApiModelService, ApiModelService>();
 builder.Services.AddSingleton<IFileStorage, FileStorage>();
-//
-// builder.Services.AddSingleton<INewErrorHandlingService<ApiError>, ApiErrorHandlingService>();
 
 ///
 ///
@@ -156,8 +154,6 @@ using (var scope = app.Services.CreateScope())
     {
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
-        // Optionally, you can seed your database here
-        // SeedData.Initialize(localService);
     }
     catch (Exception ex)
     {

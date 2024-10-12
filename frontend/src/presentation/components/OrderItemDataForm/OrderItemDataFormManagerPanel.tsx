@@ -181,11 +181,11 @@ function Product(props: { product: IProduct; count: number; onAdd: () => void })
         <div className="flex flex-col gap-2">
             <div className="flex flex-row gap-2">
                 <CoverImage
-                    className="h-20 w-20 border border-gray-900 overflow-hidden"
+                    className="h-20 w-20 border border-gray-900 overflow-hidden shrink-0"
                     src={productImages[0] == null ? undefined : `${getApiUrl()}/${productImages[0].url}`}
                 />
-                <div className="flex flex-col gap-px">
-                    <div className="text-sm font-bold truncate">{product.name}</div>
+                <div className="flex flex-col gap-px overflow-hidden">
+                    <div className="text-sm font-bold truncate" title={product.name}>{product.name}</div>
                     <div className="text-sm">${product.price}</div>
                     <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>
