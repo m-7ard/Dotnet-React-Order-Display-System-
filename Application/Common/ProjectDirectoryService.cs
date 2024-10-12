@@ -4,15 +4,17 @@ namespace Application.Common;
 
 public class DirectoryService
 {
+    private static readonly List<string> _projects = ["Application", "Api", "Domain", "Files", "Infrastructure", "Tests"];
     public static string GetProjectRoot()
     {
-        var assembly = Assembly.GetCallingAssembly();
+        var assembly = Assembly.GetExecutingAssembly();
         var dir = new DirectoryInfo(assembly.Location);
-        while (dir!.Name != "SimpleProductOrderingService")
+        while (!_projects.Contains(dir!.Name))
         {
             dir = Directory.GetParent(dir.FullName);
         }
-
+        
+        dir = Directory.GetParent(dir.FullName);
         return dir!.FullName;
     }
 
