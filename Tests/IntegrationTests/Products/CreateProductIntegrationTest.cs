@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.Products.Create.DTOs;
+using Api.DTOs.Products.Create;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 

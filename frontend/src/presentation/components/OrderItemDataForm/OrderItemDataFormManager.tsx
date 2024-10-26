@@ -10,7 +10,7 @@ type OrderItemDataFormManagerError = IFormError<{
     [UID: string]: IOrderItemDataFormError;
 }>;
 
-export default function OrderItemDataFormManager(props: {
+export type OrderItemDataFormManagerProps = {
     onDelete: (UID: string) => void;
     onUpdate: (UID: string, value: IOrderItemDataFormValue) => void;
     onAdd: (product: IProduct) => void;
@@ -18,7 +18,9 @@ export default function OrderItemDataFormManager(props: {
     value: {
         [UID: string]: IOrderItemDataFormValue;
     };
-}) {
+}
+
+export default function OrderItemDataFormManager(props: OrderItemDataFormManagerProps) {
     const { onDelete, onUpdate, onAdd, errors, value } = props;
 
     const itemManager = useItemManager<{ [productId: string]: IProduct }>({});

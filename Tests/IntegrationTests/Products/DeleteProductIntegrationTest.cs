@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.Products.Delete.DTOs;
+using Api.DTOs.Products.Delete;
 using Domain.Models;
 using Infrastructure.DbEntities;
 using Microsoft.EntityFrameworkCore;

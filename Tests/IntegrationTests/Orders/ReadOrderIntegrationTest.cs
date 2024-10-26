@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.Orders.Read.DTOs;
+using Api.DTOs.Orders.Read;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;

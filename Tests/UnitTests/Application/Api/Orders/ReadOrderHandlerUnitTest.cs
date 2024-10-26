@@ -1,4 +1,4 @@
-using Application.Api.Orders.Read.Handlers;
+using Application.Handlers.Orders.Read;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
 using Domain.Models;

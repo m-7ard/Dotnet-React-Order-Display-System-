@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.Products.List.DTOs;
+using Api.DTOs.Products.List;
 using Application.Common;
 using Domain.Models;
 

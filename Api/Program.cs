@@ -1,13 +1,13 @@
 using System.Globalization;
+using Api.Interfaces;
+using Api.Services;
+using Api.Validators;
 using Application.Api.Products.Create.Handlers;
-using Application.Api.Products.Update.Validators;
 using Application.Common;
-using Application.ErrorHandling.Api;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
 using FluentValidation;
 using Infrastructure;
-using Infrastructure.ApiModel;
 using Infrastructure.Files;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Localization;

@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.Orders.Create.DTOs;
-using Application.Api.Orders.Create.Other;
+using Api.DTOs.Orders.Create;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
@@ -25,12 +24,12 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task CreateOrder_ValidData_Success()
     {
-        var orderItemData = new Dictionary<string, OrderItemData>();
-        orderItemData["product_1"] = new OrderItemData(
+        var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
+        orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
             productId: _productOne.Id,
             quantity: 1
         );
-        orderItemData["product_2"] = new OrderItemData(
+        orderItemData["product_2"] = new CreateOrderRequestDTO.OrderItem(
             productId: _productTwo.Id,
             quantity: 1
         );
@@ -58,7 +57,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task CreateOrder_EmptyOrderItemData_Falure()
     {
-        var orderItemData = new Dictionary<string, OrderItemData>();
+        var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
 
         var request = new CreateOrderRequestDTO
         (
@@ -73,8 +72,8 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task CreateOrder_NonExistingProduct_Falure()
     {
-        var orderItemData = new Dictionary<string, OrderItemData>();
-        orderItemData["product_1"] = new OrderItemData(
+        var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
+        orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
             productId: 0,
             quantity: 1
         );
@@ -92,8 +91,8 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task CreateOrder_InvalidOrderItemData_Falure()
     {
-        var orderItemData = new Dictionary<string, OrderItemData>();
-        orderItemData["product_1"] = new OrderItemData(
+        var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
+        orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
             productId: 1,
             quantity: 0
         );

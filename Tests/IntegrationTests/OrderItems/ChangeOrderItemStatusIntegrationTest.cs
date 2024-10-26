@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.OrderItems.MarkFinished.DTOs;
+using Api.DTOs.OrderItems.MarkFinished;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;

@@ -3,12 +3,14 @@ import React, { ComponentProps, useEffect, useId, useRef } from "react";
 import { useGlobalDialogContext } from "./GlobalDialogContext";
 import deepEqual from "../../utils/deepEqual";
 
-export default function GlobalDialog<T extends React.FunctionComponent<any>>(props: {
+export type GlobalDialogProps<T extends React.FunctionComponent<any>> = {
     Trigger: React.FunctionComponent<{ onToggle: () => void; }>;
     Panel: T;
     panelProps: ComponentProps<T>;
     zIndex: number;
-}) {
+};
+
+export default function GlobalDialog<T extends React.FunctionComponent<any>>(props: GlobalDialogProps<T>) {
     const ID = useId();
     const { Trigger, Panel, panelProps, zIndex } = props;
     const { dispatchDialog, dialogExists, updateDialog } = useGlobalDialogContext();

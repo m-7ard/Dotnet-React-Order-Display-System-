@@ -1,18 +1,17 @@
-using Application.Api.OrderItems.MarkFinished.DTOs;
-using Application.Api.OrderItems.MarkFinished.Handlers;
-using Application.Api.Orders.Create.DTOs;
-using Application.Api.Orders.Create.Handlers;
-using Application.Api.Orders.Create.Other;
-using Application.Api.Orders.List.DTOs;
-using Application.Api.Orders.List.Handlers;
-using Application.Api.Orders.MarkFinished.DTOs;
-using Application.Api.Orders.MarkFinished.Handlers;
-using Application.Api.Orders.Read.DTOs;
-using Application.Api.Orders.Read.Handlers;
-using Application.ApiModels;
-using Application.ErrorHandling.Api;
+using Api.ApiModels;
+using Api.DTOs.OrderItems.MarkFinished;
+using Api.DTOs.Orders.Create;
+using Api.DTOs.Orders.List;
+using Api.DTOs.Orders.MarkFinished;
+using Api.DTOs.Orders.Read;
+using Api.Errors;
+using Api.Interfaces;
 using Application.ErrorHandling.Other;
-using Application.Interfaces.Services;
+using Application.Handlers.OrderItems.MarkFinished;
+using Application.Handlers.Orders.Create;
+using Application.Handlers.Orders.List;
+using Application.Handlers.Orders.MarkFinished;
+using Application.Handlers.Orders.Read;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -27,10 +26,10 @@ public class OrdersController : ControllerBase
 {
     private readonly ISender _mediator;
     private readonly IPlainErrorHandlingService _errorHandlingService;
-    private readonly IValidator<OrderItemData> _orderItemDataValidator;
+    private readonly IValidator<CreateOrderRequestDTO.OrderItem> _orderItemDataValidator;
     private readonly IApiModelService _apiModelService;
 
-    public OrdersController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IValidator<OrderItemData> createProductValidator, IApiModelService apiModelService)
+    public OrdersController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IValidator<CreateOrderRequestDTO.OrderItem> createProductValidator, IApiModelService apiModelService)
     {
         _mediator = mediator;
         _errorHandlingService = errorHandlingService;
@@ -71,7 +70,13 @@ public class OrdersController : ControllerBase
 
         var command = new CreateOrderCommand
         (
-            orderItemData: request.OrderItemData
+            orderItemData: request.OrderItemData.ToDictionary(
+                kvp => kvp.Key,
+                kvp => new CreateOrderCommand.OrderItem(
+                    productId: kvp.Value.ProductId,
+                    quantity: kvp.Value.Quantity
+                )
+            )
         );
         var result = await _mediator.Send(command);
 

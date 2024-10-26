@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.DraftImages.UploadImages.DTOs;
+using Api.DTOs.DraftImages.UploadImages;
 using Application.Common;
 
 namespace Tests.IntegrationTests.DraftImages;
