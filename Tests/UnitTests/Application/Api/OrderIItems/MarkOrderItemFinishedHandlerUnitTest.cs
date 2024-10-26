@@ -1,8 +1,4 @@
-using Application.Api.OrderItems.MarkFinished.Handlers;
-using Application.Api.Orders.Create.Handlers;
-using Application.Api.Orders.Create.Other;
-using Application.Api.Orders.MarkFinished.Handlers;
-using Application.Api.Products.Create.Handlers;
+using Application.Handlers.OrderItems.MarkFinished;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
 using Domain.Models;

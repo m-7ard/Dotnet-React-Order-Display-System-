@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using Application.Api.Products.Read.DTOs;
+using Api.DTOs.Products.Read;
 using Domain.Models;
 
 namespace Tests.IntegrationTests.Products;

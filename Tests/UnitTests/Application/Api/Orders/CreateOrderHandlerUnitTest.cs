@@ -1,6 +1,5 @@
-using Application.Api.Orders.Create.Handlers;
-using Application.Api.Orders.Create.Other;
-using Application.Api.Products.Create.Handlers;
+using Api.DTOs.Orders.Create;
+using Application.Handlers.Orders.Create;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
 using Domain.Models;
@@ -57,10 +56,10 @@ public class CreateOrderHandlerUnitTest
     {
         // ARRANGE
         var command = new CreateOrderCommand(
-            orderItemData: new Dictionary<string, OrderItemData>() 
+            orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new OrderItemData(productId: 1, quantity: 1) },
-                { "UID-2", new OrderItemData(productId: 2, quantity: 2) }
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: 1, quantity: 1) },
+                { "UID-2", new CreateOrderCommand.OrderItem(productId: 2, quantity: 2) }
             }
         );
 
@@ -88,9 +87,9 @@ public class CreateOrderHandlerUnitTest
     {
         // ARRANGE
         var command = new CreateOrderCommand(
-            orderItemData: new Dictionary<string, OrderItemData>() 
+            orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new OrderItemData(productId: 1, quantity: 1) },
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: 1, quantity: 1) },
             }
         );
 
@@ -106,9 +105,9 @@ public class CreateOrderHandlerUnitTest
     {
         // ARRANGE
         var command = new CreateOrderCommand(
-            orderItemData: new Dictionary<string, OrderItemData>() 
+            orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new OrderItemData(productId: 1, quantity: 1) },
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: 1, quantity: 1) },
             }
         );
 

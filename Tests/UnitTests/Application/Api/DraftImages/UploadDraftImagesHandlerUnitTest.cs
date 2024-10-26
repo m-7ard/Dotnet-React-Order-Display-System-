@@ -1,5 +1,5 @@
-using Application.Api.DraftImages.UploadImages.Handlers;
 using Application.Common;
+using Application.Handlers.DraftImages.UploadImages;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Http;

@@ -1,8 +1,8 @@
-using Application.Api.DraftImages.UploadImages.DTOs;
-using Application.Api.DraftImages.UploadImages.Handlers;
-using Application.ApiModels;
-using Application.ErrorHandling.Api;
-using Application.Interfaces.Services;
+using Api.ApiModels;
+using Api.DTOs.DraftImages.UploadImages;
+using Api.Errors;
+using Api.Interfaces;
+using Application.Handlers.DraftImages.UploadImages;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,8 +1,8 @@
-using Application.Api.ProductHistories.List.DTOs;
+using Api.DTOs.ProductHistories.List;
+using Api.DTOs.Products.Create;
+using Api.DTOs.Products.Update;
+using Api.Interfaces;
 using Application.Api.ProductHistories.List.Handlers;
-using Application.Api.Products.Create.DTOs;
-using Application.Api.Products.Update.DTOs;
-using Application.Interfaces.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

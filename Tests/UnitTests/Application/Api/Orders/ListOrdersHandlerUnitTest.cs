@@ -1,11 +1,5 @@
-using Application.Api.Orders.Create.Handlers;
-using Application.Api.Orders.Create.Other;
-using Application.Api.Orders.List.Handlers;
-using Application.Api.Products.Create.Handlers;
+using Application.Handlers.Orders.List;
 using Application.Interfaces.Persistence;
-using Domain.DomainFactories;
-using Domain.Models;
-using Domain.ValueObjects.Order;
 using Moq;
 
 namespace Tests.UnitTests.Application.Api.Orders;

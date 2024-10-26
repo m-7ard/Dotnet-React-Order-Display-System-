@@ -17,13 +17,15 @@ export type IOrderItemDataFormError = IFormError<{
     quantity: string[];
 }>;
 
-export default function OrderItemDataForm(props: {
+export type OrderItemDataFormProps = {
     onUpdate: <T extends keyof IOrderItemDataFormValue>(fieldName: T, value: IOrderItemDataFormValue[T]) => void;
     onDelete: () => void;
     product: IProduct;
     errors?: IOrderItemDataFormError;
     value: IOrderItemDataFormValue;
-}) {
+};
+
+export default function OrderItemDataForm(props: OrderItemDataFormProps) {
     const { onUpdate, onDelete, product, value } = props;
 
     const updateQuantity = (quantity: number) => {
@@ -39,7 +41,9 @@ export default function OrderItemDataForm(props: {
                     src={product.images[0] == null ? undefined : `${getApiUrl()}/Media/${product.images[0].fileName}`}
                 />
                 <div className="flex flex-col gap-px overflow-hidden">
-                    <div className="text-sm font-bold truncate" title={product.name}>{product.name}</div>
+                    <div className="text-sm font-bold truncate" title={product.name}>
+                        {product.name}
+                    </div>
                     <div className="text-sm">${product.price}</div>
                     <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>
