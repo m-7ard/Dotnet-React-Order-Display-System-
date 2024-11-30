@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import OrderItemDataFormManager from "../../../presentation/components/OrderItemDataForm/OrderItemDataFormManager";
-import { OrderItemDataFormProps } from "../../../presentation/components/OrderItemDataForm/OrderItemDataForm";
-import { OrderItemDataFormManagerPanelProps } from "../../../presentation/components/OrderItemDataForm/OrderItemDataFormManagerPanel";
+import OrderItemDataField from "../../../presentation/components/OrderItemDataForm/OrderItemData.Field";
+import { OrderItemDataFormProps } from "../../../presentation/components/OrderItemDataForm/OrderItemData.Field.Item";
+import { FilterProductsPanelProps } from "../../../presentation/components/OrderItemDataForm/FilterProducts.Panel";
 import { GlobalDialogProps } from "../../../presentation/components/Dialog/GlobalDialog";
 
 const mockProduct = {
@@ -29,7 +29,7 @@ jest.mock(
 jest.mock(
     "../../../presentation/components/OrderItemDataForm/OrderItemDataFormManagerPanel",
     () =>
-        ({ onAdd }: OrderItemDataFormManagerPanelProps) => (
+        ({ onAdd }: FilterProductsPanelProps) => (
             <div data-testid="mock-order-item-data-form-manager-panel">
                 <button onClick={() => onAdd(mockProduct)}>Add Product</button>
             </div>
@@ -57,25 +57,25 @@ describe("OrderItemDataFormManager", () => {
     };
 
     it("renders correctly", () => {
-        render(<OrderItemDataFormManager {...mockProps} />);
+        render(<OrderItemDataField {...mockProps} />);
         expect(screen.getByText("Add")).toBeInTheDocument();
         expect(screen.getAllByTestId("mock-order-item-data-form")).toHaveLength(2);
     });
 
     it("calls onDelete when delete button is clicked", () => {
-        render(<OrderItemDataFormManager {...mockProps} />);
+        render(<OrderItemDataField {...mockProps} />);
         fireEvent.click(screen.getAllByText("Delete")[0]);
         expect(mockProps.onDelete).toHaveBeenCalled();
     });
 
     it("calls onUpdate when update button is clicked", () => {
-        render(<OrderItemDataFormManager {...mockProps} />);
+        render(<OrderItemDataField {...mockProps} />);
         fireEvent.click(screen.getAllByText("Update")[0]);
         expect(mockProps.onUpdate).toHaveBeenCalled();
     });
 
     it("calls onAdd when add button is clicked", () => {
-        render(<OrderItemDataFormManager {...mockProps} />);
+        render(<OrderItemDataField {...mockProps} />);
         fireEvent.click(screen.getByText("Add Product"));
         expect(mockProps.onAdd).toHaveBeenCalledWith(mockProduct);
     });

@@ -1,19 +1,17 @@
-import { createRoute } from "@tanstack/react-router";
+import { createRoute, redirect } from "@tanstack/react-router";
 import rootRoute from "./_rootRoute";
-import commandDispatcher from "../deps/commandDispatcher";
-import ListOrdersCommand from "../../application/commands/orders/listOrders/ListOrdersCommand";
-import OrdersPage from "../Application/Orders/OrdersPage";
-import CreateOrderPage from "../Application/Orders/Create/CreateOrderPage";
-import { orderStateManager } from "../deps/stateManagers";
-import ReadOrderCommand from "../../application/commands/orders/readOrder/ReadOrderCommand";
 import { Value } from "@sinclair/typebox/value";
 import { Type } from "@sinclair/typebox";
 import Order from "../../domain/models/Order";
-import UnknownError from "../../application/errors/UnkownError";
-import ILoaderResult from "../../application/interfaces/ILoaderResult";
-import ManageOrderRoute from "../Application/Orders/Manage/ManageOrderRoute";
-import parseListOrdersCommandParameters from "../../application/commands/orders/listOrders/parseListOrdersCommandParameters";
+import ManageOrderRoute from "../Application/Orders/Manage/ManageOrder.Controller";
 import routeData from "./_routeData";
+import CreateOrderController from "../Application/Orders/Create/CreateOrder.Controller";
+import { orderDataAccess } from "../deps/dataAccess";
+import IListOrdersResponseDTO from "../../application/contracts/orders/list/IListOrdersResponseDTO";
+import orderMapper from "../../infrastructure/mappers/orderMapper";
+import OrdersController from "../Application/Orders/Orders.Controller";
+import IReadOrderResponseDTO from "../../application/contracts/orders/read/IReadOrderResponseDTO";
+import parseListOrdersCommandParameters from "../../infrastructure/parsers/parseListOrdersCommandParameters";
 
 const baseOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -21,57 +19,44 @@ const baseOrdersRoute = createRoute({
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
     loader: async ({ deps }) => {
         const parsedParams = parseListOrdersCommandParameters(deps);
-        const command = new ListOrdersCommand(parsedParams);
-        const result = await commandDispatcher.dispatch(command);
+        const response = await orderDataAccess.listOrders(parsedParams);
 
-        return {
-            ordersResult: result,
-        };
+        if (!response.ok) {
+            throw redirect({ to: "/" });
+        }
+
+        const data: IListOrdersResponseDTO = await response.json();
+
+        return data.orders.map(orderMapper.apiToDomain);
     },
-    component: OrdersPage,
+    component: OrdersController,
 });
 
 const createOrderRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: routeData.createOrder.pattern,
-    component: CreateOrderPage,
+    component: () => <CreateOrderController orderDataAccess={orderDataAccess} />,
 });
 
 const manageOrderRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: routeData.manageOrder.pattern,
-    loader: async ({ params }): Promise<ILoaderResult<Order, unknown>> => {
+    loader: async ({ params }): Promise<Order> => {
         const id = parseInt(params.id);
         if (!Value.Check(Type.Integer(), id)) {
-            return {
-                ok: false,
-                data: new Error(`Order id "${params.id}" is not a valid id.`),
-            };
+            throw redirect({ "to": "/" });
         }
 
-        const cachedOrder = orderStateManager.getOrder(id);
-        if (cachedOrder != null) {
-            return { ok: true, data: cachedOrder };
+        const response = await orderDataAccess.readOrder({ id: id });
+
+        if (!response.ok) {
+            throw redirect({ "to": "/" });
         }
 
-        const command = new ReadOrderCommand({ orderId: id });
-        const result = await commandDispatcher.dispatch(command);
-
-        if (result.isOk()) {
-            return {
-                ok: true,
-                data: result.value.order,
-            };
-        }
-
-        const { type, data } = result.error;
-
-        return {
-            ok: false,
-            data: type === "Exception" ? data : new UnknownError({}),
-        };
+        const dto: IReadOrderResponseDTO = await response.json();
+        return orderMapper.apiToDomain(dto.order);
     },
-    component: ManageOrderRoute,
+    component: () => <ManageOrderRoute orderDataAccess={orderDataAccess} />,
 });
 
 export default [baseOrdersRoute, createOrderRoute, manageOrderRoute];

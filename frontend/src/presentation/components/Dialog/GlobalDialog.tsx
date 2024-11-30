@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ComponentProps, useEffect, useId, useRef } from "react";
-import { useGlobalDialogContext } from "./GlobalDialogContext";
+import { useGlobalDialogContext } from "./GlobalDialog.Context";
 import deepEqual from "../../utils/deepEqual";
 
 export type GlobalDialogProps<T extends React.FunctionComponent<any>> = {

@@ -1,4 +1,4 @@
-namespace Application.ErrorHandling.Other;
+namespace Application.Errors;
 
 public class ValidationErrorCodes
 {

@@ -1,5 +1,5 @@
 using Application.ErrorHandling.Application;
-using Application.ErrorHandling.Other;
+using Application.Errors;
 using Application.Interfaces.Persistence;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;

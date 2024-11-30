@@ -10,7 +10,7 @@ using Application.Api.Products.Delete.Handlers;
 using Application.Api.Products.List.Handlers;
 using Application.Api.Products.Read.Handlers;
 using Application.Api.Products.Update.Handlers;
-using Application.ErrorHandling.Other;
+using Application.Errors;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

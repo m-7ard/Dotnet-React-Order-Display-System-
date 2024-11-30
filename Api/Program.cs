@@ -134,7 +134,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 */
 
 builder.Services.AddAuthorization();
-builder.Services.AddDirectoryBrowser();
+builder.Services.AddDirectoryBrowser(); // For media
 
 var app = builder.Build();
 

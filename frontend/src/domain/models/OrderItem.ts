@@ -25,6 +25,10 @@ export default class OrderItem {
         return Math.round(this.productHistory.price * this.quantity * 100) / 100;
     }
     
+    canMarkFinished(): boolean {
+        return this.status === OrderItemStatus.PENDING;
+    }
+
     public id: number;
     public quantity: number;
     public status: OrderItemStatus;
