@@ -1,74 +1,61 @@
-import { createRoute } from "@tanstack/react-router";
+import { createRoute, redirect } from "@tanstack/react-router";
 import rootRoute from "./_rootRoute";
-import ProductsPage from "../Application/Products/ProductsPage";
-import CreateProductPage from "../Application/Products/Create/CreateProductPage";
-import ListProductsCommand from "../../application/commands/products/listProducts/ListProductsCommand";
-import commandDispatcher from "../deps/commandDispatcher";
-import UnknownError from "../../application/errors/UnkownError";
 import { Value } from "@sinclair/typebox/value";
 import { Type } from "@sinclair/typebox";
-import IProduct from "../../domain/models/IProduct";
-import ILoaderResult from "../../application/interfaces/ILoaderResult";
-import ReadProductCommand from "../../application/commands/products/readProduct/ReadProductCommand";
-import UpdateProductRoute from "../Application/Products/Update/UpdateProductRoute";
-import parseListProductsCommandParameters from "../../application/commands/products/listProducts/parseListProductsCommandParameters";
+import UpdateProductController from "../Application/Products/Update/UpdateProduct.Controller";
 import routeData from "./_routeData";
+import { productDataAccess } from "../deps/dataAccess";
+import ProductsController from "../Application/Products/Products.Controller";
+import CreateProductController from "../Application/Products/Create/CreateProduct.Controller";
+import IReadProductResponseDTO from "../../application/contracts/products/read/IReadProductResponseDTO";
+import productMapper from "../../infrastructure/mappers/productMapper";
+import IListProductsResponseDTO from "../../application/contracts/products/list/IListProductsResponseDTO";
+import parseListProductsCommandParameters from "../../infrastructure/parsers/parseListProductsCommandParameters";
 
 const baseProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: routeData.listProducts.pattern,
-    loaderDeps: ({
-        search,
-    }: {
-        search: Record<string, string>
-    }) => search,
+    loaderDeps: ({ search }: { search: Record<string, string> }) => search,
     loader: async ({ deps }) => {
         const params = parseListProductsCommandParameters(deps);
-        const command = new ListProductsCommand(params);
-        const result = await commandDispatcher.dispatch(command);
+        const response = await productDataAccess.listProducts(params);
+        if (!response.ok) {
+            throw redirect({ to: "/" });
+        }
 
-        return {
-            productsResult: result,
-        };
+        const data: IListProductsResponseDTO = await response.json();
+
+        return data.products.map(productMapper.apiToDomain);
     },
-    component: ProductsPage,
+    component: ProductsController,
 });
 
 const createProductRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: routeData.createProduct.pattern,
-    component: CreateProductPage,
+    component: CreateProductController,
 });
 
 const updateProductRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: routeData.updateProduct.pattern,
-    component: UpdateProductRoute,
-    loader: async ({ params }): Promise<ILoaderResult<IProduct, unknown>> => {
+    component: UpdateProductController,
+    loader: async ({ params }) => {
         const id = parseInt(params.id);
         if (!Value.Check(Type.Integer(), id)) {
-            return {
-                ok: false,
-                data: new Error(`Product id "${params.id}" is not a valid id.`),
-            };
+            throw redirect({ to: "/products" });
         }
 
-        const command = new ReadProductCommand({ productId: id });
-        const result = await commandDispatcher.dispatch(command);
+        const response = await productDataAccess.readProduct({ id: id });
 
-        if (result.isOk()) {
-            return {
-                ok: true,
-                data: result.value.product,
-            };
+        if (!response.ok) {
+            throw redirect({ to: "/products" });
         }
 
-        const { type, data } = result.error;
+        const dto: IReadProductResponseDTO = await response.json();
+        const product = productMapper.apiToDomain(dto.product);
 
-        return {
-            ok: false,
-            data: type === "Exception" ? data : new UnknownError({}),
-        };
+        return product;
     },
 });
 

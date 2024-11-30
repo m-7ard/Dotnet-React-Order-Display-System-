@@ -1,6 +1,6 @@
 import React, { ElementType, FunctionComponent, useCallback, useEffect, useState } from "react";
 import TooltipProvider, { ITooltipPositioning } from "./TooltipProvider";
-import { useTooltipContext } from "../../contexts/TooltipContext";
+import { useTooltipContext } from "./TooltipProvider.TooltipContext";
 import useFixedPositioning from "../../hooks/useFixedPositioning";
 import { createPortal } from "react-dom";
 import { AbstractTooltipContext, useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";

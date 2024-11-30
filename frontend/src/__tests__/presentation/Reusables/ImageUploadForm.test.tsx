@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import UploadImagesForm from "../../../presentation/components/Forms/ImageUploadForm";
-import IFormError from "../../../domain/models/IFormError";
+import IPresentationError from "../../../domain/models/IFormError";
 
 describe("UploadImagesForm", () => {
     const mockOnDelete = jest.fn();
@@ -42,7 +42,7 @@ describe("UploadImagesForm", () => {
     });
 
     test("renders error messages when provided", () => {
-        const errors: IFormError<{ [generatedFileName: string]: string[] }> = {
+        const errors: IPresentationError<{ [generatedFileName: string]: string[] }> = {
             _: undefined,
             [Object.keys(mockValue)[0]]: ["Error message 1", "Error message 2"],
         };

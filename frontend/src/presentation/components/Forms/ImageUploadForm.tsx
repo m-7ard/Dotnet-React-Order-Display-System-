@@ -1,4 +1,5 @@
-import IFormError from "../../../domain/models/IFormError";
+import { useCallback } from "react";
+import IPresentationError from "../../../domain/models/IFormError";
 import { getApiUrl } from "../../../viteUtils";
 import CoverImage from "../Resuables/CoverImage";
 import MixinButton from "../Resuables/MixinButton";
@@ -13,12 +14,18 @@ export type GeneratedFileName = string & { _: "generatedFileName" };
 export type UploadImageFormValue = Record<GeneratedFileName, RequiredImageFormData>;
 
 export default function UploadImagesForm(props: {
-    onDelete: (generatedFileName: GeneratedFileName) => void;
     onSubmit: (files: File[]) => Promise<void>;
-    errors?: IFormError<{ [generatedFileName: GeneratedFileName]: string[] }>;
+    errors?: IPresentationError<{ [generatedFileName: GeneratedFileName]: string[] }>;
     value: UploadImageFormValue;
+    onChange: (value: UploadImageFormValue) => void;
 }) {
-    const { onDelete, onSubmit, errors, value } = props;
+    const { onChange, onSubmit, errors, value } = props;
+
+    const onDelete = useCallback((generatedFileName: GeneratedFileName) => {
+        const newValue = {...value};
+        delete newValue[generatedFileName];
+        onChange(newValue);
+    }, [onChange, value]);
 
     async function uploadImages(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
         event.preventDefault();
@@ -36,7 +43,7 @@ export default function UploadImagesForm(props: {
         <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}>
             <MixinPrototypeCardSection>
                 <MixinButton
-                    className="  w-fit overflow-hidden relative"
+                    className="w-fit overflow-hidden relative"
                     type="button"
                     options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
                 >

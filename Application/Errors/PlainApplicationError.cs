@@ -1,5 +1,3 @@
-using Application.ErrorHandling.Other;
-
 namespace Application.ErrorHandling.Application;
 
 public class PlainApplicationError

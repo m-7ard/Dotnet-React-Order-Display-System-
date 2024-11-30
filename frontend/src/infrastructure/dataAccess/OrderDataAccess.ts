@@ -1,45 +1,26 @@
 import IOrderDataAccess from "../../application/interfaces/dataAccess/IOrderDataAccess";
 import ICreateOrderRequestDTO from "../../application/contracts/orders/create/ICreateOrderRequestDTO";
-import ICreateOrderResponseDTO from "../../application/contracts/orders/create/ICreateOrderResponseDTO";
 import IListOrdersRequestDTO from "../../application/contracts/orders/list/IListOrdersRequestDTO";
-import { err, ok, Result } from "neverthrow";
-import Order from "../../domain/models/Order";
-import IPlainApiError from "../../application/interfaces/IPlainApiError";
-import handleResponse from "../utils/handleResponse";
-import orderMapper from "../mappers/orderMapper";
-import IListOrdersResponseDTO from "../../application/contracts/orders/list/IListOrdersResponseDTO";
 import IReadOrderRequestDTO from "../../application/contracts/orders/read/IReadOrderRequestDTO";
-import IReadOrderResponseDTO from "../../application/contracts/orders/read/IReadOrderResponseDTO";
 import IMarkOrderItemFinishedRequestDTO from "../../application/contracts/orderItems/markFinished/IMarkOrderItemFinishedRequestDTO";
-import IMarkOrderItemFinishedResponseDTO from "../../application/contracts/orderItems/markFinished/IMarkOrderItemFinishedResponseDTO";
 import IMarkOrderFinishedRequestDTO from "../../application/contracts/orders/markFinished/IMarkOrderFinishedRequestDTO";
-import IMarkOrderFinishedResponseDTO from "../../application/contracts/orders/markFinished/IMarkOrderFinishedResponseDTO";
 import { getApiUrl } from "../../viteUtils";
 
 export default class OrderDataAccess implements IOrderDataAccess {
     private readonly _apiRoute = `${getApiUrl()}/api/orders`;
 
-    async listOrders(request: IListOrdersRequestDTO): Promise<Result<Order[], IPlainApiError>> {
+    async listOrders(request: IListOrdersRequestDTO): Promise<Response> {
         const urlParams = new URLSearchParams();
         Object.entries(request).forEach(([name, value]) => value != null && urlParams.append(name, value));
         const response = await fetch(`${this._apiRoute}/list?${urlParams}`, {
             method: "GET",
         });
 
-        const { isOk, data } = await handleResponse<IListOrdersResponseDTO, IPlainApiError>({
-            response,
-            onOk: async (res) => await res.json(),
-            onError: async (res) => await res.json(),
-        });
-
-        if (isOk) {
-            return ok(data.orders.map(orderMapper.apiToDomain));
-        }
-
-        return err(data);
+        return response;
     }
 
-    async createOrder(request: ICreateOrderRequestDTO): Promise<Result<Order, IPlainApiError>> {
+    async createOrder(request: ICreateOrderRequestDTO): Promise<Response> {
+        console.log("request");
         const response = await fetch(`${this._apiRoute}/create`, {
             method: "POST",
             headers: {
@@ -48,20 +29,10 @@ export default class OrderDataAccess implements IOrderDataAccess {
             body: JSON.stringify(request),
         });
 
-        const { isOk, data } = await handleResponse<ICreateOrderResponseDTO, IPlainApiError>({
-            response,
-            onOk: async (res) => await res.json(),
-            onError: async (res) => await res.json(),
-        });
-
-        if (isOk) {
-            return ok(orderMapper.apiToDomain(data.order));
-        }
-
-        return err(data);
+        return response;
     }
 
-    async readOrder(request: IReadOrderRequestDTO): Promise<Result<Order, IPlainApiError>> {
+    async readOrder(request: IReadOrderRequestDTO): Promise<Response> {
         const response = await fetch(`${this._apiRoute}/${request.id}`, {
             method: "GET",
             headers: {
@@ -69,20 +40,10 @@ export default class OrderDataAccess implements IOrderDataAccess {
             },
         });
 
-        const { isOk, data } = await handleResponse<IReadOrderResponseDTO, IPlainApiError>({
-            response,
-            onOk: async (res) => await res.json(),
-            onError: async (res) => await res.json(),
-        });
-
-        if (isOk) {
-            return ok(orderMapper.apiToDomain(data.order));
-        }
-
-        return err(data);
+        return response;
     }
 
-    async markOrderItemFinished(request: IMarkOrderItemFinishedRequestDTO): Promise<Result<Order, IPlainApiError>> {
+    async markOrderItemFinished(request: IMarkOrderItemFinishedRequestDTO): Promise<Response> {
         const response = await fetch(`${this._apiRoute}/${request.orderId}/item/${request.orderItemId}/mark_finished`, {
             method: "PUT",
             headers: {
@@ -90,20 +51,10 @@ export default class OrderDataAccess implements IOrderDataAccess {
             },
         });
 
-        const { isOk, data } = await handleResponse<IMarkOrderItemFinishedResponseDTO, IPlainApiError>({
-            response,
-            onOk: async (res) => await res.json(),
-            onError: async (res) => await res.json(),
-        });
-
-        if (isOk) {
-            return ok(orderMapper.apiToDomain(data.order));
-        }
-
-        return err(data);
+        return response;
     }
 
-    async markOrderFinished(request: IMarkOrderFinishedRequestDTO): Promise<Result<Order, IPlainApiError>> {
+    async markOrderFinished(request: IMarkOrderFinishedRequestDTO): Promise<Response> {
         const response = await fetch(`${this._apiRoute}/${request.orderId}/mark_finished`, {
             method: "PUT",
             headers: {
@@ -111,16 +62,6 @@ export default class OrderDataAccess implements IOrderDataAccess {
             },
         });
 
-        const { isOk, data } = await handleResponse<IMarkOrderFinishedResponseDTO, IPlainApiError>({
-            response,
-            onOk: async (res) => await res.json(),
-            onError: async (res) => await res.json(),
-        });
-
-        if (isOk) {
-            return ok(orderMapper.apiToDomain(data.order));
-        }
-
-        return err(data);
+        return response;
     }
 }

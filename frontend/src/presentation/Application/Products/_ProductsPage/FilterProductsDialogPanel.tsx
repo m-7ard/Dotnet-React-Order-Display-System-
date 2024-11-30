@@ -1,7 +1,7 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import useItemManager from "../../../hooks/useItemManager";
-import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialogPanelContext";
+import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialog.Panel.Context";
 import LinkBox from "../../../components/Resuables/LinkBox";
 import MixinPanel from "../../../components/Resuables/MixinPanel";
 import FilterProductsFieldset, {

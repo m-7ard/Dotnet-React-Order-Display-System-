@@ -1,16 +1,13 @@
-import { Result } from "neverthrow";
 import ICreateProductRequestDTO from "../../contracts/products/create/ICreateProductRequestDTO";
 import IListProductsRequestDTO from "../../contracts/products/list/IListProductsRequestDTO";
-import IProduct from "../../../domain/models/IProduct";
-import IPlainApiError from "../IPlainApiError";
 import IReadProductRequestDTO from "../../contracts/products/read/IReadProductRequestDTO";
 import IUpdateProductRequestDTO from "../../contracts/products/update/IUpdateProductRequestDTO";
 import IDeleteProductRequestDTO from "../../contracts/products/delete/IDeleteProductRequestDTO";
 
 export default interface IProductDataAccess {
-    listProducts(request: IListProductsRequestDTO): Promise<Result<IProduct[], IPlainApiError>>;
-    createProduct(request: ICreateProductRequestDTO): Promise<Result<IProduct, IPlainApiError>>;
-    readProduct(request: IReadProductRequestDTO): Promise<Result<IProduct, IPlainApiError>>;
-    updateProduct(request: IUpdateProductRequestDTO): Promise<Result<IProduct, IPlainApiError>>;
-    deleteProduct(request: IDeleteProductRequestDTO): Promise<Result<null, IPlainApiError>>;
+    listProducts(request: IListProductsRequestDTO): Promise<Response>;
+    createProduct(request: ICreateProductRequestDTO): Promise<Response>;
+    readProduct(request: IReadProductRequestDTO): Promise<Response>;
+    updateProduct(request: IUpdateProductRequestDTO): Promise<Response>;
+    deleteProduct(request: IDeleteProductRequestDTO): Promise<Response>;
 }

@@ -6,7 +6,7 @@ using Api.DTOs.Orders.MarkFinished;
 using Api.DTOs.Orders.Read;
 using Api.Errors;
 using Api.Interfaces;
-using Application.ErrorHandling.Other;
+using Application.Errors;
 using Application.Handlers.OrderItems.MarkFinished;
 using Application.Handlers.Orders.Create;
 using Application.Handlers.Orders.List;

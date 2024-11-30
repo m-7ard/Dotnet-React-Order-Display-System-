@@ -1,0 +1,6 @@
+Make contracts for filters in repos.
+Rethink frontend domains since they're not really domains.
+Don't fetch in api service.
+Return a single error type from command handler in frontend.
+Look into implementing 404 for frotend as side effect in loader(?).
+check how we're saving the aggregates

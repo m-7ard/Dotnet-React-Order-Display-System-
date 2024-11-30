@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TooltipContext } from "../../contexts/TooltipContext";
+import { TooltipContext } from "./TooltipProvider.TooltipContext";
 
 export type ITooltipPositioning = {
     top?: string;

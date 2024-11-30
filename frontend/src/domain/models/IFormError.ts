@@ -1,11 +1,11 @@
-type IFormError<T> = {
-    _: string[] | undefined;
+type IPresentationError<T> = {
+    _?: string[];
 } & {
-    [K in keyof T]: T[K] extends string[]
-        ? string[] | undefined
+    [K in keyof T]?: T[K] extends string[]
+        ? string[]
         : T[K] extends object
-            ? IFormError<T[K]> | undefined
-            : string[] | undefined;
+            ? IPresentationError<T[K]>
+            : string[];
 };
 
-export default IFormError;
+export default IPresentationError;

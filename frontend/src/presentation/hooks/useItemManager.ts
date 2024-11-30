@@ -9,6 +9,7 @@ export interface IItemManager<T> {
 }
 
 export default function useItemManager<T>(initialData: T): IItemManager<T> {
+    
     const [items, setItems] = useState<T>(initialData);
 
     const setAll = useCallback((data: T) => setItems(data), []);
