@@ -1,7 +1,7 @@
 import { Result } from "neverthrow";
-import UnknownError from "../../application/errors/UnkownError";
+import UnknownError from "../errors/UnkownError";
 import { useApplicationExceptionContext } from "../Application/Application.ExceptionProvider.Context";
-import InternalServerError from "../../application/errors/InternalServerError";
+import InternalServerError from "../errors/InternalServerError";
 import { useCallback } from "react";
 
 export default function useResponseHandler() {
