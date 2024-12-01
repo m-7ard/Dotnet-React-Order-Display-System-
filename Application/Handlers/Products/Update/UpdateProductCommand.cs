@@ -2,7 +2,7 @@ using Application.ErrorHandling.Application;
 using MediatR;
 using OneOf;
 
-namespace Application.Api.Products.Update.Handlers;
+namespace Application.Handlers.Products.Update;
 
 public class UpdateProductCommand : IRequest<OneOf<UpdateProductResult, List<PlainApplicationError>>>
 {

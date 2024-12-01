@@ -1,4 +1,4 @@
-using Application.Api.Products.Create.Handlers;
+using Application.Handlers.Products.Create;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
 using Domain.Models;

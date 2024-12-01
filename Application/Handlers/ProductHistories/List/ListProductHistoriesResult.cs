@@ -1,6 +1,6 @@
 using Domain.Models;
 
-namespace Application.Api.ProductHistories.List.Handlers;
+namespace Application.Handlers.ProductHistories.List;
 
 public class ListProductHistoriesResult
 {

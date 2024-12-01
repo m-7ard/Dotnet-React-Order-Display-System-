@@ -2,18 +2,18 @@ using Application.ErrorHandling.Application;
 using MediatR;
 using OneOf;
 
-namespace Application.Api.ProductHistories.List.Handlers;
+namespace Application.Handlers.ProductHistories.List;
 
 public class ListProductHistoriesQuery : IRequest<OneOf<ListProductHistoriesResult, List<PlainApplicationError>>>
 {
     public ListProductHistoriesQuery(
-        string? name, 
-        decimal? minPrice, 
-        decimal? maxPrice, 
-        string? description, 
-        DateTime? validTo, 
-        DateTime? validFrom, 
-        int? productId, 
+        string? name,
+        decimal? minPrice,
+        decimal? maxPrice,
+        string? description,
+        DateTime? validTo,
+        DateTime? validFrom,
+        int? productId,
         string? orderBy)
     {
         Name = name;

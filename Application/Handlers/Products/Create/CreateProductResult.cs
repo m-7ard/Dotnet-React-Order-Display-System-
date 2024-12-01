@@ -1,6 +1,6 @@
 using Domain.Models;
 
-namespace Application.Api.Products.Create.Handlers;
+namespace Application.Handlers.Products.Create;
 
 public class CreateProductResult
 {

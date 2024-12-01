@@ -4,7 +4,7 @@ using Application.Interfaces.Persistence;
 using MediatR;
 using OneOf;
 
-namespace Application.Api.Products.Delete.Handlers;
+namespace Application.Handlers.Products.Delete;
 
 public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, OneOf<DeleteProductResult, List<PlainApplicationError>>>
 {

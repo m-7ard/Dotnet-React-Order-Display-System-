@@ -1,6 +1,6 @@
 using Domain.Models;
 
-namespace Application.Api.Products.List.Handlers;
+namespace Application.Handlers.Products.List;
 
 public class ListProductsResult
 {

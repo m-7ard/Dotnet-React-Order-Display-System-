@@ -2,7 +2,7 @@ using Application.ErrorHandling.Application;
 using MediatR;
 using OneOf;
 
-namespace Application.Api.Products.Delete.Handlers;
+namespace Application.Handlers.Products.Delete;
 
 public class DeleteProductCommand : IRequest<OneOf<DeleteProductResult, List<PlainApplicationError>>>
 {

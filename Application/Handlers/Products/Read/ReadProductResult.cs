@@ -1,6 +1,6 @@
 using Domain.Models;
 
-namespace Application.Api.Products.Read.Handlers;
+namespace Application.Handlers.Products.Read;
 
 public class ReadProductResult
 {

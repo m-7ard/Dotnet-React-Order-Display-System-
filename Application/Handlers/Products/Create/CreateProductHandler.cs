@@ -6,7 +6,7 @@ using Domain.Models;
 using MediatR;
 using OneOf;
 
-namespace Application.Api.Products.Create.Handlers;
+namespace Application.Handlers.Products.Create;
 
 public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<CreateProductResult, List<PlainApplicationError>>>
 {

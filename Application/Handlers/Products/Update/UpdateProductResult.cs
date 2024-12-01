@@ -1,6 +1,6 @@
 using Domain.Models;
 
-namespace Application.Api.Products.Update.Handlers;
+namespace Application.Handlers.Products.Update;
 
 public class UpdateProductResult
 {

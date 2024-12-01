@@ -2,7 +2,7 @@ using Application.ErrorHandling.Application;
 using MediatR;
 using OneOf;
 
-namespace Application.Api.Products.List.Handlers;
+namespace Application.Handlers.Products.List;
 
 public class ListProductsQuery : IRequest<OneOf<ListProductsResult, List<PlainApplicationError>>>
 {
