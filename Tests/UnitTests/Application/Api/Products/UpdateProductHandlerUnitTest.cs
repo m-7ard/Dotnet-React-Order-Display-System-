@@ -1,4 +1,4 @@
-using Application.Api.Products.Update.Handlers;
+using Application.Handlers.Products.Update;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
 using Domain.Models;

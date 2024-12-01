@@ -3,7 +3,7 @@ using Application.Interfaces.Persistence;
 using MediatR;
 using OneOf;
 
-namespace Application.Api.ProductHistories.List.Handlers;
+namespace Application.Handlers.ProductHistories.List;
 
 public class ListProductHistoriesHandler : IRequestHandler<ListProductHistoriesQuery, OneOf<ListProductHistoriesResult, List<PlainApplicationError>>>
 {
@@ -20,7 +20,7 @@ public class ListProductHistoriesHandler : IRequestHandler<ListProductHistoriesQ
         if (request.OrderBy == "newest")
         {
             orderBy = new Tuple<string, bool>("ValidFrom", false);
-        } 
+        }
         else if (request.OrderBy == "oldest")
         {
             orderBy = new Tuple<string, bool>("ValidFrom", true);

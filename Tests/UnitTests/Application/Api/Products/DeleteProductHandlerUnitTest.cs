@@ -1,4 +1,4 @@
-using Application.Api.Products.Delete.Handlers;
+using Application.Handlers.Products.Delete;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
 using Domain.Models;

@@ -1,4 +1,4 @@
-namespace Application.Api.Products.Delete.Handlers;
+namespace Application.Handlers.Products.Delete;
 
 public class DeleteProductResult
 {

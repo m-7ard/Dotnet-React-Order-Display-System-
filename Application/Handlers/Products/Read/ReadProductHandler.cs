@@ -4,7 +4,7 @@ using Application.Interfaces.Persistence;
 using MediatR;
 using OneOf;
 
-namespace Application.Api.Products.Read.Handlers;
+namespace Application.Handlers.Products.Read;
 
 public class ReadProductHandler : IRequestHandler<ReadProductQuery, OneOf<ReadProductResult, List<PlainApplicationError>>>
 {
