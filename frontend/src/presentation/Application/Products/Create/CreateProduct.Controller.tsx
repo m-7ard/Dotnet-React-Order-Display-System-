@@ -1,5 +1,5 @@
 import { Type } from "@sinclair/typebox";
-import IPresentationError from "../../../../domain/models/IFormError";
+import IPresentationError from "../../../interfaces/IPresentationError";
 import { GeneratedFileName, RequiredImageFormData } from "../../../components/Forms/ImageUploadForm";
 import useItemManager from "../../../hooks/useItemManager";
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";

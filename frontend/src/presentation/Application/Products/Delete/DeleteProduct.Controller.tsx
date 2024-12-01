@@ -5,7 +5,7 @@ import useResponseHandler from "../../../hooks/useResponseHandler";
 import IPlainApiError from "../../../../infrastructure/interfaces/IPlainApiError";
 import { err, ok } from "neverthrow";
 import useItemManager from "../../../hooks/useItemManager";
-import IPresentationError from "../../../../domain/models/IFormError";
+import IPresentationError from "../../../interfaces/IPresentationError";
 import DeleteProductDialogPanel from "./DeleteProduct.DialogPanel";
 import apiToDomainCompatibleFormError from "../../../mappers/apiToDomainCompatibleFormError";
 import IProductDataAccess from "../../../interfaces/dataAccess/IProductDataAccess";

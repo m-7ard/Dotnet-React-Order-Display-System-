@@ -1,4 +1,4 @@
-import IPresentationError from "../../../domain/models/IFormError";
+import IPresentationError from "../../interfaces/IPresentationError";
 import MixinButton from "../Resuables/MixinButton";
 import FilterProductsPanel from "./FilterProducts.Panel";
 import OrderItemDataFieldItem, { ErrorSchema as OrderItemDataFieldErrorSchema, ValueSchema as OrderItemDataValueSchema } from "./OrderItemData.Field.Item";

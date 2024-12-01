@@ -1,6 +1,6 @@
 import MixinButton from "../../../components/Resuables/MixinButton";
 import OrderItem from "../../../../domain/models/OrderItem";
-import IPresentationError from "../../../../domain/models/IFormError";
+import IPresentationError from "../../../interfaces/IPresentationError";
 import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../../components/Resuables/MixinPrototypeCard";
 import LinkBox from "../../../components/Resuables/LinkBox";
