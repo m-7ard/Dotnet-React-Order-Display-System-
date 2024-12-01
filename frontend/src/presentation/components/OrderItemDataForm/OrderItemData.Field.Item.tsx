@@ -1,5 +1,5 @@
 import { Type } from "@sinclair/typebox";
-import IPresentationError from "../../../domain/models/IFormError";
+import IPresentationError from "../../interfaces/IPresentationError";
 import IProduct from "../../../domain/models/IProduct";
 import CoverImage from "../Resuables/CoverImage";
 import MixinButton from "../Resuables/MixinButton";

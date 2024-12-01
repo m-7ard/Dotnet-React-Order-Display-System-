@@ -1,6 +1,6 @@
 import UpdateProductPage from "./UpdateProduct.Page";
 import { Type } from "@sinclair/typebox";
-import IPresentationError from "../../../../domain/models/IFormError";
+import IPresentationError from "../../../interfaces/IPresentationError";
 import { UploadImageFormValue, GeneratedFileName } from "../../../components/Forms/ImageUploadForm";
 import useItemManager from "../../../hooks/useItemManager";
 import { useMutation } from "@tanstack/react-query";

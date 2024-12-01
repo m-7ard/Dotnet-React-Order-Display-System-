@@ -1,4 +1,4 @@
-import IPresentationError from "../../../domain/models/IFormError";
+import IPresentationError from "../../interfaces/IPresentationError";
 import FilterProductsFieldset, { FilterProductsFieldsetValueState } from "../Fieldsets/FilterProductFieldset";
 import MixinButton from "../Resuables/MixinButton";
 

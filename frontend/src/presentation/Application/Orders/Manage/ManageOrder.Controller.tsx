@@ -2,7 +2,7 @@ import { useLoaderData } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import ManageOrderPage from "./ManageOrder.Page";
 import useResponseHandler from "../../../hooks/useResponseHandler";
-import IPresentationError from "../../../../domain/models/IFormError";
+import IPresentationError from "../../../interfaces/IPresentationError";
 import useItemManager from "../../../hooks/useItemManager";
 import { err, ok } from "neverthrow";
 import IPlainApiError from "../../../../infrastructure/interfaces/IPlainApiError";

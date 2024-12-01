@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import IPresentationError from "../../../domain/models/IFormError";
+import IPresentationError from "../../interfaces/IPresentationError";
 import { getApiUrl } from "../../../viteUtils";
 import CoverImage from "../Resuables/CoverImage";
 import MixinButton from "../Resuables/MixinButton";
