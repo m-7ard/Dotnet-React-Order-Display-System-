@@ -1,6 +1,6 @@
 import { PropsWithChildren, useCallback, useState } from "react";
-import InternalServerError from "../../application/errors/InternalServerError";
-import UnknownError from "../../application/errors/UnkownError";
+import InternalServerError from "../errors/InternalServerError";
+import UnknownError from "../errors/UnkownError";
 import { ApplicationExceptionContext } from "./Application.ExceptionProvider.Context";
 
 export default function ExceptionProvider({ children }: PropsWithChildren) {
