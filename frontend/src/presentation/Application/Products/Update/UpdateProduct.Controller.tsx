@@ -5,8 +5,8 @@ import { UploadImageFormValue, GeneratedFileName } from "../../../components/For
 import useItemManager from "../../../hooks/useItemManager";
 import { useMutation } from "@tanstack/react-query";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
-import apiToDomainCompatibleFormError from "../../../../application/mappers/apiToDomainCompatibleFormError";
-import typeboxToDomainCompatibleFormError from "../../../../application/mappers/typeboxToDomainCompatibleFormError";
+import apiToDomainCompatibleFormError from "../../../mappers/apiToDomainCompatibleFormError";
+import typeboxToDomainCompatibleFormError from "../../../mappers/typeboxToDomainCompatibleFormError";
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
 import useResponseHandler from "../../../hooks/useResponseHandler";
 import { productDataAccess } from "../../../deps/dataAccess";

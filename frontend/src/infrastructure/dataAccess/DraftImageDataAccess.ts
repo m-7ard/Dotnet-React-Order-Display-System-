@@ -1,5 +1,5 @@
 import IUploadDraftImagesRequestDTO from "../../application/contracts/draftImages/uploadImages/IUploadDraftImagesRequestDTO";
-import IDraftImageDataAccess from "../../application/interfaces/dataAccess/IDraftImageDataAccess";
+import IDraftImageDataAccess from "../../presentation/interfaces/dataAccess/IDraftImageDataAccess";
 import { getApiUrl } from "../../viteUtils";
 
 export default class DraftImageDataAccess implements IDraftImageDataAccess {

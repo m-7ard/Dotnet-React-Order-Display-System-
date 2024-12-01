@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import OrderStatus from "../../../domain/valueObjects/Order/OrderStatus";
 import FormField from "../Forms/FormField";
 import StatelessCharField from "../StatelessFields/StatelessCharField";
@@ -15,13 +16,16 @@ export type FilterOrdersFieldsetValueState = {
 };
 
 export default function FilterOrdersFieldset(props: {
-    data: FilterOrdersFieldsetValueState;
-    onChange: (
-        field: keyof FilterOrdersFieldsetValueState,
-        value: FilterOrdersFieldsetValueState[keyof FilterOrdersFieldsetValueState],
-    ) => void;
+    value: FilterOrdersFieldsetValueState;
+    onChange: (value: FilterOrdersFieldsetValueState) => void;
 }) {
-    const { data, onChange } = props;
+    const { value, onChange } = props;
+    
+    const updateField = useCallback(<K extends keyof FilterOrdersFieldsetValueState>(fieldName: K, fieldValue: FilterOrdersFieldsetValueState[K]) => {
+        const newValue = {...value};
+        newValue[fieldName] = fieldValue;
+        onChange(newValue);
+    }, [onChange, value]);
 
     return (
         <>
@@ -32,8 +36,8 @@ export default function FilterOrdersFieldset(props: {
                             size: "mixin-char-input-base",
                             theme: "theme-input-generic-white",
                         }}
-                        value={data[name]}
-                        onChange={(value) => onChange(name, value)}
+                        value={value[name]}
+                        onChange={(value) => updateField(name, value)}
                     />
                 )}
             </FormField>
@@ -46,8 +50,8 @@ export default function FilterOrdersFieldset(props: {
                                     size: "mixin-char-input-base",
                                     theme: "theme-input-generic-white",
                                 }}
-                                value={data[name]}
-                                onChange={(value) => onChange(name, value)}
+                                value={value[name]}
+                                onChange={(value) => updateField(name, value)}
                             />
                         )}
                     </FormField>
@@ -60,8 +64,8 @@ export default function FilterOrdersFieldset(props: {
                                     size: "mixin-char-input-base",
                                     theme: "theme-input-generic-white",
                                 }}
-                                value={data[name]}
-                                onChange={(value) => onChange(name, value)}
+                                value={value[name]}
+                                onChange={(value) => updateField(name, value)}
                             />
                         )}
                     </FormField>
@@ -72,9 +76,9 @@ export default function FilterOrdersFieldset(props: {
                     <StatelessListBox
                         nullable
                         onChange={(value) => {
-                            onChange(name, value == null ? "" : value.toString());
+                            updateField(name, value == null ? "" : value.toString());
                         }}
-                        value={data[name]}
+                        value={value[name]}
                         choices={[
                             {
                                 value: OrderStatus.FINISHED.value,
@@ -95,9 +99,9 @@ export default function FilterOrdersFieldset(props: {
                             size: "mixin-char-input-base",
                             theme: "theme-input-generic-white",
                         }}
-                        value={data[name]}
+                        value={value[name]}
                         type="date"
-                        onChange={(value) => onChange(name, value)}
+                        onChange={(value) => updateField(name, value)}
                     />
                 )}
             </FormField>
@@ -108,9 +112,9 @@ export default function FilterOrdersFieldset(props: {
                             size: "mixin-char-input-base",
                             theme: "theme-input-generic-white",
                         }}
-                        value={data[name]}
+                        value={value[name]}
                         type="date"
-                        onChange={(value) => onChange(name, value)}
+                        onChange={(value) => updateField(name, value)}
                     />
                 )}
             </FormField>
@@ -121,8 +125,8 @@ export default function FilterOrdersFieldset(props: {
                             size: "mixin-char-input-base",
                             theme: "theme-input-generic-white",
                         }}
-                        value={data[name]}
-                        onChange={(value) => onChange(name, value)}
+                        value={value[name]}
+                        onChange={(value) => updateField(name, value)}
                     />
                 )}
             </FormField>
@@ -133,8 +137,8 @@ export default function FilterOrdersFieldset(props: {
                             size: "mixin-char-input-base",
                             theme: "theme-input-generic-white",
                         }}
-                        value={data[name]}
-                        onChange={(value) => onChange(name, value)}
+                        value={value[name]}
+                        onChange={(value) => updateField(name, value)}
                     />
                 )}
             </FormField>

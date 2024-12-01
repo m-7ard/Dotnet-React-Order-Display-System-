@@ -1,6 +1,6 @@
 import { err, ok } from "neverthrow";
-import IListProductsRequestDTO from "../../application/contracts/products/list/IListProductsRequestDTO";
-import ICreateProductRequestDTO from "../../application/contracts/products/create/ICreateProductRequestDTO";
+import IListProductsRequestDTO from "../../infrastructure/contracts/products/list/IListProductsRequestDTO";
+import ICreateProductRequestDTO from "../../infrastructure/contracts/products/create/ICreateProductRequestDTO";
 import { getApiUrl } from "../../viteUtils";
 import IExceptionService from "../Interfaces/IExceptionService";
 

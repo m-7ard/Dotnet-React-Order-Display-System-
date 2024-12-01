@@ -2,18 +2,18 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import IPresentationError from "../../../../domain/models/IFormError";
 import useItemManager from "../../../hooks/useItemManager";
-import { useApplicationExceptionContext } from "../../Application.ExceptionProvider.Context";
 import { Type } from "@sinclair/typebox";
-import typeboxToDomainCompatibleFormError from "../../../../application/mappers/typeboxToDomainCompatibleFormError";
+import typeboxToDomainCompatibleFormError from "../../../mappers/typeboxToDomainCompatibleFormError";
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
 import routeData from "../../../routes/_routeData";
-import IOrderDataAccess from "../../../../application/interfaces/dataAccess/IOrderDataAccess";
-import UnknownError from "../../../../application/errors/UnkownError";
+import IOrderDataAccess from "../../../interfaces/dataAccess/IOrderDataAccess";
 import CreateOrderPage from "./CreateOrder.Page";
 import IProduct from "../../../../domain/models/IProduct";
-import ICreateOrderRequestDTO from "../../../../application/contracts/orders/create/ICreateOrderRequestDTO";
+import ICreateOrderRequestDTO from "../../../../infrastructure/contracts/orders/create/ICreateOrderRequestDTO";
 import useResponseHandler from "../../../hooks/useResponseHandler";
 import { err, ok } from "neverthrow";
+import IPlainApiError from "../../../../infrastructure/interfaces/IPlainApiError";
+import apiToDomainCompatibleFormError from "../../../mappers/apiToDomainCompatibleFormError";
 
 const validatorSchema = Type.Object({
     orderItemData: Type.Record(
@@ -90,8 +90,8 @@ export default function CreateOrderController(props: { orderDataAccess: IOrderDa
                     }
                     
                     if (response.status === 400) {
-                        const errors = await response.json();
-                        errorManager.setAll(errors);
+                        const errors: IPlainApiError = await response.json();
+                        errorManager.setAll(apiToDomainCompatibleFormError(errors));
                         return ok(undefined);
                     }
 

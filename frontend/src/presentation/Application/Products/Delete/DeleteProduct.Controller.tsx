@@ -2,13 +2,13 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import IProduct from "../../../../domain/models/IProduct";
 import useResponseHandler from "../../../hooks/useResponseHandler";
-import IPlainApiError from "../../../../application/interfaces/IPlainApiError";
+import IPlainApiError from "../../../../infrastructure/interfaces/IPlainApiError";
 import { err, ok } from "neverthrow";
 import useItemManager from "../../../hooks/useItemManager";
 import IPresentationError from "../../../../domain/models/IFormError";
 import DeleteProductDialogPanel from "./DeleteProduct.DialogPanel";
-import apiToDomainCompatibleFormError from "../../../../application/mappers/apiToDomainCompatibleFormError";
-import IProductDataAccess from "../../../../application/interfaces/dataAccess/IProductDataAccess";
+import apiToDomainCompatibleFormError from "../../../mappers/apiToDomainCompatibleFormError";
+import IProductDataAccess from "../../../interfaces/dataAccess/IProductDataAccess";
 
 export type DeleteProductErrorSchema = IPresentationError<unknown>;
 

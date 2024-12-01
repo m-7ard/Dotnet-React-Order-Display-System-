@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import FormField from "../Forms/FormField";
 import StatelessCharField from "../StatelessFields/StatelessCharField";
 import StatelessTextArea from "../StatelessFields/StatelessTextArea";
@@ -13,21 +14,37 @@ export type FilterProductsFieldsetValueState = {
 };
 
 export default function FilterProductsFieldset(props: {
-    data: FilterProductsFieldsetValueState;
-    onChange: (field: keyof FilterProductsFieldsetValueState, value: FilterProductsFieldsetValueState[keyof FilterProductsFieldsetValueState]) => void;
+    value: FilterProductsFieldsetValueState;
+    onChange: (value: FilterProductsFieldsetValueState) => void;
 }) {
-    const { data, onChange } = props;
+    const { value, onChange } = props;
+
+    const updateField = useCallback(<K extends keyof FilterProductsFieldsetValueState>(fieldName: K, fieldValue: FilterProductsFieldsetValueState[K]) => {
+        const newValue = {...value};
+        newValue[fieldName] = fieldValue;
+        onChange(newValue);
+    }, [onChange, value]);
 
     return (
         <>
+            <FormField name="id">
+                <StatelessCharField
+                    options={{
+                        size: "mixin-char-input-base",
+                        theme: "theme-input-generic-white",
+                    }}
+                    value={value.id}
+                    onChange={(value) => updateField("id", value)}
+                />
+            </FormField>
             <FormField name="name">
                 <StatelessCharField
                     options={{
                         size: "mixin-char-input-base",
                         theme: "theme-input-generic-white",
                     }}
-                    value={data.name}
-                    onChange={(value) => onChange("name", value)}
+                    value={value.name}
+                    onChange={(value) => updateField("name", value)}
                 />
             </FormField>
             <div className="flex flex-row gap-2">
@@ -38,8 +55,8 @@ export default function FilterProductsFieldset(props: {
                                 size: "mixin-char-input-base",
                                 theme: "theme-input-generic-white",
                             }}
-                            value={data.minPrice}
-                            onChange={(value) => onChange("minPrice", value)}
+                            value={value.minPrice}
+                            onChange={(value) => updateField("minPrice", value)}
                         />
                     </FormField>
                 </div>
@@ -50,16 +67,16 @@ export default function FilterProductsFieldset(props: {
                                 size: "mixin-char-input-base",
                                 theme: "theme-input-generic-white",
                             }}
-                            value={data.maxPrice}
-                            onChange={(value) => onChange("maxPrice", value)}
+                            value={value.maxPrice}
+                            onChange={(value) => updateField("maxPrice", value)}
                         />
                     </FormField>
                 </div>
             </div>
             <FormField name="description">
                 <StatelessTextArea
-                    onChange={(value) => onChange("description", value)}
-                    value={data.description}
+                    onChange={(value) => updateField("description", value)}
+                    value={value.description}
                     options={{
                         size: "mixin-textarea-any",
                         theme: "theme-textarea-generic-white",
@@ -74,9 +91,9 @@ export default function FilterProductsFieldset(props: {
                         size: "mixin-char-input-base",
                         theme: "theme-input-generic-white",
                     }}
-                    value={data.createdBefore}
+                    value={value.createdBefore}
                     type="date"
-                    onChange={(value) => onChange("createdBefore", value)}
+                    onChange={(value) => updateField("createdBefore", value)}
                 />
             </FormField>
             <FormField name="createdAfter">
@@ -85,9 +102,9 @@ export default function FilterProductsFieldset(props: {
                         size: "mixin-char-input-base",
                         theme: "theme-input-generic-white",
                     }}
-                    value={data.createdAfter}
+                    value={value.createdAfter}
                     type="date"
-                    onChange={(value) => onChange("createdAfter", value)}
+                    onChange={(value) => updateField("createdAfter", value)}
                 />
             </FormField>
         </>

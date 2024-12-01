@@ -71,7 +71,7 @@ export default function OrderItemDataField(props: {
                 Panel={FilterProductsPanel}
                 panelProps={{
                     onAdd: addOrderItem,
-                    orderItems: Object.values(value),
+                    orderItems: value,
                 }}
             />
             <div className="grid grid-cols-2 max-[425px]:grid-cols-1 gap-x-2 gap-y-4">
