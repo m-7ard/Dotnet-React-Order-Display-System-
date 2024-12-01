@@ -1,5 +1,5 @@
-import IProductHistoryDataAccess from "../../application/interfaces/dataAccess/IProductHistoryDataAccess";
-import IListProductHistoriesRequestDTO from "../../application/contracts/productHistories/list/IListProductHistoriesRequestDTO";
+import IProductHistoryDataAccess from "../../presentation/interfaces/dataAccess/IProductHistoryDataAccess";
+import IListProductHistoriesRequestDTO from "../contracts/productHistories/list/IListProductHistoriesRequestDTO";
 import { getApiUrl } from "../../viteUtils";
 
 export default class ProductHistoryDataAccess implements IProductHistoryDataAccess {

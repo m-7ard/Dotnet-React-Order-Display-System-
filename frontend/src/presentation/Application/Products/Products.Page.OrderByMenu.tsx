@@ -1,6 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback } from "react";
-import IListProductsRequestDTO from "../../../application/contracts/products/list/IListProductsRequestDTO";
+import IListProductsRequestDTO from "../../../infrastructure/contracts/products/list/IListProductsRequestDTO";
 import { AbstractTooltipDefaultPanel } from "../../components/Resuables/AbstractTooltip";
 import MixinPanel from "../../components/Resuables/MixinPanel";
 import StatelessRadioCheckboxField from "../../components/StatelessFields/StatelessRadioCheckboxField";

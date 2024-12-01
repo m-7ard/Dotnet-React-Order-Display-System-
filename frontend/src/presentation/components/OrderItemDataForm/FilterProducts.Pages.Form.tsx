@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import IPresentationError from "../../../domain/models/IFormError";
 import FilterProductsFieldset, { FilterProductsFieldsetValueState } from "../Fieldsets/FilterProductFieldset";
 import MixinButton from "../Resuables/MixinButton";
@@ -23,12 +22,6 @@ export default function FormPage(props: {
 }) {
     const { onReset, onSubmit, value, onChange } = props;
 
-    const updateField = useCallback(<T extends keyof FormPageValueState>(fieldName: T, fieldValue: FormPageValueState[T]) => {
-        const newFormValue = { ...value };
-        newFormValue[fieldName] = fieldValue;
-        onChange(newFormValue);
-    }, [onChange, value])
-
     return (
         <form
             className="flex flex-col gap-[inherit]"
@@ -43,8 +36,8 @@ export default function FormPage(props: {
         >
             <div className="flex flex-col gap-2">
                 <FilterProductsFieldset
-                    data={value}
-                    onChange={(field, value) => updateField(field, value)}
+                    value={value}
+                    onChange={onChange}
                 />
             </div>
             <footer className="flex flex-row gap-2 justify-end shrink-0">

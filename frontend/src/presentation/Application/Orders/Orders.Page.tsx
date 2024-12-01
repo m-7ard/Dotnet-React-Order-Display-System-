@@ -6,11 +6,9 @@ import LinkBox from "../../components/Resuables/LinkBox";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuables/AbstractTooltip";
 import OrderElement from "./Orders.Page.Order";
 import OrderByMenu from "./Orders.Page.OrderByMenu";
-import FilterProductsDialogPanel from "./Orders.Page.FilterOrdersDialog";
+import FilterOrdersController from "./Filter/FilterOrders.Controller";
 
-export default function OrdersPage(props: {
-    orders: Order[];
-}) {
+export default function OrdersPage(props: { orders: Order[] }) {
     const { orders } = props;
 
     return (
@@ -19,36 +17,24 @@ export default function OrdersPage(props: {
                 <LinkBox parts={[{ isLink: true, to: "/orders", label: "Orders" }]} />
                 <div className="flex flex-row gap-2 ml-auto">
                     <Link to="/orders/create">
-                        <MixinButton
-                            className=""
-                            options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
-                        >
+                        <MixinButton className="" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}>
                             Create
                         </MixinButton>
                     </Link>
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
-                            <MixinButton
-                                className=" basis-1/2"
-                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
-                                onClick={onToggle}
-                            >
+                            <MixinButton className=" basis-1/2" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle}>
                                 Filter
                             </MixinButton>
                         )}
-                        Panel={FilterProductsDialogPanel}
+                        Panel={FilterOrdersController}
                         panelProps={{}}
                     />
                     <AbstractTooltip
                         Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
-                                <MixinButton
-                                    className="w-full truncate"
-                                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
-                                    onClick={onToggle}
-                                    active={open}
-                                >
+                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open}>
                                     Order By
                                 </MixinButton>
                             </AbstractTooltipTrigger>

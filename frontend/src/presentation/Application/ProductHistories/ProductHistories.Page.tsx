@@ -3,10 +3,10 @@ import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuab
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
 import IProductHistory from "../../../domain/models/IProductHistory";
-import FilterProductHistoriesDialogPanel from "./_ProductHistories/FilterProductHistoriesDialogPanel";
 import routeData from "../../routes/_routeData";
 import ProductHistory from "./ProductHistories.Page.ProductHistoryElement";
 import OrderByMenu from "./ProductHistories.Page.OrderByMenu";
+import FilterProductHistoriesController from "./Filter/FilterProductHistories.Controller";
 
 export default function ProductHistoriesPage(props: { productHistories: IProductHistory[] }) {
     const { productHistories } = props;
@@ -23,7 +23,7 @@ export default function ProductHistoriesPage(props: { productHistories: IProduct
                                 Filter
                             </MixinButton>
                         )}
-                        Panel={FilterProductHistoriesDialogPanel}
+                        Panel={FilterProductHistoriesController}
                         panelProps={{}}
                     />
                     <AbstractTooltip

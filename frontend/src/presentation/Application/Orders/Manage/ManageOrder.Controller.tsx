@@ -5,9 +5,9 @@ import useResponseHandler from "../../../hooks/useResponseHandler";
 import IPresentationError from "../../../../domain/models/IFormError";
 import useItemManager from "../../../hooks/useItemManager";
 import { err, ok } from "neverthrow";
-import IPlainApiError from "../../../../application/interfaces/IPlainApiError";
+import IPlainApiError from "../../../../infrastructure/interfaces/IPlainApiError";
 import OrderItem from "../../../../domain/models/OrderItem";
-import IOrderDataAccess from "../../../../application/interfaces/dataAccess/IOrderDataAccess";
+import IOrderDataAccess from "../../../interfaces/dataAccess/IOrderDataAccess";
 import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import OrderItemStatus from "../../../../domain/valueObjects/OrderItem/OrderItemStatus";
 

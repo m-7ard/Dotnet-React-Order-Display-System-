@@ -7,9 +7,9 @@ import routeData from "./_routeData";
 import { productDataAccess } from "../deps/dataAccess";
 import ProductsController from "../Application/Products/Products.Controller";
 import CreateProductController from "../Application/Products/Create/CreateProduct.Controller";
-import IReadProductResponseDTO from "../../application/contracts/products/read/IReadProductResponseDTO";
+import IReadProductResponseDTO from "../../infrastructure/contracts/products/read/IReadProductResponseDTO";
 import productMapper from "../../infrastructure/mappers/productMapper";
-import IListProductsResponseDTO from "../../application/contracts/products/list/IListProductsResponseDTO";
+import IListProductsResponseDTO from "../../infrastructure/contracts/products/list/IListProductsResponseDTO";
 import parseListProductsCommandParameters from "../../infrastructure/parsers/parseListProductsCommandParameters";
 
 const baseProductsRoute = createRoute({

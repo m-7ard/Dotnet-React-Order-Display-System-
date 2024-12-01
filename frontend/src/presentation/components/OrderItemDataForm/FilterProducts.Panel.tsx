@@ -7,7 +7,7 @@ import { useGlobalDialogPanelContext } from "../Dialog/GlobalDialog.Panel.Contex
 import LinkBox from "../Resuables/LinkBox";
 import MixinPanel from "../Resuables/MixinPanel";
 import productMapper from "../../../infrastructure/mappers/productMapper";
-import IListProductsResponseDTO from "../../../application/contracts/products/list/IListProductsResponseDTO";
+import IListProductsResponseDTO from "../../../infrastructure/contracts/products/list/IListProductsResponseDTO";
 import { productDataAccess } from "../../deps/dataAccess";
 import FormPage, { FormPageErrorState, FormPageValueState } from "./FilterProducts.Pages.Form";
 import ResultsPage from "./FilterProducts.Pages.Results";
@@ -15,6 +15,9 @@ import CountTrackerProduct from "./FilterProducts.Results.CountTracker";
 import useDefaultErrorHandling from "../../hooks/useResponseHandler";
 import { err, ok } from "neverthrow";
 import parseListProductsCommandParameters from "../../../infrastructure/parsers/parseListProductsCommandParameters";
+import { ValueSchema as ItemValueSchema } from "./OrderItemData.Field.Item";
+import apiToDomainCompatibleFormError from "../../mappers/apiToDomainCompatibleFormError";
+import IPlainApiError from "../../../infrastructure/interfaces/IPlainApiError";
 
 const FORM_PAGE_INITIAL_DATA = {
     id: "",
@@ -27,10 +30,9 @@ const FORM_PAGE_INITIAL_DATA = {
 };
 
 export type FilterProductsPanelProps = {
-    orderItems: Array<{
-        product: IProduct;
-        quantity: number;
-    }>;
+    orderItems: {
+        [productId: number | string]: ItemValueSchema;
+    };
     onAdd: (product: IProduct) => void;
 };
 
@@ -56,14 +58,15 @@ export default function FilterProductsPanel(props: FilterProductsPanelProps) {
                         const products = data.products.map(productMapper.apiToDomain);
                         return ok(products);
                     } else if (response.status === 400) {
-                        const errors = await response.json();
-                        formErrors.setAll(errors);
+                        const errors: IPlainApiError = await response.json();
+                        formErrors.setAll(apiToDomainCompatibleFormError(errors));
                         return ok(undefined);
                     }
-                    
-                    return err(undefined)
-                }
-            })
+
+                    return err(undefined);
+                },
+                fallbackValue: undefined,
+            });
         },
     });
 
@@ -125,16 +128,22 @@ export default function FilterProductsPanel(props: FilterProductsPanelProps) {
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             {
                 {
-                    form: <FormPage 
-                        onReset={() => formValue.setAll(FORM_PAGE_INITIAL_DATA)} 
-                        onSubmit={searchProductsMutation.mutate}
-                        value={formValue.items}
-                        onChange={(value) => formValue.setAll(value)}
-                    />,
-                    result: <ResultsPage ControlComponent={CountTrackerProduct} results={searchResults.map((result) => ({
-                        onAdd: () => onAdd(result),
-                        product: result
-                    }))} />,
+                    form: <FormPage onReset={() => formValue.setAll(FORM_PAGE_INITIAL_DATA)} onSubmit={searchProductsMutation.mutate} value={formValue.items} onChange={(value) => formValue.setAll(value)} />,
+                    result: (
+                        <ResultsPage
+                            ControlComponent={CountTrackerProduct}
+                            results={searchResults.map((result) => {
+                                const product = Object.prototype.hasOwnProperty.call(orderItems, result.id) ? orderItems[result.id] : null;
+
+                                return {
+                                    onAdd: () => onAdd(result),
+                                    product: result,
+                                    quantity: product?.quantity ?? 0,
+                                    isAdded: product != null,
+                                };
+                            })}
+                        />
+                    ),
                 }[route]
             }
         </MixinPanel>

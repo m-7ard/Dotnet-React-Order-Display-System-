@@ -7,7 +7,7 @@ import { useCallback } from "react";
 export default function useResponseHandler() {
     const { dispatchException } = useApplicationExceptionContext();
 
-    return useCallback(async <T, E, F>(props: { requestFn: () => Promise<Response>; onResponseFn: (response: Response) => Promise<Result<T, E>>; fallbackValue?: F }) => {
+    return useCallback(async <S, E, F>(props: { requestFn: () => Promise<Response>; onResponseFn: (response: Response) => Promise<Result<S, E>>; fallbackValue?: F }) => {
         const { requestFn, onResponseFn, fallbackValue } = props;
 
         try {

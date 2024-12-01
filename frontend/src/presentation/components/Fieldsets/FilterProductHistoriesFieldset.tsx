@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import FormField from "../Forms/FormField";
 import StatelessCharField from "../StatelessFields/StatelessCharField";
 import StatelessTextArea from "../StatelessFields/StatelessTextArea";
@@ -13,13 +14,17 @@ export type FilterProductHistoriesFieldsetValueState = {
 };
 
 export default function FilterProductHistoriesFieldset(props: {
-    data: FilterProductHistoriesFieldsetValueState;
-    onChange: (
-        field: keyof FilterProductHistoriesFieldsetValueState,
-        value: FilterProductHistoriesFieldsetValueState[keyof FilterProductHistoriesFieldsetValueState],
-    ) => void;
+    value: FilterProductHistoriesFieldsetValueState;
+    onChange: (value: FilterProductHistoriesFieldsetValueState) => void;
 }) {
-    const { data, onChange } = props;
+    const { value, onChange } = props;
+
+    const updateField = useCallback(<K extends keyof FilterProductHistoriesFieldsetValueState>(fieldName: K, fieldValue: FilterProductHistoriesFieldsetValueState[K]) => {
+        const newValue = {...value};
+        newValue[fieldName] = fieldValue;
+        onChange(newValue);
+    }, [onChange, value]);
+
 
     return (
         <>
@@ -30,8 +35,8 @@ export default function FilterProductHistoriesFieldset(props: {
                             size: "mixin-char-input-base",
                             theme: "theme-input-generic-white",
                         }}
-                        value={data[name]}
-                        onChange={(value) => onChange(name, value)}
+                        value={value[name]}
+                        onChange={(value) => updateField(name, value)}
                     />
                 )}
             </FormField>
@@ -44,8 +49,8 @@ export default function FilterProductHistoriesFieldset(props: {
                                     size: "mixin-char-input-base",
                                     theme: "theme-input-generic-white",
                                 }}
-                                value={data[name]}
-                                onChange={(value) => onChange(name, value)}
+                                value={value[name]}
+                                onChange={(value) => updateField(name, value)}
                             />
                         )}
                     </FormField>
@@ -58,8 +63,8 @@ export default function FilterProductHistoriesFieldset(props: {
                                     size: "mixin-char-input-base",
                                     theme: "theme-input-generic-white",
                                 }}
-                                value={data[name]}
-                                onChange={(value) => onChange(name, value)}
+                                value={value[name]}
+                                onChange={(value) => updateField(name, value)}
                             />
                         )}
                     </FormField>
@@ -68,8 +73,8 @@ export default function FilterProductHistoriesFieldset(props: {
             <FormField name="description">
                 {({ name }) => (
                     <StatelessTextArea
-                        onChange={(value) => onChange(name, value)}
-                        value={data[name]}
+                        onChange={(value) => updateField(name, value)}
+                        value={value[name]}
                         options={{
                             size: "mixin-textarea-any",
                             theme: "theme-textarea-generic-white",
@@ -86,9 +91,9 @@ export default function FilterProductHistoriesFieldset(props: {
                             size: "mixin-char-input-base",
                             theme: "theme-input-generic-white",
                         }}
-                        value={data[name]}
+                        value={value[name]}
                         type="date"
-                        onChange={(value) => onChange(name, value)}
+                        onChange={(value) => updateField(name, value)}
                     />
                 )}
             </FormField>
@@ -99,9 +104,9 @@ export default function FilterProductHistoriesFieldset(props: {
                             size: "mixin-char-input-base",
                             theme: "theme-input-generic-white",
                         }}
-                        value={data[name]}
+                        value={value[name]}
                         type="date"
-                        onChange={(value) => onChange(name, value)}
+                        onChange={(value) => updateField(name, value)}
                     />
                 )}
             </FormField>
@@ -112,8 +117,8 @@ export default function FilterProductHistoriesFieldset(props: {
                             size: "mixin-char-input-base",
                             theme: "theme-input-generic-white",
                         }}
-                        value={data[name]}
-                        onChange={(value) => onChange(name, value)}
+                        value={value[name]}
+                        onChange={(value) => updateField(name, value)}
                     />
                 )}
             </FormField>

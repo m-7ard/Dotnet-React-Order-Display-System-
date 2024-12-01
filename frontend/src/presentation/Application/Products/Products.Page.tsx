@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import MixinButton from "../../components/Resuables/MixinButton";
-import FilterProductsDialogPanel from "./_ProductsPage/FilterProductsDialogPanel";
+import FilterProductsDialogPanel from "./Filter/FilterProducts.DialogPanel";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuables/AbstractTooltip";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
@@ -8,6 +8,7 @@ import routeData from "../../routes/_routeData";
 import OrderByMenu from "./Products.Page.OrderByMenu";
 import IProduct from "../../../domain/models/IProduct";
 import Product from "./Products.Page.Product";
+import FilterProductsController from "./Filter/FilterProducts.Controller";
 
 export default function ProductsPage(props: { products: IProduct[] }) {
     const { products } = props;
@@ -29,7 +30,7 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                                 Filter
                             </MixinButton>
                         )}
-                        Panel={FilterProductsDialogPanel}
+                        Panel={FilterProductsController}
                         panelProps={{}}
                     />
                     <AbstractTooltip

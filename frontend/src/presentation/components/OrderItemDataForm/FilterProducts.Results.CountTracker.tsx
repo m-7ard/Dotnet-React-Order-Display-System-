@@ -3,8 +3,8 @@ import { getApiUrl } from "../../../viteUtils";
 import CoverImage from "../Resuables/CoverImage";
 import MixinButton from "../Resuables/MixinButton";
 
-export default function CountTrackerProduct(props: { product: IProduct; onAdd: () => void }) {
-    const { product, onAdd } = props;
+export default function CountTrackerProduct(props: { product: IProduct; onAdd: () => void; isAdded: boolean; quantity: number }) {
+    const { product, onAdd, isAdded, quantity } = props;
     const productImages = product.images;
 
     return (
@@ -20,10 +20,18 @@ export default function CountTrackerProduct(props: { product: IProduct; onAdd: (
                 </div>
             </div>
             <footer className="flex flex-row gap-2">
-                <div className="mixin-button-like mixin-button-base bg-gray-200 border border-gray-900">x</div>
-                <MixinButton className="grow justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }} onClick={onAdd}>
-                    Add Item
-                </MixinButton>
+                {isAdded ? (
+                    <>
+                        <div className="mixin-button-like mixin-button-base bg-gray-200 border border-gray-900">x{quantity}</div>
+                        <MixinButton className="grow justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}>
+                            Already Added
+                        </MixinButton>
+                    </>
+                ) : (
+                    <MixinButton className="grow justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }} onClick={onAdd}>
+                        Add Item
+                    </MixinButton>
+                )}
             </footer>
         </div>
     );

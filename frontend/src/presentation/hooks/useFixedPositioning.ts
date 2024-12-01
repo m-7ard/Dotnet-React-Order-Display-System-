@@ -2,19 +2,12 @@ import { useCallback, useState, useLayoutEffect } from "react";
 import fitFixedContainer from "../utils/fixedContainers/fitFixedContainer";
 import positionFixedContainer from "../utils/fixedContainers/positionFixedContainer";
 
-export default function useFixedPositioning({
-    targetElement,
-    referenceElement,
-    positioning,
-}: {
-    targetElement: HTMLElement | null;
-    referenceElement: HTMLElement | null;
-    positioning: Record<string, string>;
-}) {
+export default function useFixedPositioning({ targetElement, referenceElement, positioning }: { targetElement: HTMLElement | null; referenceElement: HTMLElement | null; positioning: Record<string, string> }) {
     const resizeWindow = useCallback(() => {
         if (targetElement == null || referenceElement == null) {
             return;
         }
+
         positionFixedContainer(targetElement, referenceElement, positioning);
         fitFixedContainer(targetElement);
     }, [targetElement, referenceElement, positioning]);

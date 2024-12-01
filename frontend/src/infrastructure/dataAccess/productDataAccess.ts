@@ -1,9 +1,9 @@
-import IListProductsRequestDTO from "../../application/contracts/products/list/IListProductsRequestDTO";
-import IProductDataAccess from "../../application/interfaces/dataAccess/IProductDataAccess";
-import ICreateProductRequestDTO from "../../application/contracts/products/create/ICreateProductRequestDTO";
-import IReadProductRequestDTO from "../../application/contracts/products/read/IReadProductRequestDTO";
-import IUpdateProductRequestDTO from "../../application/contracts/products/update/IUpdateProductRequestDTO";
-import IDeleteProductRequestDTO from "../../application/contracts/products/delete/IDeleteProductRequestDTO";
+import IListProductsRequestDTO from "../contracts/products/list/IListProductsRequestDTO";
+import IProductDataAccess from "../../presentation/interfaces/dataAccess/IProductDataAccess";
+import ICreateProductRequestDTO from "../contracts/products/create/ICreateProductRequestDTO";
+import IReadProductRequestDTO from "../contracts/products/read/IReadProductRequestDTO";
+import IUpdateProductRequestDTO from "../contracts/products/update/IUpdateProductRequestDTO";
+import IDeleteProductRequestDTO from "../contracts/products/delete/IDeleteProductRequestDTO";
 import { getApiUrl } from "../../viteUtils";
 
 export default class ProductDataAccess implements IProductDataAccess {

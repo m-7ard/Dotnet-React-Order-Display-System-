@@ -7,10 +7,10 @@ import ManageOrderRoute from "../Application/Orders/Manage/ManageOrder.Controlle
 import routeData from "./_routeData";
 import CreateOrderController from "../Application/Orders/Create/CreateOrder.Controller";
 import { orderDataAccess } from "../deps/dataAccess";
-import IListOrdersResponseDTO from "../../application/contracts/orders/list/IListOrdersResponseDTO";
+import IListOrdersResponseDTO from "../../infrastructure/contracts/orders/list/IListOrdersResponseDTO";
 import orderMapper from "../../infrastructure/mappers/orderMapper";
 import OrdersController from "../Application/Orders/Orders.Controller";
-import IReadOrderResponseDTO from "../../application/contracts/orders/read/IReadOrderResponseDTO";
+import IReadOrderResponseDTO from "../../infrastructure/contracts/orders/read/IReadOrderResponseDTO";
 import parseListOrdersCommandParameters from "../../infrastructure/parsers/parseListOrdersCommandParameters";
 
 const baseOrdersRoute = createRoute({

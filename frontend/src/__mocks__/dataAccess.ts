@@ -1,7 +1,7 @@
-import IDraftImageDataAccess from "../application/interfaces/dataAccess/IDraftImageDataAccess";
-import IOrderDataAccess from "../application/interfaces/dataAccess/IOrderDataAccess";
-import IProductDataAccess from "../application/interfaces/dataAccess/IProductDataAccess";
-import IProductHistoryDataAccess from "../application/interfaces/dataAccess/IProductHistoryDataAccess";
+import IDraftImageDataAccess from "../presentation/interfaces/dataAccess/IDraftImageDataAccess";
+import IOrderDataAccess from "../presentation/interfaces/dataAccess/IOrderDataAccess";
+import IProductDataAccess from "../presentation/interfaces/dataAccess/IProductDataAccess";
+import IProductHistoryDataAccess from "../presentation/interfaces/dataAccess/IProductHistoryDataAccess";
 
 export const mockProductDataAccess: jest.Mocked<IProductDataAccess> = {
     createProduct: jest.fn(),

@@ -1,9 +1,9 @@
-import IOrderDataAccess from "../../application/interfaces/dataAccess/IOrderDataAccess";
-import ICreateOrderRequestDTO from "../../application/contracts/orders/create/ICreateOrderRequestDTO";
-import IListOrdersRequestDTO from "../../application/contracts/orders/list/IListOrdersRequestDTO";
-import IReadOrderRequestDTO from "../../application/contracts/orders/read/IReadOrderRequestDTO";
-import IMarkOrderItemFinishedRequestDTO from "../../application/contracts/orderItems/markFinished/IMarkOrderItemFinishedRequestDTO";
-import IMarkOrderFinishedRequestDTO from "../../application/contracts/orders/markFinished/IMarkOrderFinishedRequestDTO";
+import IOrderDataAccess from "../../presentation/interfaces/dataAccess/IOrderDataAccess";
+import ICreateOrderRequestDTO from "../contracts/orders/create/ICreateOrderRequestDTO";
+import IListOrdersRequestDTO from "../contracts/orders/list/IListOrdersRequestDTO";
+import IReadOrderRequestDTO from "../contracts/orders/read/IReadOrderRequestDTO";
+import IMarkOrderItemFinishedRequestDTO from "../contracts/orderItems/markFinished/IMarkOrderItemFinishedRequestDTO";
+import IMarkOrderFinishedRequestDTO from "../contracts/orders/markFinished/IMarkOrderFinishedRequestDTO";
 import { getApiUrl } from "../../viteUtils";
 
 export default class OrderDataAccess implements IOrderDataAccess {

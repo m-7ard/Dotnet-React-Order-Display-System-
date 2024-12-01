@@ -14,7 +14,7 @@ export default function SidebarMenuDialog() {
                 size: "mixin-panel-base",
                 theme: "theme-panel-generic-white",
             }}
-            className="top-0 bottom-0 left-0 fixed"
+            className="top-0 bottom-0 left-0 fixed w-72"
         >
             <header className="flex flex-row justify-between items-center">
                 <div className="text-sm">Menu</div>

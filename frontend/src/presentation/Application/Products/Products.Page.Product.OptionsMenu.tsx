@@ -62,9 +62,7 @@ export default function ProductOptionMenu(props: { product: IProduct }) {
                                 Delete Product
                             </MixinButton>
                         )}
-                        Panel={() => (
-                            <DeleteProductFactory product={product} />
-                        )}
+                        Panel={() => <DeleteProductFactory product={product} />}
                         panelProps={{ product: product }}
                     />
                     <a

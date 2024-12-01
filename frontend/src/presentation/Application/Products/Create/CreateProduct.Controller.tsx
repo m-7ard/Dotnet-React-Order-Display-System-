@@ -9,8 +9,8 @@ import { useMutation } from "@tanstack/react-query";
 import useResponseHandler from "../../../hooks/useResponseHandler";
 import { productDataAccess } from "../../../deps/dataAccess";
 import { err, ok } from "neverthrow";
-import apiToDomainCompatibleFormError from "../../../../application/mappers/apiToDomainCompatibleFormError";
-import typeboxToDomainCompatibleFormError from "../../../../application/mappers/typeboxToDomainCompatibleFormError";
+import apiToDomainCompatibleFormError from "../../../mappers/apiToDomainCompatibleFormError";
+import typeboxToDomainCompatibleFormError from "../../../mappers/typeboxToDomainCompatibleFormError";
 import useUploadProductImages from "../../../hooks/useUploadProductImages";
 
 const validatorSchema = Type.Object({
