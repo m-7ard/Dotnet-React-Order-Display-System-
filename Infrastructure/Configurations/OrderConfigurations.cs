@@ -8,8 +8,10 @@ public class OrderConfigurations : IEntityTypeConfiguration<OrderDbEntity>
 {
     public void Configure(EntityTypeBuilder<OrderDbEntity> builder)
     {
-        builder.Property(d => d.DateCreated)
-            .HasDefaultValueSql("GETDATE()");
+        builder.HasKey(d => d.Id);
+
+        builder.Property(d => d.Id)
+            .ValueGeneratedNever();
 
         builder.Property(d => d.Total)
             .HasPrecision(18, 2);

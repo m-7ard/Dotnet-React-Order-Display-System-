@@ -3,7 +3,6 @@ using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 using Infrastructure;
 using Infrastructure.Persistence;
 
@@ -75,8 +74,14 @@ public class Mixins
         return menuItemImage;
     }
 
-    public async Task<Order> CreateOrder(List<Product> products, int number, OrderStatus orderStatus, OrderItemStatus orderItemStatus) {
-        var orderItems = new List<OrderItem>();
+    public async Task<Order> CreateOrder(List<Product> products, int seed, OrderStatus orderStatus) {
+        var newOrder = OrderFactory.BuildNewOrder(
+            id: Guid.NewGuid(),
+            total: 0,
+            orderItems: [],
+            status: orderStatus
+        );
+
         foreach (var product in products)
         {
             var productHistory = await _productHistoryRepository.GetLatestByProductIdAsync(product.Id);
@@ -85,23 +90,14 @@ public class Mixins
                 throw new Exception("A Product's ProductHistory cannot be null when creating an Order because an Order's OrderItems need a non-null ProductHistoryId.");
             }
             
-            var orderItem = OrderItemFactory.BuildNewOrderItem(
-                quantity: number,
-                status: orderItemStatus,
-                productHistoryId: productHistory.Id,
-                productId: product.Id
-            );
-            orderItems.Add(orderItem);
+            var result = newOrder.TryAddOrderItem(productHistory, seed);
+            if (result.TryPickT1(out var errors, out var orderItem))
+            {
+                throw new Exception("Something went wrong in Mixins.CreateOrder trying to add an OrderItem to an Order");
+            }
         }
 
-        var order = await _orderRespository.CreateAsync(
-            OrderFactory.BuildNewOrder(
-                total: products.Sum(d => d.Price * number),
-                orderItems: orderItems,
-                status: orderStatus
-            )
-        );
-
-        return order;
+        await _orderRespository.CreateAsync(newOrder);
+        return newOrder;
     }
 }

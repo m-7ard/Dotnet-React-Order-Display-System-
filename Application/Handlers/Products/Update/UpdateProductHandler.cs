@@ -1,4 +1,3 @@
-using Application.ErrorHandling.Application;
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
@@ -8,7 +7,7 @@ using OneOf;
 
 namespace Application.Handlers.Products.Update;
 
-public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<UpdateProductResult, List<PlainApplicationError>>>
+public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<UpdateProductResult, List<ApplicationError>>>
 {
     private readonly IProductRepository _productRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
@@ -21,17 +20,17 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
         _draftImageRepository = draftImageRepository;
     }
 
-    public async Task<OneOf<UpdateProductResult, List<PlainApplicationError>>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+    public async Task<OneOf<UpdateProductResult, List<ApplicationError>>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
-        var errors = new List<PlainApplicationError>();
+        var errors = new List<ApplicationError>();
 
         var productUpdating = await _productRepository.GetByIdAsync(request.Id);
         if (productUpdating is null)
         {
-            errors.Add(new PlainApplicationError(
+            errors.Add(new ApplicationError(
                 message: $"Product of Id \"{request.Id}\" does not exist.",
                 path: ["_"],
-                code: ValidationErrorCodes.ModelDoesNotExist
+                code: ApplicationErrorCodes.ModelDoesNotExist
             ));
 
             return errors;
@@ -40,10 +39,10 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
         var latestProductHistory = await _productHistoryRepository.GetLatestByProductIdAsync(productUpdating.Id);
         if (latestProductHistory is null)
         {
-            errors.Add(new PlainApplicationError(
+            errors.Add(new ApplicationError(
                 message: $"Product of Id \"{request.Id}\" lacks valid ProductHistory.",
                 path: ["_"],
-                code: ValidationErrorCodes.IntegrityError
+                code: ApplicationErrorCodes.IntegrityError
             ));
 
             return errors;
@@ -64,10 +63,10 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
             var draftImage = await _draftImageRepository.GetByFileNameAsync(fileName);
             if (draftImage is null)
             {
-                errors.Add(new PlainApplicationError(
+                errors.Add(new ApplicationError(
                     message: $"ProductImage of fileName \"{fileName}\" does not exist.",
                     path: ["images", fileName],
-                    code: ValidationErrorCodes.ModelDoesNotExist
+                    code: ApplicationErrorCodes.ModelDoesNotExist
                 ));
                 continue;
             }

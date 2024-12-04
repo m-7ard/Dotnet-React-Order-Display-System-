@@ -1,10 +1,10 @@
-using Application.ErrorHandling.Application;
+using Application.Errors;
 using MediatR;
 using OneOf;
 
 namespace Application.Handlers.Products.Update;
 
-public class UpdateProductCommand : IRequest<OneOf<UpdateProductResult, List<PlainApplicationError>>>
+public class UpdateProductCommand : IRequest<OneOf<UpdateProductResult, List<ApplicationError>>>
 {
     public UpdateProductCommand(string name, decimal price, string description, List<string> images, int id)
     {

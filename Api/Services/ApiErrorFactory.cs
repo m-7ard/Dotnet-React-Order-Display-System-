@@ -1,18 +1,17 @@
 
 using Api.Errors;
-using Api.Interfaces;
 using Application.Common;
 using Application.Errors;
 using FluentValidation.Results;
 
 namespace Api.Services;
 
-public class PlainApiErrorHandlingService : IPlainErrorHandlingService
+public class ApiErrorFactory
 {
     // "_" = form error
     // "field" = field error
     // "field/_" = field form error
-    public PlainApiError CreateError(List<string> path, string message, string fieldName)
+    public static PlainApiError CreateError(List<string> path, string message, string fieldName)
     {
         return new PlainApiError(
             fieldName: fieldName,
@@ -21,7 +20,7 @@ public class PlainApiErrorHandlingService : IPlainErrorHandlingService
         );
     }
 
-    public List<PlainApiError> FluentToApiErrors(List<ValidationFailure> validationFailures, List<string> path)
+    public static List<PlainApiError> FluentToApiErrors(List<ValidationFailure> validationFailures, List<string> path)
     {
         return validationFailures.Select((error) =>
         {
@@ -38,7 +37,7 @@ public class PlainApiErrorHandlingService : IPlainErrorHandlingService
         }).ToList();
     }
 
-    public List<PlainApiError> TranslateServiceErrors(List<ApplicationError> errors)
+    public static List<PlainApiError> TranslateServiceErrors(List<ApplicationError> errors)
     {
         return errors.Select((error) =>
         {

@@ -26,9 +26,8 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
         _product002 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
         _order001 = await mixins.CreateOrder(
             products: new List<Product>() { _product001, _product002 },
-            number: 1,
             orderStatus: OrderStatus.Pending,
-            orderItemStatus: OrderItemStatus.Pending
+            seed: 1
         );
     }
 
@@ -39,7 +38,7 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
         var repo = new OrderRepository(db);
         foreach (var orderItem in _order001.OrderItems)
         {
-            _order001.UpdateOrderItemStatus(orderItemId: orderItem.Id, OrderItemStatus.Finished);
+            _order001.TryMarkOrderItemFinished(orderItemId: orderItem.Id);
         }
         await repo.UpdateAsync(_order001);
 
@@ -62,7 +61,7 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
     public async Task MarkOrderFinished_NonExistingOrder_Failure()
     {
         var request = new MarkOrderFinishedRequestDTO();
-        var response = await _client.PutAsync($"{_route}/100000000/mark_finished", JsonContent.Create(request));
+        var response = await _client.PutAsync($"{_route}/{Guid.NewGuid()}/mark_finished", JsonContent.Create(request));
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -73,7 +72,7 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
     {
         var db = _factory.CreateDbContext();
         var repo = new OrderRepository(db);
-        _order001.UpdateStatus(OrderStatus.Finished);
+        _order001.TryMarkFinished();
         await repo.UpdateAsync(_order001);
 
         var request = new MarkOrderFinishedRequestDTO();

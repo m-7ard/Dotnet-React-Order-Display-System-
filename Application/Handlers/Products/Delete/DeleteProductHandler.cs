@@ -1,4 +1,3 @@
-using Application.ErrorHandling.Application;
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using MediatR;
@@ -6,7 +5,7 @@ using OneOf;
 
 namespace Application.Handlers.Products.Delete;
 
-public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, OneOf<DeleteProductResult, List<PlainApplicationError>>>
+public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, OneOf<DeleteProductResult, List<ApplicationError>>>
 {
     private readonly IProductRepository _productRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
@@ -17,16 +16,16 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, OneOf<
         _productHistoryRepository = productHistoryRepository;
     }
 
-    public async Task<OneOf<DeleteProductResult, List<PlainApplicationError>>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+    public async Task<OneOf<DeleteProductResult, List<ApplicationError>>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
         var product = await _productRepository.GetByIdAsync(id: request.Id);
         if (product is null)
         {
-            return new List<PlainApplicationError>() {
-                new PlainApplicationError(
+            return new List<ApplicationError>() {
+                new ApplicationError(
                     message: $"Product with Id \"{request.Id}\" does not exist.",
                     path: ["_"],
-                    code: ValidationErrorCodes.ModelDoesNotExist
+                    code: ApplicationErrorCodes.ModelDoesNotExist
                 )
             };
         }
@@ -34,11 +33,11 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, OneOf<
         var latestProductHistory = await _productHistoryRepository.GetLatestByProductIdAsync(product.Id);
         if (latestProductHistory is null)
         {
-            return new List<PlainApplicationError>() {
-                new PlainApplicationError(
+            return new List<ApplicationError>() {
+                new ApplicationError(
                     message: $"Product of Id \"{request.Id}\" lacks valid ProductHistory.",
                     path: ["_"],
-                    code: ValidationErrorCodes.IntegrityError
+                    code: ApplicationErrorCodes.IntegrityError
                 )
             };
         }

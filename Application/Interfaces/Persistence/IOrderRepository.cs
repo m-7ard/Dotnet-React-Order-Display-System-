@@ -1,22 +1,12 @@
+using Application.Contracts.Criteria;
 using Domain.Models;
-using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 
 namespace Application.Interfaces.Persistence;
 
 public interface IOrderRepository
 {
-    Task<Order> CreateAsync(Order order);
-    Task<Order?> GetByIdAsync(int id);
-    Task<List<Order>> FindAllAsync(
-        decimal? minTotal, 
-        decimal? maxTotal, 
-        OrderStatus? status, 
-        DateTime? createdBefore, 
-        DateTime? createdAfter, 
-        int? productId, 
-        int? id, 
-        int? productHistoryId,
-        Tuple<string, bool>? orderBy);
+    Task CreateAsync(Order order);
+    Task<Order?> GetByIdAsync(Guid id);
+    Task<List<Order>> FindAllAsync(FilterOrdersCriteria criteria);
     Task UpdateAsync(Order order);
 }

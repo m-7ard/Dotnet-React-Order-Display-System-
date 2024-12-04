@@ -4,7 +4,6 @@ using Api.DTOs.Orders.List;
 using Application.Common;
 using Domain.Models;
 using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 using Microsoft.EntityFrameworkCore;
 
 namespace Tests.IntegrationTests.Orders;
@@ -28,21 +27,18 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
         _product003 = await mixins.CreateProductAndProductHistory(number: 3, images: []);
         _order001 = await mixins.CreateOrder(
             products: new List<Product>() { _product001, _product002 },
-            number: 1,
-            orderStatus: OrderStatus.Pending,
-            orderItemStatus: OrderItemStatus.Pending
+            seed: 1,
+            orderStatus: OrderStatus.Pending
         );
         _order002 = await mixins.CreateOrder(
             products: new List<Product>() { _product001, _product002 },
-            number: 10,
-            orderStatus: OrderStatus.Finished,
-            orderItemStatus: OrderItemStatus.Finished
+            seed: 10,
+            orderStatus: OrderStatus.Finished
         );
         _order003 = await mixins.CreateOrder(
             products: new List<Product>() { _product003 },
-            number: 100,
-            orderStatus: OrderStatus.Pending,
-            orderItemStatus: OrderItemStatus.Pending
+            seed: 100,
+            orderStatus: OrderStatus.Pending
         );
     }
 
@@ -51,15 +47,15 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
     {
         var request = new ListOrdersRequestDTO
         (
-               minTotal: null,
-               maxTotal: null,
-               status: null,
-               createdBefore: null,
-               createdAfter: null,
-               id: null,
-               productId: null,
-               productHistoryId: null,
-               orderBy: null
+            minTotal: null,
+            maxTotal: null,
+            status: null,
+            createdBefore: null,
+            createdAfter: null,
+            id: null,
+            productId: null,
+            productHistoryId: null,
+            orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -262,9 +258,9 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
         Assert.NotNull(content);
         Assert.NotNull(content.Orders);
 
-        Assert.StrictEqual(_order003.Id, content.Orders[0].Id);
-        Assert.StrictEqual(_order002.Id, content.Orders[1].Id);
-        Assert.StrictEqual(_order001.Id, content.Orders[2].Id);
+        Assert.Equal(_order003.Id.ToString(), content.Orders[0].Id);
+        Assert.Equal(_order002.Id.ToString(), content.Orders[1].Id);
+        Assert.Equal(_order001.Id.ToString(), content.Orders[2].Id);
     }
 
     [Fact]
@@ -292,8 +288,8 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
         Assert.NotNull(content);
         Assert.NotNull(content.Orders);
 
-        Assert.StrictEqual(_order003.Id, content.Orders[2].Id);
-        Assert.StrictEqual(_order002.Id, content.Orders[1].Id);
-        Assert.StrictEqual(_order001.Id, content.Orders[0].Id);
+        Assert.Equal(_order003.Id.ToString(), content.Orders[2].Id);
+        Assert.Equal(_order002.Id.ToString(), content.Orders[1].Id);
+        Assert.Equal(_order001.Id.ToString(), content.Orders[0].Id);
     }
 }

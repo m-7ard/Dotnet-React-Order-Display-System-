@@ -8,7 +8,7 @@ public class ListOrdersRequestDTO
         string? status,
         DateTime? createdBefore,
         DateTime? createdAfter,
-        int? id,
+        Guid? id,
         int? productId,
         int? productHistoryId,
         string? orderBy)
@@ -29,7 +29,7 @@ public class ListOrdersRequestDTO
     public string? Status { get; set; }
     public DateTime? CreatedBefore { get; set; }
     public DateTime? CreatedAfter { get; set; }
-    public int? Id { get; set; }
+    public Guid? Id { get; set; }
     public int? ProductId { get; set; }
     public int? ProductHistoryId { get; set; }
     public string? OrderBy { get; set; }

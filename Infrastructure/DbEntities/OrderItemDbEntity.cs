@@ -9,12 +9,12 @@ public class OrderItemDbEntity
     }
 
     public OrderItemDbEntity(
-        int id,
+        Guid id,
         int quantity,
         Statuses status,
         DateTime dateCreated,
         DateTime dateFinished,
-        int orderId,
+        Guid orderId,
         int productHistoryId,
         int productId)
     {
@@ -28,7 +28,7 @@ public class OrderItemDbEntity
         ProductId = productId;
     }
 
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
     public int Quantity { get; set; }
     public Statuses Status { get; set; }
     public DateTime DateCreated { get; private set; }
@@ -36,7 +36,7 @@ public class OrderItemDbEntity
     public int ProductId { get; set; }
 
     // Order FK
-    public int OrderId { get; set; }
+    public Guid OrderId { get; set; }
     public OrderDbEntity Order { get; private set; } = null!;
 
     // Product History FK

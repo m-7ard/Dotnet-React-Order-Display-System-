@@ -8,6 +8,9 @@ public class OrderItemConfigurations : IEntityTypeConfiguration<OrderItemDbEntit
 {
     public void Configure(EntityTypeBuilder<OrderItemDbEntity> builder)
     {
-        builder.Property(d => d.DateCreated).HasDefaultValueSql("GETDATE()");
+        builder.HasKey(d => d.Id);
+
+        builder.Property(d => d.Id)
+            .ValueGeneratedNever();
     }
 }

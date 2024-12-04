@@ -1,11 +1,11 @@
-using Application.ErrorHandling.Application;
+using Application.Errors;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using OneOf;
 
 namespace Application.Handlers.DraftImages.UploadImages;
 
-public class UploadDraftImagesCommand : IRequest<OneOf<UploadDraftImagesResult, List<PlainApplicationError>>>
+public class UploadDraftImagesCommand : IRequest<OneOf<UploadDraftImagesResult, List<ApplicationError>>>
 {
     public UploadDraftImagesCommand(List<IFormFile> files)
     {

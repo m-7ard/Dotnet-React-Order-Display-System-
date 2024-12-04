@@ -1,10 +1,10 @@
-using Application.ErrorHandling.Application;
+using Application.Errors;
 using MediatR;
 using OneOf;
 
 namespace Application.Handlers.Orders.List;
 
-public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<PlainApplicationError>>>
+public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<ApplicationError>>>
 {
     public ListOrdersQuery(
         decimal? minTotal,
@@ -12,7 +12,7 @@ public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<PlainApplic
         string? status,
         DateTime? createdBefore,
         DateTime? createdAfter,
-        int? id,
+        Guid? id,
         int? productId,
         int? productHistoryId,
         string? orderBy)
@@ -33,7 +33,7 @@ public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<PlainApplic
     public string? Status { get; set; }
     public DateTime? CreatedBefore { get; set; }
     public DateTime? CreatedAfter { get; set; }
-    public int? Id { get; set; }
+    public Guid? Id { get; set; }
     public int? ProductId { get; set; }
     public int? ProductHistoryId { get; set; }
     public string? OrderBy { get; set; }

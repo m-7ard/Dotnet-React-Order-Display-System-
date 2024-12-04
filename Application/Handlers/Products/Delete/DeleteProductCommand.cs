@@ -1,10 +1,10 @@
-using Application.ErrorHandling.Application;
+using Application.Errors;
 using MediatR;
 using OneOf;
 
 namespace Application.Handlers.Products.Delete;
 
-public class DeleteProductCommand : IRequest<OneOf<DeleteProductResult, List<PlainApplicationError>>>
+public class DeleteProductCommand : IRequest<OneOf<DeleteProductResult, List<ApplicationError>>>
 {
     public DeleteProductCommand(int id)
     {

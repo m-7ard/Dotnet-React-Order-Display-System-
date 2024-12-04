@@ -26,12 +26,12 @@ public class ApiModelService : IApiModelService
             }
 
             var orderItemApiModel = new OrderItemApiModel(
-                id: orderItem.Id,
+                id: orderItem.Id.ToString(),
                 quantity: orderItem.Quantity,
                 status: orderItem.Status.Name,
                 dateCreated: orderItem.DateCreated,
                 dateFinished: orderItem.DateFinished,
-                orderId: order.Id,
+                orderId: order.Id.ToString(),
                 productHistory: CreateProductHistoryApiModel(productHistory)
             );
 
@@ -39,7 +39,7 @@ public class ApiModelService : IApiModelService
         }
 
         var apiModel = new OrderApiModel(
-            id: order.Id,
+            id: order.Id.ToString(),
             total: order.Total,
             dateCreated: order.DateCreated,
             dateFinished: order.DateFinished,

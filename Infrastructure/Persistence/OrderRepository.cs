@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
+using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
 using Domain.Models;
-using Domain.ValueObjects.Order;
 using Infrastructure.DbEntities;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -17,15 +17,14 @@ public class OrderRepository : IOrderRepository
         _dbContext = simpleProductOrderServiceDbContext;
     }
 
-    public async Task<Order> CreateAsync(Order order)
+    public async Task CreateAsync(Order order)
     {
         var orderDbEntity = OrderMapper.ToDbModel(order);
         _dbContext.Add(orderDbEntity);
         await _dbContext.SaveChangesAsync();
-        return OrderMapper.ToDomain(orderDbEntity);
     }
 
-    public async Task<Order?> GetByIdAsync(int id)
+    public async Task<Order?> GetByIdAsync(Guid id)
     {
         var orderDbEntity = await _dbContext.Order
             .Include(d => d.OrderItems)
@@ -34,60 +33,51 @@ public class OrderRepository : IOrderRepository
         return orderDbEntity is null ? null : OrderMapper.ToDomain(orderDbEntity);
     }
 
-    public async Task<List<Order>> FindAllAsync(
-        decimal? minTotal, 
-        decimal? maxTotal, 
-        OrderStatus? status, 
-        DateTime? createdBefore, 
-        DateTime? createdAfter, 
-        int? productId, 
-        int? id, 
-        int? productHistoryId,
-        Tuple<string, bool>? orderBy)
+    public async Task<List<Order>> FindAllAsync(FilterOrdersCriteria criteria)
     {
         IQueryable<OrderDbEntity> query = _dbContext.Order.Include(d => d.OrderItems);
 
-        if (id is not null)
+        if (criteria.Id is not null)
         {
-            query = query.Where(order => order.Id == id);
+            query = query.Where(order => order.Id == criteria.Id);
         }
 
-        if (minTotal is not null)
+        if (criteria.MinTotal is not null)
         {
-            query = query.Where(order => order.Total >= minTotal);
+            query = query.Where(order => order.Total >= criteria.MinTotal);
         }
 
-        if (maxTotal is not null)
+        if (criteria.MaxTotal is not null)
         {
-            query = query.Where(order => order.Total <= maxTotal);
+            query = query.Where(order => order.Total <= criteria.MaxTotal);
         }
 
-        if (createdAfter is not null)
+        if (criteria.CreatedAfter is not null)
         {
-            query = query.Where(order => order.DateCreated >= createdAfter);
+            query = query.Where(order => order.DateCreated >= criteria.CreatedAfter);
         }
 
-        if (createdBefore is not null)
+        if (criteria.CreatedBefore is not null)
         {
-            query = query.Where(order => order.DateCreated <= createdBefore);
+            query = query.Where(order => order.DateCreated <= criteria.CreatedBefore);
         }
 
-        if (status is not null)
+        if (criteria.Status is not null)
         {
-            query = query.Where(order => order.Status == OrderMapper.ToDbEntityStatus(status));
+            query = query.Where(order => order.Status == OrderMapper.ToDbEntityStatus(criteria.Status));
         }
 
-        if (productId is not null)
+        if (criteria.ProductId is not null)
         {
-            query = query.Where(order => order.OrderItems.Any(item => item.ProductId == productId));
+            query = query.Where(order => order.OrderItems.Any(item => item.ProductId == criteria.ProductId));
         }
 
-        if (productHistoryId is not null)
+        if (criteria.ProductHistoryId is not null)
         {
-            query = query.Where(order => order.OrderItems.Any((item) => item.ProductHistoryId == productHistoryId));
+            query = query.Where(order => order.OrderItems.Any(item => item.ProductHistoryId == criteria.ProductHistoryId));
         }
 
-        if (orderBy is not null)
+        if (criteria.OrderBy is not null)
         {
             Dictionary<string, Expression<Func<OrderDbEntity, object>>> fieldMappings = new()
             {
@@ -95,9 +85,9 @@ public class OrderRepository : IOrderRepository
                 { "DateCreated", p => p.DateCreated },
             };
 
-            if (fieldMappings.TryGetValue(orderBy.Item1, out var orderByExpression))
+            if (fieldMappings.TryGetValue(criteria.OrderBy.Item1, out var orderByExpression))
             {
-                query = orderBy.Item2 ? query.OrderBy(orderByExpression) : query.OrderByDescending(orderByExpression);
+                query = criteria.OrderBy.Item2 ? query.OrderBy(orderByExpression) : query.OrderByDescending(orderByExpression);
             }
         }
 

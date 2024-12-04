@@ -2,7 +2,13 @@ namespace Api.ApiModels;
 
 public class OrderApiModel
 {
-    public OrderApiModel(int id, decimal total, DateTime dateCreated, DateTime dateFinished, List<OrderItemApiModel> orderItems, string status)
+    public OrderApiModel(
+        string id, 
+        decimal total, 
+        DateTime dateCreated, 
+        DateTime dateFinished, 
+        List<OrderItemApiModel> orderItems, 
+        string status)
     {
         Id = id;
         Total = total;
@@ -12,7 +18,7 @@ public class OrderApiModel
         Status = status;
     }
 
-    public int Id { get; private set; }
+    public string Id { get; private set; }
     public decimal Total { get; set; }
     public string Status { get; set; }
     public DateTime DateCreated { get; private set; }

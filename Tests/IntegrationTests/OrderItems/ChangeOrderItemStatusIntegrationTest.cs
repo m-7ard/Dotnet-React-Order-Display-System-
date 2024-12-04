@@ -26,9 +26,8 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
         _product002 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
         _order001 = await mixins.CreateOrder(
             products: new List<Product>() { _product001, _product002 },
-            number: 1,
             orderStatus: OrderStatus.Pending,
-            orderItemStatus: OrderItemStatus.Pending
+            seed: 1
         );
         _orderItem001 = _order001.OrderItems.Find(orderItem => orderItem.ProductHistoryId == _product001.Id)!; 
     }
@@ -46,13 +45,13 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
         Assert.NotNull(content);
         Assert.NotNull(content.Order);
         
-        var updatedOrderItem = content.Order.OrderItems.Find(orderItem => orderItem.Id == _orderItem001.Id);
+        var updatedOrderItem = content.Order.OrderItems.Find(orderItem => orderItem.Id == _orderItem001.Id.ToString());
         Assert.NotNull(updatedOrderItem);
         Assert.Equal(OrderItemStatus.Finished.Name, updatedOrderItem.Status);
 
         // Confirm it was updated (move this to a Unit Test?)
         var db = _factory.CreateDbContext();
-        var persistedOrderItem = await db.OrderItem.SingleAsync(d => d.Id == updatedOrderItem.Id)!;
+        var persistedOrderItem = await db.OrderItem.SingleAsync(d => d.Id.ToString() == updatedOrderItem.Id)!;
         Assert.Equal(OrderItemDbEntity.Statuses.Finished, persistedOrderItem.Status);
     }
 
@@ -71,7 +70,7 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
     {
         var db = _factory.CreateDbContext();
         var repo = new OrderRepository(db);
-        _order001.UpdateOrderItemStatus(orderItemId: _orderItem001.Id, OrderItemStatus.Finished);
+        _order001.TryMarkOrderItemFinished(orderItemId: _orderItem001.Id);
         await repo.UpdateAsync(_order001);
 
         var request = new MarkOrderItemFinishedRequestDTO();
