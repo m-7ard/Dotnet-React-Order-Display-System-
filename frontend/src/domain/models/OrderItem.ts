@@ -4,7 +4,7 @@ import Order from "./Order";
 
 export default class OrderItem {
     constructor(props: {
-        id: number;
+        id: string;
         quantity: number;
         status: OrderItemStatus;
         dateCreated: Date;
@@ -29,7 +29,7 @@ export default class OrderItem {
         return this.status === OrderItemStatus.PENDING;
     }
 
-    public id: number;
+    public id: string;
     public quantity: number;
     public status: OrderItemStatus;
     public dateCreated: Date;

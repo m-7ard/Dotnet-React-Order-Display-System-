@@ -2,7 +2,7 @@ import { Static, Type } from "@sinclair/typebox";
 import parseTypeboxSchemaOrNull from "../../presentation/utils/parseTypeboxSchemaOrNull";
 
 const schema = Type.Object({
-    id: Type.Number({ minimum: 0 }),
+    id: Type.String({ minLength: 1 }),
     minTotal: Type.Number({ minimum: 0 }),
     maxTotal: Type.Number({ minimum: 0 }),
     status: Type.String({ minLength: 1 }),

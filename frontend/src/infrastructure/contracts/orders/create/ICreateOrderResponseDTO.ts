@@ -1,7 +1,5 @@
-import IOrderApiModel from "../../../apiModels/IOrderApiModel";
-
 type ICreateOrderResponseDTO = {
-    order: IOrderApiModel;
+    orderId: string;
 };
 
 export default ICreateOrderResponseDTO;
