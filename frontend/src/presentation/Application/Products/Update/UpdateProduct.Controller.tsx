@@ -99,7 +99,7 @@ export default function UpdateProductController() {
                         navigate({ to: "/products" });
                         return ok(undefined);
                     } else if (response.status === 400) {
-                        const errors = apiToDomainCompatibleFormError<ErrorSchema>(result.error.data);
+                        const errors = apiToDomainCompatibleFormError(await response.json());
                         errorManager.setAll(errors);
                         return ok(undefined);
                     }

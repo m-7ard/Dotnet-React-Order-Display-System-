@@ -1,7 +1,5 @@
 import { createRoute, redirect } from "@tanstack/react-router";
 import rootRoute from "./_rootRoute";
-import { Value } from "@sinclair/typebox/value";
-import { Type } from "@sinclair/typebox";
 import Order from "../../domain/models/Order";
 import ManageOrderRoute from "../Application/Orders/Manage/ManageOrder.Controller";
 import routeData from "./_routeData";
@@ -42,11 +40,7 @@ const manageOrderRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: routeData.manageOrder.pattern,
     loader: async ({ params }): Promise<Order> => {
-        const id = parseInt(params.id);
-        if (!Value.Check(Type.Integer(), id)) {
-            throw redirect({ "to": "/" });
-        }
-
+        const id = params.id;
         const response = await orderDataAccess.readOrder({ id: id });
 
         if (!response.ok) {

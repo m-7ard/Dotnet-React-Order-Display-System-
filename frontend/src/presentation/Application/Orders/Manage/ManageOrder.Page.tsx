@@ -14,7 +14,7 @@ const ORDER_STATUS_COLORS = {
 };
 
 export default function ManageOrderPage(props: { order: Order; onMarkFinished: () => void; onMarkOrderItemFinished: (orderItem: OrderItem) => void; errors: IPresentationError<Record<string | number, unknown>> }) {
-    const { order, onMarkFinished, onMarkOrderItemFinished, errors } = props;
+    const { order, onMarkFinished, onMarkOrderItemFinished } = props;
 
     return (
         <div className="mixin-page-like mixin-page-base mx-auto">

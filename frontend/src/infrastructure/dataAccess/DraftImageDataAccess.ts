@@ -1,6 +1,6 @@
-import IUploadDraftImagesRequestDTO from "../../application/contracts/draftImages/uploadImages/IUploadDraftImagesRequestDTO";
 import IDraftImageDataAccess from "../../presentation/interfaces/dataAccess/IDraftImageDataAccess";
 import { getApiUrl } from "../../viteUtils";
+import IUploadDraftImagesRequestDTO from "../contracts/uploadImages/IUploadDraftImagesRequestDTO";
 
 export default class DraftImageDataAccess implements IDraftImageDataAccess {
     private readonly _apiRoute = `${getApiUrl()}/api/draft_images`;

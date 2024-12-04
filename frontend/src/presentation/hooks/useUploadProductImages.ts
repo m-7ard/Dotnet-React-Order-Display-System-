@@ -1,9 +1,9 @@
 import { ok, err } from "neverthrow";
 import { useCallback } from "react";
-import IUploadDraftImagesResponseDTO from "../../application/contracts/draftImages/uploadImages/IUploadDraftImagesResponseDTO";
 import { draftImageDataAccess } from "../deps/dataAccess";
 import useResponseHandler from "./useResponseHandler";
 import IPlainApiError from "../../infrastructure/interfaces/IPlainApiError";
+import IUploadDraftImagesResponseDTO from "../../infrastructure/contracts/uploadImages/IUploadDraftImagesResponseDTO";
 
 export default function useUploadProductImages(props: { onSuccess: (dto: IUploadDraftImagesResponseDTO) => void; onError: (errors: IPlainApiError) => void }) {
     const responseHandler = useResponseHandler();

@@ -1,4 +1,4 @@
-import IImageApiModel from "../../../../infrastructure/apiModels/IImageApiModel";
+import IImageApiModel from "../../apiModels/IImageApiModel";
 
 type IUploadDraftImagesResponseDTO = {
     images: IImageApiModel[];
