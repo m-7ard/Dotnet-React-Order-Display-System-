@@ -1,4 +1,3 @@
-using Application.ErrorHandling.Application;
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
@@ -10,7 +9,7 @@ using OneOf;
 
 namespace Application.Handlers.Orders.Create;
 
-public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<CreateOrderResult, List<PlainApplicationError>>>
+public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<CreateOrderResult, List<ApplicationError>>>
 {
     private readonly IProductRepository _productRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
@@ -23,9 +22,9 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
         _orderRepository = orderRepository;
     }
 
-    public async Task<OneOf<CreateOrderResult, List<PlainApplicationError>>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+    public async Task<OneOf<CreateOrderResult, List<ApplicationError>>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        var errors = new List<PlainApplicationError>();
+        var errors = new List<ApplicationError>();
 
         var retrievedProductsHistory = new Dictionary<string, ProductHistory>();
         foreach (var (uid, orderItem) in request.OrderItemData)
@@ -35,10 +34,10 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             if (product is null)
             {
                 errors.Add(
-                    new PlainApplicationError(
+                    new ApplicationError(
                         message: $"Product with Id \"{orderItem.ProductId}\" does not exist.",
                         path: ["orderItems", uid, "id"],
-                        code: ValidationErrorCodes.ModelDoesNotExist
+                        code: ApplicationErrorCodes.ModelDoesNotExist
                     )
                 );
                 continue;
@@ -49,10 +48,10 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             if (latestProductHistory is null)
             {
                 errors.Add(
-                    new PlainApplicationError(
+                    new ApplicationError(
                         message: $"Product with Id \"{orderItem.ProductId}\" does not have a ProductHistory. All Products should have a ProductHistory when created and updated.",
                         path: ["orderItems", uid, "_"],
-                        code: ValidationErrorCodes.StateMismatch
+                        code: ApplicationErrorCodes.IntegrityError
                     )
                 );
                 continue;
@@ -81,12 +80,16 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
         });
 
         // Create Order
+        var generatedId = Guid.NewGuid();
         var inputOrder = OrderFactory.BuildNewOrder(
+            id: generatedId,
             total: total,
             orderItems: request.OrderItemData.Keys.Select(uid =>
             {
                 var orderItemData = request.OrderItemData[uid];
                 return OrderItemFactory.BuildNewOrderItem(
+                    id: Guid.NewGuid(),
+                    orderId: generatedId,
                     quantity: orderItemData.Quantity,
                     status: OrderItemStatus.Pending,
                     productHistoryId: retrievedProductsHistory[uid].Id,
@@ -96,7 +99,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             status: OrderStatus.Pending
         );
 
-        var outputOrder = await _orderRepository.CreateAsync(inputOrder);
-        return new CreateOrderResult(order: outputOrder);
+        await _orderRepository.CreateAsync(inputOrder);
+        return new CreateOrderResult(order: inputOrder);
     }
 }

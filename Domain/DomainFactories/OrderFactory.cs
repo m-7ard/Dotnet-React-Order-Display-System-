@@ -5,7 +5,7 @@ namespace Domain.DomainFactories;
 
 public class OrderFactory
 {
-    public static Order BuildExistingOrder(int id, decimal total, DateTime dateCreated, DateTime dateFinished, List<OrderItem> orderItems, OrderStatus status)
+    public static Order BuildExistingOrder(Guid id, decimal total, DateTime dateCreated, DateTime dateFinished, List<OrderItem> orderItems, OrderStatus status)
     {
         return new Order(
             id: id,
@@ -17,12 +17,12 @@ public class OrderFactory
         );
     }
 
-    public static Order BuildNewOrder(decimal total, List<OrderItem> orderItems, OrderStatus status)
+    public static Order BuildNewOrder(Guid id, decimal total, List<OrderItem> orderItems, OrderStatus status)
     {
         return new Order(
-            id: 0,
+            id: id,
             total: total,
-            dateCreated: new DateTime(),
+            dateCreated: DateTime.UtcNow,
             dateFinished: new DateTime(),
             orderItems: orderItems,
             status: status

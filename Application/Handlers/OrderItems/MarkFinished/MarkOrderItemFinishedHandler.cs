@@ -1,4 +1,3 @@
-using Application.ErrorHandling.Application;
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Domain.ValueObjects.OrderItem;
@@ -7,7 +6,7 @@ using OneOf;
 
 namespace Application.Handlers.OrderItems.MarkFinished;
 
-public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishedCommand, OneOf<MarkOrderItemFinishedResult, List<PlainApplicationError>>>
+public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishedCommand, OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
 
@@ -16,47 +15,26 @@ public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishe
         _orderRepository = orderRepository;
     }
 
-    public async Task<OneOf<MarkOrderItemFinishedResult, List<PlainApplicationError>>> Handle(MarkOrderItemFinishedCommand request, CancellationToken cancellationToken)
+    public async Task<OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>> Handle(MarkOrderItemFinishedCommand request, CancellationToken cancellationToken)
     {
         var order = await _orderRepository.GetByIdAsync(id: request.OrderId);
         if (order is null)
         {
-            return new List<PlainApplicationError>() {
-                new PlainApplicationError(
-                    message: $"Order with Id \"{request.OrderId}\" does not exist.",
-                    path: ["_"],
-                    code: ValidationErrorCodes.ModelDoesNotExist
-                )
-            };
+            return ApplicationErrorFactory.CreateSingleListError(
+                message: $"Order with Id \"{request.OrderId}\" does not exist.",
+                path: ["_"],
+                code: ApplicationErrorCodes.ModelDoesNotExist
+            );
         }
 
-        var orderItem = order.OrderItems.Find(orderItem => orderItem.Id == request.OrderItemId);
-        if (orderItem is null)
+        var result = order.TryMarkOrderItemFinished(request.OrderItemId);
+        if (result.TryPickT1(out var errors, out var _))
         {
-            return new List<PlainApplicationError>() {
-                new PlainApplicationError(
-                    message: $"OrderItem with Id \"{request.OrderItemId}\" does not exist does not exist in Order of id \"{request.OrderId}\".",
-                    path: ["_"],
-                    code: ValidationErrorCodes.ModelDoesNotExist
-                )
-            };
+            return ApplicationErrorFactory.DomainErrorsToApplicationErrors(errors);
         }
 
-        if (orderItem.Status == OrderItemStatus.Finished)
-        {
-            return new List<PlainApplicationError>() {
-                new PlainApplicationError(
-                    message: $"OrderItem with Id \"{request.OrderItemId}\" is already finished.",
-                    path: ["_"],
-                    code: ValidationErrorCodes.StateMismatch
-                )
-            };
-        }
-
-        order.UpdateOrderItemStatus(orderItemId: orderItem.Id, OrderItemStatus.Finished);
         await _orderRepository.UpdateAsync(order);
 
-        var result = new MarkOrderItemFinishedResult(order: order);
-        return result;
+        return  new MarkOrderItemFinishedResult(order: order);
     }
 }

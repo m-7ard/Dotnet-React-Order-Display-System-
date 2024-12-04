@@ -1,4 +1,3 @@
-using Application.ErrorHandling.Application;
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
@@ -8,7 +7,7 @@ using OneOf;
 
 namespace Application.Handlers.Products.Create;
 
-public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<CreateProductResult, List<PlainApplicationError>>>
+public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<CreateProductResult, List<ApplicationError>>>
 {
     private readonly IProductRepository _productRepository;
     private readonly IDraftImageRepository _draftImageRepository;
@@ -21,9 +20,9 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
         _productHistoryRepository = productHistoryRepository;
     }
 
-    public async Task<OneOf<CreateProductResult, List<PlainApplicationError>>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+    public async Task<OneOf<CreateProductResult, List<ApplicationError>>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
-        var errors = new List<PlainApplicationError>();
+        var errors = new List<ApplicationError>();
 
         var draftImages = new List<DraftImage>();
         foreach (var fileName in request.Images)
@@ -31,10 +30,10 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
             var draftImage = await _draftImageRepository.GetByFileNameAsync(fileName);
             if (draftImage is null)
             {
-                errors.Add(new PlainApplicationError(
+                errors.Add(new ApplicationError(
                     message: $"DraftImage of fileName \"{fileName}\" does not exist.",
                     path: ["images", fileName],
-                    code: ValidationErrorCodes.ModelDoesNotExist
+                    code: ApplicationErrorCodes.ModelDoesNotExist
                 ));
                 continue;
             }

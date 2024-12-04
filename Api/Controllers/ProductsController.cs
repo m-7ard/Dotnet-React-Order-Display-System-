@@ -157,7 +157,7 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist)
+            return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
                 ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
                 : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));        
         }
@@ -204,11 +204,11 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            if (errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist))
+            if (errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist))
             {
                 return NotFound(_errorHandlingService.TranslateServiceErrors(errors));
             }
-            else if (errors.Any(err => err.Code is ValidationErrorCodes.IntegrityError))
+            else if (errors.Any(err => err.Code is ApplicationErrorCodes.IntegrityError))
             {
                 return Conflict(_errorHandlingService.TranslateServiceErrors(errors));
             }
@@ -230,11 +230,11 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            if (errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist))
+            if (errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist))
             {
                 return NotFound(_errorHandlingService.TranslateServiceErrors(errors));
             }
-            else if (errors.Any(err => err.Code is ValidationErrorCodes.IntegrityError))
+            else if (errors.Any(err => err.Code is ApplicationErrorCodes.IntegrityError))
             {
                 return Conflict(_errorHandlingService.TranslateServiceErrors(errors));
             }

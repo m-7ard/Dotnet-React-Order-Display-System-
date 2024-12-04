@@ -1,3 +1,4 @@
+using System.Net;
 using Api.ApiModels;
 using Api.DTOs.OrderItems.MarkFinished;
 using Api.DTOs.Orders.Create;
@@ -6,6 +7,7 @@ using Api.DTOs.Orders.MarkFinished;
 using Api.DTOs.Orders.Read;
 using Api.Errors;
 using Api.Interfaces;
+using Api.Services;
 using Application.Errors;
 using Application.Handlers.OrderItems.MarkFinished;
 using Application.Handlers.Orders.Create;
@@ -40,17 +42,21 @@ public class OrdersController : ControllerBase
     [HttpPost("create")]
     public async Task<ActionResult<CreateOrderRequestDTO>> Create(CreateOrderRequestDTO request)
     {
-        var errors = new List<PlainApiError>();
         if (request.OrderItemData.Count == 0)
         {
-            errors.Add(_errorHandlingService.CreateError(
-                path: ["orderItemData", "_"],
-                message: "Order Item Data cannot be empty.",
-                fieldName: "orderItemData"
-            ));
-            return BadRequest(errors);
+            return BadRequest(
+                new List<PlainApiError>()
+                {
+                    ApiErrorFactory.CreateError(
+                        path: ["orderItemData", "_"],
+                        message: "Order Item Data cannot be empty.",
+                        fieldName: "orderItemData"
+                    )
+                }
+            );
         }
 
+        var errors = new List<PlainApiError>();
         foreach (var (uid, orderItemData) in request.OrderItemData)
         {
             var validation = _orderItemDataValidator.Validate(orderItemData);
@@ -82,7 +88,7 @@ public class OrdersController : ControllerBase
 
         if (result.TryPickT1(out var handlerErrors, out var value))
         {
-            return BadRequest(_errorHandlingService.TranslateServiceErrors(handlerErrors));
+            return BadRequest(ApiErrorFactory.TranslateServiceErrors(handlerErrors));
         }
 
         var response = new CreateOrderResponseDTO(order: await _apiModelService.CreateOrderApiModel(value.Order));
@@ -91,7 +97,7 @@ public class OrdersController : ControllerBase
 
     [HttpGet("list")]
     public async Task<ActionResult<ListOrdersResponseDTO>> List(
-        [FromQuery] int? id,
+        [FromQuery] string? id,
         [FromQuery] decimal? minTotal,
         [FromQuery] decimal? maxTotal,
         [FromQuery] string? status,
@@ -101,8 +107,10 @@ public class OrdersController : ControllerBase
         [FromQuery] int? productHistoryId,
         [FromQuery] string? orderBy)
     {
+        bool validId = Guid.TryParse(id, out var parsedId);
+
         var parameters = new ListOrdersRequestDTO(
-            id: id,
+            id: validId ? parsedId : null,
             minTotal: minTotal,
             maxTotal: maxTotal,
             status: status,
@@ -112,11 +120,6 @@ public class OrdersController : ControllerBase
             productHistoryId: productHistoryId,
             orderBy: orderBy
         );
-
-        if (parameters.Id is not null && parameters.Id <= 0)
-        {
-            parameters.Id = null;
-        }
 
         if (parameters.ProductId is not null && parameters.ProductId <= 0)
         {
@@ -175,19 +178,22 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ReadOrderResponseDTO>> Read(int id)
+    public async Task<ActionResult<ReadOrderResponseDTO>> Read(string id)
     {
-        var query = new ReadOrderQuery(
-            id: id
-        );
+        bool validId = Guid.TryParse(id, out var parsedId);
+        if (!validId)
+        {
+            return NotFound();
+        }
 
+        var query = new ReadOrderQuery(id: parsedId);
         var result = await _mediator.Send(query);
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist)
+            return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
                 ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
-                : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+                : StatusCode((int)HttpStatusCode.InternalServerError, _errorHandlingService.TranslateServiceErrors(errors));
         };
 
         var response = new ReadOrderResponseDTO(
@@ -197,18 +203,28 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPut("{orderId}/item/{orderItemId}/mark_finished")]
-    public async Task<ActionResult<MarkOrderItemFinishedResponseDTO>> MarkOrderItemFinished(int orderId, int orderItemId)
+    public async Task<ActionResult<MarkOrderItemFinishedResponseDTO>> MarkOrderItemFinished(string orderId, string orderItemId)
     {
+        if (!Guid.TryParse(orderId, out var parsedOrderId))
+        {
+            return NotFound();
+        }
+
+        if (!Guid.TryParse(orderItemId, out var parsedOrderItemId))
+        {
+            return NotFound();
+        }
+        
         var query = new MarkOrderItemFinishedCommand(
-            orderId: orderId,
-            orderItemId: orderItemId
+            orderId: parsedOrderId,
+            orderItemId: parsedOrderItemId
         );
 
         var result = await _mediator.Send(query);
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist)
+            return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
                 ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
                 : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         };
@@ -218,17 +234,22 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPut("{orderId}/mark_finished")]
-    public async Task<ActionResult<MarkOrderFinishedResponseDTO>> MarkFinished(int orderId)
+    public async Task<ActionResult<MarkOrderFinishedResponseDTO>> MarkFinished(string orderId)
     {
+        if (!Guid.TryParse(orderId, out var parsedOrderId))
+        {
+            return NotFound();
+        }
+
         var query = new MarkOrderFinishedCommand(
-            orderId: orderId
+            orderId: parsedOrderId
         );
 
         var result = await _mediator.Send(query);
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return errors.Any(err => err.Code is ValidationErrorCodes.ModelDoesNotExist)
+            return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
                 ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
                 : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         };

@@ -1,10 +1,10 @@
-using Application.ErrorHandling.Application;
+using Application.Errors;
 using MediatR;
 using OneOf;
 
 namespace Application.Handlers.ProductHistories.List;
 
-public class ListProductHistoriesQuery : IRequest<OneOf<ListProductHistoriesResult, List<PlainApplicationError>>>
+public class ListProductHistoriesQuery : IRequest<OneOf<ListProductHistoriesResult, List<ApplicationError>>>
 {
     public ListProductHistoriesQuery(
         string? name,

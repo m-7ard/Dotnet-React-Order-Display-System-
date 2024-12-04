@@ -22,7 +22,7 @@ public class MarkOrderFinishedHandlerUnitTest
         );
 
         _mockOrder = OrderFactory.BuildExistingOrder(
-            id: 1,
+            id: Guid.NewGuid(),
             total: 100,
             dateCreated: DateTime.Today,
             dateFinished: DateTime.MinValue,
@@ -39,8 +39,14 @@ public class MarkOrderFinishedHandlerUnitTest
             orderId: _mockOrder.Id
         );
 
-        _mockOrder.OrderItems = [new OrderItem(id: 1, quantity: 1, status: OrderItemStatus.Finished, dateCreated: _mockOrder.DateCreated, dateFinished: DateTime.MinValue, orderId: _mockOrder.Id, productHistoryId: 1, productId: 1)];
-
+        _mockOrder.OrderItems = [
+            Mixins.CreateOrderItem(
+                orderId: _mockOrder.Id,
+                status: OrderItemStatus.Finished,
+                dateCreated: _mockOrder.DateCreated,
+                dateFinished: DateTime.MinValue
+            )
+        ];
         _mockOrderRepository.Setup(repo => repo.GetByIdAsync(_mockOrder.Id)).ReturnsAsync(_mockOrder);
 
         // ACT
@@ -56,10 +62,8 @@ public class MarkOrderFinishedHandlerUnitTest
     {
         // ARRANGE
         var command = new MarkOrderFinishedCommand(
-            orderId: _mockOrder.Id
+            orderId: Guid.Empty
         );
-
-        _mockOrder.OrderItems = [new OrderItem(id: 1, quantity: 1, status: OrderItemStatus.Finished, dateCreated: _mockOrder.DateCreated, dateFinished: DateTime.MinValue, orderId: _mockOrder.Id, productHistoryId: 1, productId: 1)];
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -76,7 +80,14 @@ public class MarkOrderFinishedHandlerUnitTest
             orderId: _mockOrder.Id
         );
 
-        _mockOrder.OrderItems = [new OrderItem(id: 1, quantity: 1, status: OrderItemStatus.Pending, dateCreated: _mockOrder.DateCreated, dateFinished: DateTime.MinValue, orderId: _mockOrder.Id, productHistoryId: 1, productId: 1)];
+        _mockOrder.OrderItems = [
+            Mixins.CreateOrderItem(
+                orderId: _mockOrder.Id,
+                status: OrderItemStatus.Pending,
+                dateCreated: _mockOrder.DateCreated,
+                dateFinished: DateTime.MinValue
+            )
+        ];
 
         _mockOrderRepository.Setup(repo => repo.GetByIdAsync(_mockOrder.Id)).ReturnsAsync(_mockOrder);
 
@@ -95,7 +106,14 @@ public class MarkOrderFinishedHandlerUnitTest
             orderId: _mockOrder.Id
         );
 
-        _mockOrder.OrderItems = [new OrderItem(id: 1, quantity: 1, status: OrderItemStatus.Finished, dateCreated: _mockOrder.DateCreated, dateFinished: DateTime.MinValue, orderId: _mockOrder.Id, productHistoryId: 1, productId: 1)];
+        _mockOrder.OrderItems = [
+            Mixins.CreateOrderItem(
+                orderId: _mockOrder.Id,
+                status: OrderItemStatus.Pending,
+                dateCreated: _mockOrder.DateCreated,
+                dateFinished: DateTime.MinValue
+            )
+        ];
         _mockOrder.Status = OrderStatus.Finished;
 
         _mockOrderRepository.Setup(repo => repo.GetByIdAsync(_mockOrder.Id)).ReturnsAsync(_mockOrder);

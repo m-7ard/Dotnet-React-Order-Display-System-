@@ -1,10 +1,10 @@
-using Application.ErrorHandling.Application;
+using Application.Errors;
 using MediatR;
 using OneOf;
 
 namespace Application.Handlers.Orders.Create;
 
-public class CreateOrderCommand : IRequest<OneOf<CreateOrderResult, List<PlainApplicationError>>>
+public class CreateOrderCommand : IRequest<OneOf<CreateOrderResult, List<ApplicationError>>>
 {
     public CreateOrderCommand(Dictionary<string, OrderItem> orderItemData)
     {

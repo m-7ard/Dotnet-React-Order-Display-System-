@@ -1,10 +1,10 @@
-using Application.ErrorHandling.Application;
+using Application.Errors;
 using MediatR;
 using OneOf;
 
 namespace Application.Handlers.Products.Create;
 
-public class CreateProductCommand : IRequest<OneOf<CreateProductResult, List<PlainApplicationError>>>
+public class CreateProductCommand : IRequest<OneOf<CreateProductResult, List<ApplicationError>>>
 {
     public CreateProductCommand(string name, decimal price, string description, List<string> images)
     {

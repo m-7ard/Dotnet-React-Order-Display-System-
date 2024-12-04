@@ -1,11 +1,11 @@
-using Application.ErrorHandling.Application;
+using Application.Errors;
 using Application.Interfaces.Persistence;
 using MediatR;
 using OneOf;
 
 namespace Application.Handlers.Products.List;
 
-public class ListProductsHandler : IRequestHandler<ListProductsQuery, OneOf<ListProductsResult, List<PlainApplicationError>>>
+public class ListProductsHandler : IRequestHandler<ListProductsQuery, OneOf<ListProductsResult, List<ApplicationError>>>
 {
     private readonly IProductRepository _productRepository;
 
@@ -14,7 +14,7 @@ public class ListProductsHandler : IRequestHandler<ListProductsQuery, OneOf<List
         _productRepository = productRepository;
     }
 
-    public async Task<OneOf<ListProductsResult, List<PlainApplicationError>>> Handle(ListProductsQuery request, CancellationToken cancellationToken)
+    public async Task<OneOf<ListProductsResult, List<ApplicationError>>> Handle(ListProductsQuery request, CancellationToken cancellationToken)
     {
         Tuple<string, bool>? orderBy = new Tuple<string, bool>("DateCreated", false);
         if (request.OrderBy == "newest")

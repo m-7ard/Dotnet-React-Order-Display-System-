@@ -21,7 +21,7 @@ public class ReadOrderHandlerUnitTest
         );
 
         _mockOrder = OrderFactory.BuildExistingOrder(
-            id: 1,
+            id: Guid.NewGuid(),
             total: 100,
             dateCreated: DateTime.Today,
             dateFinished: DateTime.MinValue,

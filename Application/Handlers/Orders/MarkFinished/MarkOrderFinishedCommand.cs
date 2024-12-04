@@ -1,15 +1,15 @@
-using Application.ErrorHandling.Application;
+using Application.Errors;
 using MediatR;
 using OneOf;
 
 namespace Application.Handlers.Orders.MarkFinished;
 
-public class MarkOrderFinishedCommand : IRequest<OneOf<MarkOrderFinishedResult, List<PlainApplicationError>>>
+public class MarkOrderFinishedCommand : IRequest<OneOf<MarkOrderFinishedResult, List<ApplicationError>>>
 {
-    public MarkOrderFinishedCommand(int orderId)
+    public MarkOrderFinishedCommand(Guid orderId)
     {
         OrderId = orderId;
     }
 
-    public int OrderId { get; set; }
+    public Guid OrderId { get; set; }
 }

@@ -1,6 +1,6 @@
 namespace Application.Errors;
 
-public class ValidationErrorCodes
+public class ApplicationErrorCodes
 {
     public const string IsNull = "IsNull";
     public const string StateMismatch = "StateMismatch";
@@ -12,4 +12,5 @@ public class ValidationErrorCodes
     public const string FileInvalidExtension = "FileInvalidExtension";
     public const string FileCountExceeded = "FileCountExceeded";
     public const string FileNoFiles = "FileNoFiles";
+    public const string DomainError = "DomainError";
 }

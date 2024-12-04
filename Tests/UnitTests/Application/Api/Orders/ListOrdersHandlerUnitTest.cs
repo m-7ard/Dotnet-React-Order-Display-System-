@@ -1,3 +1,4 @@
+using Application.Contracts.Criteria;
 using Application.Handlers.Orders.List;
 using Application.Interfaces.Persistence;
 using Moq;
@@ -37,19 +38,20 @@ public class ListOrdersHandlerUnitTest
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // ASSERT
+        var criteria = new FilterOrdersCriteria(
+            minTotal: null,
+            maxTotal: null,
+            status: null,
+            createdBefore: null,
+            createdAfter: null,
+            productId: null,
+            id: null,
+            productHistoryId: null,
+            orderBy: new Tuple<string, bool>("DateCreated", false)
+        );
         Assert.True(result.IsT0);
         _mockOrderRepository.Verify(
-            repo => repo.FindAllAsync(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                new Tuple<string, bool>("DateCreated", false)
-            )
+            repo => repo.FindAllAsync(criteria)
         );
     }
 
@@ -77,19 +79,20 @@ public class ListOrdersHandlerUnitTest
         var result = await _handler.Handle(query, CancellationToken.None);
         
         // ASSERT
+        var criteria = new FilterOrdersCriteria(
+            minTotal: null,
+            maxTotal: null,
+            status: null,
+            createdBefore: null,
+            createdAfter: null,
+            productId: null,
+            id: null,
+            productHistoryId: null,
+            orderBy: new Tuple<string, bool>(expectedField, expectedAscending)
+        );
         Assert.True(result.IsT0);
         _mockOrderRepository.Verify(
-            repo => repo.FindAllAsync(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                new Tuple<string, bool>(expectedField, expectedAscending)
-            )
+            repo => repo.FindAllAsync(criteria)
         );
     }
 }

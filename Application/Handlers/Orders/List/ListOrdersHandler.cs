@@ -1,4 +1,5 @@
-using Application.ErrorHandling.Application;
+using Application.Contracts.Criteria;
+using Application.Errors;
 using Application.Interfaces.Persistence;
 using Domain.ValueObjects.Order;
 using MediatR;
@@ -6,7 +7,7 @@ using OneOf;
 
 namespace Application.Handlers.Orders.List;
 
-public class ListOrdersHandler : IRequestHandler<ListOrdersQuery, OneOf<ListOrdersResult, List<PlainApplicationError>>>
+public class ListOrdersHandler : IRequestHandler<ListOrdersQuery, OneOf<ListOrdersResult, List<ApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
 
@@ -15,7 +16,7 @@ public class ListOrdersHandler : IRequestHandler<ListOrdersQuery, OneOf<ListOrde
         _orderRepository = orderRepository;
     }
 
-    public async Task<OneOf<ListOrdersResult, List<PlainApplicationError>>> Handle(ListOrdersQuery request, CancellationToken cancellationToken)
+    public async Task<OneOf<ListOrdersResult, List<ApplicationError>>> Handle(ListOrdersQuery request, CancellationToken cancellationToken)
     {
         Tuple<string, bool>? orderBy = new Tuple<string, bool>("DateCreated", false);
         if (request.OrderBy == "newest")
@@ -35,7 +36,7 @@ public class ListOrdersHandler : IRequestHandler<ListOrdersQuery, OneOf<ListOrde
             orderBy = new Tuple<string, bool>("Total", true);
         }
 
-        var orders = await _orderRepository.FindAllAsync(
+        var criteria = new FilterOrdersCriteria(
             minTotal: request.MinTotal,
             maxTotal: request.MaxTotal,
             status: request.Status is null || !OrderStatus.IsValid(request.Status) ? null : new OrderStatus(name: request.Status),
@@ -46,6 +47,8 @@ public class ListOrdersHandler : IRequestHandler<ListOrdersQuery, OneOf<ListOrde
             productHistoryId: request.ProductHistoryId,
             orderBy: orderBy
         );
+
+        var orders = await _orderRepository.FindAllAsync(criteria);
 
         var result = new ListOrdersResult(orders: orders);
         return result;

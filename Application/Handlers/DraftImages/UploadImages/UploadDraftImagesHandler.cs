@@ -1,5 +1,5 @@
 using Application.Common;
-using Application.ErrorHandling.Application;
+using Application.Errors;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
 using Domain.DomainFactories;
@@ -9,7 +9,7 @@ using OneOf;
 
 namespace Application.Handlers.DraftImages.UploadImages;
 
-public class UploadDraftImagesHandler : IRequestHandler<UploadDraftImagesCommand, OneOf<UploadDraftImagesResult, List<PlainApplicationError>>>
+public class UploadDraftImagesHandler : IRequestHandler<UploadDraftImagesCommand, OneOf<UploadDraftImagesResult, List<ApplicationError>>>
 {
     private readonly IDraftImageRepository _draftImageRepository;
     private readonly IFileStorage _fileStorage;
@@ -20,7 +20,7 @@ public class UploadDraftImagesHandler : IRequestHandler<UploadDraftImagesCommand
         _fileStorage = fileStorage;
     }
 
-    public async Task<OneOf<UploadDraftImagesResult, List<PlainApplicationError>>> Handle(UploadDraftImagesCommand request, CancellationToken cancellationToken)
+    public async Task<OneOf<UploadDraftImagesResult, List<ApplicationError>>> Handle(UploadDraftImagesCommand request, CancellationToken cancellationToken)
     {
         var images = new List<DraftImage>();
 

@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using Api.DTOs.Orders.Read;
 using Domain.Models;
 using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 
 namespace Tests.IntegrationTests.Orders;
 
@@ -23,9 +22,8 @@ public class ReadOrderIntegrationTest : OrdersIntegrationTest
         _product002 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
         _order001 = await mixins.CreateOrder(
             products: new List<Product>() { _product001, _product002 },
-            number: 1,
-            orderStatus: OrderStatus.Pending,
-            orderItemStatus: OrderItemStatus.Pending
+            seed: 1,
+            orderStatus: OrderStatus.Pending
         );
     }
 

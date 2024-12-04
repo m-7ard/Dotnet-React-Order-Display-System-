@@ -4,7 +4,7 @@ namespace Domain.Models;
 
 public class OrderItem
 {
-    public OrderItem(int id, int quantity, OrderItemStatus status, DateTime dateCreated, DateTime dateFinished, int orderId, int productHistoryId, int productId)
+    public OrderItem(Guid id, int quantity, OrderItemStatus status, DateTime dateCreated, DateTime dateFinished, Guid orderId, int productHistoryId, int productId)
     {
         Id = id;
         Quantity = quantity;
@@ -16,12 +16,12 @@ public class OrderItem
         ProductId = productId;
     }
 
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
     public int Quantity { get; set; }
     public OrderItemStatus Status { get; set; }
     public DateTime DateCreated { get; private set; }
     public DateTime DateFinished { get; set; }
-    public int OrderId { get; set; }
+    public Guid OrderId { get; set; }
     public int ProductId { get; set; }
     public int ProductHistoryId { get; set; }
 
