@@ -23,6 +23,7 @@
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <Pkgxunit_analyzers Condition=" '$(Pkgxunit_analyzers)' == '' ">C:\Users\maxim\.nuget\packages\xunit.analyzers\1.4.0</Pkgxunit_analyzers>
+    <PkgTypeGen Condition=" '$(PkgTypeGen)' == '' ">C:\Users\maxim\.nuget\packages\typegen\6.0.2</PkgTypeGen>
     <PkgMicrosoft_Extensions_ApiDescription_Server Condition=" '$(PkgMicrosoft_Extensions_ApiDescription_Server)' == '' ">C:\Users\maxim\.nuget\packages\microsoft.extensions.apidescription.server\6.0.5</PkgMicrosoft_Extensions_ApiDescription_Server>
   </PropertyGroup>
 </Project>

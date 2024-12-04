@@ -4,7 +4,7 @@ import OrderItem from "./OrderItem";
 
 export default class Order {
     constructor(props: {
-        id: number;
+        id: string;
         total: number;
         status: OrderStatus;
         dateCreated: Date;
@@ -19,7 +19,7 @@ export default class Order {
         this.orderItems = props.orderItems;
     }
 
-    public id: number;
+    public id: string;
     public total: number;
     public status: OrderStatus;
     public dateCreated: Date;

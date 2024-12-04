@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "5DSQk/YSc+Y=",
+  "dgSpecHash": "ncHpVLQclsE=",
   "success": true,
   "projectFilePath": "C:\\Users\\maxim\\OneDrive\\Escritorio\\dot_net_work\\SimpleProductOrderingService\\Tests\\Tests.csproj",
   "expectedPackageFiles": [
@@ -180,6 +180,7 @@
     "C:\\Users\\maxim\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512",
     "C:\\Users\\maxim\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\maxim\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
+    "C:\\Users\\maxim\\.nuget\\packages\\typegen\\6.0.2\\typegen.6.0.2.nupkg.sha512",
     "C:\\Users\\maxim\\.nuget\\packages\\xunit\\2.5.3\\xunit.2.5.3.nupkg.sha512",
     "C:\\Users\\maxim\\.nuget\\packages\\xunit.abstractions\\2.0.3\\xunit.abstractions.2.0.3.nupkg.sha512",
     "C:\\Users\\maxim\\.nuget\\packages\\xunit.analyzers\\1.4.0\\xunit.analyzers.1.4.0.nupkg.sha512",

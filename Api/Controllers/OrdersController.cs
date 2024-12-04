@@ -59,12 +59,14 @@ public class OrdersController : ControllerBase
             var validation = _orderItemDataValidator.Validate(orderItemData);
             if (!validation.IsValid)
             {
-                errors.AddRange(ApiErrorFactory.FluentToApiErrors(
-                    validationFailures: validation.Errors,
-                    path: ["orderItemData", uid]
-                ));
+                continue;
             }
-        }
+
+            errors.AddRange(ApiErrorFactory.FluentToApiErrors(
+                validationFailures: validation.Errors,
+                path: ["orderItemData", uid]
+            ));
+    }
 
         if (errors.Count > 0)
         {
