@@ -12,16 +12,16 @@ public class PlainApiErrorHandlingService : IPlainErrorHandlingService
     // "_" = form error
     // "field" = field error
     // "field/_" = field form error
-    public PlainApiError CreateError(List<string> path, string message, string fieldName)
+    public ApiError CreateError(List<string> path, string message, string fieldName)
     {
-        return new PlainApiError(
+        return new ApiError(
             fieldName: fieldName,
             path: string.Join("/", path),
             message: message
         );
     }
 
-    public List<PlainApiError> FluentToApiErrors(List<ValidationFailure> validationFailures, List<string> path)
+    public List<ApiError> FluentToApiErrors(List<ValidationFailure> validationFailures, List<string> path)
     {
         return validationFailures.Select((error) =>
         {
@@ -30,7 +30,7 @@ public class PlainApiErrorHandlingService : IPlainErrorHandlingService
                 ? camelCaseFieldName
                 : $"/{camelCaseFieldName}/{string.Join("/", path)}";
 
-            return new PlainApiError(
+            return new ApiError(
                 fieldName: camelCaseFieldName,
                 path: fullPath,
                 message: error.ErrorMessage
@@ -38,11 +38,11 @@ public class PlainApiErrorHandlingService : IPlainErrorHandlingService
         }).ToList();
     }
 
-    public List<PlainApiError> TranslateServiceErrors(List<ApplicationError> errors)
+    public List<ApiError> TranslateServiceErrors(List<ApplicationError> errors)
     {
         return errors.Select((error) =>
         {
-            return new PlainApiError(
+            return new ApiError(
                 fieldName: error.Path[0],
                 path: string.Join("/", error.Path),
                 message: error.Message

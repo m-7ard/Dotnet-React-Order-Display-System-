@@ -1,3 +1,4 @@
+using Application.Handlers.ProductHistories.Read;
 using Application.Handlers.Products.Read;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;

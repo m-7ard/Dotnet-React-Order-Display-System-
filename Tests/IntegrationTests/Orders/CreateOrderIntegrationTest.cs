@@ -4,6 +4,9 @@ using Api.DTOs.Orders.Create;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
+using Infrastructure.DbEntities;
+using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Tests.IntegrationTests.Orders;
 
@@ -45,13 +48,20 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
 
         var content = await response.Content.ReadFromJsonAsync<CreateOrderResponseDTO>();
         Assert.NotNull(content);
-        Assert.NotNull(content.Order);
-        Assert.NotEmpty(content.Order.OrderItems);
+        Assert.NotNull(content.OrderId);
 
-        Assert.Equal(content.Order.Status, OrderStatus.Pending.Name);
-        Assert.StrictEqual(2, content.Order.OrderItems.Count);
+        var isValidGuid = Guid.TryParse(content.OrderId, out var parsedId);
+        Assert.True(isValidGuid);
 
-        Assert.True(content.Order.OrderItems.All(item => item.Status == OrderItemStatus.Pending.Name));
+        var repo = new OrderRepository(_factory.CreateDbContext());
+        var order = await repo.GetByIdAsync(parsedId);
+        Assert.NotNull(order);
+        Assert.NotEmpty(order.OrderItems);
+
+        Assert.Equal(OrderStatus.Pending, order.Status);
+        Assert.StrictEqual(2, order.OrderItems.Count);
+
+        Assert.True(order.OrderItems.All(item => item.Status == OrderItemStatus.Pending));
     }
 
     [Fact]

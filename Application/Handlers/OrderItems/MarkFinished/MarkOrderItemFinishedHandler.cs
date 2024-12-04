@@ -1,6 +1,5 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
-using Domain.ValueObjects.OrderItem;
 using MediatR;
 using OneOf;
 
@@ -34,7 +33,6 @@ public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishe
         }
 
         await _orderRepository.UpdateAsync(order);
-
-        return  new MarkOrderItemFinishedResult(order: order);
+        return new MarkOrderItemFinishedResult(orderId: request.OrderId, orderItemId: request.OrderItemId);
     }
 }

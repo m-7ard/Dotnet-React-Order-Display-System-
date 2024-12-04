@@ -30,7 +30,7 @@ public class DraftImagesController : ControllerBase
     {
         if (files == null || files.Count == 0)
         {
-            return BadRequest(new List<PlainApiError>() {
+            return BadRequest(new List<ApiError>() {
                 _errorHandlingService.CreateError(
                     path: ["_"],
                     message: "Must upload at least 1 file.",
@@ -41,7 +41,7 @@ public class DraftImagesController : ControllerBase
 
         if (files.Count > 8)
         {
-            return BadRequest(new List<PlainApiError>() {
+            return BadRequest(new List<ApiError>() {
                 _errorHandlingService.CreateError(
                     path: ["_"],
                     message: "Cannot upload more than 8 files.",
@@ -50,7 +50,7 @@ public class DraftImagesController : ControllerBase
             });
         }
 
-        var contentTooLargeErrors = new List<PlainApiError>();
+        var contentTooLargeErrors = new List<ApiError>();
 
         foreach (var file in files)
         {
@@ -71,7 +71,7 @@ public class DraftImagesController : ControllerBase
             return StatusCode(StatusCodes.Status413PayloadTooLarge, contentTooLargeErrors);
         }
 
-        var invalidFileFormatErrors = new List<PlainApiError>();
+        var invalidFileFormatErrors = new List<ApiError>();
 
         foreach (var file in files)
         {

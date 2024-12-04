@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using Api.DTOs.Orders.MarkFinished;
 using Domain.Models;
 using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 using Infrastructure.DbEntities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -50,10 +49,9 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
 
         var content = await response.Content.ReadFromJsonAsync<MarkOrderFinishedResponseDTO>();
         Assert.NotNull(content);
-        Assert.NotNull(content.Order);
+        Assert.NotNull(content.OrderId);
 
-        // Confirm it was updated
-        var persistedOrder = await _factory.CreateDbContext().Order.SingleAsync(d => d.Id == _order001.Id)!;
+        var persistedOrder = await _factory.CreateDbContext().Order.SingleAsync(d => d.Id.ToString() == content.OrderId);
         Assert.Equal(OrderDbEntity.Statuses.Finished, persistedOrder.Status);
     }
 

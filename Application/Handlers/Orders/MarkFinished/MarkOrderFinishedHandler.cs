@@ -34,6 +34,6 @@ public class MarkOrderFinishedHandler : IRequestHandler<MarkOrderFinishedCommand
 
         await _orderRepository.UpdateAsync(order);
         
-        return new MarkOrderFinishedResult(order: order);
+        return new MarkOrderFinishedResult(orderId: request.OrderId);
     }
 }

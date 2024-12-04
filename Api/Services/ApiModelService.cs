@@ -1,28 +1,35 @@
 using Api.ApiModels;
+using Api.Errors;
 using Api.Interfaces;
+using Application.Errors;
+using Application.Handlers.ProductHistories.Read;
 using Application.Interfaces.Persistence;
 using Domain.Models;
+using MediatR;
+using OneOf;
 
 namespace Api.Services;
 
 public class ApiModelService : IApiModelService
 {
-    private readonly IProductHistoryRepository _productHistoryRepository;
+    private readonly ISender _mediator;
 
-    public ApiModelService(IProductHistoryRepository productHistoryRepository)
+    public ApiModelService(ISender mediator)
     {
-        _productHistoryRepository = productHistoryRepository;
+        _mediator = mediator;
     }
 
-    public async Task<OrderApiModel> CreateOrderApiModel(Order order)
+    public async Task<OneOf<OrderApiModel, List<ApplicationError>>> TryCreateOrderApiModel(Order order)
     {
         var orderItems = new List<OrderItemApiModel>();
+
         foreach (var orderItem in order.OrderItems)
         {
-            var productHistory = await _productHistoryRepository.GetByIdAsync(orderItem.ProductHistoryId);
-            if (productHistory is null)
+            var query = new ReadProductHistoryQuery(orderItem.ProductHistoryId);
+            var result = await _mediator.Send(query);
+            if (result.TryPickT1(out var errors, out var value))
             {
-                throw new Exception($"ProductHistory of Id \"{orderItem.ProductHistoryId}\" does not exist.");
+                return errors;
             }
 
             var orderItemApiModel = new OrderItemApiModel(
@@ -32,13 +39,13 @@ public class ApiModelService : IApiModelService
                 dateCreated: orderItem.DateCreated,
                 dateFinished: orderItem.DateFinished,
                 orderId: order.Id.ToString(),
-                productHistory: CreateProductHistoryApiModel(productHistory)
+                productHistory: CreateProductHistoryApiModel(value.ProductHistory)
             );
 
             orderItems.Add(orderItemApiModel);
         }
 
-        var apiModel = new OrderApiModel(
+        var orderApiModel = new OrderApiModel(
             id: order.Id.ToString(),
             total: order.Total,
             dateCreated: order.DateCreated,
@@ -47,7 +54,7 @@ public class ApiModelService : IApiModelService
             status: order.Status.Name
         );
 
-        return apiModel;
+        return orderApiModel;
     }
 
     public ProductApiModel CreateProductApiModel(Product product)

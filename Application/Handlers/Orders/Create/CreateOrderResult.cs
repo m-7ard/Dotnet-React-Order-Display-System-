@@ -4,10 +4,10 @@ namespace Application.Handlers.Orders.Create;
 
 public class CreateOrderResult
 {
-    public CreateOrderResult(Order order)
+    public CreateOrderResult(Guid orderId)
     {
-        Order = order;
+        OrderId = orderId;
     }
 
-    public Order Order { get; set; }
+    public Guid OrderId { get; set; }
 }

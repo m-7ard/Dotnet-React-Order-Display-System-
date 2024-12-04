@@ -7,7 +7,6 @@ using Api.DTOs.Orders.MarkFinished;
 using Api.DTOs.Orders.Read;
 using Api.Errors;
 using Api.Interfaces;
-using Api.Services;
 using Application.Errors;
 using Application.Handlers.OrderItems.MarkFinished;
 using Application.Handlers.Orders.Create;
@@ -27,25 +26,23 @@ namespace Api.Controllers;
 public class OrdersController : ControllerBase
 {
     private readonly ISender _mediator;
-    private readonly IPlainErrorHandlingService _errorHandlingService;
     private readonly IValidator<CreateOrderRequestDTO.OrderItem> _orderItemDataValidator;
     private readonly IApiModelService _apiModelService;
 
-    public OrdersController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IValidator<CreateOrderRequestDTO.OrderItem> createProductValidator, IApiModelService apiModelService)
+    public OrdersController(ISender mediator, IValidator<CreateOrderRequestDTO.OrderItem> createProductValidator, IApiModelService apiModelService)
     {
         _mediator = mediator;
-        _errorHandlingService = errorHandlingService;
         _orderItemDataValidator = createProductValidator;
         _apiModelService = apiModelService;
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<CreateOrderRequestDTO>> Create(CreateOrderRequestDTO request)
+    public async Task<ActionResult<CreateOrderResponseDTO>> Create(CreateOrderRequestDTO request)
     {
         if (request.OrderItemData.Count == 0)
         {
             return BadRequest(
-                new List<PlainApiError>()
+                new List<ApiError>()
                 {
                     ApiErrorFactory.CreateError(
                         path: ["orderItemData", "_"],
@@ -56,13 +53,13 @@ public class OrdersController : ControllerBase
             );
         }
 
-        var errors = new List<PlainApiError>();
+        var errors = new List<ApiError>();
         foreach (var (uid, orderItemData) in request.OrderItemData)
         {
             var validation = _orderItemDataValidator.Validate(orderItemData);
             if (!validation.IsValid)
             {
-                errors.AddRange(_errorHandlingService.FluentToApiErrors(
+                errors.AddRange(ApiErrorFactory.FluentToApiErrors(
                     validationFailures: validation.Errors,
                     path: ["orderItemData", uid]
                 ));
@@ -85,14 +82,13 @@ public class OrdersController : ControllerBase
             )
         );
         var result = await _mediator.Send(command);
-
         if (result.TryPickT1(out var handlerErrors, out var value))
         {
-            return BadRequest(ApiErrorFactory.TranslateServiceErrors(handlerErrors));
+            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(handlerErrors));
         }
 
-        var response = new CreateOrderResponseDTO(order: await _apiModelService.CreateOrderApiModel(value.Order));
-        return StatusCode(StatusCodes.Status201Created, response);
+        var respone = new CreateOrderResponseDTO(orderId: value.OrderId.ToString());
+        return StatusCode(StatusCodes.Status201Created, respone);
     }
 
     [HttpGet("list")]
@@ -164,13 +160,19 @@ public class OrdersController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
         }
 
         var orders = new List<OrderApiModel>();
         foreach (var order in value.Orders)
         {
-            orders.Add(await _apiModelService.CreateOrderApiModel(order));
+            var apiModelResult = await _apiModelService.TryCreateOrderApiModel(order);
+            if (apiModelResult.TryPickT1(out var apiModelErrors, out var apiModelValue))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ApiErrorFactory.TranslateApplicationErrors(apiModelErrors));
+            }
+
+            orders.Add(apiModelValue);
         }
 
         var response = new ListOrdersResponseDTO(orders: orders);
@@ -192,13 +194,17 @@ public class OrdersController : ControllerBase
         if (result.TryPickT1(out var errors, out var value))
         {
             return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
-                ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
-                : StatusCode((int)HttpStatusCode.InternalServerError, _errorHandlingService.TranslateServiceErrors(errors));
+                ? NotFound(ApiErrorFactory.TranslateApplicationErrors(errors))
+                : StatusCode((int)HttpStatusCode.InternalServerError, ApiErrorFactory.TranslateApplicationErrors(errors));
         };
 
-        var response = new ReadOrderResponseDTO(
-            order: await _apiModelService.CreateOrderApiModel(value.Order)
-        );
+        var apiModelResult = await _apiModelService.TryCreateOrderApiModel(value.Order);
+        if (apiModelResult.TryPickT1(out var apiModelErrors, out var apiModelValue))
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ApiErrorFactory.TranslateApplicationErrors(apiModelErrors));
+        }
+
+        var response = new ReadOrderResponseDTO(order: apiModelValue);
         return Ok(response);
     }
 
@@ -225,11 +231,11 @@ public class OrdersController : ControllerBase
         if (result.TryPickT1(out var errors, out var value))
         {
             return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
-                ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
-                : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+                ? NotFound(ApiErrorFactory.TranslateApplicationErrors(errors))
+                : BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
         };
 
-        var response = new MarkOrderItemFinishedResponseDTO(order: await _apiModelService.CreateOrderApiModel(value.Order));
+        var response = new MarkOrderItemFinishedResponseDTO(orderId: value.OrderId.ToString(), orderItemId: value.OrderItemId.ToString());
         return Ok(response);
     }
 
@@ -250,11 +256,11 @@ public class OrdersController : ControllerBase
         if (result.TryPickT1(out var errors, out var value))
         {
             return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
-                ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
-                : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+                ? NotFound(ApiErrorFactory.TranslateApplicationErrors(errors))
+                : BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
         };
 
-        var response = new MarkOrderFinishedResponseDTO(order: await _apiModelService.CreateOrderApiModel(value.Order));
+        var response = new MarkOrderFinishedResponseDTO(orderId: value.OrderId.ToString());
         return Ok(response);
     }
 }

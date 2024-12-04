@@ -42,7 +42,7 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult<CreateProductResponseDTO>> Create(CreateProductRequestDTO request)
     {
         var validation = _createProductValidator.Validate(request);
-        var validationErrors = new List<PlainApiError>();
+        var validationErrors = new List<ApiError>();
         if (!validation.IsValid)
         {
             var fluentErrors = _errorHandlingService.FluentToApiErrors(
@@ -170,7 +170,7 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult<UpdateProductResponseDTO>> Update(int id, UpdateProductRequestDTO request)
     {
         var validation = _updateProductValidator.Validate(request);
-        var validationErrors = new List<PlainApiError>();
+        var validationErrors = new List<ApiError>();
         if (!validation.IsValid)
         {
             var fluentErrors = _errorHandlingService.FluentToApiErrors(

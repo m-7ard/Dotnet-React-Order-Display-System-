@@ -4,10 +4,10 @@ namespace Api.DTOs.Orders.Create;
 
 public class CreateOrderResponseDTO
 {
-    public CreateOrderResponseDTO(OrderApiModel order)
+    public CreateOrderResponseDTO(string orderId)
     {
-        Order = order;
+        OrderId = orderId;
     }
 
-    public OrderApiModel Order { get; set; }
+    public string OrderId { get; set; }
 }

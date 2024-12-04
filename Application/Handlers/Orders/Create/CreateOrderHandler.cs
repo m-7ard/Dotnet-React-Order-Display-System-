@@ -25,12 +25,16 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
     public async Task<OneOf<CreateOrderResult, List<ApplicationError>>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
         var errors = new List<ApplicationError>();
+        var order = OrderFactory.BuildNewOrder(
+            id: Guid.NewGuid(),
+            total: 0,
+            orderItems: [],
+            status: OrderStatus.Pending
+        );
 
-        var retrievedProductsHistory = new Dictionary<string, ProductHistory>();
         foreach (var (uid, orderItem) in request.OrderItemData)
         {
             var product = await _productRepository.GetByIdAsync(orderItem.ProductId);
-
             if (product is null)
             {
                 errors.Add(
@@ -44,7 +48,6 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             }
 
             var latestProductHistory = await _productHistoryRepository.GetLatestByProductIdAsync(product.Id);
-
             if (latestProductHistory is null)
             {
                 errors.Add(
@@ -54,10 +57,16 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
                         code: ApplicationErrorCodes.IntegrityError
                     )
                 );
+                
                 continue;
             }
 
-            retrievedProductsHistory[uid] = latestProductHistory;
+            var result = order.TryAddOrderItem(productHistory: latestProductHistory, quantity: orderItem.Quantity);
+            if (result.TryPickT1(out var domainErrors, out var _))
+            {
+                var translated = ApplicationErrorFactory.DomainErrorsToApplicationErrors(domainErrors);
+                errors.AddRange(translated.AsEnumerable());
+            }
         }
 
         if (errors.Count > 0)
@@ -65,41 +74,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             return errors;
         }
 
-        // var newOrder = OrderFactory.BuildNewOrder(
-        //     total: 0,
-        //     orderItems: [],
-        //     status: OrderStatus.Pending
-        // );
-
-        // Calc total
-        decimal total = request.OrderItemData.Keys.Sum(uid =>
-        {
-            var productHistory = retrievedProductsHistory[uid];
-            var orderItem = request.OrderItemData[uid];
-            return productHistory.Price * orderItem.Quantity;
-        });
-
-        // Create Order
-        var generatedId = Guid.NewGuid();
-        var inputOrder = OrderFactory.BuildNewOrder(
-            id: generatedId,
-            total: total,
-            orderItems: request.OrderItemData.Keys.Select(uid =>
-            {
-                var orderItemData = request.OrderItemData[uid];
-                return OrderItemFactory.BuildNewOrderItem(
-                    id: Guid.NewGuid(),
-                    orderId: generatedId,
-                    quantity: orderItemData.Quantity,
-                    status: OrderItemStatus.Pending,
-                    productHistoryId: retrievedProductsHistory[uid].Id,
-                    productId: orderItemData.ProductId
-                );
-            }).ToList(),
-            status: OrderStatus.Pending
-        );
-
-        await _orderRepository.CreateAsync(inputOrder);
-        return new CreateOrderResult(order: inputOrder);
+        await _orderRepository.CreateAsync(order);
+        return new CreateOrderResult(orderId: order.Id);
     }
 }
