@@ -1,4 +1,4 @@
-import IUploadDraftImagesRequestDTO from "../../../application/contracts/draftImages/uploadImages/IUploadDraftImagesRequestDTO";
+import IUploadDraftImagesRequestDTO from "../../../infrastructure/contracts/uploadImages/IUploadDraftImagesRequestDTO";
 
 export default interface IDraftImageDataAccess {
     uploadImages(request: IUploadDraftImagesRequestDTO): Promise<Response>;

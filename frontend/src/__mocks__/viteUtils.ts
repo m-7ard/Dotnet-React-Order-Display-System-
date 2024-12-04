@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export const getLocalUrl = (path: string) => {
+export const getLocalUrl = (_path: string) => {
     return "some.url";
 };
 

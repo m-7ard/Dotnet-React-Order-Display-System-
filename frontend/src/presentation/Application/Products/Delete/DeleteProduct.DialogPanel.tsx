@@ -11,7 +11,7 @@ export default function DeleteProductDialogPanel(props: {
     errors: DeleteProductErrorSchema
     onClose: () => void;
 }) {
-    const { product, onSubmit, errors, onClose } = props;
+    const { product, onSubmit, onClose } = props;
 
     return (
         <MixinPanel

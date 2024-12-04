@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import MixinButton from "../../components/Resuables/MixinButton";
-import FilterProductsDialogPanel from "./Filter/FilterProducts.DialogPanel";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuables/AbstractTooltip";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";

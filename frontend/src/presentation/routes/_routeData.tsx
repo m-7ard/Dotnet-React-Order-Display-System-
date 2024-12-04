@@ -17,7 +17,7 @@ const routeData = {
     ...{
         listOrders: createRoute("/orders", () => "/orders"),
         createOrder: createRoute("/orders/create", () => `/orders/create`),
-        manageOrder: createRoute("/orders/$id/manage", (params: { id: number }) => `/orders/${params.id}/manage`),
+        manageOrder: createRoute("/orders/$id/manage", (params: { id: string }) => `/orders/${params.id}/manage`),
     },
     ...{
         listProducts: createRoute("/products", () => "/products"),
