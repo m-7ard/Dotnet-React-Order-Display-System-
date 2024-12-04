@@ -1,13 +1,13 @@
-using Domain.Models;
-
 namespace Application.Handlers.OrderItems.MarkFinished;
 
 public class MarkOrderItemFinishedResult
 {
-    public MarkOrderItemFinishedResult(Order order)
+    public MarkOrderItemFinishedResult(Guid orderId, Guid orderItemId)
     {
-        Order = order;
+        OrderId = orderId;
+        OrderItemId = orderItemId;
     }
 
-    public Order Order { get; set; }
+    public Guid OrderId { get; set; }
+    public Guid OrderItemId { get; set; }
 }

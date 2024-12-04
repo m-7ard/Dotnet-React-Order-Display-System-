@@ -4,10 +4,10 @@ namespace Application.Handlers.Orders.MarkFinished;
 
 public class MarkOrderFinishedResult
 {
-    public MarkOrderFinishedResult(Order order)
+    public MarkOrderFinishedResult(Guid orderId)
     {
-        Order = order;
+        OrderId = orderId;
     }
 
-    public Order Order { get; set; }
+    public Guid OrderId { get; set; }
 }

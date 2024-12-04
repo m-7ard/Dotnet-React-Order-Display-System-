@@ -43,15 +43,11 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
 
         var content = await response.Content.ReadFromJsonAsync<MarkOrderItemFinishedResponseDTO>();
         Assert.NotNull(content);
-        Assert.NotNull(content.Order);
+        Assert.NotNull(content.OrderId);
+        Assert.NotNull(content.OrderItemId);
         
-        var updatedOrderItem = content.Order.OrderItems.Find(orderItem => orderItem.Id == _orderItem001.Id.ToString());
-        Assert.NotNull(updatedOrderItem);
-        Assert.Equal(OrderItemStatus.Finished.Name, updatedOrderItem.Status);
-
-        // Confirm it was updated (move this to a Unit Test?)
         var db = _factory.CreateDbContext();
-        var persistedOrderItem = await db.OrderItem.SingleAsync(d => d.Id.ToString() == updatedOrderItem.Id)!;
+        var persistedOrderItem = await db.OrderItem.SingleAsync(d => d.Id.ToString() == content.OrderItemId);
         Assert.Equal(OrderItemDbEntity.Statuses.Finished, persistedOrderItem.Status);
     }
 

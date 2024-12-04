@@ -1,13 +1,13 @@
-using Api.ApiModels;
-
 namespace Api.DTOs.OrderItems.MarkFinished;
 
 public class MarkOrderItemFinishedResponseDTO
 {
-    public MarkOrderItemFinishedResponseDTO(OrderApiModel order)
+    public MarkOrderItemFinishedResponseDTO(string orderId, string orderItemId)
     {
-        Order = order;
+        OrderId = orderId;
+        OrderItemId = orderItemId;
     }
 
-    public OrderApiModel Order { get; set; }
+    public string OrderId { get; set; }
+    public string OrderItemId { get; set; }
 }

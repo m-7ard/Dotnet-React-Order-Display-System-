@@ -1,26 +1,24 @@
-
-using Api.Errors;
 using Application.Common;
 using Application.Errors;
 using FluentValidation.Results;
 
-namespace Api.Services;
+namespace Api.Errors;
 
 public class ApiErrorFactory
 {
     // "_" = form error
     // "field" = field error
     // "field/_" = field form error
-    public static PlainApiError CreateError(List<string> path, string message, string fieldName)
+    public static ApiError CreateError(List<string> path, string message, string fieldName)
     {
-        return new PlainApiError(
+        return new ApiError(
             fieldName: fieldName,
             path: string.Join("/", path),
             message: message
         );
     }
 
-    public static List<PlainApiError> FluentToApiErrors(List<ValidationFailure> validationFailures, List<string> path)
+    public static List<ApiError> FluentToApiErrors(List<ValidationFailure> validationFailures, List<string> path)
     {
         return validationFailures.Select((error) =>
         {
@@ -29,7 +27,7 @@ public class ApiErrorFactory
                 ? camelCaseFieldName
                 : $"/{camelCaseFieldName}/{string.Join("/", path)}";
 
-            return new PlainApiError(
+            return new ApiError(
                 fieldName: camelCaseFieldName,
                 path: fullPath,
                 message: error.ErrorMessage
@@ -37,11 +35,11 @@ public class ApiErrorFactory
         }).ToList();
     }
 
-    public static List<PlainApiError> TranslateServiceErrors(List<ApplicationError> errors)
+    public static List<ApiError> TranslateApplicationErrors(List<ApplicationError> errors)
     {
         return errors.Select((error) =>
         {
-            return new PlainApiError(
+            return new ApiError(
                 fieldName: error.Path[0],
                 path: string.Join("/", error.Path),
                 message: error.Message
