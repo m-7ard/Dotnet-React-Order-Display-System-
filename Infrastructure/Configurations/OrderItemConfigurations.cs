@@ -12,5 +12,9 @@ public class OrderItemConfigurations : IEntityTypeConfiguration<OrderItemDbEntit
 
         builder.Property(d => d.Id)
             .ValueGeneratedNever();
+
+        builder.Property(e => e.SerialNumber)
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("NEXT VALUE FOR OrderSerialNumberSequence");
     }
 }

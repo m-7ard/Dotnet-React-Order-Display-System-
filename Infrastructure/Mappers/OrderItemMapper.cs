@@ -16,7 +16,8 @@ public static class OrderItemMapper
             dateFinished: source.DateFinished,
             orderId: source.OrderId,
             productHistoryId: source.ProductHistoryId,
-            productId: source.ProductId
+            productId: source.ProductId,
+            serialNumber: source.SerialNumber
         );
     }
 
@@ -30,7 +31,8 @@ public static class OrderItemMapper
             dateFinished: source.DateFinished,
             orderId: source.OrderId,
             productHistoryId: source.ProductHistoryId,
-            productId: source.ProductId
+            productId: source.ProductId,
+            serialNumber: source.SerialNumber
         );
     }
 

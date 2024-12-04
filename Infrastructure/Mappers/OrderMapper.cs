@@ -14,7 +14,8 @@ public static class OrderMapper
             dateCreated: source.DateCreated,
             dateFinished: source.DateFinished,
             orderItems: source.OrderItems.Select(OrderItemMapper.ToDomain).ToList(),
-            status: new OrderStatus(source.Status.ToString())
+            status: new OrderStatus(source.Status.ToString()),
+            serialNumber: source.SerialNumber
         );
     }
 
@@ -25,7 +26,9 @@ public static class OrderMapper
             total: source.Total,
             dateCreated: source.DateCreated,
             dateFinished: source.DateFinished,
-            status: ToDbEntityStatus(source.Status)) 
+            status: ToDbEntityStatus(source.Status),
+            serialNumber: source.SerialNumber
+        )
         {
             OrderItems = source.OrderItems.Select(OrderItemMapper.ToDbModel).ToList()
         };

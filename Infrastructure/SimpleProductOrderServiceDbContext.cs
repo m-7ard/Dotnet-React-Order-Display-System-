@@ -19,6 +19,11 @@ public class SimpleProductOrderServiceDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Required for SerialNumber to work as a non-pk auto-incrementing field
+        modelBuilder.HasSequence<int>("OrderSerialNumberSequence");
+        modelBuilder.HasSequence<int>("OrderItemSerialNumberSequence");
+
+        // configs
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(SimpleProductOrderServiceDbContext).Assembly);
     }
 }

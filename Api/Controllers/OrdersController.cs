@@ -57,7 +57,7 @@ public class OrdersController : ControllerBase
         foreach (var (uid, orderItemData) in request.OrderItemData)
         {
             var validation = _orderItemDataValidator.Validate(orderItemData);
-            if (!validation.IsValid)
+            if (validation.IsValid)
             {
                 continue;
             }
@@ -66,7 +66,7 @@ public class OrdersController : ControllerBase
                 validationFailures: validation.Errors,
                 path: ["orderItemData", uid]
             ));
-    }
+        }
 
         if (errors.Count > 0)
         {

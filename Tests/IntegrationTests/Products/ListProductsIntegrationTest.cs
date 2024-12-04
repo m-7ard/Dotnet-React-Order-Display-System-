@@ -17,8 +17,12 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
         await base.InitializeAsync();
         var db = _factory.CreateDbContext();
         var mixins = new Mixins(db);
+
+        // Delay to prevent date bugs
         _price1_NameDescProduct1 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
+        await Task.Delay(50);
         _price2_NameDescProduct2 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
+        await Task.Delay(50);
         _price3_NameDescProduct3 = await mixins.CreateProductAndProductHistory(number: 3, images: []);
     }
 

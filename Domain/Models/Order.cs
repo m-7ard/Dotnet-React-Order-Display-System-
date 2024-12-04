@@ -9,7 +9,7 @@ using OneOf;
 namespace Domain.Models;
 public class Order
 {
-    public Order(Guid id, decimal total, DateTime dateCreated, DateTime dateFinished, List<OrderItem> orderItems, OrderStatus status)
+    public Order(Guid id, decimal total, DateTime dateCreated, DateTime dateFinished, List<OrderItem> orderItems, OrderStatus status, int serialNumber)
     {
         Id = id;
         Total = total;
@@ -17,9 +17,11 @@ public class Order
         DateFinished = dateFinished;
         OrderItems = orderItems;
         Status = status;
+        SerialNumber = serialNumber;
     }
 
     public Guid Id { get; private set; }
+    public int SerialNumber { get; private set; }
     public decimal Total { get; set; }
     public OrderStatus Status { get; set; }
     public DateTime DateCreated { get; private set; }

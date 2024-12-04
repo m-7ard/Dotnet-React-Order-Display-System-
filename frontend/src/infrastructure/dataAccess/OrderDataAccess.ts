@@ -20,7 +20,6 @@ export default class OrderDataAccess implements IOrderDataAccess {
     }
 
     async createOrder(request: ICreateOrderRequestDTO): Promise<Response> {
-        console.log("request");
         const response = await fetch(`${this._apiRoute}/create`, {
             method: "POST",
             headers: {

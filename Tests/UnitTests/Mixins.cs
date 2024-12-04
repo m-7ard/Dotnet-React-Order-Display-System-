@@ -16,7 +16,8 @@ public class Mixins
             dateFinished: dateFinished, 
             orderId: orderId,
             productHistoryId: 1, 
-            productId: 1
+            productId: 1,
+            serialNumber: 1
         );
     }
 
