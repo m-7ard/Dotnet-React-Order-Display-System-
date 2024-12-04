@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
+using Domain.DomainEvents.Order;
 using Domain.Models;
 using Infrastructure.DbEntities;
 using Infrastructure.Mappers;
@@ -101,11 +102,15 @@ public class OrderRepository : IOrderRepository
         var currentOrderEntity = await _dbContext.Order.SingleAsync(d => d.Id == updatedOrder.Id);
         _dbContext.Entry(currentOrderEntity).CurrentValues.SetValues(updatedOrderEntity);
 
-        foreach (var updatedItemEntity in updatedOrderEntity.OrderItems)
+        foreach (var domainEvent in updatedOrder.DomainEvents)
         {
-            var currentOrderItemEntity = await _dbContext.OrderItem.SingleAsync(d => d.Id == updatedItemEntity.Id);
-            _dbContext.Entry(currentOrderItemEntity).CurrentValues.SetValues(updatedItemEntity);
-        }        
+            if (domainEvent is OrderItemPendingUpdatingEvent updateEvent)
+            {
+                var payload = updateEvent.Payload;
+                var orderItemDbEntity = await _dbContext.OrderItem.SingleAsync(orderItem => orderItem.Id == payload.Id);
+                _dbContext.Entry(orderItemDbEntity).CurrentValues.SetValues(OrderItemMapper.ToDbModel(payload));
+            }
+        }
         
         await _dbContext.SaveChangesAsync();
     }

@@ -1,3 +1,5 @@
+using Domain.DomainEvents;
+using Domain.DomainEvents.Order;
 using Domain.DomainFactories;
 using Domain.Errors;
 using Domain.ValueObjects.Order;
@@ -23,6 +25,7 @@ public class Order
     public DateTime DateCreated { get; private set; }
     public DateTime DateFinished { get; set; }
     public List<OrderItem> OrderItems { get; set; }
+    public List<DomainEvent> DomainEvents { get; set; } = [];
 
     private void UpdateStatus(OrderStatus status)
     {
@@ -43,6 +46,7 @@ public class Order
         }
 
         orderItem.UpdateStatus(status);
+        DomainEvents.Add(new OrderItemPendingUpdatingEvent(orderItem));
     }
 
     public OneOf<bool, List<DomainError>> TryMarkFinished()
