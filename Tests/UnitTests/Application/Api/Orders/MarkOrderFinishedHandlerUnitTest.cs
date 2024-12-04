@@ -27,7 +27,8 @@ public class MarkOrderFinishedHandlerUnitTest
             dateCreated: DateTime.Today,
             dateFinished: DateTime.MinValue,
             orderItems: [],
-            status: OrderStatus.Pending
+            status: OrderStatus.Pending,
+            serialNumber: 1
         );
     }
 

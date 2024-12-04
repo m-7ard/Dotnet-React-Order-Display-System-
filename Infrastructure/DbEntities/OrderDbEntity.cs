@@ -7,16 +7,18 @@ public class OrderDbEntity
         Finished
     }
 
-    public OrderDbEntity(Guid id, decimal total, DateTime dateCreated, DateTime dateFinished, Statuses status)
+    public OrderDbEntity(Guid id, decimal total, DateTime dateCreated, DateTime dateFinished, Statuses status, int serialNumber)
     {
         Id = id;
         Total = total;
         DateCreated = dateCreated;
         DateFinished = dateFinished;
         Status = status;
+        SerialNumber = serialNumber;
     }
 
     public Guid Id { get; private set; }
+    public int SerialNumber { get; private set; }
     public decimal Total { get; set; }
     public Statuses Status { get; set; }
     public DateTime DateCreated { get; private set; }

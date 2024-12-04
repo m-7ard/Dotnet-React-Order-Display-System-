@@ -16,7 +16,8 @@ public class OrderItemDbEntity
         DateTime dateFinished,
         Guid orderId,
         int productHistoryId,
-        int productId)
+        int productId,
+        int serialNumber)
     {
         Id = id;
         Quantity = quantity;
@@ -26,9 +27,11 @@ public class OrderItemDbEntity
         OrderId = orderId;
         ProductHistoryId = productHistoryId;
         ProductId = productId;
+        SerialNumber = serialNumber;
     }
 
     public Guid Id { get; private set; }
+    public int SerialNumber { get; private set; }
     public int Quantity { get; set; }
     public Statuses Status { get; set; }
     public DateTime DateCreated { get; private set; }
