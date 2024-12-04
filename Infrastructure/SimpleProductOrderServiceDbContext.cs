@@ -19,48 +19,6 @@ public class SimpleProductOrderServiceDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Product
-        modelBuilder.Entity<ProductDbEntity>().Property(d => d.Name)
-            .HasMaxLength(255)
-            .IsRequired();
-        modelBuilder.Entity<ProductDbEntity>().Property(d => d.Description)
-            .HasMaxLength(1028)
-            .IsRequired();
-        modelBuilder.Entity<ProductDbEntity>().Property(d => d.DateCreated)
-            .HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<ProductDbEntity>().Property(d => d.Price)
-            .HasPrecision(18, 2);
-
-        // ProductHistory
-        modelBuilder.Entity<ProductHistoryDbEntity>().Property(d => d.Name)
-            .HasMaxLength(255)
-            .IsRequired();
-        modelBuilder.Entity<ProductHistoryDbEntity>().Property(d => d.Description)
-            .HasMaxLength(1028)
-            .IsRequired();
-        modelBuilder.Entity<ProductHistoryDbEntity>().Property(d => d.ValidFrom)
-            .HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<ProductHistoryDbEntity>()
-            .HasOne(h => h.Product)
-            .WithMany(p => p.ProductHistories)
-            .HasForeignKey(h => h.ProductId)
-            .OnDelete(DeleteBehavior.SetNull);
-        modelBuilder.Entity<ProductHistoryDbEntity>().Property(d => d.Price)
-            .HasPrecision(18, 2);
-
-        // DraftImage
-        modelBuilder.Entity<ProductImageDbEntity>().Property(d => d.DateCreated).HasDefaultValueSql("GETDATE()");
-
-        // ProductImage
-        modelBuilder.Entity<ProductImageDbEntity>().Property(d => d.DateCreated).HasDefaultValueSql("GETDATE()");
-
-        // Order
-        modelBuilder.Entity<OrderDbEntity>().Property(d => d.DateCreated)
-            .HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<OrderDbEntity>().Property(d => d.Total)
-            .HasPrecision(18, 2);
-
-        // Order Item
-        modelBuilder.Entity<OrderItemDbEntity>().Property(d => d.DateCreated).HasDefaultValueSql("GETDATE()");
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(SimpleProductOrderServiceDbContext).Assembly);
     }
 }
