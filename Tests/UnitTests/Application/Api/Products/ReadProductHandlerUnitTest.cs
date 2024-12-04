@@ -1,4 +1,3 @@
-using Application.Api.Products.Read.Handlers;
 using Application.Handlers.Products.Read;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;

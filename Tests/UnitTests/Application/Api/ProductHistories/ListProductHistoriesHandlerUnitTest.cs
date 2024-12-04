@@ -1,4 +1,3 @@
-using Application.Api.ProductHistories.List.Handlers;
 using Application.Handlers.ProductHistories.List;
 using Application.Interfaces.Persistence;
 using Moq;

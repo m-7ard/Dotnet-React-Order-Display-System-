@@ -6,6 +6,20 @@ public class BaseIntegrationTest : IAsyncLifetime
 {
     protected readonly IntegrationWebApplicationFactory<Program> _factory;
     protected readonly HttpClient _client;
+    private void DeleteTestFiles()
+    {
+        Environment.SetEnvironmentVariable("IS_TEST", "true");
+        foreach (string file in Directory.GetFiles(DirectoryService.GetMediaDirectory()))
+        {
+            if (file.Contains("include-this.txt"))
+            {
+                // keep this file for github
+                continue;
+            }
+
+            File.Delete(file);
+        }
+    }
 
     public BaseIntegrationTest()
     {
@@ -13,11 +27,8 @@ public class BaseIntegrationTest : IAsyncLifetime
         _client = _factory.CreateClient();
 
         // Delete saved test files before every run
-        Environment.SetEnvironmentVariable("IS_TEST", "true");
-        foreach (string file in Directory.GetFiles(DirectoryService.GetMediaDirectory()))
-        {
-            File.Delete(file);
-        }
+        // (If last run somehow caused an error.)
+        DeleteTestFiles();
     }
 
     public virtual async Task InitializeAsync()
@@ -37,10 +48,6 @@ public class BaseIntegrationTest : IAsyncLifetime
         }
 
         // Delete saved test files after all tests have finished
-        Environment.SetEnvironmentVariable("IS_TEST", "true");
-        foreach (string file in Directory.GetFiles(DirectoryService.GetMediaDirectory()))
-        {
-            File.Delete(file);
-        }
+        DeleteTestFiles();
     }
 }

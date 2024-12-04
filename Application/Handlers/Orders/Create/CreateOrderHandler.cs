@@ -66,6 +66,12 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             return errors;
         }
 
+        // var newOrder = OrderFactory.BuildNewOrder(
+        //     total: 0,
+        //     orderItems: [],
+        //     status: OrderStatus.Pending
+        // );
+
         // Calc total
         decimal total = request.OrderItemData.Keys.Sum(uid =>
         {
