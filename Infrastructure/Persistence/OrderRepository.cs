@@ -113,5 +113,6 @@ public class OrderRepository : IOrderRepository
         }
         
         await _dbContext.SaveChangesAsync();
+        updatedOrder.ClearEvents();
     }
 }

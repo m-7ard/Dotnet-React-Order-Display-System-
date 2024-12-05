@@ -28,6 +28,10 @@ public class Order
     public DateTime DateFinished { get; set; }
     public List<OrderItem> OrderItems { get; set; }
     public List<DomainEvent> DomainEvents { get; set; } = [];
+    public void ClearEvents()
+    {
+        DomainEvents = [];
+    }
 
     private void UpdateStatus(OrderStatus status)
     {
