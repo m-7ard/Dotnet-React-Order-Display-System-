@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using Api.DTOs.OrderItems.MarkFinished;
 using Domain.Models;
 using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 using Infrastructure.DbEntities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +28,7 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
             orderStatus: OrderStatus.Pending,
             seed: 1
         );
-        _orderItem001 = _order001.OrderItems.Find(orderItem => orderItem.ProductHistoryId == _product001.Id)!; 
+        _orderItem001 = _order001.OrderItems.Find(orderItem => orderItem.ProductId == _product001.Id)!; 
     }
 
     [Fact]

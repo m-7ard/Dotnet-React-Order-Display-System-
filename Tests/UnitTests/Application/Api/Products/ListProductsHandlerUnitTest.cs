@@ -1,7 +1,6 @@
+using Application.Contracts.Criteria;
 using Application.Handlers.Products.List;
 using Application.Interfaces.Persistence;
-using Domain.DomainFactories;
-using Domain.Models;
 using Moq;
 
 namespace Tests.UnitTests.Application.Api.Products;
@@ -39,17 +38,17 @@ public class ListProductsHandlerUnitTest
         
         // ASSERT
         Assert.True(result.IsT0);
-        _mockProductRepository.Verify(repo => repo.FindAllAsync(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                new Tuple<string, bool>("DateCreated", false)
-            )
+        var critiera = new FilterProductsCriteria(
+            id: null,
+            name: null,
+            minPrice: null,
+            maxPrice: null,
+            description: null,
+            createdBefore: null,
+            createdAfter: null,
+            orderBy: new Tuple<string, bool>("DateCreated", false)
         );
+        _mockProductRepository.Verify(repo => repo.FindAllAsync(critiera));
     }
 
     [Theory]
@@ -76,16 +75,16 @@ public class ListProductsHandlerUnitTest
         
         // ASSERT
         Assert.True(result.IsT0);
-        _mockProductRepository.Verify(repo => repo.FindAllAsync(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                new Tuple<string, bool>(expectedField, expectedAscending)
-            )
+        var critiera = new FilterProductsCriteria(
+            id: null,
+            name: null,
+            minPrice: null,
+            maxPrice: null,
+            description: null,
+            createdBefore: null,
+            createdAfter: null,
+            orderBy: new Tuple<string, bool>(expectedField, expectedAscending)
         );
+        _mockProductRepository.Verify(repo => repo.FindAllAsync(critiera));
     }
 }

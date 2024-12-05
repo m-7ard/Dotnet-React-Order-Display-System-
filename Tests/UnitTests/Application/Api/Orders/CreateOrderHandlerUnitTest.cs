@@ -1,4 +1,3 @@
-using Api.DTOs.Orders.Create;
 using Application.Handlers.Orders.Create;
 using Application.Interfaces.Persistence;
 using Domain.DomainFactories;
@@ -31,7 +30,7 @@ public class CreateOrderHandlerUnitTest
         );
     
         _mockProduct001 = ProductFactory.BuildExistingProduct(
-            id: 1,
+            id: Guid.NewGuid(),
             name: "Product 1",
             price: 1,
             description: "description",
@@ -39,7 +38,7 @@ public class CreateOrderHandlerUnitTest
             images: []
         );
         _mockProduct002 = ProductFactory.BuildExistingProduct(
-            id: 2,
+            id: Guid.NewGuid(),
             name: "Product 2",
             price: 2,
             description: "description",
@@ -52,24 +51,24 @@ public class CreateOrderHandlerUnitTest
     }
 
     [Fact]
-    public async Task CreateProduct_WitbhoutImages_Success()
+    public async Task CreateOrder_WitbhoutImages_Success()
     {
         // ARRANGE
         var command = new CreateOrderCommand(
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new CreateOrderCommand.OrderItem(productId: 1, quantity: 1) },
-                { "UID-2", new CreateOrderCommand.OrderItem(productId: 2, quantity: 2) }
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id.ToString(), quantity: 1) },
+                { "UID-2", new CreateOrderCommand.OrderItem(productId: _mockProductHistory002.Id.ToString(), quantity: 2) }
             }
         );
 
         var total = _mockProduct001.Price + _mockProduct002.Price * 2;
 
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(_mockProduct001);
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(2)).ReturnsAsync(_mockProduct002);
+        _mockProductRepository.Setup(repo => repo.GetByIdAsync(_mockProductHistory001.Id)).ReturnsAsync(_mockProduct001);
+        _mockProductRepository.Setup(repo => repo.GetByIdAsync(_mockProductHistory002.Id)).ReturnsAsync(_mockProduct002);
 
-        _mockProductHistoryRepository.Setup(repo => repo.GetLatestByProductIdAsync(1)).ReturnsAsync(_mockProductHistory001);
-        _mockProductHistoryRepository.Setup(repo => repo.GetLatestByProductIdAsync(2)).ReturnsAsync(_mockProductHistory002);
+        _mockProductHistoryRepository.Setup(repo => repo.GetLatestByProductIdAsync(_mockProduct001.Id)).ReturnsAsync(_mockProductHistory001);
+        _mockProductHistoryRepository.Setup(repo => repo.GetLatestByProductIdAsync(_mockProduct002.Id)).ReturnsAsync(_mockProductHistory002);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -83,13 +82,13 @@ public class CreateOrderHandlerUnitTest
     }
 
     [Fact]
-    public async Task CreateProduct_ProductDoesNotExist_Failure()
+    public async Task CreateOrder_ProductDoesNotExist_Failure()
     {
         // ARRANGE
         var command = new CreateOrderCommand(
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new CreateOrderCommand.OrderItem(productId: 1, quantity: 1) },
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id.ToString(), quantity: 1) },
             }
         );
 
@@ -101,17 +100,17 @@ public class CreateOrderHandlerUnitTest
     }
 
     [Fact]
-    public async Task CreateProduct_ProductHistoryDoesNotExist_Failure()
+    public async Task CreateOrder_ProductHistoryDoesNotExist_Failure()
     {
         // ARRANGE
         var command = new CreateOrderCommand(
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new CreateOrderCommand.OrderItem(productId: 1, quantity: 1) },
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id.ToString(), quantity: 1) },
             }
         );
 
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(_mockProduct001);
+        _mockProductRepository.Setup(repo => repo.GetByIdAsync(_mockProductHistory001.Id)).ReturnsAsync(_mockProduct001);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);

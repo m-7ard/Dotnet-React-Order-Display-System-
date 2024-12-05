@@ -2,7 +2,7 @@ namespace Domain.Models;
 
 public class ProductImage
 {
-    public ProductImage(int id, string fileName, string originalFileName, string url, DateTime dateCreated, int? productId)
+    public ProductImage(Guid id, string fileName, string originalFileName, string url, DateTime dateCreated, Guid? productId)
     {
         Id = id;
         FileName = fileName;
@@ -12,10 +12,10 @@ public class ProductImage
         ProductId = productId;
     }
 
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
     public string FileName { get; private set; }
     public string OriginalFileName { get; private set; }
     public string Url { get; private set; }
     public DateTime DateCreated { get; private set; }
-    public int? ProductId { get; private set; }
+    public Guid? ProductId { get; private set; }
 }

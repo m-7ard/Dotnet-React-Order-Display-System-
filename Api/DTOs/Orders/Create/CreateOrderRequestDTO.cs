@@ -11,13 +11,13 @@ public class CreateOrderRequestDTO
 
     public class OrderItem
     {
-        public OrderItem(int productId, int quantity)
+        public OrderItem(string productId, int quantity)
         {
             ProductId = productId;
             Quantity = quantity;
         }
 
-        public int ProductId { get; set; }
+        public string ProductId { get; set; }
         public int Quantity { get; set; }
     }
 }

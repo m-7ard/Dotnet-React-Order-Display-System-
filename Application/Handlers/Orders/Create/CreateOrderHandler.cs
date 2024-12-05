@@ -34,13 +34,25 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
 
         foreach (var (uid, orderItem) in request.OrderItemData)
         {
-            var product = await _productRepository.GetByIdAsync(orderItem.ProductId);
+            var validId = Guid.TryParse(orderItem.ProductId, out var parsedId);
+            if (!validId)
+            {
+                errors.AddRange(
+                    ApplicationErrorFactory.CreateSingleListError(
+                        message: $"Invalid Product Id.",
+                        path: ["orderItems", uid, "id"],
+                        code: ApplicationErrorCodes.ModelDoesNotExist
+                    )
+                );
+            }
+
+            var product = await _productRepository.GetByIdAsync(parsedId);
             if (product is null)
             {
-                errors.Add(
-                    new ApplicationError(
+                errors.AddRange(
+                    ApplicationErrorFactory.CreateSingleListError(
                         message: $"Product with Id \"{orderItem.ProductId}\" does not exist.",
-                        path: ["orderItems", uid, "id"],
+                        path: ["orderItems", uid, "_"],
                         code: ApplicationErrorCodes.ModelDoesNotExist
                     )
                 );

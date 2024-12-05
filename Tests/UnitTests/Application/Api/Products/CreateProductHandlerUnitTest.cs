@@ -29,10 +29,8 @@ public class CreateProductHandlerUnitTest
     public async Task CreateProduct_WitbhoutImages_Success()
     {
         // ARRANGE
-        var mockProduct = ProductFactory.BuildNewProduct(
-            name: "Product 1",
-            price: 1,
-            description: "description",
+        var mockProduct = Mixins.CreateProduct(
+            seed: 1,
             images: []
         );
 
@@ -60,13 +58,11 @@ public class CreateProductHandlerUnitTest
     public async Task CreateProduct_WithImages_Success()
     {
         // ARRANGE
-        var mockProduct = ProductFactory.BuildNewProduct(
-            name: "Product 1",
-            price: 1,
-            description: "description",
+        var mockProduct = Mixins.CreateProduct(
+            seed: 1,
             images: [
-                ProductImageFactory.BuildNewProductImage(fileName: "fileName", originalFileName: "originalFileName", url: "url"),
-                ProductImageFactory.BuildNewProductImage(fileName: "fileName", originalFileName: "originalFileName", url: "url")
+                Mixins.CreateProductImage(1),
+                Mixins.CreateProductImage(2)
             ]
         );
 
@@ -89,8 +85,10 @@ public class CreateProductHandlerUnitTest
         
         // ASSERT
         Assert.True(result.IsT0);
-        _mockDraftImageRepository.Verify(repo => repo.GetByFileNameAsync("fileName"), Times.Exactly(2));
-        _mockDraftImageRepository.Verify(repo => repo.DeleteByFileNameAsync("fileName"), Times.Exactly(2));
+        //** Check and delete draft images
+        _mockDraftImageRepository.Verify(repo => repo.GetByFileNameAsync(It.IsAny<string>()), Times.Exactly(2));
+        _mockDraftImageRepository.Verify(repo => repo.DeleteByFileNameAsync(It.IsAny<string>()), Times.Exactly(2));
+        //** Create product and product history
         _mockProductRepository.Verify(repo => repo.CreateAsync(It.IsAny<Product>()), Times.Once);
         _mockProductHistoryRepository.Verify(repo => repo.CreateAsync(It.IsAny<ProductHistory>()), Times.Once);
     }

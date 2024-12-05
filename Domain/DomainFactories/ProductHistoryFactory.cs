@@ -5,11 +5,11 @@ namespace Domain.DomainFactories;
 public class ProductHistoryFactory
 {
     public static ProductHistory BuildExistingProductHistory(
-        int id,
+        Guid id,
         string name,
         List<string> images,
         decimal price,
-        int productId,
+        Guid productId,
         DateTime validFrom,
         DateTime validTo,
         string description)
@@ -27,14 +27,15 @@ public class ProductHistoryFactory
     }
 
     public static ProductHistory BuildNewProductHistory(
+        Guid id,
         string name,
         List<string> images,
         decimal price,
-        int productId,
+        Guid productId,
         string description)
     {
         return new ProductHistory(
-            id: 0,
+            id: id,
             name: name,
             images: images,
             price: price,
@@ -45,9 +46,10 @@ public class ProductHistoryFactory
         );
     }
 
-        public static ProductHistory BuildNewProductHistoryFromProduct(Product product)
+    public static ProductHistory BuildNewProductHistoryFromProduct(Product product)
     {
         return BuildNewProductHistory(
+            id: Guid.NewGuid(),
             name: product.Name,
             images: product.Images.Select(image => image.FileName).ToList(),
             price: product.Price,

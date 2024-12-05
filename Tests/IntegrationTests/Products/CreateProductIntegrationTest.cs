@@ -43,7 +43,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
         var db = _factory.CreateDbContext();
         var productHistories = await db.ProductHistory.ToListAsync();
         Assert.StrictEqual(1, productHistories.Count);
-        Assert.StrictEqual(content.Product.Id, productHistories[0].ProductId);
+        Assert.Equal(content.Product.Id, productHistories[0].ProductId.ToString());
     }
 
     [Fact]

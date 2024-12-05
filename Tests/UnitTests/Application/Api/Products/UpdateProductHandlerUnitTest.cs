@@ -29,13 +29,9 @@ public class UpdateProductHandlerUnitTest
     public async Task UpdateProduct_NoImages_Success()
     {
         // ARRANGE
-        var oldMockProduct = ProductFactory.BuildExistingProduct(
-            id: 100,
-            name: "Product 1",
-            price: 1,
-            description: "description",
-            images: [],
-            dateCreated: new DateTime()
+        var oldMockProduct = Mixins.CreateProduct(
+            seed: 1,
+            images: []
         );
 
         var newMockProduct = ProductFactory.BuildExistingProduct(
@@ -71,21 +67,17 @@ public class UpdateProductHandlerUnitTest
         _mockProductHistoryRepository.Verify(repo => repo.CreateAsync(It.Is<ProductHistory>(d => d.Name == newMockProductHistory.Name)), Times.Once);
     }
 
-        [Fact]
+    [Fact]
     public async Task UpdateProduct_WithImages_Success()
     {
         // ARRANGE
-        var deleteProductImage = ProductImageFactory.BuildExistingProductImage(id: 1, fileName: "file-1", originalFileName: "abc", url: "url", dateCreated: new DateTime(), productId: 100);
-        var keepProductImage = ProductImageFactory.BuildExistingProductImage(id: 2, fileName: "file-2", originalFileName: "abc", url: "url", dateCreated: new DateTime(), productId: 100);
-        var newProductImage = ProductImageFactory.BuildExistingProductImage(id: 3, fileName: "file-3", originalFileName: "abc", url: "url", dateCreated: new DateTime(), productId: 100);
+        var deleteProductImage = ProductImageFactory.BuildExistingProductImage(id: Guid.NewGuid(), fileName: "file-1", originalFileName: "abc", url: "url", dateCreated: new DateTime(), productId: Guid.NewGuid());
+        var keepProductImage = ProductImageFactory.BuildExistingProductImage(id: Guid.NewGuid(), fileName: "file-2", originalFileName: "abc", url: "url", dateCreated: new DateTime(), productId: Guid.NewGuid());
+        var newProductImage = ProductImageFactory.BuildExistingProductImage(id: Guid.NewGuid(), fileName: "file-3", originalFileName: "abc", url: "url", dateCreated: new DateTime(), productId: Guid.NewGuid());
 
-        var oldMockProduct = ProductFactory.BuildExistingProduct(
-            id: 100,
-            name: "Product 1",
-            price: 1,
-            description: "description",
-            images: [deleteProductImage, keepProductImage],
-            dateCreated: new DateTime()
+        var oldMockProduct = Mixins.CreateProduct(
+            seed: 1,
+            images: [deleteProductImage, keepProductImage]
         );
 
         var newMockProduct = ProductFactory.BuildExistingProduct(

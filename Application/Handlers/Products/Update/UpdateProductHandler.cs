@@ -24,39 +24,35 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
     {
         var errors = new List<ApplicationError>();
 
-        var productUpdating = await _productRepository.GetByIdAsync(request.Id);
-        if (productUpdating is null)
+        var product = await _productRepository.GetByIdAsync(request.Id);
+        if (product is null)
         {
-            errors.Add(new ApplicationError(
+            return ApplicationErrorFactory.CreateSingleListError(
                 message: $"Product of Id \"{request.Id}\" does not exist.",
                 path: ["_"],
                 code: ApplicationErrorCodes.ModelDoesNotExist
-            ));
-
-            return errors;
+            );
         }
 
-        var latestProductHistory = await _productHistoryRepository.GetLatestByProductIdAsync(productUpdating.Id);
+        var latestProductHistory = await _productHistoryRepository.GetLatestByProductIdAsync(product.Id);
         if (latestProductHistory is null)
         {
-            errors.Add(new ApplicationError(
-                message: $"Product of Id \"{request.Id}\" lacks valid ProductHistory.",
+            return ApplicationErrorFactory.CreateSingleListError(
+                message: $"Product of Id \"{request.Id}\" does not exist.",
                 path: ["_"],
                 code: ApplicationErrorCodes.IntegrityError
-            ));
-
-            return errors;
+            );
         }
 
-        var newProductImageValue = new List<ProductImage>();
+        var newProductImagesValue = new List<ProductImage>();
         var draftsUsed = new List<DraftImage>();
 
         foreach (var fileName in request.Images)
         {
-            var productImage = productUpdating.Images.Find(image => image.FileName == fileName);
+            var productImage = product.Images.Find(image => image.FileName == fileName);
             if (productImage is not null)
             {
-                newProductImageValue.Add(productImage);
+                newProductImagesValue.Add(productImage);
                 continue;
             }
 
@@ -71,7 +67,8 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
                 continue;
             }
 
-            newProductImageValue.Add(ProductImageFactory.BuildNewProductImageFromDraftImage(draftImage));
+            var newImage = product.CreateProductImageFromDraft(draftImage);
+            newProductImagesValue.Add(newImage);
             draftsUsed.Add(draftImage);
         }
 
@@ -80,12 +77,20 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
             return errors;
         }
 
-        productUpdating.Name = request.Name;
-        productUpdating.Price = request.Price;
-        productUpdating.Description = request.Description;
-        productUpdating.Images = newProductImageValue;
-        await _productRepository.UpdateAsync(productUpdating);
+        var updateResult = product.TryUpdate(
+            name: request.Name,
+            price: request.Price,
+            description: request.Description,
+            images: newProductImagesValue
+        );
+        if (updateResult.TryPickT1(out var updateErrors, out var _))
+        {
+            return ApplicationErrorFactory.DomainErrorsToApplicationErrors(updateErrors);
+        }
 
+        await _productRepository.UpdateAsync(product);
+
+        // Delete used drafts
         foreach (var draftImage in draftsUsed)
         {
             await _draftImageRepository.DeleteByFileNameAsync(draftImage.FileName);
@@ -96,12 +101,9 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
         await _productHistoryRepository.UpdateAsync(latestProductHistory);
 
         // Create new Product History
-        var inputProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(productUpdating);
+        var inputProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(product: product);
         await _productHistoryRepository.CreateAsync(inputProductHistory);
 
-        return new UpdateProductResult
-        (
-            product: productUpdating
-        );
+        return new UpdateProductResult(product: product);
     }
 }

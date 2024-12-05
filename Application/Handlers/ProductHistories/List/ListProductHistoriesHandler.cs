@@ -1,3 +1,4 @@
+using Application.Contracts.Criteria;
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using MediatR;
@@ -42,7 +43,7 @@ public class ListProductHistoriesHandler : IRequestHandler<ListProductHistoriesQ
             orderBy = new Tuple<string, bool>("OriginalProductId", true);
         }
 
-        var productHistories = await _productHistoryRepository.FindAllAsync(
+        var criteria = new FilterProductHistoriesCriteria(
             name: request.Name,
             minPrice: request.MinPrice,
             maxPrice: request.MaxPrice,
@@ -52,6 +53,7 @@ public class ListProductHistoriesHandler : IRequestHandler<ListProductHistoriesQ
             productId: request.ProductId,
             orderBy: orderBy
         );
+        var productHistories = await _productHistoryRepository.FindAllAsync(criteria);
 
         var result = new ListProductHistoriesResult(productHistories: productHistories);
         return result;

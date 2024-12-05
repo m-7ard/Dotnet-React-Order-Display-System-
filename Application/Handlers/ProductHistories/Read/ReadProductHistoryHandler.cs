@@ -19,13 +19,11 @@ public class ReadProductHistoryHandler : IRequestHandler<ReadProductHistoryQuery
         var productHistory = await _productHistoryRepository.GetByIdAsync(request.Id);
         if (productHistory is null)
         {
-            return new List<ApplicationError>() {
-                new ApplicationError(
-                    message: $"ProductHistory with Id \"{request.Id}\" does not exist.",
-                    path: ["_"],
-                    code: ApplicationErrorCodes.ModelDoesNotExist
-                )
-            };
+            return ApplicationErrorFactory.CreateSingleListError(
+                message: $"ProductHistory with Id \"{request.Id}\" does not exist.",
+                path: ["_"],
+                code: ApplicationErrorCodes.ModelDoesNotExist
+           );
         }
 
         var result = new ReadProductHistoryResult(productHistory: productHistory);

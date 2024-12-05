@@ -13,8 +13,8 @@ public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<Application
         DateTime? createdBefore,
         DateTime? createdAfter,
         Guid? id,
-        int? productId,
-        int? productHistoryId,
+        Guid? productId,
+        Guid? productHistoryId,
         string? orderBy)
     {
         MinTotal = minTotal;
@@ -34,7 +34,7 @@ public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<Application
     public DateTime? CreatedBefore { get; set; }
     public DateTime? CreatedAfter { get; set; }
     public Guid? Id { get; set; }
-    public int? ProductId { get; set; }
-    public int? ProductHistoryId { get; set; }
+    public Guid? ProductId { get; set; }
+    public Guid? ProductHistoryId { get; set; }
     public string? OrderBy { get; set; }
 }

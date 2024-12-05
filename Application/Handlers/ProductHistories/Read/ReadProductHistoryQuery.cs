@@ -6,10 +6,10 @@ namespace Application.Handlers.ProductHistories.Read;
 
 public class ReadProductHistoryQuery : IRequest<OneOf<ReadProductHistoryResult, List<ApplicationError>>>
 {
-    public ReadProductHistoryQuery(int id)
+    public ReadProductHistoryQuery(Guid id)
     {
         Id = id;
     }
 
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 }

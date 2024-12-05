@@ -106,7 +106,6 @@ public class Order
 
     public OneOf<OrderItem, List<DomainError>> TryAddOrderItem(ProductHistory productHistory, int quantity)
     {
-        // Todo: add some rule of whether duplicates are allowed
         var orderItem = OrderItemFactory.BuildNewOrderItem(
             id: Guid.NewGuid(),
             orderId: Id,

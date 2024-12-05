@@ -6,7 +6,7 @@ namespace Application.Handlers.Products.List;
 
 public class ListProductsQuery : IRequest<OneOf<ListProductsResult, List<ApplicationError>>>
 {
-    public ListProductsQuery(string? name, decimal? minPrice, decimal? maxPrice, string? description, DateTime? createdBefore, DateTime? createdAfter, int? id, string? orderBy)
+    public ListProductsQuery(string? name, decimal? minPrice, decimal? maxPrice, string? description, DateTime? createdBefore, DateTime? createdAfter, Guid? id, string? orderBy)
     {
         Name = name;
         MinPrice = minPrice;
@@ -18,7 +18,7 @@ public class ListProductsQuery : IRequest<OneOf<ListProductsResult, List<Applica
         OrderBy = orderBy;
     }
 
-    public int? Id { get; set; }
+    public Guid? Id { get; set; }
     public string? Name { get; set; }
     public decimal? MinPrice { get; set; }
     public decimal? MaxPrice { get; set; }

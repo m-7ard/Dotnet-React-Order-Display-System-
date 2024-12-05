@@ -8,6 +8,11 @@ public class ProductImageConfigurations : IEntityTypeConfiguration<ProductImageD
 {
     public void Configure(EntityTypeBuilder<ProductImageDbEntity> builder)
     {
+        builder.HasKey(d => d.Id);
+
+        builder.Property(d => d.Id)
+            .ValueGeneratedNever();
+            
         builder.Property(d => d.DateCreated).HasDefaultValueSql("GETDATE()");
     }
 }

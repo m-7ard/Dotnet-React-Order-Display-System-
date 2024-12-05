@@ -2,6 +2,7 @@ using Api.DTOs.ProductHistories.List;
 using Api.DTOs.Products.Create;
 using Api.DTOs.Products.Update;
 using Api.Interfaces;
+using Api.Mappers;
 using Application.Handlers.ProductHistories.List;
 using FluentValidation;
 using MediatR;
@@ -17,13 +18,11 @@ public class ProductHistoryController : ControllerBase
 {
     private readonly ISender _mediator;
     private readonly IPlainErrorHandlingService _errorHandlingService;
-    private readonly IApiModelService _apiModelService;
 
-    public ProductHistoryController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IValidator<CreateProductRequestDTO> createProductValidator, IValidator<UpdateProductRequestDTO> updateProductValidator, IApiModelService apiModelService)
+    public ProductHistoryController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IValidator<CreateProductRequestDTO> createProductValidator, IValidator<UpdateProductRequestDTO> updateProductValidator)
     {
         _mediator = mediator;
         _errorHandlingService = errorHandlingService;
-        _apiModelService = apiModelService;
     }
 
     [HttpGet("list")]
@@ -34,7 +33,7 @@ public class ProductHistoryController : ControllerBase
         [FromQuery] string? description, 
         [FromQuery] DateTime? validTo, 
         [FromQuery] DateTime? validFrom,
-        [FromQuery] int? productId,
+        [FromQuery] string? productId,
         [FromQuery] string? orderBy)
     {
         var parameters = new ListProductHistoriesRequestDTO(
@@ -44,7 +43,7 @@ public class ProductHistoryController : ControllerBase
             description: description,
             validTo: validTo,
             validFrom: validFrom,
-            productId: productId,
+            productId: Guid.TryParse(productId, out var parsedId) ? parsedId : null,
             orderBy: orderBy
         );
         if (parameters.Name is not null && parameters.Name.Length == 0)
@@ -91,7 +90,7 @@ public class ProductHistoryController : ControllerBase
             return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         }
 
-        var response = new ListProductHistoriesResponseDTO(productHistories: value.ProductHistories.Select(_apiModelService.CreateProductHistoryApiModel).ToList());
+        var response = new ListProductHistoriesResponseDTO(productHistories: value.ProductHistories.Select(ApiModelMapper.ProductHistoryToApiModel).ToList());
         return Ok(response);
     }
 }

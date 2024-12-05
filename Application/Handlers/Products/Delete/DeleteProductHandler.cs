@@ -21,25 +21,21 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, OneOf<
         var product = await _productRepository.GetByIdAsync(id: request.Id);
         if (product is null)
         {
-            return new List<ApplicationError>() {
-                new ApplicationError(
-                    message: $"Product with Id \"{request.Id}\" does not exist.",
-                    path: ["_"],
-                    code: ApplicationErrorCodes.ModelDoesNotExist
-                )
-            };
+            return ApplicationErrorFactory.CreateSingleListError(
+                message: $"Product with Id \"{request.Id}\" does not exist.",
+                path: ["_"],
+                code: ApplicationErrorCodes.ModelDoesNotExist
+            );
         }
 
         var latestProductHistory = await _productHistoryRepository.GetLatestByProductIdAsync(product.Id);
         if (latestProductHistory is null)
         {
-            return new List<ApplicationError>() {
-                new ApplicationError(
-                    message: $"Product of Id \"{request.Id}\" lacks valid ProductHistory.",
-                    path: ["_"],
-                    code: ApplicationErrorCodes.IntegrityError
-                )
-            };
+            return ApplicationErrorFactory.CreateSingleListError(
+                message: $"Product of Id \"{request.Id}\" lacks valid ProductHistory.",
+                path: ["_"],
+                code: ApplicationErrorCodes.IntegrityError
+            );
         }
 
         // Invalidate old history

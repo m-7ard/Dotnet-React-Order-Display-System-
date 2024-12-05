@@ -8,6 +8,10 @@ public class ProductHistoryConfigurations : IEntityTypeConfiguration<ProductHist
 {
     public void Configure(EntityTypeBuilder<ProductHistoryDbEntity> builder)
     {
+        builder.HasKey(d => d.Id);
+
+        builder.Property(d => d.Id)
+            .ValueGeneratedNever();
 
         builder.Property(d => d.Name)
             .HasMaxLength(255)

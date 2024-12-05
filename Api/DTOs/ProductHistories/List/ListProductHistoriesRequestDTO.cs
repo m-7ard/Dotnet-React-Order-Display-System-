@@ -9,7 +9,7 @@ public class ListProductHistoriesRequestDTO
         string? description,
         DateTime? validTo,
         DateTime? validFrom,
-        int? productId,
+        Guid? productId,
         string? orderBy)
     {
         Name = name;
@@ -28,6 +28,6 @@ public class ListProductHistoriesRequestDTO
     public string? Description { get; set; }
     public DateTime? ValidTo { get; set; }
     public DateTime? ValidFrom { get; set; }
-    public int? ProductId { get; set; }
+    public Guid? ProductId { get; set; }
     public string? OrderBy { get; set; }
 }

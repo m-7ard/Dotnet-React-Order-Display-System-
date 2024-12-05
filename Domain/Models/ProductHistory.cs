@@ -3,11 +3,11 @@ namespace Domain.Models;
 public class ProductHistory
 {
     public ProductHistory(
-        int id,
+        Guid id,
         string name,
         List<string> images,
         decimal price,
-        int productId,
+        Guid productId,
         DateTime validFrom,
         DateTime validTo,
         string description)
@@ -22,12 +22,12 @@ public class ProductHistory
         Description = description;
     }
 
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
     public string Name { get; set; }
     public List<string> Images { get; set; }
     public string Description { get; set; }
     public decimal Price { get; set; }
-    public int ProductId { get; set; }
+    public Guid ProductId { get; set; }
     public DateTime ValidFrom { get; set; }
     public DateTime ValidTo { get; set; }
 
