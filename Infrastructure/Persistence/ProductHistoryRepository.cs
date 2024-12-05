@@ -27,13 +27,13 @@ public class ProductHistoryRespository : IProductHistoryRepository
 
     public async Task<ProductHistory?> GetLatestByProductIdAsync(Guid id)
     {
-        var productHistoryDbEntity = await _dbContext.ProductHistory.OrderByDescending(d => d.ValidFrom).FirstOrDefaultAsync(d => d.ProductId == id && d.ValidFrom > d.ValidTo);
+        var productHistoryDbEntity = await _dbContext.ProductHistory.OrderByDescending(prodHist => prodHist.ValidFrom).FirstOrDefaultAsync(prodHist => prodHist.ProductId == id && prodHist.ValidTo == null);
         return productHistoryDbEntity is null ? null : ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 
     public async Task<ProductHistory?> GetByIdAsync(Guid id)
     {
-        var productHistoryDbEntity = await _dbContext.ProductHistory.FirstOrDefaultAsync(d => d.Id == id);
+        var productHistoryDbEntity = await _dbContext.ProductHistory.FirstOrDefaultAsync(prodHist => prodHist.Id == id);
         return productHistoryDbEntity is null ? null : ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 
@@ -106,7 +106,7 @@ public class ProductHistoryRespository : IProductHistoryRepository
 
     public async Task UpdateAsync(ProductHistory productHistory)
     {
-        var currentEntity = await _dbContext.ProductHistory.SingleAsync(d => d.Id == productHistory.Id);
+        var currentEntity = await _dbContext.ProductHistory.SingleAsync(prodHist => prodHist.Id == productHistory.Id);
 
         var updatedEntity = ProductHistoryMapper.ToDbModel(productHistory);
         _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);

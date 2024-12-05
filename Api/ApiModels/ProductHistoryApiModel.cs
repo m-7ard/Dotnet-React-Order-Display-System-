@@ -2,7 +2,7 @@ namespace Api.ApiModels;
 
 public class ProductHistoryApiModel
 {
-    public ProductHistoryApiModel(string id, string name, List<string> images, string description, decimal price, string productId, DateTime validFrom, DateTime validTo)
+    public ProductHistoryApiModel(string id, string name, List<string> images, string description, decimal price, string productId, DateTime validFrom, DateTime? validTo)
     {
         Id = id;
         Name = name;
@@ -21,5 +21,5 @@ public class ProductHistoryApiModel
     public decimal Price { get; set; }
     public string ProductId { get; set; }
     public DateTime ValidFrom { get; set; }
-    public DateTime ValidTo { get; set; }
+    public DateTime? ValidTo { get; set; }
 }
