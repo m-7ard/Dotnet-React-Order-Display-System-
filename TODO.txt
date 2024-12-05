@@ -1,5 +1,2 @@
-Make contracts for filters in repos.
-Don't fetch in api service.
 Look into implementing 404 for frotend as side effect in loader(?).
-check how we're saving the aggregates
-fix redundancies through code
+possibly manually insert a UTC date instead of using the sql generated one

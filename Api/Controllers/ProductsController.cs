@@ -76,13 +76,12 @@ public class ProductsController : ControllerBase
             return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
         }
         
-        var response = new CreateProductResponseDTO(product: ApiModelMapper.ProductToApiModel(value.Product));
-        return StatusCode(StatusCodes.Status201Created, response);
+        return StatusCode(StatusCodes.Status201Created, new CreateProductResponseDTO(id: value.Id.ToString()));
     }
 
     [HttpGet("list")]
     public async Task<ActionResult<ListProductsResponseDTO>> List(
-        [FromQuery] string? id, 
+        [FromQuery] Guid? id, 
         [FromQuery] string? name, 
         [FromQuery] decimal? minPrice, 
         [FromQuery] decimal? maxPrice, 
@@ -91,37 +90,46 @@ public class ProductsController : ControllerBase
         [FromQuery] DateTime? createdAfter,
         [FromQuery] string? orderBy)
     {
-        bool validId = Guid.TryParse(id, out var parsedId);
+        var parameters = new ListProductsRequestDTO(
+            id: id,
+            name: name,
+            minPrice: minPrice,
+            maxPrice: maxPrice,
+            description: description,
+            createdBefore: createdBefore,
+            createdAfter: createdAfter,
+            orderBy: orderBy
+        );
 
-        if (name is not null && name.Length == 0)
+        if (parameters.Name is not null && parameters.Name.Length == 0)
         {
-            name = null;
+            parameters.Name = null;
         }
 
-        if (minPrice is not null && minPrice < 0)
+        if (parameters.MinPrice is not null && parameters.MinPrice < 0)
         {
-            minPrice = null;
+            parameters.MinPrice = null;
         }
 
-        if (maxPrice is not null && minPrice is not null && minPrice > maxPrice)
+        if (parameters.MaxPrice is not null && parameters.MinPrice is not null && parameters.MinPrice > parameters.MaxPrice)
         {
-            minPrice = null;
-            maxPrice = null;
+            parameters.MinPrice = null;
+            parameters.MaxPrice = null;
         }
 
-        if (description is not null && description.Length == 0)
+        if (parameters.Description is not null && parameters.Description.Length == 0)
         {
-            description = null;
+            parameters.Description = null;
         }
 
-        if (createdBefore is not null && createdAfter is not null && createdBefore > createdAfter)
+        if (parameters.CreatedBefore is not null && parameters.CreatedAfter is not null && parameters.CreatedBefore > parameters.CreatedAfter)
         {
-            createdBefore = null;
-            createdAfter = null;
+            parameters.CreatedBefore = null;
+            parameters.CreatedAfter = null;
         }
 
         var query = new ListProductsQuery(
-            id: validId ? parsedId : null,
+            id: id,
             name: name,
             minPrice: minPrice,
             maxPrice: maxPrice,
@@ -142,15 +150,9 @@ public class ProductsController : ControllerBase
     }
     
     [HttpGet("{id}")]
-    public async Task<ActionResult<ReadProductResponseDTO>> Read(string id)
+    public async Task<ActionResult<ReadProductResponseDTO>> Read(Guid id)
     {
-        bool validId = Guid.TryParse(id, out var parsedId);
-        if (!validId)
-        {
-            return NotFound();
-        }
-
-        var query = new ReadProductQuery(id: parsedId);
+        var query = new ReadProductQuery(id: id);
         var result = await _mediator.Send(query);
 
         if (result.TryPickT1(out var errors, out var value))
@@ -165,14 +167,8 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("{id}/update")]
-    public async Task<ActionResult<UpdateProductResponseDTO>> Update(string id, UpdateProductRequestDTO request)
+    public async Task<ActionResult<UpdateProductResponseDTO>> Update(Guid id, UpdateProductRequestDTO request)
     {
-        bool validId = Guid.TryParse(id, out var parsedId);
-        if (!validId)
-        {
-            return NotFound();
-        }
-
         var validation = _updateProductValidator.Validate(request);
         var validationErrors = new List<ApiError>();
         if (!validation.IsValid)
@@ -197,7 +193,7 @@ public class ProductsController : ControllerBase
         }
 
         var query = new UpdateProductCommand(
-            id: parsedId,
+            id: id,
             name: request.Name,
             price: request.Price,
             description: request.Description,
@@ -219,20 +215,13 @@ public class ProductsController : ControllerBase
             return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors)); 
         }
 
-        var response = new UpdateProductResponseDTO(product: ApiModelMapper.ProductToApiModel(value.Product));
-        return Ok(response);
+        return Ok(new UpdateProductResponseDTO(id: value.Id.ToString()));
     }
 
     [HttpPost("{id}/delete")]
-    public async Task<ActionResult<UpdateProductResponseDTO>> Delete(string id, UpdateProductRequestDTO request)
+    public async Task<ActionResult<DeleteProductResponseDTO>> Delete(Guid id)
     {
-        bool validId = Guid.TryParse(id, out var parsedId);
-        if (!validId)
-        {
-            return NotFound();
-        }
-
-        var query = new DeleteProductCommand(id: parsedId);
+        var query = new DeleteProductCommand(id: id);
         var result = await _mediator.Send(query);
 
         if (result.TryPickT1(out var errors, out var value))

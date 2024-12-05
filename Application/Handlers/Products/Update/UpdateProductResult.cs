@@ -4,10 +4,10 @@ namespace Application.Handlers.Products.Update;
 
 public class UpdateProductResult
 {
-    public UpdateProductResult(Product product)
+    public UpdateProductResult(Guid id)
     {
-        Product = product;
+        Id = id;
     }
 
-    public Product Product { get; set; }
+    public Guid Id { get; set; }
 }

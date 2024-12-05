@@ -43,8 +43,7 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
 
         var content = await response.Content.ReadFromJsonAsync<UpdateProductResponseDTO>();
         Assert.NotNull(content);
-        Assert.NotNull(content.Product);
-        Assert.StrictEqual(1, content.Product.Images.Count);
+        Assert.NotNull(content.Id);
 
         var db = _factory.CreateDbContext();
         var productHistories = await db.ProductHistory.ToListAsync();
@@ -102,8 +101,8 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         // Check Image model was deleted
-        // var db = _factory.CreateDbContext();
-        // var productImage = await db.ProductImage.SingleOrDefaultAsync(d => d.Id == _validImage.Id);
-        // Assert.Null(productImage);
+        var db = _factory.CreateDbContext();
+        var productImage = await db.ProductImage.ToListAsync();
+        Assert.True(productImage.Count == 0);
     }
 }

@@ -45,7 +45,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
                 continue;
             }
 
-            if (product.TryAddDraftImage(draftImage).TryPickT1(out var domainErrors, out var _))
+            if (product.TryAddImageFromDraftImage(draftImage).TryPickT1(out var domainErrors, out var _))
             {
                 errors.AddRange(ApplicationErrorFactory.DomainErrorsToApplicationErrors(domainErrors));
             }
@@ -72,6 +72,6 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
         // Create Product History
         await _productHistoryRepository.CreateAsync(ProductHistoryFactory.BuildNewProductHistoryFromProduct(outputProduct));
 
-        return new CreateProductResult(product: outputProduct);
+        return new CreateProductResult(id: product.Id);
     }
 }

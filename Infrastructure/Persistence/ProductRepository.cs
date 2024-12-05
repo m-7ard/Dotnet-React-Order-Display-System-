@@ -118,6 +118,7 @@ public class ProductRepository : IProductRepository
         }
 
         await _dbContext.SaveChangesAsync();
+        product.ClearEvents();
     }
 
     public async Task DeleteByIdAsync(Guid id)

@@ -34,19 +34,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
 
         foreach (var (uid, orderItem) in request.OrderItemData)
         {
-            var validId = Guid.TryParse(orderItem.ProductId, out var parsedId);
-            if (!validId)
-            {
-                errors.AddRange(
-                    ApplicationErrorFactory.CreateSingleListError(
-                        message: $"Invalid Product Id.",
-                        path: ["orderItems", uid, "id"],
-                        code: ApplicationErrorCodes.ModelDoesNotExist
-                    )
-                );
-            }
-
-            var product = await _productRepository.GetByIdAsync(parsedId);
+            var product = await _productRepository.GetByIdAsync(orderItem.ProductId);
             if (product is null)
             {
                 errors.AddRange(

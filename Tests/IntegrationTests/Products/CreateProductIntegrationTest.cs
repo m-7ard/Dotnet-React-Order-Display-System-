@@ -38,12 +38,13 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
 
         var content = await response.Content.ReadFromJsonAsync<CreateProductResponseDTO>();
         Assert.NotNull(content);
-        Assert.NotNull(content.Product);
+        Assert.NotNull(content.Id);
 
+        // Check that Product History was created
         var db = _factory.CreateDbContext();
         var productHistories = await db.ProductHistory.ToListAsync();
         Assert.StrictEqual(1, productHistories.Count);
-        Assert.Equal(content.Product.Id, productHistories[0].ProductId.ToString());
+        Assert.Equal(content.Id, productHistories[0].ProductId.ToString());
     }
 
     [Fact]
@@ -63,8 +64,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
 
         var responseContent = await response.Content.ReadFromJsonAsync<CreateProductResponseDTO>();
         Assert.NotNull(responseContent);
-        Assert.NotNull(responseContent.Product);
-        Assert.NotEmpty(responseContent.Product.Images);
+        Assert.NotNull(responseContent.Id);
     }
 
     [Fact]
