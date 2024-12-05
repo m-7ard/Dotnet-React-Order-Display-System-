@@ -39,8 +39,8 @@ public class DeleteProductIntegrationTest : ProductsIntegrationTest
         var product = await db.Product.SingleOrDefaultAsync(dbProduct => dbProduct.Id == _product001.Id);
         Assert.Null(product);
 
-        // var image = await db.ProductImage.SingleOrDefaultAsync(dbImage => dbImage.Id == _validImage.Id);
-        // Assert.Null(image);
+        var image = await db.ProductImage.SingleOrDefaultAsync(dbImage => dbImage.Id == _product001.Images[0].Id);
+        Assert.Null(image);
 
         var updatedProductHistory = await db.ProductHistory.SingleAsync(d => d.Id == _product001History.Id);
         Assert.True(updatedProductHistory.ValidTo > updatedProductHistory.ValidFrom);     

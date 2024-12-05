@@ -122,9 +122,6 @@ public class UpdateProductHandlerUnitTest
         // ASSERT
         Assert.True(result.IsT0);
 
-        // deleted ProductImage should not be returned
-        Assert.Null(result.AsT0.Product.Images.Find(image => image.FileName == deleteProductImage.FileName));
-        
         // new ProductImage should have draft deleted
         _mockDraftImageRepository.Verify(repo => repo.DeleteByFileNameAsync(newProductImage.FileName), Times.Once);
         

@@ -57,8 +57,8 @@ public class CreateOrderHandlerUnitTest
         var command = new CreateOrderCommand(
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id.ToString(), quantity: 1) },
-                { "UID-2", new CreateOrderCommand.OrderItem(productId: _mockProductHistory002.Id.ToString(), quantity: 2) }
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id, quantity: 1) },
+                { "UID-2", new CreateOrderCommand.OrderItem(productId: _mockProductHistory002.Id, quantity: 2) }
             }
         );
 
@@ -88,7 +88,7 @@ public class CreateOrderHandlerUnitTest
         var command = new CreateOrderCommand(
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id.ToString(), quantity: 1) },
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id, quantity: 1) },
             }
         );
 
@@ -106,7 +106,7 @@ public class CreateOrderHandlerUnitTest
         var command = new CreateOrderCommand(
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id.ToString(), quantity: 1) },
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id, quantity: 1) },
             }
         );
 

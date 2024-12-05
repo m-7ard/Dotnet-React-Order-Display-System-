@@ -95,26 +95,26 @@ public class OrdersController : ControllerBase
 
     [HttpGet("list")]
     public async Task<ActionResult<ListOrdersResponseDTO>> List(
-        [FromQuery] string? id,
+        [FromQuery] Guid? id,
         [FromQuery] decimal? minTotal,
         [FromQuery] decimal? maxTotal,
         [FromQuery] string? status,
         [FromQuery] DateTime? createdBefore,
         [FromQuery] DateTime? createdAfter,
-        [FromQuery] string? productId,
-        [FromQuery] string? productHistoryId,
+        [FromQuery] Guid? productId,
+        [FromQuery] Guid? productHistoryId,
         [FromQuery] string? orderBy)
     {
 
         var parameters = new ListOrdersRequestDTO(
-            id: Guid.TryParse(id, out var parsedId) ? parsedId : null,
+            id: id,
             minTotal: minTotal,
             maxTotal: maxTotal,
             status: status,
             createdBefore: createdBefore,
             createdAfter: createdAfter,
-            productId: Guid.TryParse(productId, out var parsedProductId) ? parsedProductId : null,
-            productHistoryId: Guid.TryParse(productHistoryId, out var parsedProductHistoryId) ? parsedProductHistoryId : null,
+            productId: productId,
+            productHistoryId: productHistoryId,
             orderBy: orderBy
         );
 

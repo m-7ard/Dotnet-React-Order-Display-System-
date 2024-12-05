@@ -163,8 +163,7 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
     [Fact]
     public async Task ListAllProduct_OrderByOldest_Success()
     {
-        var request = new ListProductsRequestDTO
-        (
+        var request = new ListProductsRequestDTO(
             id: null,
             name: null,
             minPrice: null,
@@ -188,5 +187,31 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
         Assert.Equal(_price1_NameDescProduct1.Id.ToString(), content.Products[0].Id);
         Assert.Equal(_price2_NameDescProduct2.Id.ToString(), content.Products[1].Id);
         Assert.Equal(_price3_NameDescProduct3.Id.ToString(), content.Products[2].Id);
+    }
+
+    [Fact]
+    public async Task ListAllProduct_ById_Success()
+    {
+        var request = new ListProductsRequestDTO
+        (
+            id: _price1_NameDescProduct1.Id,
+            name: null,
+            minPrice: null,
+            maxPrice: null,
+            description: null,
+            createdBefore: null,
+            createdAfter: null,
+            orderBy: null
+        );
+        var queryString = ObjToQueryString.Convert(request);
+        var response = await _client.GetAsync($"{_route}/list?{queryString}");
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var content = await response.Content.ReadFromJsonAsync<ListProductsResponseDTO>();
+        Assert.NotNull(content);
+        Assert.NotNull(content.Products);
+        Assert.StrictEqual(1, content.Products.Count);
     }
 }

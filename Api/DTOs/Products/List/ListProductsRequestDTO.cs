@@ -9,7 +9,7 @@ public class ListProductsRequestDTO
         string? description,
         DateTime? createdBefore,
         DateTime? createdAfter,
-        int? id,
+        Guid? id,
         string? orderBy)
     {
         Name = name;
@@ -22,7 +22,7 @@ public class ListProductsRequestDTO
         OrderBy = orderBy;
     }
 
-    public int? Id { get; set; }
+    public Guid? Id { get; set; }
     public string? Name { get; set; }
     public decimal? MinPrice { get; set; }
     public decimal? MaxPrice { get; set; }

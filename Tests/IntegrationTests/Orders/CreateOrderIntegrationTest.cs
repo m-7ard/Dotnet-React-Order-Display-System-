@@ -29,11 +29,11 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     {
         var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
         orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
-            productId: _productOne.Id.ToString(),
+            productId: _productOne.Id,
             quantity: 1
         );
         orderItemData["product_2"] = new CreateOrderRequestDTO.OrderItem(
-            productId: _productTwo.Id.ToString(),
+            productId: _productTwo.Id,
             quantity: 1
         );
 
@@ -84,7 +84,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     {
         var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
         orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
-            productId: Guid.Empty.ToString(),
+            productId: Guid.Empty,
             quantity: 1
         );
 
@@ -103,7 +103,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     {
         var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
         orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
-            productId: Guid.NewGuid().ToString(),
+            productId: Guid.NewGuid(),
             quantity: 0
         );
 

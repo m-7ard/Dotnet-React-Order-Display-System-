@@ -104,6 +104,6 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
         var inputProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(product: product);
         await _productHistoryRepository.CreateAsync(inputProductHistory);
 
-        return new UpdateProductResult(product: product);
+        return new UpdateProductResult(id: product.Id);
     }
 }

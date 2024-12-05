@@ -1,13 +1,11 @@
-using Domain.Models;
-
 namespace Application.Handlers.Products.Create;
 
 public class CreateProductResult
 {
-    public CreateProductResult(Product product)
+    public CreateProductResult(Guid id)
     {
-        Product = product;
+        Id = id;
     }
 
-    public Product Product { get; set; }
+    public Guid Id { get; set; }
 }

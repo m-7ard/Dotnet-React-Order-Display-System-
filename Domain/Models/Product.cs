@@ -36,7 +36,7 @@ public class Product
     }
     public const int MAX_IMAGE_LENGTH = 8;
 
-    public OneOf<bool, List<DomainError>> TryAddDraftImage(DraftImage draftImage)
+    public OneOf<bool, List<DomainError>> TryAddImageFromDraftImage(DraftImage draftImage)
     {
         var productImage = CreateProductImageFromDraft(draftImage);
         if (Images.Count >= MAX_IMAGE_LENGTH)
