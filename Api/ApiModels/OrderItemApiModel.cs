@@ -7,7 +7,7 @@ public class OrderItemApiModel
         int quantity, 
         string status, 
         DateTime dateCreated, 
-        DateTime dateFinished, 
+        DateTime? dateFinished, 
         string orderId, 
         ProductHistoryApiModel productHistory)
     {
@@ -24,7 +24,7 @@ public class OrderItemApiModel
     public int Quantity { get; set; }
     public string Status { get; set; }
     public DateTime DateCreated { get; private set; }
-    public DateTime DateFinished { get; set; }
+    public DateTime? DateFinished { get; set; }
     public string OrderId { get; set; }
     public ProductHistoryApiModel ProductHistory { get; set; }
 }

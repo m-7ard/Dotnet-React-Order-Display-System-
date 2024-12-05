@@ -7,7 +7,7 @@ public class OrderDbEntity
         Finished
     }
 
-    public OrderDbEntity(Guid id, decimal total, DateTime dateCreated, DateTime dateFinished, Statuses status, int serialNumber)
+    public OrderDbEntity(Guid id, decimal total, DateTime dateCreated, DateTime? dateFinished, Statuses status, int serialNumber)
     {
         Id = id;
         Total = total;
@@ -22,7 +22,7 @@ public class OrderDbEntity
     public decimal Total { get; set; }
     public Statuses Status { get; set; }
     public DateTime DateCreated { get; private set; }
-    public DateTime DateFinished { get; set; }
+    public DateTime? DateFinished { get; set; }
 
     // Order Item RFK
     public List<OrderItemDbEntity> OrderItems { get; set; } = [];

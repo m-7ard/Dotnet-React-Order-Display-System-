@@ -9,7 +9,7 @@ public class ProductHistory
         decimal price,
         Guid productId,
         DateTime validFrom,
-        DateTime validTo,
+        DateTime? validTo,
         string description)
     {
         Id = id;
@@ -29,7 +29,7 @@ public class ProductHistory
     public decimal Price { get; set; }
     public Guid ProductId { get; set; }
     public DateTime ValidFrom { get; set; }
-    public DateTime ValidTo { get; set; }
+    public DateTime? ValidTo { get; set; }
 
     public void Invalidate()
     {

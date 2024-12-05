@@ -11,7 +11,7 @@ public class ProductHistoryFactory
         decimal price,
         Guid productId,
         DateTime validFrom,
-        DateTime validTo,
+        DateTime? validTo,
         string description)
     {
         return new ProductHistory(
@@ -41,7 +41,7 @@ public class ProductHistoryFactory
             price: price,
             productId: productId,
             validFrom: new DateTime(),
-            validTo: new DateTime(), 
+            validTo: null, 
             description: description
         );
     }

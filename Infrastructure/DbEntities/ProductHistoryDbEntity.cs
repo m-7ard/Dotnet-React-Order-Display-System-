@@ -10,7 +10,7 @@ public class ProductHistoryDbEntity
         decimal price,
         Guid? productId,
         DateTime validFrom,
-        DateTime validTo,
+        DateTime? validTo,
         Guid originalProductId)
     {
         Id = id;
@@ -37,5 +37,5 @@ public class ProductHistoryDbEntity
     public Guid OriginalProductId { get; set; }
     
     public DateTime ValidFrom { get; set; }
-    public DateTime ValidTo { get; set; }
+    public DateTime? ValidTo { get; set; }
 }

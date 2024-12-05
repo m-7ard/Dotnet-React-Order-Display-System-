@@ -13,7 +13,7 @@ public class OrderItemDbEntity
         int quantity,
         Statuses status,
         DateTime dateCreated,
-        DateTime dateFinished,
+        DateTime? dateFinished,
         Guid orderId,
         Guid productHistoryId,
         Guid productId,
@@ -35,7 +35,7 @@ public class OrderItemDbEntity
     public int Quantity { get; set; }
     public Statuses Status { get; set; }
     public DateTime DateCreated { get; private set; }
-    public DateTime DateFinished { get; set; }
+    public DateTime? DateFinished { get; set; }
     public Guid ProductId { get; set; }
 
     // Order FK
