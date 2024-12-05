@@ -15,8 +15,8 @@ public class OrderItemDbEntity
         DateTime dateCreated,
         DateTime dateFinished,
         Guid orderId,
-        int productHistoryId,
-        int productId,
+        Guid productHistoryId,
+        Guid productId,
         int serialNumber)
     {
         Id = id;
@@ -36,13 +36,13 @@ public class OrderItemDbEntity
     public Statuses Status { get; set; }
     public DateTime DateCreated { get; private set; }
     public DateTime DateFinished { get; set; }
-    public int ProductId { get; set; }
+    public Guid ProductId { get; set; }
 
     // Order FK
     public Guid OrderId { get; set; }
     public OrderDbEntity Order { get; private set; } = null!;
 
     // Product History FK
-    public int ProductHistoryId { get; set; }
+    public Guid ProductHistoryId { get; set; }
     public ProductHistoryDbEntity ProductHistory { get; set; } = null!;
 }

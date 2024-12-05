@@ -1,9 +1,8 @@
 using Api.ApiModels;
-using Api.Errors;
 using Api.Interfaces;
+using Api.Mappers;
 using Application.Errors;
 using Application.Handlers.ProductHistories.Read;
-using Application.Interfaces.Persistence;
 using Domain.Models;
 using MediatR;
 using OneOf;
@@ -39,7 +38,7 @@ public class ApiModelService : IApiModelService
                 dateCreated: orderItem.DateCreated,
                 dateFinished: orderItem.DateFinished,
                 orderId: order.Id.ToString(),
-                productHistory: CreateProductHistoryApiModel(value.ProductHistory)
+                productHistory: ApiModelMapper.ProductHistoryToApiModel(value.ProductHistory)
             );
 
             orderItems.Add(orderItemApiModel);
@@ -55,37 +54,5 @@ public class ApiModelService : IApiModelService
         );
 
         return orderApiModel;
-    }
-
-    public ProductApiModel CreateProductApiModel(Product product)
-    {
-        var productApiModel = new ProductApiModel(
-            id: product.Id,
-            name: product.Name,
-            price: product.Price,
-            description: product.Description,
-            dateCreated: product.DateCreated,
-            images: product.Images.Select(d => new ImageApiModel(
-                fileName: d.FileName,
-                originalFileName: d.OriginalFileName,
-                url: d.Url
-            )).ToList()
-        );
-
-        return productApiModel;
-    }
-
-    public ProductHistoryApiModel CreateProductHistoryApiModel(ProductHistory productHistory)
-    {
-        return new ProductHistoryApiModel(
-            id: productHistory.Id,
-            name: productHistory.Name,
-            images: productHistory.Images,
-            description: productHistory.Description,
-            price: productHistory.Price,
-            productId: productHistory.ProductId,
-            validFrom: productHistory.ValidFrom,
-            validTo: productHistory.ValidTo
-        );
     }
 }

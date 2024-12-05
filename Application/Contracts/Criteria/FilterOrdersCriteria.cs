@@ -10,9 +10,9 @@ public class FilterOrdersCriteria : IEquatable<FilterOrdersCriteria>
         OrderStatus? status,
         DateTime? createdBefore,
         DateTime? createdAfter,
-        int? productId,
+        Guid? productId,
         Guid? id,
-        int? productHistoryId,
+        Guid? productHistoryId,
         Tuple<string, bool>? orderBy)
     {
         MinTotal = minTotal;
@@ -31,9 +31,9 @@ public class FilterOrdersCriteria : IEquatable<FilterOrdersCriteria>
     public OrderStatus? Status { get; set; }
     public DateTime? CreatedBefore { get; set; }
     public DateTime? CreatedAfter { get; set; }
-    public int? ProductId { get; set; }
+    public Guid? ProductId { get; set; }
     public Guid? Id { get; set; }
-    public int? ProductHistoryId { get; set; }
+    public Guid? ProductHistoryId { get; set; }
     public Tuple<string, bool>? OrderBy { get; set; }
 
     // For Unit Testing

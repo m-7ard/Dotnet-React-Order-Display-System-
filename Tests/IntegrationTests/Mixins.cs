@@ -27,26 +27,35 @@ public class Mixins
 
     public async Task<Product> CreateProduct(int number, List<DraftImage> images)
     {
-        var inputProduct = ProductFactory.BuildNewProduct(
+        var productId = Guid.NewGuid();
+        var product = ProductFactory.BuildNewProduct(
+            id: productId,
             name: $"Product #{number}",
             price: number,
             description: $"Product #{number} Description",
-            images: images.Select(ProductImageFactory.BuildNewProductImageFromDraftImage).ToList()
+            images: images.Select((image) => ProductImageFactory.BuildNewProductImageFromDraftImage(
+                source: image,
+                id: Guid.NewGuid(),
+                productId: productId
+            )).ToList()
         );
 
-        var outputProduct = await _productRepository.CreateAsync(inputProduct);
+        await _productRepository.CreateAsync(product);
+        var upToDateProduct = await _productRepository.GetByIdAsync(product.Id);
+
         foreach (var draftImage in images)
         {
             await _draftImageRepository.DeleteByFileNameAsync(draftImage.FileName);
         }
 
-        return outputProduct!;
+        return upToDateProduct!;
     }
 
     public async Task<Product> CreateProductAndProductHistory(int number, List<DraftImage> images)
     {
         var product = await CreateProduct(number: number, images: images);
         var inputProductHistory = ProductHistoryFactory.BuildNewProductHistory(
+            id: Guid.NewGuid(),
             name: product.Name,
             images: product.Images.Select(image => image.FileName).ToList(),
             price: product.Price,
@@ -60,7 +69,8 @@ public class Mixins
 
     public async Task<DraftImage> CreateDraftImage(TestFileRoute fileRoute, string destinationFileName)
     {
-        // Copy file from -> to as destinationFileName
+        // Copy a file from [fileRoute] that is an existing file's path
+        // To a destination, where it includes the fileName in the path at the end
         File.Copy(fileRoute.Value, Path.Join(DirectoryService.GetMediaDirectory(), destinationFileName), overwrite: true);
         
         var menuItemImage = await _draftImageRepository.CreateAsync(

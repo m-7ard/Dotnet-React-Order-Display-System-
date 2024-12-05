@@ -1,11 +1,14 @@
 using Domain.DomainEvents;
 using Domain.DomainEvents.Product;
+using Domain.DomainFactories;
+using Domain.Errors;
+using OneOf;
 
 namespace Domain.Models;
 public class Product
 {
     public Product(
-        int id, 
+        Guid id, 
         string name, 
         decimal price, 
         string description, 
@@ -20,7 +23,7 @@ public class Product
         Images = images;
     }
 
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
     public string Name { get; set; }
     public decimal Price { get; set; }
     public string Description { get; set; }
@@ -31,9 +34,36 @@ public class Product
     {
         DomainEvents = [];
     }
+    public const int MAX_IMAGE_LENGTH = 8;
 
-    public void Update(string name, decimal price, string description, List<ProductImage> images)
+    public OneOf<bool, List<DomainError>> TryAddDraftImage(DraftImage draftImage)
     {
+        var productImage = CreateProductImageFromDraft(draftImage);
+        if (Images.Count >= MAX_IMAGE_LENGTH)
+        {
+            return DomainErrorFactory.CreateSingleListError(
+                message: "Product cannot have more than 8 images.",
+                path: ["images"],
+                code: "MAX_PRODUCT_IMAGE_LENGTH_EXCEEDED"
+            );
+        }
+
+        Images.Add(productImage);
+        return true;
+    }
+
+
+    public OneOf<bool, List<DomainError>> TryUpdate(string name, decimal price, string description, List<ProductImage> images)
+    {
+        if (images.Count > MAX_IMAGE_LENGTH)
+        {
+            return DomainErrorFactory.CreateSingleListError(
+                message: "Product cannot have more than 8 images.",
+                path: ["images"],
+                code: "MAX_PRODUCT_IMAGE_LENGTH_EXCEEDED"
+            );
+        }
+
         Name = name;
         Price = price;
         Description = description;
@@ -68,5 +98,17 @@ public class Product
         }
 
         Images = images;
+        return true;
+    }
+
+    public ProductImage CreateProductImageFromDraft(DraftImage draftImage)
+    {
+        var productImage = ProductImageFactory.BuildNewProductImageFromDraftImage(
+            source: draftImage,
+            id: Guid.NewGuid(),
+            productId: Id
+        );
+
+        return productImage;
     }
 }

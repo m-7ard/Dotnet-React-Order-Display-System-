@@ -26,16 +26,12 @@ public class DeleteProductHandlerUnitTest
     public async Task DeleteProduct_ValidProductAndValidProductHistory_Success()
     {
         // ARRANGE
-        var mockProduct = ProductFactory.BuildExistingProduct(
-            id: 100,
-            name: "Product 1",
-            price: 1,
-            description: "description",
-            images: [],
-            dateCreated: new DateTime()
+        var mockProduct = Mixins.CreateProduct(
+            seed: 1,
+            images: []
         );
 
-        var mockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(mockProduct);
+        var mockProductHistory = Mixins.CreateProductHistory(1);
 
         var command = new DeleteProductCommand(
             id: mockProduct.Id
@@ -64,22 +60,14 @@ public class DeleteProductHandlerUnitTest
     public async Task DeleteProduct_ProductDoesNotExist_Failure()
     {
         // ARRANGE
-        var mockProduct = ProductFactory.BuildExistingProduct(
-            id: 100,
-            name: "Product 1",
-            price: 1,
-            description: "description",
-            images: [],
-            dateCreated: new DateTime()
+        var mockProduct = Mixins.CreateProduct(
+            seed: 1,
+            images: []
         );
 
         var command = new DeleteProductCommand(
             id: mockProduct.Id
         );
-
-        // Product Exists
-        _mockProductRepository
-            .Setup(repo => repo.GetByIdAsync(mockProduct.Id));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -93,13 +81,9 @@ public class DeleteProductHandlerUnitTest
     public async Task DeleteProduct_ProductHistoryDoesNotExist_Failure()
     {
         // ARRANGE
-        var mockProduct = ProductFactory.BuildExistingProduct(
-            id: 100,
-            name: "Product 1",
-            price: 1,
-            description: "description",
-            images: [],
-            dateCreated: new DateTime()
+        var mockProduct = Mixins.CreateProduct(
+            seed: 1,
+            images: []
         );
 
         var command = new DeleteProductCommand(
@@ -107,7 +91,6 @@ public class DeleteProductHandlerUnitTest
         );
 
         _mockProductRepository.Setup(repo => repo.GetByIdAsync(mockProduct.Id)).ReturnsAsync(mockProduct);
-        _mockProductHistoryRepository.Setup(repo => repo.GetLatestByProductIdAsync(mockProduct.Id));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);

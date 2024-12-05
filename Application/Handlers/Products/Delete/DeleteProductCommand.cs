@@ -6,10 +6,10 @@ namespace Application.Handlers.Products.Delete;
 
 public class DeleteProductCommand : IRequest<OneOf<DeleteProductResult, List<ApplicationError>>>
 {
-    public DeleteProductCommand(int id)
+    public DeleteProductCommand(Guid id)
     {
         Id = id;
     }
 
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 }

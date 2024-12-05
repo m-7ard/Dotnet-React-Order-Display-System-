@@ -3,7 +3,7 @@ namespace Api.ApiModels;
 public class ProductApiModel
 {
     public ProductApiModel(
-        int id,
+        string id,
         string name,
         decimal price,
         string description,
@@ -18,7 +18,7 @@ public class ProductApiModel
         Images = images;
     }
 
-    public int Id { get; private set; }
+    public string Id { get; private set; }
     public string Name { get; set; }
     public decimal Price { get; set; }
     public string Description { get; set; }

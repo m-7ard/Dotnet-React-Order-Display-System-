@@ -101,33 +101,22 @@ public class OrdersController : ControllerBase
         [FromQuery] string? status,
         [FromQuery] DateTime? createdBefore,
         [FromQuery] DateTime? createdAfter,
-        [FromQuery] int? productId,
-        [FromQuery] int? productHistoryId,
+        [FromQuery] string? productId,
+        [FromQuery] string? productHistoryId,
         [FromQuery] string? orderBy)
     {
-        bool validId = Guid.TryParse(id, out var parsedId);
 
         var parameters = new ListOrdersRequestDTO(
-            id: validId ? parsedId : null,
+            id: Guid.TryParse(id, out var parsedId) ? parsedId : null,
             minTotal: minTotal,
             maxTotal: maxTotal,
             status: status,
             createdBefore: createdBefore,
             createdAfter: createdAfter,
-            productId: productId,
-            productHistoryId: productHistoryId,
+            productId: Guid.TryParse(productId, out var parsedProductId) ? parsedProductId : null,
+            productHistoryId: Guid.TryParse(productHistoryId, out var parsedProductHistoryId) ? parsedProductHistoryId : null,
             orderBy: orderBy
         );
-
-        if (parameters.ProductId is not null && parameters.ProductId <= 0)
-        {
-            parameters.ProductId = null;
-        }
-
-        if (parameters.ProductHistoryId is not null && parameters.ProductHistoryId <= 0)
-        {
-            parameters.ProductHistoryId = null;
-        }
 
         if (parameters.MinTotal is not null && parameters.MinTotal < 0)
         {

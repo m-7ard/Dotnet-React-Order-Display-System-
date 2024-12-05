@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
+using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
-using Domain.DomainFactories;
 using Domain.Models;
 using Infrastructure.DbEntities;
 using Infrastructure.Mappers;
@@ -25,7 +25,7 @@ public class ProductRepository : IProductRepository
         return ProductMapper.FromDbEntityToDomain(productDbEntity);
     }
 
-    public async Task<Product?> GetByIdAsync(int id)
+    public async Task<Product?> GetByIdAsync(Guid id)
     {
         var productDbEntity = await _dbContext.Product
             .Include(d => d.Images)
@@ -33,64 +33,45 @@ public class ProductRepository : IProductRepository
         return productDbEntity is null ? null : ProductMapper.FromDbEntityToDomain(productDbEntity);
     }
 
-    public async Task<List<Product>> FindAllAsync(
-        int? id,
-        string? name,
-        decimal? minPrice,
-        decimal? maxPrice,
-        string? description,
-        DateTime? createdBefore,
-        DateTime? createdAfter,
-        Tuple<string, bool>? orderBy)
+    public async Task<List<Product>> FindAllAsync(FilterProductsCriteria criteria)
     {
         IQueryable<ProductDbEntity> query = _dbContext.Product.Include(d => d.Images);
-
-        if (id is not null)
+        if (criteria.Id is not null)
         {
-            query = query.Where(item => item.Id == id);
+            query = query.Where(item => item.Id == criteria.Id);
         }
 
-        if (!string.IsNullOrEmpty(name))
+        if (!string.IsNullOrEmpty(criteria.Name))
         {
-            query = query.Where(item => item.Name.Contains(name));
+            query = query.Where(item => item.Name.Contains(criteria.Name));
         }
 
-        if (!string.IsNullOrEmpty(description))
+        if (!string.IsNullOrEmpty(criteria.Description))
         {
-            query = query.Where(item => item.Description.Contains(description));
+            query = query.Where(item => item.Description.Contains(criteria.Description));
         }
 
-        if (minPrice.HasValue)
+        if (criteria.MinPrice.HasValue)
         {
-            query = query.Where(item => item.Price >= minPrice.Value);
+            query = query.Where(item => item.Price >= criteria.MinPrice.Value);
         }
 
-        if (maxPrice.HasValue)
+        if (criteria.MaxPrice.HasValue)
         {
-            query = query.Where(item => item.Price <= maxPrice.Value);
+            query = query.Where(item => item.Price <= criteria.MaxPrice.Value);
         }
 
-        if (createdAfter.HasValue)
+        if (criteria.CreatedAfter.HasValue)
         {
-            query = query.Where(item => item.DateCreated >= createdAfter);
+            query = query.Where(item => item.DateCreated >= criteria.CreatedAfter);
         }
 
-        if (createdBefore.HasValue)
+        if (criteria.CreatedBefore.HasValue)
         {
-            query = query.Where(item => item.DateCreated <= createdBefore);
+            query = query.Where(item => item.DateCreated <= criteria.CreatedBefore);
         }
 
-        if (minPrice.HasValue)
-        {
-            query = query.Where(item => item.Price >= minPrice.Value);
-        }
-
-        if (maxPrice.HasValue)
-        {
-            query = query.Where(item => item.Price <= maxPrice.Value);
-        }
-
-        if (orderBy is not null)
+        if (criteria.OrderBy is not null)
         {
             Dictionary<string, Expression<Func<ProductDbEntity, object>>> fieldMappings = new()
             {
@@ -98,12 +79,14 @@ public class ProductRepository : IProductRepository
                 { "DateCreated", p => p.DateCreated },
             };
 
-            if (fieldMappings.TryGetValue(orderBy.Item1, out var orderByExpression))
+            if (fieldMappings.TryGetValue(criteria.OrderBy.Item1, out var orderByExpression))
             {
-                query = orderBy.Item2 ? query.OrderBy(orderByExpression) : query.OrderByDescending(orderByExpression);
+                query = criteria.OrderBy.Item2 
+                    ? query.OrderBy(orderByExpression) 
+                    : query.OrderByDescending(orderByExpression);
             }
         }
-
+        
         var dbProducts = await query.ToListAsync();
         return dbProducts.Select(ProductMapper.FromDbEntityToDomain).ToList();
     }
@@ -133,7 +116,7 @@ public class ProductRepository : IProductRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task DeleteByIdAsync(int id)
+    public async Task DeleteByIdAsync(Guid id)
     {
         var entity = await _dbContext.Product
             .Include(d => d.Images)

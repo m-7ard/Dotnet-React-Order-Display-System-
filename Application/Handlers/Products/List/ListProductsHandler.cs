@@ -1,3 +1,4 @@
+using Application.Contracts.Criteria;
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using MediatR;
@@ -34,7 +35,7 @@ public class ListProductsHandler : IRequestHandler<ListProductsQuery, OneOf<List
             orderBy = new Tuple<string, bool>("Price", true);
         }
 
-        var products = await _productRepository.FindAllAsync(
+        var criteria = new FilterProductsCriteria(
             id: request.Id,
             name: request.Name,
             minPrice: request.MinPrice,
@@ -44,7 +45,7 @@ public class ListProductsHandler : IRequestHandler<ListProductsQuery, OneOf<List
             createdAfter: request.CreatedAfter,
             orderBy: orderBy
         );
-
+        var products = await _productRepository.FindAllAsync(criteria);
         var result = new ListProductsResult(products: products);
         return result;
     }

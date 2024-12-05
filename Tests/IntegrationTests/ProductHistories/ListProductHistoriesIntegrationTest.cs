@@ -155,9 +155,9 @@ public class ListProductHistoriesIntegrationTest : ProductHistoriesIntegrationTe
         Assert.NotNull(content);
         Assert.NotNull(content.ProductHistories);
 
-        Assert.Equal(_price1_NameDescProduct1.Id, content.ProductHistories[2].ProductId);
-        Assert.Equal(_price2_NameDescProduct2.Id, content.ProductHistories[1].ProductId);
-        Assert.Equal(_price3_NameDescProduct3.Id, content.ProductHistories[0].ProductId);
+        Assert.Equal(_price1_NameDescProduct1.Id.ToString(), content.ProductHistories[2].ProductId);
+        Assert.Equal(_price2_NameDescProduct2.Id.ToString(), content.ProductHistories[1].ProductId);
+        Assert.Equal(_price3_NameDescProduct3.Id.ToString(), content.ProductHistories[0].ProductId);
     }
 
     [Fact]
@@ -184,8 +184,8 @@ public class ListProductHistoriesIntegrationTest : ProductHistoriesIntegrationTe
         Assert.NotNull(content);
         Assert.NotNull(content.ProductHistories);
 
-        Assert.Equal(_price1_NameDescProduct1.Id, content.ProductHistories[0].ProductId);
-        Assert.Equal(_price2_NameDescProduct2.Id, content.ProductHistories[1].ProductId);
-        Assert.Equal(_price3_NameDescProduct3.Id, content.ProductHistories[2].ProductId);
+        Assert.Equal(_price1_NameDescProduct1.Id.ToString(), content.ProductHistories[0].ProductId);
+        Assert.Equal(_price2_NameDescProduct2.Id.ToString(), content.ProductHistories[1].ProductId);
+        Assert.Equal(_price3_NameDescProduct3.Id.ToString(), content.ProductHistories[2].ProductId);
     }
 }

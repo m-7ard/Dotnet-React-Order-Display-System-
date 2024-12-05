@@ -13,8 +13,7 @@ public class CreateOrder_OrderItemValidator : AbstractValidator<CreateOrderReque
             .WithMessage("Invalid data format");
 
         RuleFor(x => x.ProductId)
-            .NotEmpty()
-            .GreaterThan(0);
+            .NotEmpty();
 
         RuleFor(x => x.Quantity)
             .NotEmpty()

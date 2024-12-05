@@ -4,7 +4,7 @@ namespace Domain.DomainFactories;
 
 public class ProductImageFactory
 {
-    public static ProductImage BuildExistingProductImage(int id, string fileName, string originalFileName, string url, DateTime dateCreated, int? productId)
+    public static ProductImage BuildExistingProductImage(Guid id, string fileName, string originalFileName, string url, DateTime dateCreated, Guid? productId)
     {
         return new ProductImage(
             id: id,
@@ -16,21 +16,23 @@ public class ProductImageFactory
         );
     }
 
-    public static ProductImage BuildNewProductImage(string fileName,string originalFileName, string url)
+    public static ProductImage BuildNewProductImage(Guid id, string fileName,string originalFileName, string url, Guid productId)
     {
         return new ProductImage(
-            id: 0,
+            id: id,
             fileName: fileName,
             originalFileName: originalFileName,
             url: url,
             dateCreated: new DateTime(),
-            productId: 0
+            productId: productId
         );
     }
 
-    public static ProductImage BuildNewProductImageFromDraftImage(DraftImage source)
+    public static ProductImage BuildNewProductImageFromDraftImage(DraftImage source, Guid id, Guid productId)
     {
         return BuildNewProductImage(
+            id: id,
+            productId: productId,
             fileName: source.FileName,
             originalFileName: source.OriginalFileName,
             url: source.Url

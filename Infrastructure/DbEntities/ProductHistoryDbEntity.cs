@@ -3,15 +3,15 @@ namespace Infrastructure.DbEntities;
 public class ProductHistoryDbEntity
 {
     public ProductHistoryDbEntity(
-        int id,
+        Guid id,
         string name,
         List<string> images,
         string description,
         decimal price,
-        int? productId,
+        Guid? productId,
         DateTime validFrom,
         DateTime validTo,
-        int originalProductId)
+        Guid originalProductId)
     {
         Id = id;
         Name = name;
@@ -24,17 +24,17 @@ public class ProductHistoryDbEntity
         OriginalProductId = originalProductId;
     }
 
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
     public string Name { get; set; } = null!;
     public List<string> Images { get; set; } = [];
     public string Description { get; set; } = null!;
     public decimal Price { get; set; }
 
     // Product FK
-    public int? ProductId { get; set; }
+    public Guid? ProductId { get; set; }
     public ProductDbEntity? Product { get; set; }
 
-    public int OriginalProductId { get; set; }
+    public Guid OriginalProductId { get; set; }
     
     public DateTime ValidFrom { get; set; }
     public DateTime ValidTo { get; set; }

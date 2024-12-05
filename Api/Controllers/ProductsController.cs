@@ -5,6 +5,7 @@ using Api.DTOs.Products.Read;
 using Api.DTOs.Products.Update;
 using Api.Errors;
 using Api.Interfaces;
+using Api.Mappers;
 using Application.Errors;
 using Application.Handlers.Products.Create;
 using Application.Handlers.Products.Delete;
@@ -24,37 +25,34 @@ namespace Api.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly ISender _mediator;
-    private readonly IPlainErrorHandlingService _errorHandlingService;
     private readonly IValidator<CreateProductRequestDTO> _createProductValidator;
     private readonly IValidator<UpdateProductRequestDTO> _updateProductValidator;
-    private readonly IApiModelService _apiModelService;
 
-    public ProductsController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IValidator<CreateProductRequestDTO> createProductValidator, IValidator<UpdateProductRequestDTO> updateProductValidator, IApiModelService apiModelService)
+    public ProductsController(ISender mediator, IValidator<CreateProductRequestDTO> createProductValidator, IValidator<UpdateProductRequestDTO> updateProductValidator)
     {
         _mediator = mediator;
-        _errorHandlingService = errorHandlingService;
         _createProductValidator = createProductValidator;
         _updateProductValidator = updateProductValidator;
-        _apiModelService = apiModelService;
     }
 
     [HttpPost("create")]
     public async Task<ActionResult<CreateProductResponseDTO>> Create(CreateProductRequestDTO request)
     {
-        var validation = _createProductValidator.Validate(request);
         var validationErrors = new List<ApiError>();
+        var validation = _createProductValidator.Validate(request);
+        
         if (!validation.IsValid)
         {
-            var fluentErrors = _errorHandlingService.FluentToApiErrors(
-                validationFailures: validation.Errors,
-                path: []
+            validationErrors.AddRange(
+                ApiErrorFactory.FluentToApiErrors(
+                    validationFailures: validation.Errors,
+                    path: []
+                )
             );
-            validationErrors.AddRange(fluentErrors);
-
         }
 
         if (request.Images.Count > 8) {
-            validationErrors.Add(_errorHandlingService.CreateError(
+            validationErrors.Add(ApiErrorFactory.CreateError(
                 path: ["images", "_"],
                 message: "Only up to 8 images are allowed.",
                 fieldName: "images"
@@ -65,8 +63,7 @@ public class ProductsController : ControllerBase
             return BadRequest(validationErrors);
         }
 
-        var command = new CreateProductCommand
-        (
+        var command = new CreateProductCommand(
             name: request.Name,
             price: request.Price,
             description: request.Description,
@@ -76,16 +73,16 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
         }
         
-        var response = new CreateProductResponseDTO(product: _apiModelService.CreateProductApiModel(value.Product));
+        var response = new CreateProductResponseDTO(product: ApiModelMapper.ProductToApiModel(value.Product));
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
     [HttpGet("list")]
     public async Task<ActionResult<ListProductsResponseDTO>> List(
-        [FromQuery] int? id, 
+        [FromQuery] string? id, 
         [FromQuery] string? name, 
         [FromQuery] decimal? minPrice, 
         [FromQuery] decimal? maxPrice, 
@@ -94,10 +91,7 @@ public class ProductsController : ControllerBase
         [FromQuery] DateTime? createdAfter,
         [FromQuery] string? orderBy)
     {
-        if (id is not null && id <= 0)
-        {
-            id = null;
-        }
+        bool validId = Guid.TryParse(id, out var parsedId);
 
         if (name is not null && name.Length == 0)
         {
@@ -127,7 +121,7 @@ public class ProductsController : ControllerBase
         }
 
         var query = new ListProductsQuery(
-            id: id,
+            id: validId ? parsedId : null,
             name: name,
             minPrice: minPrice,
             maxPrice: maxPrice,
@@ -140,49 +134,58 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
         }
 
-        var response = new ListProductsResponseDTO(products: value.Products.Select(_apiModelService.CreateProductApiModel).ToList());
+        var response = new ListProductsResponseDTO(products: value.Products.Select(ApiModelMapper.ProductToApiModel).ToList());
         return Ok(response);
     }
     
     [HttpGet("{id}")]
-    public async Task<ActionResult<ReadProductResponseDTO>> Read(int id)
+    public async Task<ActionResult<ReadProductResponseDTO>> Read(string id)
     {
-        var query = new ReadProductQuery(
-            id: id
-        );
+        bool validId = Guid.TryParse(id, out var parsedId);
+        if (!validId)
+        {
+            return NotFound();
+        }
+
+        var query = new ReadProductQuery(id: parsedId);
         var result = await _mediator.Send(query);
 
         if (result.TryPickT1(out var errors, out var value))
         {
             return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
-                ? NotFound(_errorHandlingService.TranslateServiceErrors(errors))
-                : BadRequest(_errorHandlingService.TranslateServiceErrors(errors));        
+                ? NotFound(ApiErrorFactory.TranslateApplicationErrors(errors))
+                : BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));        
         }
 
-        var response = new ReadProductResponseDTO(product: _apiModelService.CreateProductApiModel(value.Product));
+        var response = new ReadProductResponseDTO(product: ApiModelMapper.ProductToApiModel(value.Product));
         return Ok(response);
     }
 
     [HttpPut("{id}/update")]
-    public async Task<ActionResult<UpdateProductResponseDTO>> Update(int id, UpdateProductRequestDTO request)
+    public async Task<ActionResult<UpdateProductResponseDTO>> Update(string id, UpdateProductRequestDTO request)
     {
+        bool validId = Guid.TryParse(id, out var parsedId);
+        if (!validId)
+        {
+            return NotFound();
+        }
+
         var validation = _updateProductValidator.Validate(request);
         var validationErrors = new List<ApiError>();
         if (!validation.IsValid)
         {
-            var fluentErrors = _errorHandlingService.FluentToApiErrors(
+            validationErrors.AddRange(ApiErrorFactory.FluentToApiErrors(
                 validationFailures: validation.Errors,
                 path: []
-            );
-            validationErrors.AddRange(fluentErrors);
+            ));
 
         }
 
         if (request.Images.Count > 8) {
-            validationErrors.Add(_errorHandlingService.CreateError(
+            validationErrors.Add(ApiErrorFactory.CreateError(
                 path: ["images", "_"],
                 message: "Only up to 8 images are allowed.",
                 fieldName: "images"
@@ -194,7 +197,7 @@ public class ProductsController : ControllerBase
         }
 
         var query = new UpdateProductCommand(
-            id: id,
+            id: parsedId,
             name: request.Name,
             price: request.Price,
             description: request.Description,
@@ -206,40 +209,44 @@ public class ProductsController : ControllerBase
         {
             if (errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist))
             {
-                return NotFound(_errorHandlingService.TranslateServiceErrors(errors));
+                return NotFound(ApiErrorFactory.TranslateApplicationErrors(errors));
             }
             else if (errors.Any(err => err.Code is ApplicationErrorCodes.IntegrityError))
             {
-                return Conflict(_errorHandlingService.TranslateServiceErrors(errors));
+                return Conflict(ApiErrorFactory.TranslateApplicationErrors(errors));
             }
 
-            return BadRequest(_errorHandlingService.TranslateServiceErrors(errors)); 
+            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors)); 
         }
 
-        var response = new UpdateProductResponseDTO(product: _apiModelService.CreateProductApiModel(value.Product));
+        var response = new UpdateProductResponseDTO(product: ApiModelMapper.ProductToApiModel(value.Product));
         return Ok(response);
     }
 
     [HttpPost("{id}/delete")]
-    public async Task<ActionResult<UpdateProductResponseDTO>> Delete(int id, UpdateProductRequestDTO request)
+    public async Task<ActionResult<UpdateProductResponseDTO>> Delete(string id, UpdateProductRequestDTO request)
     {
-        var query = new DeleteProductCommand(
-            id: id
-        );
+        bool validId = Guid.TryParse(id, out var parsedId);
+        if (!validId)
+        {
+            return NotFound();
+        }
+
+        var query = new DeleteProductCommand(id: parsedId);
         var result = await _mediator.Send(query);
 
         if (result.TryPickT1(out var errors, out var value))
         {
             if (errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist))
             {
-                return NotFound(_errorHandlingService.TranslateServiceErrors(errors));
+                return NotFound(ApiErrorFactory.TranslateApplicationErrors(errors));
             }
             else if (errors.Any(err => err.Code is ApplicationErrorCodes.IntegrityError))
             {
-                return Conflict(_errorHandlingService.TranslateServiceErrors(errors));
+                return Conflict(ApiErrorFactory.TranslateApplicationErrors(errors));
             }
 
-            return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
         }
 
         var response = new DeleteProductResponseDTO();

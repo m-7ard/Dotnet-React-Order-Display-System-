@@ -1,7 +1,5 @@
-using Application.Handlers.ProductHistories.Read;
 using Application.Handlers.Products.Read;
 using Application.Interfaces.Persistence;
-using Domain.DomainFactories;
 using Moq;
 
 namespace Tests.UnitTests.Application.Api.Products;
@@ -22,13 +20,9 @@ public class ReadProductsHandlerUnitTest
     public async Task ReadProduct_ValidData_Success()
     {
         // ARRANGE
-        var mockProduct = ProductFactory.BuildExistingProduct(
-            id: 100,
-            name: "Product 1",
-            price: 1,
-            description: "description",
-            images: [],
-            dateCreated: new DateTime()
+        var mockProduct = Mixins.CreateProduct(
+            seed: 1,
+            images: []
         );
 
         var query = new ReadProductQuery(mockProduct.Id);
@@ -42,13 +36,11 @@ public class ReadProductsHandlerUnitTest
         Assert.True(result.IsT0);
     }
 
-        [Fact]
+    [Fact]
     public async Task ReadProduct_ProductDoesNotExist_Failure()
     {
         // ARRANGE
-        var query = new ReadProductQuery(1);
-
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(1));
+        var query = new ReadProductQuery(Guid.Empty);
 
         // ACT
         var result = await _handler.Handle(query, CancellationToken.None);

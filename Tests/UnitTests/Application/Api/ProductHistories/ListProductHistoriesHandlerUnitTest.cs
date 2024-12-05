@@ -1,3 +1,4 @@
+using Application.Contracts.Criteria;
 using Application.Handlers.ProductHistories.List;
 using Application.Interfaces.Persistence;
 using Moq;
@@ -36,18 +37,18 @@ public class ListProductHistoriesHandlerUnitTest
         var result = await _handler.Handle(query, CancellationToken.None);
 
         // ASSERT
-        Assert.True(result.IsT0);
-        _mockProductHistoryRepository.Verify(repo => repo.FindAllAsync(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                new Tuple<string, bool>("DateCreated", false)
-            )
+        var criteria = new FilterProductHistoriesCriteria(
+            name: null,
+            minPrice: null,
+            maxPrice: null,
+            description: null,
+            validFrom: null,
+            validTo: null,
+            productId: null,
+            orderBy: new Tuple<string, bool>("DateCreated", false)
         );
+        Assert.True(result.IsT0);
+        _mockProductHistoryRepository.Verify(repo => repo.FindAllAsync(criteria));
     }
 
     [Theory]
@@ -76,16 +77,17 @@ public class ListProductHistoriesHandlerUnitTest
 
         // ASSERT
         Assert.True(result.IsT0);
-        _mockProductHistoryRepository.Verify(repo => repo.FindAllAsync(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                new Tuple<string, bool>(expectedField, expectedAscending)
-            )
+
+        var criteria = new FilterProductHistoriesCriteria(
+            name: null,
+            minPrice: null,
+            maxPrice: null,
+            description: null,
+            validFrom: null,
+            validTo: null,
+            productId: null,
+            orderBy: new Tuple<string, bool>(expectedField, expectedAscending)
         );
+        _mockProductHistoryRepository.Verify(repo => repo.FindAllAsync(criteria));
     }
 }

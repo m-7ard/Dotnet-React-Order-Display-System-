@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
 using Domain.Models;
 using Infrastructure.DbEntities;
@@ -24,76 +25,67 @@ public class ProductHistoryRespository : IProductHistoryRepository
         return ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 
-    public async Task<ProductHistory?> GetLatestByProductIdAsync(int id)
+    public async Task<ProductHistory?> GetLatestByProductIdAsync(Guid id)
     {
         var productHistoryDbEntity = await _dbContext.ProductHistory.OrderByDescending(d => d.ValidFrom).FirstOrDefaultAsync(d => d.ProductId == id && d.ValidFrom > d.ValidTo);
         return productHistoryDbEntity is null ? null : ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 
-    public async Task<ProductHistory?> GetByIdAsync(int id)
+    public async Task<ProductHistory?> GetByIdAsync(Guid id)
     {
         var productHistoryDbEntity = await _dbContext.ProductHistory.FirstOrDefaultAsync(d => d.Id == id);
         return productHistoryDbEntity is null ? null : ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 
-    public async Task<List<ProductHistory>> FindAllAsync(
-        string? name,
-        decimal? minPrice,
-        decimal? maxPrice,
-        string? description,
-        DateTime? validFrom,
-        DateTime? validTo,
-        int? productId,
-        Tuple<string, bool>? orderBy)
+    public async Task<List<ProductHistory>> FindAllAsync(FilterProductHistoriesCriteria criteria)
     {
         IQueryable<ProductHistoryDbEntity> query = _dbContext.ProductHistory;
-
-        if (!string.IsNullOrEmpty(name))
+        if (!string.IsNullOrEmpty(criteria.Name))
         {
-            query = query.Where(item => item.Name.Contains(name));
+            query = query.Where(item => item.Name.Contains(criteria.Name));
         }
 
-        if (!string.IsNullOrEmpty(description))
+        if (!string.IsNullOrEmpty(criteria.Description))
         {
-            query = query.Where(item => item.Description.Contains(description));
+            query = query.Where(item => item.Description.Contains(criteria.Description));
         }
 
-        if (minPrice is not null)
+        if (criteria.MinPrice is not null)
         {
-            query = query.Where(item => item.Price >= minPrice.Value);
+            query = query.Where(item => item.Price >= criteria.MinPrice.Value);
         }
 
-        if (maxPrice is not null)
+        if (criteria.MaxPrice is not null)
         {
-            query = query.Where(item => item.Price <= maxPrice.Value);
+            query = query.Where(item => item.Price <= criteria.MaxPrice.Value);
         }
 
-        if (validFrom is not null)
+        if (criteria.ValidFrom is not null)
         {
-            query = query.Where(item => item.ValidFrom >= validFrom);
+            query = query.Where(item => item.ValidFrom >= criteria.ValidFrom);
         }
 
-        if (validTo is not null)
+        if (criteria.ValidTo is not null)
         {
-            query = query.Where(item => item.ValidTo <= validTo);
+            query = query.Where(item => item.ValidTo <= criteria.ValidTo);
         }
 
-        if (minPrice is not null)
+        if (criteria.MinPrice is not null)
         {
-            query = query.Where(item => item.Price >= minPrice.Value);
+            query = query.Where(item => item.Price >= criteria.MinPrice.Value);
         }
 
-        if (maxPrice is not null)
+        if (criteria.MaxPrice is not null)
         {
-            query = query.Where(item => item.Price <= maxPrice.Value);
+            query = query.Where(item => item.Price <= criteria.MaxPrice.Value);
         }
 
-        if (productId is not null)
+        if (criteria.ProductId is not null)
         {
-            query = query.Where(item => item.OriginalProductId == productId);
+            query = query.Where(item => item.OriginalProductId == criteria.ProductId);
         }
 
-        if (orderBy is not null)
+        if (criteria.OrderBy is not null)
         {
             Dictionary<string, Expression<Func<ProductHistoryDbEntity, object>>> fieldMappings = new()
             {
@@ -102,9 +94,9 @@ public class ProductHistoryRespository : IProductHistoryRepository
                 { "OriginalProductId", p => p.OriginalProductId }
             };
 
-            if (fieldMappings.TryGetValue(orderBy.Item1, out var orderByExpression))
+            if (fieldMappings.TryGetValue(criteria.OrderBy.Item1, out var orderByExpression))
             {
-                query = orderBy.Item2 ? query.OrderBy(orderByExpression) : query.OrderByDescending(orderByExpression);
+                query = criteria.OrderBy.Item2 ? query.OrderBy(orderByExpression) : query.OrderByDescending(orderByExpression);
             }
         }
 

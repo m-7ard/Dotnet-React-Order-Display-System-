@@ -107,7 +107,7 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
     [Fact]
     public async Task ListAllProduct_CreatedBeforeProduct2_Success()
     {
-            var request = new ListProductsRequestDTO
+        var request = new ListProductsRequestDTO
         (
             id: null,
             name: null,
@@ -155,9 +155,9 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
         Assert.NotNull(content.Products);
         Assert.StrictEqual(3, content.Products.Count);
 
-        Assert.StrictEqual(_price3_NameDescProduct3.Id, content.Products[0].Id);
-        Assert.StrictEqual(_price2_NameDescProduct2.Id, content.Products[1].Id);
-        Assert.StrictEqual(_price1_NameDescProduct1.Id, content.Products[2].Id);
+        Assert.Equal(_price3_NameDescProduct3.Id.ToString(), content.Products[0].Id);
+        Assert.Equal(_price2_NameDescProduct2.Id.ToString(), content.Products[1].Id);
+        Assert.Equal(_price1_NameDescProduct1.Id.ToString(), content.Products[2].Id);
     }
 
     [Fact]
@@ -185,8 +185,8 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
         Assert.NotNull(content.Products);
         Assert.StrictEqual(3, content.Products.Count);
 
-        Assert.StrictEqual(_price1_NameDescProduct1.Id, content.Products[0].Id);
-        Assert.StrictEqual(_price2_NameDescProduct2.Id, content.Products[1].Id);
-        Assert.StrictEqual(_price3_NameDescProduct3.Id, content.Products[2].Id);
+        Assert.Equal(_price1_NameDescProduct1.Id.ToString(), content.Products[0].Id);
+        Assert.Equal(_price2_NameDescProduct2.Id.ToString(), content.Products[1].Id);
+        Assert.Equal(_price3_NameDescProduct3.Id.ToString(), content.Products[2].Id);
     }
 }
