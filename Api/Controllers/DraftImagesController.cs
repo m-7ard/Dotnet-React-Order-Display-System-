@@ -2,6 +2,7 @@ using Api.ApiModels;
 using Api.DTOs.DraftImages.UploadImages;
 using Api.Errors;
 using Api.Interfaces;
+using Api.Mappers;
 using Application.Handlers.DraftImages.UploadImages;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -101,11 +102,7 @@ public class DraftImagesController : ControllerBase
             return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
         }
 
-        var response = new UploadDraftImagesResponseDTO(images: value.DraftImage.Select(d => new ImageApiModel(
-            fileName: d.FileName,
-            originalFileName: d.OriginalFileName,
-            url: d.Url
-        )).ToList());
+        var response = new UploadDraftImagesResponseDTO(images: value.DraftImage.Select(ApiModelMapper.DraftImageToImageData).ToList());
         return StatusCode(StatusCodes.Status201Created, response);
     }
 }
