@@ -1,6 +1,8 @@
+using System.IO.Pipes;
 using System.Linq.Expressions;
 using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
+using Domain.DomainEvents.Product;
 using Domain.Models;
 using Infrastructure.DbEntities;
 using Infrastructure.Mappers;
@@ -86,7 +88,7 @@ public class ProductRepository : IProductRepository
                     : query.OrderByDescending(orderByExpression);
             }
         }
-        
+
         var dbProducts = await query.ToListAsync();
         return dbProducts.Select(ProductMapper.FromDbEntityToDomain).ToList();
     }
@@ -96,22 +98,24 @@ public class ProductRepository : IProductRepository
         var currentEntity = await _dbContext.Product
             .Include(d => d.Images)
             .SingleAsync(d => d.Id == product.Id);
-
         var updatedEntity = ProductMapper.FromDomainToDbEntity(product);
-
-        var removedImages = currentEntity.Images
-            .Where(oldImage => !updatedEntity.Images.Any(newImage => newImage.Id == oldImage.Id))
-            .ToList();
-        _dbContext.ProductImage.RemoveRange(removedImages);
-        
-        var newImages = updatedEntity.Images.Where(image => !currentEntity.Images.Exists(other => other.FileName == image.FileName));
-        foreach (var image in newImages)
-        {
-            image.ProductId = currentEntity.Id;
-            _dbContext.ProductImage.Add(image);
-        }
-
         _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
+
+        foreach (var domainEvent in product.DomainEvents)
+        {
+            if (domainEvent is ProductImagePendingCreationEvent productImagePendingCreationEvent)
+            {
+                var payload = productImagePendingCreationEvent.Payload;
+                var imageEntity = ProductImageMapper.ToDbModel(payload);
+                _dbContext.Add(imageEntity);
+            }
+            else if (domainEvent is ProductImagePendingDeletionEvent productImagePendingDeletionEvent)
+            {
+                var payload = productImagePendingDeletionEvent.Payload;
+                var imageEntity = await _dbContext.ProductImage.SingleAsync(image => image.Id == payload.Id);
+                _dbContext.Remove(imageEntity);
+            }
+        }
 
         await _dbContext.SaveChangesAsync();
     }
