@@ -9,5 +9,5 @@ public interface IProductRepository
     Task UpdateAsync(Product product);
     Task DeleteByIdAsync(Guid id);
     Task<Product?> GetByIdAsync(Guid id);
-    Task<List<Product>> FindAllAsync(FilterProductsCriteria criteria);
+    Task<List<Product>> FilterAllAsync(FilterProductsCriteria criteria);
 }

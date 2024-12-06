@@ -1,11 +1,11 @@
 import { useNavigate } from "@tanstack/react-router";
-import IProductHistory from "../../../domain/models/IProductHistory";
+import ProductHistory from "../../../domain/models/IProductHistory";
 import { AbstractTooltipDefaultPanel } from "../../components/Resuables/AbstractTooltip";
 import MixinButton from "../../components/Resuables/MixinButton";
 import MixinPanel from "../../components/Resuables/MixinPanel";
 import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
 
-export default function OptionMenu(props: { productHistory: IProductHistory }) {
+export default function OptionMenu(props: { productHistory: ProductHistory }) {
     const { productHistory } = props;
     const navigate = useNavigate();
     const { onClose } = useAbstractTooltipContext();

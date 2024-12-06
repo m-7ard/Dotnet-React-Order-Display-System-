@@ -35,7 +35,7 @@ public class ProductRepository : IProductRepository
         return productDbEntity is null ? null : ProductMapper.FromDbEntityToDomain(productDbEntity);
     }
 
-    public async Task<List<Product>> FindAllAsync(FilterProductsCriteria criteria)
+    public async Task<List<Product>> FilterAllAsync(FilterProductsCriteria criteria)
     {
         IQueryable<ProductDbEntity> query = _dbContext.Product.Include(d => d.Images);
         if (criteria.Id is not null)

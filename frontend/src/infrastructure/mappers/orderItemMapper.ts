@@ -10,7 +10,7 @@ const orderItemMapper = {
             quantity: source.quantity,
             status: OrderItemStatus.create(source.status),
             dateCreated: new Date(source.dateCreated),
-            dateFinished: new Date(source.dateFinished),
+            dateFinished: source.dateFinished == null ? null : new Date(source.dateFinished),
             orderId: source.orderId,
             productHistory: productHistoryMapper.apiToDomain(source.productHistory),
         });

@@ -8,7 +8,7 @@ export default class Order {
         total: number;
         status: OrderStatus;
         dateCreated: Date;
-        dateFinished: Date;
+        dateFinished: Date | null;
         orderItems: OrderItem[];
     }) {
         this.id = props.id;
@@ -23,7 +23,7 @@ export default class Order {
     public total: number;
     public status: OrderStatus;
     public dateCreated: Date;
-    public dateFinished: Date;
+    public dateFinished: Date | null;
     public orderItems: OrderItem[];
 
     canMarkFinished(): boolean {

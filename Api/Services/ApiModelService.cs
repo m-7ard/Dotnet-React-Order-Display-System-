@@ -31,28 +31,15 @@ public class ApiModelService : IApiModelService
                 return errors;
             }
 
-            var orderItemApiModel = new OrderItemApiModel(
-                id: orderItem.Id.ToString(),
-                quantity: orderItem.Quantity,
-                status: orderItem.Status.Name,
-                dateCreated: orderItem.DateCreated,
-                dateFinished: orderItem.DateFinished,
-                orderId: order.Id.ToString(),
-                productHistory: ApiModelMapper.ProductHistoryToApiModel(value.ProductHistory)
+            var orderItemApiModel = ApiModelMapper.OrderItemToApiModel(
+                orderItem: orderItem,
+                productHistory: value.ProductHistory
             );
 
             orderItems.Add(orderItemApiModel);
         }
 
-        var orderApiModel = new OrderApiModel(
-            id: order.Id.ToString(),
-            total: order.Total,
-            dateCreated: order.DateCreated,
-            dateFinished: order.DateFinished,
-            orderItems: orderItems,
-            status: order.Status.Name
-        );
-
+        var orderApiModel = ApiModelMapper.OrderToApiModel(order: order, orderItems: orderItems);
         return orderApiModel;
     }
 }

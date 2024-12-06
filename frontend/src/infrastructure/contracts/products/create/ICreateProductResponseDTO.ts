@@ -1,7 +1,7 @@
 import IProductApiModel from "../../../apiModels/IProductApiModel";
 
 type ICreateProductRespnseDTO = {
-    product: IProductApiModel;
-}
+    id: IProductApiModel["id"];
+};
 
 export default ICreateProductRespnseDTO;

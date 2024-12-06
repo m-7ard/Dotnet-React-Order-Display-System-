@@ -1,5 +1,5 @@
 import OrderItemStatus from "../valueObjects/OrderItem/OrderItemStatus";
-import IProductHistory from "./IProductHistory";
+import ProductHistory from "./IProductHistory";
 import Order from "./Order";
 
 export default class OrderItem {
@@ -8,9 +8,9 @@ export default class OrderItem {
         quantity: number;
         status: OrderItemStatus;
         dateCreated: Date;
-        dateFinished: Date;
+        dateFinished: Date | null;
         orderId: Order["id"];
-        productHistory: IProductHistory;
+        productHistory: ProductHistory;
     }) {
         this.id = props.id;
         this.quantity = props.quantity;
@@ -33,7 +33,7 @@ export default class OrderItem {
     public quantity: number;
     public status: OrderItemStatus;
     public dateCreated: Date;
-    public dateFinished: Date;
+    public dateFinished: Date | null;
     public orderId: Order["id"];
-    public productHistory: IProductHistory;
+    public productHistory: ProductHistory;
 }

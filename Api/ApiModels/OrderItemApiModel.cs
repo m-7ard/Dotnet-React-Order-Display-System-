@@ -3,13 +3,14 @@ namespace Api.ApiModels;
 public class OrderItemApiModel
 {
     public OrderItemApiModel(
-        string id, 
-        int quantity, 
-        string status, 
-        DateTime dateCreated, 
-        DateTime? dateFinished, 
-        string orderId, 
-        ProductHistoryApiModel productHistory)
+        string id,
+        int quantity,
+        string status,
+        DateTime dateCreated,
+        DateTime? dateFinished,
+        string orderId,
+        ProductHistoryApiModel productHistory,
+        int serialNumber)
     {
         Id = id;
         Quantity = quantity;
@@ -18,6 +19,7 @@ public class OrderItemApiModel
         DateFinished = dateFinished;
         OrderId = orderId;
         ProductHistory = productHistory;
+        SerialNumber = serialNumber;
     }
 
     public string Id { get; private set; }
@@ -27,4 +29,5 @@ public class OrderItemApiModel
     public DateTime? DateFinished { get; set; }
     public string OrderId { get; set; }
     public ProductHistoryApiModel ProductHistory { get; set; }
+    public int SerialNumber { get; set; }
 }

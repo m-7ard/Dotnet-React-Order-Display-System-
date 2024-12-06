@@ -1,12 +1,12 @@
 import { useNavigate } from "@tanstack/react-router";
-import IProductHistory from "../../../domain/models/IProductHistory";
 import { getApiUrl } from "../../../viteUtils";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuables/AbstractTooltip";
 import CoverImage from "../../components/Resuables/CoverImage";
 import MixinButton from "../../components/Resuables/MixinButton";
 import OptionMenu from "./ProductHistories.Page.ProductHistoryElement.OptionMenu";
+import ProductHistory from "../../../domain/models/IProductHistory";
 
-export default function ProductHistory(props: { productHistory: IProductHistory }) {
+export default function ProductHistoryElement(props: { productHistory: ProductHistory }) {
     const { productHistory } = props;
     const productImages = productHistory.images.map((image) => `${getApiUrl()}/Media/${image}`);
     const navigate = useNavigate();
@@ -33,7 +33,7 @@ export default function ProductHistory(props: { productHistory: IProductHistory 
                 </div>
                 <div className="flex flex-row gap-2">
                     <div className="text-xs font-bold">Valid To</div>
-                    <div className="text-xs">{productHistory.validFrom > productHistory.validTo ? "N/A" : productHistory.validTo.toLocaleString("en-us")}</div>
+                    <div className="text-xs">{productHistory.isValid() ? productHistory.validTo.toLocaleString("en-us") : "N/A"}</div>
                 </div>
             </div>
             <footer className="flex flex-col gap-2 bg-gray-100">

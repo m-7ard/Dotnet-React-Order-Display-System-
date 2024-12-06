@@ -1,9 +1,9 @@
-import IProductHistory from "../../domain/models/IProductHistory";
+import ProductHistory from "../../domain/models/IProductHistory";
 import IProductHistoryApiModel from "../apiModels/IProductHistoryApiModel";
 
 const productHistoryMapper = {
-    apiToDomain: (source: IProductHistoryApiModel): IProductHistory => {
-        return {
+    apiToDomain: (source: IProductHistoryApiModel): ProductHistory => {
+        return new ProductHistory({
             id: source.id,
             name: source.name,
             images: source.images,
@@ -11,8 +11,8 @@ const productHistoryMapper = {
             price: source.price,
             productId: source.productId,
             validFrom: new Date(source.validFrom),
-            validTo: new Date(source.validTo),
-        };
+            validTo: source.validTo == null ? null : new Date(source.validTo),
+        });
     },
 };
 

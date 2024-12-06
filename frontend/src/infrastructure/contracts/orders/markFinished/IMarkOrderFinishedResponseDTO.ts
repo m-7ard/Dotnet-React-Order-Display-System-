@@ -1,5 +1,7 @@
+import IOrderApiModel from "../../../apiModels/IOrderApiModel";
+
 type IMarkOrderFinishedResponseDTO = {
-    orderId: string;
+    orderId: IOrderApiModel["id"];
 };
 
 export default IMarkOrderFinishedResponseDTO;

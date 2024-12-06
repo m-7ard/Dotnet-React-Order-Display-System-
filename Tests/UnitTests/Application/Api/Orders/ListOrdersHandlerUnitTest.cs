@@ -51,7 +51,7 @@ public class ListOrdersHandlerUnitTest
         );
         Assert.True(result.IsT0);
         _mockOrderRepository.Verify(
-            repo => repo.FindAllAsync(criteria)
+            repo => repo.FilterAllAsync(criteria)
         );
     }
 
@@ -92,7 +92,7 @@ public class ListOrdersHandlerUnitTest
         );
         Assert.True(result.IsT0);
         _mockOrderRepository.Verify(
-            repo => repo.FindAllAsync(criteria)
+            repo => repo.FilterAllAsync(criteria)
         );
     }
 }
