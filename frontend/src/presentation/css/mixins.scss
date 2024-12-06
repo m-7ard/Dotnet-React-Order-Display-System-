@@ -4,7 +4,7 @@
     }
 
     .mixin-button-sm {
-        @apply gap-0.5 px-2 py-1 text-sm leading-none;
+        @apply gap-1 px-2 py-1 text-sm leading-none;
     }
 
     .mixin-button-base {
@@ -114,7 +114,7 @@
 
     .mixin-Pcard-base {
         [data-role="section"] {
-            @apply py-2 px-4;
+            @apply p-3;
         }
     }
 }

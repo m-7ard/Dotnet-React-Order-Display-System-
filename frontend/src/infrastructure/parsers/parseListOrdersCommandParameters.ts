@@ -1,5 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import parseTypeboxSchemaOrNull from "../../presentation/utils/parseTypeboxSchemaOrNull";
+import IListOrdersRequestDTO from "../contracts/orders/list/IListOrdersRequestDTO";
 
 const schema = Type.Object({
     id: Type.String({ minLength: 1 }),
@@ -15,7 +16,7 @@ const schema = Type.Object({
 
 type Schema = Static<typeof schema>;
 
-export default function parseListOrdersCommandParameters(data: Partial<Record<keyof Schema, unknown>>) {
+export default function parseListOrdersCommandParameters(data: Partial<Record<keyof Schema, unknown>>): IListOrdersRequestDTO {
     return {
         id: parseTypeboxSchemaOrNull(schema.properties.id, data.id),
         minTotal: parseTypeboxSchemaOrNull(schema.properties.minTotal, data.minTotal),

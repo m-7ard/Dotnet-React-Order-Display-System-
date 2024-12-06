@@ -26,7 +26,7 @@ export default function OrderElement(props: { order: Order }) {
         >
             <MixinPrototypeCardSection className={`flex flex-col ${ORDER_STATUS_COLORS[order.status.value]}`}>
                 <div className="flex flex-row justify-between items-baseline">
-                    <div className="text-sm">Order #{order.id}</div>
+                    <div className="text-sm">Order #{order.serialNumber}</div>
                     <div className="text-sm">{`${order.status.value}`}</div>
                 </div>
                 <div className="flex flex-row justify-between items-baseline">

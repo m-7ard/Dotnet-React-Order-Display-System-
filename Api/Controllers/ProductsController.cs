@@ -128,15 +128,21 @@ public class ProductsController : ControllerBase
             parameters.CreatedAfter = null;
         }
 
+        Console.WriteLine("--------------------------------");
+        Console.WriteLine("--------------------------------");
+        Console.WriteLine("--------------------------------");
+        Console.WriteLine(id);
+        Console.WriteLine(name);
+
         var query = new ListProductsQuery(
-            id: id,
-            name: name,
-            minPrice: minPrice,
-            maxPrice: maxPrice,
-            description: description,
-            createdBefore: createdBefore,
-            createdAfter: createdAfter,
-            orderBy: orderBy
+            id: parameters.Id,
+            name: parameters.Name,
+            minPrice: parameters.MinPrice,
+            maxPrice: parameters.MaxPrice,
+            description: parameters.Description,
+            createdBefore: parameters.CreatedBefore,
+            createdAfter: parameters.CreatedAfter,
+            orderBy: parameters.OrderBy
         );
         var result = await _mediator.Send(query);
 

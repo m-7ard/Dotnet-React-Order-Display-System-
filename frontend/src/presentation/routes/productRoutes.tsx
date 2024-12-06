@@ -8,14 +8,23 @@ import CreateProductController from "../Application/Products/Create/CreateProduc
 import IReadProductResponseDTO from "../../infrastructure/contracts/products/read/IReadProductResponseDTO";
 import productMapper from "../../infrastructure/mappers/productMapper";
 import IListProductsResponseDTO from "../../infrastructure/contracts/products/list/IListProductsResponseDTO";
-import parseListProductsCommandParameters from "../../infrastructure/parsers/parseListProductsCommandParameters";
+import parseListProductsRequestDTO from "../../infrastructure/parsers/parseListProductsRequestDTO";
 
 const baseProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: routeData.listProducts.pattern,
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
     loader: async ({ deps }) => {
-        const params = parseListProductsCommandParameters(deps);
+        const params = parseListProductsRequestDTO({
+            id: deps.id,
+            minPrice: deps.minPrice,
+            maxPrice: deps.maxPrice,
+            name: deps.name,
+            createdBefore: deps.createdBefore,
+            createdAfter: deps.createdAfter,
+            description: deps.description,
+            orderBy: deps.orderBy,
+        });
         const response = await productDataAccess.listProducts(params);
         if (!response.ok) {
             throw redirect({ to: "/" });

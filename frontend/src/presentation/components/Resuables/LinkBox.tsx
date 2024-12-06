@@ -18,7 +18,7 @@ export default function LinkBox(props: {
     const parts = [{ isLink: true, to: routeData.frontpage.build({}), label: "All" }, ...props.parts];
 
     return (
-        <div className="flex flex-row gap-1 text-sm text-gray-900 px-2 py-px bg-gray-50 border border-gray-900 shrink-0">
+        <div className="flex flex-row gap-1 text-sm text-gray-900 px-2 py-px bg-white border border-gray-900 shrink-0">
             {parts.map((part, i) => (
                 <React.Fragment key={i}>
                     {part.isLink ? (

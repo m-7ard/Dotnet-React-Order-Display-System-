@@ -17,9 +17,9 @@ import apiToDomainCompatibleFormError from "../../../mappers/apiToDomainCompatib
 
 const validatorSchema = Type.Object({
     orderItemData: Type.Record(
-        Type.String(),
+        Type.String({ minLength: 1 }),
         Type.Object({
-            productId: Type.Number({ minimum: 1 }),
+            productId: Type.String({ minLength: 1 }),
             quantity: Type.Number({ minimum: 1 }),
         }),
         { minProperties: 1, suffixPath: "/_" },
@@ -60,7 +60,6 @@ export default function CreateOrderController(props: { orderDataAccess: IOrderDa
     const navigate = useNavigate();
     const createOrderMutation = useMutation({
         mutationFn: async () => {
-
             const request: ICreateOrderRequestDTO = {
                 ...itemManager.items,
                 orderItemData: Object.entries(itemManager.items.orderItemData).reduce<ICreateOrderRequestDTO["orderItemData"]>((acc, [key, value]) => {

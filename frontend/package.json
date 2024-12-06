@@ -20,7 +20,8 @@
     "jsonpointer": "^5.0.1",
     "neverthrow": "^7.1.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "superstruct": "^2.0.2"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.25.4",
