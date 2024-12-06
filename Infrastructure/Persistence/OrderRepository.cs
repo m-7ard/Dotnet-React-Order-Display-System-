@@ -34,7 +34,7 @@ public class OrderRepository : IOrderRepository
         return orderDbEntity is null ? null : OrderMapper.ToDomain(orderDbEntity);
     }
 
-    public async Task<List<Order>> FindAllAsync(FilterOrdersCriteria criteria)
+    public async Task<List<Order>> FilterAllAsync(FilterOrdersCriteria criteria)
     {
         IQueryable<OrderDbEntity> query = _dbContext.Order.Include(d => d.OrderItems);
 

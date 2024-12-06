@@ -22,7 +22,7 @@ const routeData = {
     ...{
         listProducts: createRoute("/products", () => "/products"),
         createProduct: createRoute("/products/create", () => `/products/create`),
-        updateProduct: createRoute("/products/$id/update", (params: { id: number }) => `/products/${params.id}/update`),
+        updateProduct: createRoute("/products/$id/update", (params: { id: string }) => `/products/${params.id}/update`),
     },
 
     ...{ listProductHistories: createRoute("/product_histories", () => "/product_histories") },

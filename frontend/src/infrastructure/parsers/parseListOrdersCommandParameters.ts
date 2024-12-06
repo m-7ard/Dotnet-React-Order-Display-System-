@@ -8,8 +8,8 @@ const schema = Type.Object({
     status: Type.String({ minLength: 1 }),
     createdBefore: Type.Date(),
     createdAfter: Type.Date(),
-    productId: Type.Number({ minimum: 0 }),
-    productHistoryId: Type.Number({ minimum: 0 }),
+    productId: Type.String({ minLength: 1 }),
+    productHistoryId: Type.String({ minLength: 1 }),
     orderBy: Type.String({ minLength: 1 }),
 });
 

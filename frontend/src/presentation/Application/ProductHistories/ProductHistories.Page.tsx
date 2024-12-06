@@ -2,13 +2,13 @@ import MixinButton from "../../components/Resuables/MixinButton";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuables/AbstractTooltip";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
-import IProductHistory from "../../../domain/models/IProductHistory";
+import ProductHistory from "../../../domain/models/IProductHistory";
 import routeData from "../../routes/_routeData";
-import ProductHistory from "./ProductHistories.Page.ProductHistoryElement";
 import OrderByMenu from "./ProductHistories.Page.OrderByMenu";
 import FilterProductHistoriesController from "./Filter/FilterProductHistories.Controller";
+import ProductHistoryElement from "./ProductHistories.Page.ProductHistoryElement";
 
-export default function ProductHistoriesPage(props: { productHistories: IProductHistory[] }) {
+export default function ProductHistoriesPage(props: { productHistories: ProductHistory[] }) {
     const { productHistories } = props;
 
     return (
@@ -42,7 +42,7 @@ export default function ProductHistoriesPage(props: { productHistories: IProduct
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
             <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[425px]:grid-cols-1 gap-x-2 gap-y-4">
                 {productHistories.map((productHistory) => (
-                    <ProductHistory productHistory={productHistory} key={productHistory.id} />
+                    <ProductHistoryElement productHistory={productHistory} key={productHistory.id} />
                 ))}
             </section>
         </div>

@@ -1,7 +1,5 @@
 import { createRoute, redirect } from "@tanstack/react-router";
 import rootRoute from "./_rootRoute";
-import { Value } from "@sinclair/typebox/value";
-import { Type } from "@sinclair/typebox";
 import UpdateProductController from "../Application/Products/Update/UpdateProduct.Controller";
 import routeData from "./_routeData";
 import { productDataAccess } from "../deps/dataAccess";
@@ -41,11 +39,7 @@ const updateProductRoute = createRoute({
     path: routeData.updateProduct.pattern,
     component: UpdateProductController,
     loader: async ({ params }) => {
-        const id = parseInt(params.id);
-        if (!Value.Check(Type.Integer(), id)) {
-            throw redirect({ to: "/products" });
-        }
-
+        const id = params.id;
         const response = await productDataAccess.readProduct({ id: id });
 
         if (!response.ok) {

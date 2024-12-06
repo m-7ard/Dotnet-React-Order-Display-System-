@@ -45,7 +45,7 @@ public class ListProductsHandler : IRequestHandler<ListProductsQuery, OneOf<List
             createdAfter: request.CreatedAfter,
             orderBy: orderBy
         );
-        var products = await _productRepository.FindAllAsync(criteria);
+        var products = await _productRepository.FilterAllAsync(criteria);
         var result = new ListProductsResult(products: products);
         return result;
     }

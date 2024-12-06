@@ -1,5 +1,5 @@
 import IProduct from "../../../../domain/models/IProduct";
-import IProductHistory from "../../../../domain/models/IProductHistory";
+import ProductHistory from "../../../../domain/models/IProductHistory";
 import Order from "../../../../domain/models/Order";
 
 export default interface IListOrdersRequestDTO {
@@ -10,6 +10,6 @@ export default interface IListOrdersRequestDTO {
     createdAfter: Date | null;
     id: Order["id"] | null;
     productId: IProduct["id"] | null;
-    productHistoryId: IProductHistory["id"] | null;
+    productHistoryId: ProductHistory["id"] | null;
     orderBy: string | null;
 }

@@ -48,7 +48,7 @@ public class ListProductsHandlerUnitTest
             createdAfter: null,
             orderBy: new Tuple<string, bool>("DateCreated", false)
         );
-        _mockProductRepository.Verify(repo => repo.FindAllAsync(critiera));
+        _mockProductRepository.Verify(repo => repo.FilterAllAsync(critiera));
     }
 
     [Theory]
@@ -85,6 +85,6 @@ public class ListProductsHandlerUnitTest
             createdAfter: null,
             orderBy: new Tuple<string, bool>(expectedField, expectedAscending)
         );
-        _mockProductRepository.Verify(repo => repo.FindAllAsync(critiera));
+        _mockProductRepository.Verify(repo => repo.FilterAllAsync(critiera));
     }
 }

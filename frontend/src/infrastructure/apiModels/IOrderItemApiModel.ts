@@ -6,7 +6,8 @@ export default interface IOrderItemApiModel {
     quantity: number;
     status: string;
     dateCreated: string;
-    dateFinished: string;
+    dateFinished: string | null;
     orderId: IOrderApiModel["id"];
     productHistory: IProductHistoryApiModel;
+    serialNumber: number;
 }

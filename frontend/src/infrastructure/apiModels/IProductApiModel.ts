@@ -1,7 +1,7 @@
 import IImageApiModel from "./IImageApiModel";
 
 export default interface IProductApiModel {
-    id: number;
+    id: string;
     name: string;
     price: number;
     description: string;

@@ -1,7 +1,7 @@
 import IImageData from "./IImageData";
 
 export default interface IProduct {
-    id: number,
+    id: string,
     name: string,
     price: number,
     description: string,

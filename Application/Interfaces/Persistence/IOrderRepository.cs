@@ -7,6 +7,6 @@ public interface IOrderRepository
 {
     Task CreateAsync(Order order);
     Task<Order?> GetByIdAsync(Guid id);
-    Task<List<Order>> FindAllAsync(FilterOrdersCriteria criteria);
+    Task<List<Order>> FilterAllAsync(FilterOrdersCriteria criteria);
     Task UpdateAsync(Order order);
 }

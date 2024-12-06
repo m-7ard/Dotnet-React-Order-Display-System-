@@ -48,4 +48,31 @@ public class ApiModelMapper
             validTo: productHistory.ValidTo
         );
     }
+
+    public static OrderItemApiModel OrderItemToApiModel(OrderItem orderItem, ProductHistory productHistory)
+    {
+        return new OrderItemApiModel(
+            id: orderItem.Id.ToString(),
+            quantity: orderItem.Quantity,
+            status: orderItem.Status.Name,
+            dateCreated: orderItem.DateCreated,
+            dateFinished: orderItem.DateFinished,
+            orderId: orderItem.OrderId.ToString(),
+            productHistory: ProductHistoryToApiModel(productHistory),
+            serialNumber: orderItem.SerialNumber
+        );
+    }
+
+    public static OrderApiModel OrderToApiModel(Order order, List<OrderItemApiModel> orderItems)
+    {
+        return new OrderApiModel(
+            id: order.Id.ToString(),
+            total: order.Total,
+            dateCreated: order.DateCreated,
+            dateFinished: order.DateFinished,
+            orderItems: orderItems,
+            status: order.Status.Name,
+            serialNumber: order.SerialNumber
+        );
+    }
 }

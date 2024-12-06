@@ -48,7 +48,7 @@ public class ListOrdersHandler : IRequestHandler<ListOrdersQuery, OneOf<ListOrde
             orderBy: orderBy
         );
 
-        var orders = await _orderRepository.FindAllAsync(criteria);
+        var orders = await _orderRepository.FilterAllAsync(criteria);
 
         var result = new ListOrdersResult(orders: orders);
         return result;

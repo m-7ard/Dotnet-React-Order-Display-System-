@@ -5,6 +5,7 @@ export default interface IOrderApiModel {
     total: number;
     status: string;
     dateCreated: string;
-    dateFinished: string;
+    dateFinished: string | null;
     orderItems: IOrderItemApiModel[];
+    serialNumber: number;
 }
