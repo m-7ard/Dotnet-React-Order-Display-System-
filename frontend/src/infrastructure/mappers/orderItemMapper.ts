@@ -13,6 +13,7 @@ const orderItemMapper = {
             dateFinished: source.dateFinished == null ? null : new Date(source.dateFinished),
             orderId: source.orderId,
             productHistory: productHistoryMapper.apiToDomain(source.productHistory),
+            serialNumber: source.serialNumber
         });
     },
 };

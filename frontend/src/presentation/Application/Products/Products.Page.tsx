@@ -6,7 +6,7 @@ import LinkBox from "../../components/Resuables/LinkBox";
 import routeData from "../../routes/_routeData";
 import OrderByMenu from "./Products.Page.OrderByMenu";
 import IProduct from "../../../domain/models/IProduct";
-import Product from "./Products.Page.Product";
+import ProductElement from "./Products.Page.ProductElement";
 import FilterProductsController from "./Filter/FilterProducts.Controller";
 
 export default function ProductsPage(props: { products: IProduct[] }) {
@@ -46,9 +46,9 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                 </div>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="grid grid-cols-4 max-[576px]:grid-cols-3 max-[425px]:grid-cols-2 gap-x-2 gap-y-4">
+            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[375px]:grid-cols-1 gap-3">
                 {products.map((product) => (
-                    <Product product={product} key={product.id} />
+                    <ProductElement product={product} key={product.id} />
                 ))}
             </section>
         </div>

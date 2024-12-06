@@ -6,6 +6,7 @@ import MixinButton from "../Resuables/MixinButton";
 import StatelessCharField from "../StatelessFields/StatelessCharField";
 import { Value } from "@sinclair/typebox/value";
 import { getApiUrl } from "../../../viteUtils";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 
 export type ValueSchema = {
     product: IProduct;
@@ -26,7 +27,7 @@ export type OrderItemDataFormProps = {
 };
 
 export default function OrderItemDataFieldItem(props: OrderItemDataFormProps) {
-    const { onUpdate, onDelete, product, value } = props;
+    const { onUpdate, onDelete, product, value, errors } = props;
 
     const updateQuantity = (quantity: number) => {
         const isValid = Value.Check(Type.Integer({ minimum: 1 }), quantity);
@@ -36,21 +37,29 @@ export default function OrderItemDataFieldItem(props: OrderItemDataFormProps) {
     };
 
     return (
-        <div className="flex flex-col gap-2">
-            <div className="flex flex-row gap-2">
+        <MixinPrototypeCard options={{
+            size: "mixin-Pcard-base",
+            theme: "theme-Pcard-generic-white"
+        }}>
+            <MixinPrototypeCardSection className="flex flex-row gap-2">
                 <CoverImage
-                    className="h-20 w-20 border border-gray-900 overflow-hidden shrink-0"
+                    className="basis-1/3 aspect-square border border-gray-900 overflow-hidden shrink-0"
                     src={product.images[0] == null ? undefined : `${getApiUrl()}/Media/${product.images[0].fileName}`}
                 />
-                <div className="flex flex-col gap-px overflow-hidden">
-                    <div className="text-sm font-bold truncate" title={product.name}>
-                        {product.name}
+                 <div className="flex flex-col gap-px overflow-hidden">
+                    <div className="overflow-hidden">
+                        <div className="text-xs font-bold">Name</div>
+                        <div className="text-sm truncate" title={product.name}>
+                            {product.name}
+                        </div>
                     </div>
-                    <div className="text-sm">${product.price}</div>
-                    <div className="mt-auto text-xs">{product.dateCreated.toLocaleString("en-us")}</div>
+                    <div>
+                        <div className="text-xs font-bold">Price</div>
+                        <div className="text-sm truncate">${product.price}</div>
+                    </div>
                 </div>
-            </div>
-            <footer className="flex flex-row gap-2">
+            </MixinPrototypeCardSection>
+            <MixinPrototypeCardSection className="flex flex-row gap-2">
                 <div className="flex flex-row gap-2 grow">
                     <MixinButton
                         options={{
@@ -82,15 +91,28 @@ export default function OrderItemDataFieldItem(props: OrderItemDataFormProps) {
                         -
                     </MixinButton>
                 </div>
-            </footer>
-            <MixinButton
-                className="justify-center w-full"
-                type="button"
-                onClick={onDelete}
-                options={{ size: "mixin-button-base", theme: "theme-button-generic-red" }}
-            >
-                Remove Item
-            </MixinButton>
-        </div>
+            </MixinPrototypeCardSection>
+            {errors == null ? null : (
+                <MixinPrototypeCardSection className="flex flex-col gap-2">
+                    <ul>
+                        {Object.values(errors).reduce((acc, errors) => [...acc, ...errors], []).map((error) => (
+                            <li className="text-xs">
+                                \&bull {error}             
+                            </li>
+                        ))}
+                    </ul>   
+                </MixinPrototypeCardSection>
+            )}
+            <MixinPrototypeCardSection>
+                <MixinButton
+                    className="justify-center w-full"
+                    type="button"
+                    onClick={onDelete}
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-red" }}
+                >
+                    Remove Item
+                </MixinButton>
+            </MixinPrototypeCardSection>
+        </MixinPrototypeCard>
     );
 }

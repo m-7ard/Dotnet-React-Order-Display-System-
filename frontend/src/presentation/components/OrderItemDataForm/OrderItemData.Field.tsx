@@ -14,11 +14,7 @@ type ValueSchema = {
     [productId: number | string]: OrderItemDataValueSchema;
 };
 
-export default function OrderItemDataField(props: {
-    onChange: (value: ValueSchema) => void;
-    errors?: ErrorSchema;
-    value: ValueSchema;
-}) {
+export default function OrderItemDataField(props: { onChange: (value: ValueSchema) => void; errors?: ErrorSchema; value: ValueSchema }) {
     const { errors, value, onChange } = props;
 
     const deleteOrderItem = useCallback(
@@ -52,13 +48,13 @@ export default function OrderItemDataField(props: {
     );
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3 p-3 border border-gray-900 bg-gray-100">
             <GlobalDialog
                 zIndex={10}
                 Trigger={({ onToggle }) => (
                     <MixinButton
                         options={{
-                            size: "mixin-button-sm",
+                            size: "mixin-button-base",
                             theme: "theme-button-generic-white",
                         }}
                         className="w-full justify-center "
@@ -74,11 +70,13 @@ export default function OrderItemDataField(props: {
                     orderItems: value,
                 }}
             />
-            <div className="grid grid-cols-2 max-[425px]:grid-cols-1 gap-x-2 gap-y-4">
-                {Object.entries(value).map(([productId, oiData]) => (
-                    <OrderItemDataFieldItem product={oiData.product} errors={errors?.[productId]} value={value[productId]} onUpdate={updateOrderItem} onDelete={() => deleteOrderItem(productId)} key={productId} />
-                ))}
-            </div>
+            {Object.entries(value).length > 0 && (
+                <div className="grid grid-cols-2 max-[425px]:grid-cols-1 gap-3">
+                    {Object.entries(value).map(([productId, oiData]) => (
+                        <OrderItemDataFieldItem product={oiData.product} errors={errors?.[productId]} value={value[productId]} onUpdate={updateOrderItem} onDelete={() => deleteOrderItem(productId)} key={productId} />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

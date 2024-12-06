@@ -22,7 +22,7 @@ export default function ManageOrderPage(props: { order: Order; onMarkFinished: (
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listOrders.build({}), label: "Orders" },
-                        { isLink: false, label: order.id },
+                        { isLink: false, label: order.serialNumber },
                         { isLink: true, to: routeData.manageOrder.build({ id: order.id }), label: "Manage" },
                     ]}
                 />
@@ -32,7 +32,7 @@ export default function ManageOrderPage(props: { order: Order; onMarkFinished: (
                 <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}>
                     <MixinPrototypeCardSection className={`flex flex-col ${ORDER_STATUS_COLORS[order.status.value]}`}>
                         <div className="flex flex-row justify-between items-baseline">
-                            <div className="text-sm">Order #{order.id}</div>
+                            <div className="text-sm">Order #{order.serialNumber}</div>
                             <div className="text-sm">{`${order.status.value}`}</div>
                         </div>
                         <div className="flex flex-row justify-between items-baseline">

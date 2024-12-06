@@ -12,6 +12,7 @@ const orderMapper = {
             dateCreated: new Date(source.dateCreated),
             dateFinished: source.dateFinished == null ? null : new Date(source.dateFinished),
             orderItems: source.orderItems.map(orderItemMapper.apiToDomain),
+            serialNumber: source.serialNumber
         });
     },
 };

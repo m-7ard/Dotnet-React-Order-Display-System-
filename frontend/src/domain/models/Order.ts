@@ -10,6 +10,7 @@ export default class Order {
         dateCreated: Date;
         dateFinished: Date | null;
         orderItems: OrderItem[];
+        serialNumber: number;
     }) {
         this.id = props.id;
         this.total = props.total;
@@ -17,6 +18,7 @@ export default class Order {
         this.dateCreated = props.dateCreated;
         this.dateFinished = props.dateFinished;
         this.orderItems = props.orderItems;
+        this.serialNumber = props.serialNumber;
     }
 
     public id: string;
@@ -25,6 +27,7 @@ export default class Order {
     public dateCreated: Date;
     public dateFinished: Date | null;
     public orderItems: OrderItem[];
+    public serialNumber: number;
 
     canMarkFinished(): boolean {
         return this.orderItems.every((orderItem) => orderItem.status === OrderItemStatus.FINISHED);

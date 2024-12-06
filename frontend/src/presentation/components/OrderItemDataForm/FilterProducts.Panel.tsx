@@ -14,7 +14,7 @@ import ResultsPage from "./FilterProducts.Pages.Results";
 import CountTrackerProduct from "./FilterProducts.Results.CountTracker";
 import useDefaultErrorHandling from "../../hooks/useResponseHandler";
 import { err, ok } from "neverthrow";
-import parseListProductsCommandParameters from "../../../infrastructure/parsers/parseListProductsCommandParameters";
+import parseListProductsRequestDTO from "../../../infrastructure/parsers/parseListProductsRequestDTO";
 import { ValueSchema as ItemValueSchema } from "./OrderItemData.Field.Item";
 import apiToDomainCompatibleFormError from "../../mappers/apiToDomainCompatibleFormError";
 import IPlainApiError from "../../../infrastructure/interfaces/IPlainApiError";
@@ -48,7 +48,7 @@ export default function FilterProductsPanel(props: FilterProductsPanelProps) {
 
     const searchProductsMutation = useMutation({
         mutationFn: async () => {
-            const parsedParams = parseListProductsCommandParameters(formValue.items);
+            const parsedParams = parseListProductsRequestDTO(formValue.items);
             return await responseHandler({
                 requestFn: () => productDataAccess.listProducts(parsedParams),
                 onResponseFn: async (response) => {

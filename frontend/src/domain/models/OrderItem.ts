@@ -11,6 +11,7 @@ export default class OrderItem {
         dateFinished: Date | null;
         orderId: Order["id"];
         productHistory: ProductHistory;
+        serialNumber: number;
     }) {
         this.id = props.id;
         this.quantity = props.quantity;
@@ -19,6 +20,7 @@ export default class OrderItem {
         this.dateFinished = props.dateFinished;
         this.orderId = props.orderId;
         this.productHistory = props.productHistory;
+        this.serialNumber = props.serialNumber;
     }
 
     getTotal(): number {
@@ -36,4 +38,5 @@ export default class OrderItem {
     public dateFinished: Date | null;
     public orderId: Order["id"];
     public productHistory: ProductHistory;
+    public serialNumber: number;
 }

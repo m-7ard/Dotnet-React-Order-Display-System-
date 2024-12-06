@@ -23,7 +23,7 @@ export default function OrderItemElement(props: { orderItem: OrderItem; onMarkOr
         >
             <MixinPrototypeCardSection className={`flex flex-col ${ORDER_ITEM_STATUS_COLORS[orderItem.status.value]}`}>
                 <div className="flex flex-row justify-between items-baseline">
-                    <div className="text-sm">Order Item #{orderItem.id}</div>
+                    <div className="text-sm">Order Item #{orderItem.serialNumber}</div>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection className="flex flex-col gap-1">

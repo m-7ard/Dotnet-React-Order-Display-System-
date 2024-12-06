@@ -55,6 +55,17 @@ export default function CreateOrderPage(props: {
                 />
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            {errors._ == null ? null : (
+                <div className="flex flex-col gap-2 p-2 border border-gray-900">
+                    <ul>
+                        {errors._.map((error) => (
+                            <li>
+                                {error}             
+                            </li>
+                        ))}
+                    </ul>   
+                </div>
+            )}
             <form
                 className="mixin-page-content-like mixin-page-content-base"
                 onSubmit={async (e) => {

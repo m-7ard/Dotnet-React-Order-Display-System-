@@ -1,28 +1,29 @@
 import { Static, Type } from "@sinclair/typebox";
 import parseTypeboxSchemaOrNull from "../../presentation/utils/parseTypeboxSchemaOrNull";
+import IListProductsRequestDTO from "../contracts/products/list/IListProductsRequestDTO";
 
 const schema = Type.Object({
+    id: Type.String({ minLength: 1 }),
     minPrice: Type.Number({ minimum: 0 }),
     maxPrice: Type.Number({ minimum: 0, maximum: 10 ** 6 }),
     name: Type.String({ minLength: 1 }),
-    validTo: Type.Date(),
-    validFrom: Type.Date(),
+    createdBefore: Type.Date(),
+    createdAfter: Type.Date(),
     description: Type.String({ minLength: 1 }),
-    productId: Type.Number({ minimum: 0 }),
     orderBy: Type.String({ minLength: 1 }),
 });
 
 type Schema = Static<typeof schema>;
 
-export default function parseListProductHistoriesCommandParameters(data: Partial<Record<keyof Schema, unknown>>) {
+export default function parseListProductsRequestDTO(data: Partial<Record<keyof Schema, unknown>>): IListProductsRequestDTO {
     return {
+        id: parseTypeboxSchemaOrNull(schema.properties.id, data.id),
         minPrice: parseTypeboxSchemaOrNull(schema.properties.minPrice, data.minPrice),
         maxPrice: parseTypeboxSchemaOrNull(schema.properties.maxPrice, data.maxPrice),
         name: parseTypeboxSchemaOrNull(schema.properties.name, data.name),
-        validFrom: parseTypeboxSchemaOrNull(schema.properties.validFrom, data.validFrom),
-        validTo: parseTypeboxSchemaOrNull(schema.properties.validTo, data.validTo),
+        createdAfter: parseTypeboxSchemaOrNull(schema.properties.createdAfter, data.createdAfter),
+        createdBefore: parseTypeboxSchemaOrNull(schema.properties.createdBefore, data.createdBefore),
         description: parseTypeboxSchemaOrNull(schema.properties.description, data.description),
-        productId: parseTypeboxSchemaOrNull(schema.properties.productId, data.productId),
         orderBy: parseTypeboxSchemaOrNull(schema.properties.orderBy, data.orderBy),
     }
 }

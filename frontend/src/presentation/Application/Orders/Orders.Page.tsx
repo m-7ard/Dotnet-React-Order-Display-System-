@@ -4,7 +4,7 @@ import Order from "../../../domain/models/Order";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuables/AbstractTooltip";
-import OrderElement from "./Orders.Page.Order";
+import OrderElement from "./Orders.Page.OrderElement";
 import OrderByMenu from "./Orders.Page.OrderByMenu";
 import FilterOrdersController from "./Filter/FilterOrders.Controller";
 
