@@ -71,11 +71,11 @@ export default function OrderItemDataField(props: { onChange: (value: ValueSchem
                 }}
             />
             {Object.entries(value).length > 0 && (
-                <div className="grid grid-cols-2 max-[425px]:grid-cols-1 gap-3">
+                <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">
                     {Object.entries(value).map(([productId, oiData]) => (
                         <OrderItemDataFieldItem product={oiData.product} errors={errors?.[productId]} value={value[productId]} onUpdate={updateOrderItem} onDelete={() => deleteOrderItem(productId)} key={productId} />
                     ))}
-                </div>
+                </section>
             )}
         </div>
     );
