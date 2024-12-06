@@ -40,7 +40,7 @@ export default function ProductHistoriesPage(props: { productHistories: ProductH
                 </div>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[425px]:grid-cols-1 gap-x-2 gap-y-4">
+            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">
                 {productHistories.map((productHistory) => (
                     <ProductHistoryElement productHistory={productHistory} key={productHistory.id} />
                 ))}

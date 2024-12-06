@@ -46,7 +46,7 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                 </div>
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[375px]:grid-cols-1 gap-3">
+            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">
                 {products.map((product) => (
                     <ProductElement product={product} key={product.id} />
                 ))}

@@ -12,7 +12,7 @@ export default function FrontpagePage() {
                 <LinkBox parts={[]} />
             </header>
             <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <ul className="mixin-page-content-like mixin-page-content-base sm:grid sm:grid-cols-2">
+            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">
                 <Navigator
                     title="Products"
                     imageUrl={getLocalUrl("/src/presentation/images/_045d1801-1987-4ce3-abd9-1b8f56fcde24-removebg-preview.png")}
@@ -30,7 +30,7 @@ export default function FrontpagePage() {
                     ]}
                 />
                 <Navigator title="Product Histories" imageUrl={getLocalUrl("/src/presentation/images/_4766e2d9-54f8-48b5-9366-11485ac2198b-removebg-preview.png")} buttons={[{ label: "List", href: "/product_histories" }]} />
-            </ul>
+            </section>
         </div>
     );
 }
@@ -47,9 +47,11 @@ function Navigator(props: { title: string; imageUrl: string; buttons: Array<{ la
             }}
         >
             <MixinPrototypeCardSection className="flex flex-row gap-2">
-                <div className="flex gap-2 bg-white w-full">
+                <div className="flex gap-2 bg-white w-full overflow-hidden">
                     <CoverImage src={imageUrl} className="h-full aspect-square border border-gray-900 bg-white" />
-                    <div className="mixin-button-base border border-gray-900 flex grow justify-center">{title}</div>
+                    <div className="mixin-button-base border border-gray-900 flex grow justify-center overflow-hidden">
+                        <div className="truncate">{title}</div>
+                    </div>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection className="flex flex-col gap-2">
