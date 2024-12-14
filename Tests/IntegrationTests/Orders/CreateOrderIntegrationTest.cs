@@ -13,15 +13,15 @@ namespace Tests.IntegrationTests.Orders;
 [Collection("Sequential")]
 public class CreateOrderIntegrationTest : OrdersIntegrationTest
 {
-    private Product _productOne = null!;
-    private Product _productTwo = null!;
+    private Product _PRODUCT_001 = null!;
+    private Product _PRODUCT_002 = null!;
     public async override Task InitializeAsync()
     {
         await base.InitializeAsync();
         var db = _factory.CreateDbContext();
         var mixins = new Mixins(db);
-        _productOne = await mixins.CreateProductAndProductHistory(number: 1, images: []);
-        _productTwo = await mixins.CreateProductAndProductHistory(number: 2, images: []);
+        _PRODUCT_001 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
+        _PRODUCT_002 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
     }
 
     [Fact]
@@ -29,16 +29,15 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     {
         var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
         orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
-            productId: _productOne.Id,
+            productId: _PRODUCT_001.Id,
             quantity: 1
         );
         orderItemData["product_2"] = new CreateOrderRequestDTO.OrderItem(
-            productId: _productTwo.Id,
+            productId: _PRODUCT_002.Id,
             quantity: 1
         );
 
-        var request = new CreateOrderRequestDTO
-        (
+        var request = new CreateOrderRequestDTO(
             orderItemData: orderItemData
         );
         var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
@@ -69,8 +68,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     {
         var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
 
-        var request = new CreateOrderRequestDTO
-        (
+        var request = new CreateOrderRequestDTO(
             orderItemData: orderItemData
         );
         var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
@@ -88,8 +86,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
             quantity: 1
         );
 
-        var request = new CreateOrderRequestDTO
-        (
+        var request = new CreateOrderRequestDTO(
             orderItemData: orderItemData
         );
         var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
@@ -107,8 +104,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
             quantity: 0
         );
 
-        var request = new CreateOrderRequestDTO
-        (
+        var request = new CreateOrderRequestDTO(
             orderItemData: orderItemData
         );
         var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
