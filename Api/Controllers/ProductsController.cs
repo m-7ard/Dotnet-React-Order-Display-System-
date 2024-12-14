@@ -128,12 +128,6 @@ public class ProductsController : ControllerBase
             parameters.CreatedAfter = null;
         }
 
-        Console.WriteLine("--------------------------------");
-        Console.WriteLine("--------------------------------");
-        Console.WriteLine("--------------------------------");
-        Console.WriteLine(id);
-        Console.WriteLine(name);
-
         var query = new ListProductsQuery(
             id: parameters.Id,
             name: parameters.Name,
