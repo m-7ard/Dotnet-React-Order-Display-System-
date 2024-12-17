@@ -4,9 +4,7 @@ using Api.DTOs.Orders.Create;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
-using Infrastructure.DbEntities;
 using Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace Tests.IntegrationTests.Orders;
 

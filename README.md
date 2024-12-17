@@ -3,14 +3,15 @@
 ## Table of Contents
 1. [Local Setup](#run-locally)
 2. [Features](#features)
-3. [Lessons Learned](#lessons-learned)
-4. [API Reference](#api-reference)
+3. [Screenshots](#screenshots)
+4. [Lessons Learned](#lessons-learned)
+5. [API Reference](#api-reference)
     - [Products API](#products-api-endpoints)
     - [Orders API](#orders-api-endpoints)
     - [Draft Images API](#draft-images-api-endpoints)
     - [Product Histories API](#product-histories-api-endpoints)
-5. [Error Handling](#error-handling)
-6. [Authentication](#authentication)
+6. [Error Handling](#error-handling)
+7. [Authentication](#authentication)
 
 ## Run Locally
 
@@ -60,6 +61,41 @@ npm run dev
 - Backend Integration Tests
 - Backend Application Layer Unit Tests
 - Frontend Validation
+
+## Screenshots
+
+### Create Product Page
+![Create Product Page](https://i.imgur.com/4phmheO.png)
+
+### Create Product Page (Mobile)
+![Create Product Page (mobile)](https://i.imgur.com/OXKlJDs.png)
+
+### List Products Page
+![List Products Page](https://i.imgur.com/384j8h9.png)
+
+### List Product Page (Mobile)
+![List Product Page (mobile)](https://i.imgur.com/A6KCk51.png)
+
+### Filter Products Modal Form Tab
+![Filter Products Modal Form Tab](https://i.imgur.com/YWLV503.png)
+
+### Filter Products Modal Results Tab
+![Filter Products Modal Results Tab](https://i.imgur.com/7FGUg1x.png)
+
+### Create Order Page
+![Create Order Page](https://i.imgur.com/oEkJ1Q5.png)
+
+### List Orders Page (Mobile)
+![List Orders Page (mobile)](https://i.imgur.com/uQOf7Df.png)
+
+### List Orders Page (Full)
+![List Orders Page (full)](https://i.imgur.com/E9fZJWk.png)
+
+### List Product Histories Page
+![List Product Histories Page](https://i.imgur.com/NLnu3S2.png)
+
+### Frontpage
+![Frontpage](https://i.imgur.com/SGHS78r.png)
 
 ## Lessons Learned
 
