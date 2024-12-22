@@ -18,6 +18,9 @@ export default function ProductHistoryElement(props: { productHistory: ProductHi
                 size: "mixin-Pcard-base",
                 theme: "theme-Pcard-generic-white",
             }}
+            hasBorder
+            hasDivide
+            hasShadow
         >
             <MixinPrototypeCardSection className="grid gap-3" style={{ gridTemplateColumns: "auto 1fr" }}>
                 <CoverImage className="aspect-square h-full overflow-hidden shrink-0 rounded-lg bg-gray-300" src={productImages[0]} />
@@ -42,7 +45,7 @@ export default function ProductHistoryElement(props: { productHistory: ProductHi
                     <span className="truncate token-card--list-value--text">{productHistory.isValid() ? productHistory.validTo.toLocaleString("en-us") : "N/A"}</span>
                 </div>
             </MixinPrototypeCardSection>
-            <MixinPrototypeCardSection className="flex flex-col gap-3 bg-gray-100">
+            <MixinPrototypeCardSection className="flex flex-col gap-3">
                 <a
                     className="w-full"
                     onClick={(e) => {

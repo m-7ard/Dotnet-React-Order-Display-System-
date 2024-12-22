@@ -82,7 +82,7 @@
     @apply p-1 text-sm leading-none absolute inset-0 transition-colors;
   }
   .mixin-Pcard-like {
-    @apply divide-y rounded-lg overflow-hidden;
+    @apply rounded-lg overflow-hidden;
   }
   .mixin-Pcard-base > [data-role=Pcard-section] {
     @apply px-4 py-3;
@@ -165,8 +165,7 @@
     @apply border-gray-300;
   }
   .theme-Pcard-generic-white {
-    box-shadow: 0 2px 6px 0px rgba(214, 221, 217, 0.5);
-    @apply bg-white divide-gray-300;
+    @apply bg-white;
   }
   .theme-panel-generic-white {
     @apply bg-white border border-gray-900;
@@ -196,6 +195,15 @@
   }
   .token-card--list-value--text {
     @apply text-gray-600 text-sm;
+  }
+  .token-default-shadow {
+    box-shadow: 0 2px 6px 0px rgba(214, 221, 217, 0.5);
+  }
+  .token-default-border-color {
+    @apply border-gray-300;
+  }
+  .token-default-divide-color {
+    @apply divide-gray-300;
   }
 }
 html {
