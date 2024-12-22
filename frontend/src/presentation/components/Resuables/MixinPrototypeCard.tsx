@@ -30,7 +30,7 @@ export function MixinPrototypeCardSection<T extends ElementType = "section">(
     const Component = as ?? "section";
 
     return (
-        <Component className={[className].join(" ")} {...HTMLattrs} data-role="section">
+        <Component className={[className].join(" ")} {...HTMLattrs} data-role="Pcard-section">
             {props.children}
         </Component>
     );

@@ -3,9 +3,11 @@
 @tailwind utilities;
 @import "./mixins.scss";
 @import "./themes.scss";
+@import "./tokens.scss";
 
 html {
-    font-family: "Roboto", sans-serif;
+    background-color: #fafafa;
+    font-family: "Inter", serif;
     height: 100%;
 }
 

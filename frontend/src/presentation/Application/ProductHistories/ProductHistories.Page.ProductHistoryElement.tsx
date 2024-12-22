@@ -19,38 +19,30 @@ export default function ProductHistoryElement(props: { productHistory: ProductHi
                 theme: "theme-Pcard-generic-white",
             }}
         >
-            <MixinPrototypeCardSection className="flex flex-row gap-2">
-                <CoverImage className="aspect-square basis-1/3 border border-gray-900 overflow-hidden shrink-0" src={productImages[0] == null ? undefined : productImages[0]} />
-                <div className="flex flex-col gap-px grow overflow-hidden">
-                    <div className="overflow-hidden">
-                        <div className="text-xs font-bold">Name</div>
-                        <div className="text-sm truncate" title={productHistory.name}>
-                            {productHistory.name}
-                        </div>
+            <MixinPrototypeCardSection className="grid gap-3" style={{ gridTemplateColumns: "auto 1fr" }}>
+                <CoverImage className="aspect-square h-full overflow-hidden shrink-0 rounded-lg bg-gray-300" src={productImages[0]} />
+                <div>
+                    <div className="text-base font-bold truncate" title={productHistory.name}>
+                        {productHistory.name}
                     </div>
-                    <div>
-                        <div className="text-xs font-bold">Price</div>
-                        <div className="text-sm truncate">${productHistory.price}</div>
-                    </div>
+                    <div className="text-sm truncate">${productHistory.price}</div>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection>
-                <div className="flex flex-col gap-px">
-                    <div className="flex flex-row gap-2">
-                        <div className="text-xs font-bold">Original Product Id</div>
-                        <div className="text-xs">{productHistory.productId}</div>
-                    </div>
-                    <div className="flex flex-row gap-2">
-                        <div className="text-xs font-bold">Valid From</div>
-                        <div className="text-xs">{productHistory.validFrom.toLocaleString("en-us")}</div>
-                    </div>
-                    <div className="flex flex-row gap-2">
-                        <div className="text-xs font-bold">Valid To</div>
-                        <div className="text-xs">{productHistory.isValid() ? productHistory.validTo.toLocaleString("en-us") : "N/A"}</div>
-                    </div>
+                <div className="token-card--list">
+                    <span className="token-card--list-label--text shrink-0">Original Product Id</span>
+                    <span className="truncate token-card--list-value--text">{productHistory.productId}</span>
+                </div>
+                <div className="token-card--list">
+                    <span className="token-card--list-label--text shrink-0">Valid From</span>
+                    <span className="truncate token-card--list-value--text">{productHistory.validFrom.toLocaleString("en-us")}</span>
+                </div>
+                <div className="token-card--list">
+                    <span className="token-card--list-label--text shrink-0">Valid To</span>
+                    <span className="truncate token-card--list-value--text">{productHistory.isValid() ? productHistory.validTo.toLocaleString("en-us") : "N/A"}</span>
                 </div>
             </MixinPrototypeCardSection>
-            <MixinPrototypeCardSection className="flex flex-col gap-2 bg-gray-100">
+            <MixinPrototypeCardSection className="flex flex-col gap-3 bg-gray-100">
                 <a
                     className="w-full"
                     onClick={(e) => {

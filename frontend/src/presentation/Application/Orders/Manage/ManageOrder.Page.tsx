@@ -7,6 +7,9 @@ import LinkBox from "../../../components/Resuables/LinkBox";
 import Order from "../../../../domain/models/Order";
 import routeData from "../../../routes/_routeData";
 import OrderItemElement from "./ManageOrder.Page.OrderItem";
+import contentGridTracks from "../../../data-attributes/contentGridTracks";
+import pageSection from "../../../data-attributes/PageSection";
+import Divider from "../../../components/Resuables/Divider";
 
 const ORDER_STATUS_COLORS = {
     [OrderStatus.FINISHED.value]: "bg-green-600/50",
@@ -17,8 +20,8 @@ export default function ManageOrderPage(props: { order: Order; onMarkFinished: (
     const { order, onMarkFinished, onMarkOrderItemFinished } = props;
 
     return (
-        <div className="mixin-page-like mixin-page-base mx-auto">
-            <header className="flex flex-row gap-2 items-center">
+        <div className="mixin-page-like mixin-page-base mixin-content-grid">
+            <header className="flex flex-row gap-3 items-center" {...pageSection} {...contentGridTracks.base}>
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listOrders.build({}), label: "Orders" },
@@ -27,8 +30,8 @@ export default function ManageOrderPage(props: { order: Order; onMarkFinished: (
                     ]}
                 />
             </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="mixin-page-content-like mixin-page-content-base">
+            <Divider {...contentGridTracks.base} />
+            <section {...pageSection} {...contentGridTracks.base} className="flex flex-col gap-3">
                 <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}>
                     <MixinPrototypeCardSection className={`flex flex-col ${ORDER_STATUS_COLORS[order.status.value]}`}>
                         <div className="flex flex-row justify-between items-baseline">
@@ -40,8 +43,8 @@ export default function ManageOrderPage(props: { order: Order; onMarkFinished: (
                             <div className="text-sm">{order.total}$</div>
                         </div>
                     </MixinPrototypeCardSection>
-                    <MixinPrototypeCardSection className="bg-gray-100">
-                        <div className="flex flex-row gap-2">
+                    <MixinPrototypeCardSection>
+                        <div className="flex flex-row gap-3">
                             {order.status === OrderStatus.PENDING && (
                                 <>
                                     <MixinButton className={`basis-1/2 justify-center ${order.canMarkFinished() ? "" : "contrast-50 cursor-not-allowed"}`} options={{ size: "mixin-button-sm", theme: "theme-button-generic-green" }} onClick={onMarkFinished}>
@@ -65,13 +68,9 @@ export default function ManageOrderPage(props: { order: Order; onMarkFinished: (
                         </div>
                     </MixinPrototypeCardSection>
                 </MixinPrototypeCard>
-                <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2">
+                <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3" {...pageSection} {...contentGridTracks.base}>
                     {order.orderItems.map((orderItem) => (
-                        <OrderItemElement
-                            orderItem={orderItem}
-                            key={orderItem.id}
-                            onMarkOrderItenFinished={() => onMarkOrderItemFinished(orderItem)}
-                        />
+                        <OrderItemElement orderItem={orderItem} key={orderItem.id} onMarkOrderItenFinished={() => onMarkOrderItemFinished(orderItem)} />
                     ))}
                 </div>
             </section>

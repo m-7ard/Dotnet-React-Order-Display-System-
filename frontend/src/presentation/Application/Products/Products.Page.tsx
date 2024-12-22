@@ -8,17 +8,19 @@ import OrderByMenu from "./Products.Page.OrderByMenu";
 import IProduct from "../../../domain/models/IProduct";
 import ProductElement from "./Products.Page.ProductElement";
 import FilterProductsController from "./Filter/FilterProducts.Controller";
+import pageSection from "../../data-attributes/PageSection";
+import contentGridTracks from "../../data-attributes/contentGridTracks";
 
 export default function ProductsPage(props: { products: IProduct[] }) {
     const { products } = props;
 
     return (
-        <div className="mixin-page-like mixin-page-base mx-auto">
-            <header className="flex flex-row gap-2 items-center shrink-0 overflow-x-auto">
+        <div className="mixin-page-like mixin-page-base mixin-content-grid">
+            <header className="flex flex-row gap-2 items-center shrink-0 overflow-x-auto" {...pageSection} {...contentGridTracks.base}>
                 <LinkBox parts={[{ isLink: true, to: routeData.createProduct.build({}), label: "Products" }]} />
                 <div className="flex flex-row gap-2 ml-auto">
                     <Link to="/products/create">
-                        <MixinButton className="justify-center w-full  " options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}>
+                        <MixinButton className="justify-center w-full" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}>
                             Create
                         </MixinButton>
                     </Link>
@@ -45,8 +47,8 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                     />
                 </div>
             </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">
+            <hr className="h-0 w-full border-bottom border-gray-300" {...contentGridTracks.base}></hr>
+            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3" {...pageSection} {...contentGridTracks.base}>
                 {products.map((product) => (
                     <ProductElement product={product} key={product.id} />
                 ))}

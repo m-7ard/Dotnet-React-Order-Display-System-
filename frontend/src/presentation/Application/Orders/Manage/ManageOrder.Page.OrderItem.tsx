@@ -27,7 +27,7 @@ export default function OrderItemElement(props: { orderItem: OrderItem; onMarkOr
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection className="flex flex-col gap-1">
-                <div className="w-full flex flex-row justify-between px-2 py-1 bg-gray-100 shrink-0  border border-gray-900">
+                <div className="w-full flex flex-row justify-between px-2 py-1 shrink-0  border border-gray-900">
                     {Array.from({ length: 4 }).map((_, i) => (
                         <CoverImage className="h-12 w-12 border border-gray-900  overflow-hidden bg-gray-50" src={orderItem.productHistory.images[i] == null ? undefined : `${getApiUrl()}/Media/${orderItem.productHistory.images[i]}`} key={i} />
                     ))}
@@ -42,7 +42,7 @@ export default function OrderItemElement(props: { orderItem: OrderItem; onMarkOr
                     <div className="text-sm ml-auto">Total - {`${orderItem.getTotal()}$`}</div>
                 </div>
             </MixinPrototypeCardSection>
-            <MixinPrototypeCardSection className="bg-gray-100">
+            <MixinPrototypeCardSection>
                 <div className="flex flex-row gap-2">
                     {orderItem.canMarkFinished() && (
                         <>

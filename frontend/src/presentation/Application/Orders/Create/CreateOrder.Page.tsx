@@ -67,7 +67,6 @@ export default function CreateOrderPage(props: {
                 </div>
             )}
             <form
-                className="mixin-page-content-like mixin-page-content-base"
                 onSubmit={async (e) => {
                     e.preventDefault();
                     onSubmit();
