@@ -40,7 +40,7 @@ export default function UploadImagesForm(props: {
     }
 
     return (
-        <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}>
+        <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }} hasBorder hasDivide>
             <MixinPrototypeCardSection>
                 <MixinButton
                     className="w-fit overflow-hidden relative"

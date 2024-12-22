@@ -18,6 +18,9 @@ export default function ProductElement(props: { product: IProduct }) {
                 size: "mixin-Pcard-base",
                 theme: "theme-Pcard-generic-white",
             }}
+            hasBorder
+            hasDivide
+            hasShadow
         >
             <MixinPrototypeCardSection className="grid gap-3" style={{ gridTemplateColumns: "auto 1fr" }}>
                 <CoverImage className="aspect-square h-full overflow-hidden shrink-0 rounded-lg bg-gray-300" src={productImages[0]} />

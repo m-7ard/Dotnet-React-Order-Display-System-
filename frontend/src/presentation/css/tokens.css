@@ -23,4 +23,13 @@
   .token-card--list-value--text {
     @apply text-gray-600 text-sm;
   }
+  .token-default-shadow {
+    box-shadow: 0 2px 6px 0px rgba(214, 221, 217, 0.5);
+  }
+  .token-default-border-color {
+    @apply border-gray-300;
+  }
+  .token-default-divide-color {
+    @apply divide-gray-300;
+  }
 }/*# sourceMappingURL=tokens.css.map */
