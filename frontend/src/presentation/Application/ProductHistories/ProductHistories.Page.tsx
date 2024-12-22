@@ -7,13 +7,16 @@ import routeData from "../../routes/_routeData";
 import OrderByMenu from "./ProductHistories.Page.OrderByMenu";
 import FilterProductHistoriesController from "./Filter/FilterProductHistories.Controller";
 import ProductHistoryElement from "./ProductHistories.Page.ProductHistoryElement";
+import contentGridTracks from "../../data-attributes/contentGridTracks";
+import pageSection from "../../data-attributes/PageSection";
+import Divider from "../../components/Resuables/Divider";
 
 export default function ProductHistoriesPage(props: { productHistories: ProductHistory[] }) {
     const { productHistories } = props;
 
     return (
-        <div className="mixin-page-like mixin-page-base mx-auto">
-            <header className="flex flex-row gap-2 items-center overflow-x-auto shrink-0">
+        <div className="mixin-page-like mixin-page-base mixin-content-grid">
+            <header className="flex flex-row gap-2 items-center overflow-x-auto shrink-0" {...pageSection} {...contentGridTracks.base}>
                 <LinkBox parts={[{ isLink: true, to: routeData.listProductHistories.build({}), label: "Product Histories" }]} />
                 <div className="flex flex-row gap-2 ml-auto">
                     <GlobalDialog
@@ -39,8 +42,8 @@ export default function ProductHistoriesPage(props: { productHistories: ProductH
                     />
                 </div>
             </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">
+            <Divider {...contentGridTracks.base}></Divider>
+            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3" {...pageSection} {...contentGridTracks.base}>
                 {productHistories.map((productHistory) => (
                     <ProductHistoryElement productHistory={productHistory} key={productHistory.id} />
                 ))}

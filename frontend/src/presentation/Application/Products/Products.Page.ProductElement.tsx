@@ -18,30 +18,23 @@ export default function ProductElement(props: { product: IProduct }) {
                 size: "mixin-Pcard-base",
                 theme: "theme-Pcard-generic-white",
             }}
-            className="h-fit"
         >
-            <MixinPrototypeCardSection className="flex flex-row gap-2">
-                <CoverImage className="aspect-square basis-1/3 w-full border border-gray-900 overflow-hidden shrink-0" src={productImages[0] == null ? undefined : productImages[0]} />
-                <div className="flex flex-col gap-px overflow-hidden">
-                    <div className="overflow-hidden">
-                        <div className="text-xs font-bold">Name</div>
-                        <div className="text-sm truncate" title={product.name}>
-                            {product.name}
-                        </div>
+            <MixinPrototypeCardSection className="grid gap-3" style={{ gridTemplateColumns: "auto 1fr" }}>
+                <CoverImage className="aspect-square h-full overflow-hidden shrink-0 rounded-lg bg-gray-300" src={productImages[0]} />
+                <div>
+                    <div className="text-base font-bold truncate" title={product.name}>
+                        {product.name}
                     </div>
-                    <div>
-                        <div className="text-xs font-bold">Price</div>
-                        <div className="text-sm truncate">${product.price}</div>
-                    </div>
+                    <div className="text-sm truncate">${product.price}</div>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection>
-                <div className="flex flex-row gap-2">
-                    <div className="text-xs font-bold">Date Created</div>
-                    <div className="text-xs truncate">{product.dateCreated.toLocaleString("en-us")}</div>
+                <div className="flex flex-row justify-between">
+                    <div className="text-sm font-bold">Date Created</div>
+                    <div className="text-sm truncate">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>
             </MixinPrototypeCardSection>
-            <MixinPrototypeCardSection className="flex flex-col gap-2 bg-gray-100">
+            <MixinPrototypeCardSection className="flex flex-col gap-1">
                 <a
                     className="w-full"
                     onClick={(e) => {

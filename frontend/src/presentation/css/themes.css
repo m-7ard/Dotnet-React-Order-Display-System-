@@ -1,12 +1,12 @@
 @layer components {
   .theme-input-generic-white {
-    @apply border border-gray-900 flex flex-grow;
+    @apply border border-gray-300 flex flex-grow rounded-md overflow-hidden;
   }
   .theme-input-generic-white > input {
-    @apply text-gray-900 bg-white focus:bg-gray-200;
+    @apply text-gray-900 bg-white focus:bg-gray-300 rounded-md;
   }
   .theme-button-generic-white {
-    @apply border border-gray-900 text-gray-900;
+    @apply rounded-lg border border-gray-300 text-gray-900;
   }
   .theme-button-generic-white:not(.theme-button-generic-white[data-active=true]) {
     @apply bg-white hover:bg-gray-200;
@@ -15,7 +15,7 @@
     @apply bg-gray-200;
   }
   .theme-button-generic-yellow {
-    @apply border border-gray-900 text-gray-900;
+    @apply rounded-lg text-gray-900;
   }
   .theme-button-generic-yellow:not(.theme-button-generic-yellow[data-active=true]) {
     @apply bg-yellow-300 hover:bg-yellow-400;
@@ -24,7 +24,7 @@
     @apply bg-yellow-400;
   }
   .theme-button-generic-green {
-    @apply border border-gray-900 text-gray-900;
+    @apply rounded-lg text-gray-900;
   }
   .theme-button-generic-green:not(.theme-button-generic-green[data-active=true]) {
     @apply bg-green-300 hover:bg-green-400;
@@ -33,7 +33,7 @@
     @apply bg-green-400;
   }
   .theme-button-generic-red {
-    @apply border border-gray-900 text-gray-900;
+    @apply rounded-lg text-gray-900;
   }
   .theme-button-generic-red:not(.theme-button-generic-red[data-active=true]) {
     @apply bg-red-300 hover:bg-red-400;
@@ -42,27 +42,28 @@
     @apply bg-red-400;
   }
   .theme-checkbox-generic-white {
-    @apply border border-gray-900 bg-white hover:bg-gray-200;
+    @apply border border-gray-900 bg-white hover:bg-gray-300;
   }
   .theme-checkbox-generic-white--active [data-role=inner-part], .theme-checkbox-generic-white:has(:checked) [data-role=inner-part] {
     @apply bg-gray-900;
   }
   .theme-textarea-generic-white {
-    @apply border border-gray-900 text-gray-900 bg-white;
+    @apply border border-gray-300 text-gray-900 bg-white;
   }
   .theme-textarea-generic-white > textarea {
-    @apply bg-white focus:bg-gray-200;
+    @apply bg-white focus:bg-gray-300;
   }
   .theme-textarea-generic-white [data-role=footer] {
-    @apply bg-transparent border-gray-900;
+    @apply bg-transparent border-gray-300;
   }
   .theme-textarea-generic-white [data-role=counter] {
-    @apply border-gray-900;
+    @apply border-gray-300;
   }
   .theme-Pcard-generic-white {
-    @apply bg-white divide-gray-900 border-gray-900;
+    box-shadow: 0 2px 6px 0px rgba(214, 221, 217, 0.5);
+    @apply bg-white divide-gray-300;
   }
   .theme-panel-generic-white {
-    @apply bg-gray-50 border border-gray-900;
+    @apply bg-white border border-gray-900;
   }
 }/*# sourceMappingURL=themes.css.map */

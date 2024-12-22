@@ -7,6 +7,8 @@ import routeData from "../../../routes/_routeData";
 import { ErrorState, ValueState } from "./CreateProduct.Controller";
 import { useCallback } from "react";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
+import pageSection from "../../../data-attributes/PageSection";
+import contentGridTracks from "../../../data-attributes/contentGridTracks";
 
 export default function CreateProductPage(props: { value: ValueState; errors: ErrorState; onSubmit: () => void; onReset: () => void; onChange: (value: ValueState) => void; uploadImages: (images: File[]) => Promise<void> }) {
     const { value, errors, onSubmit, onReset, onChange, uploadImages } = props;
@@ -21,8 +23,18 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
     );
 
     return (
-        <div className="mixin-page-like mixin-page-base mx-auto">
-            <header className="flex flex-row gap-2 items-center">
+        <form
+            onSubmit={(e) => {
+                e.preventDefault();
+                onSubmit();
+            }}
+            onReset={(e) => {
+                e.preventDefault();
+                onReset();
+            }}
+            className="mixin-page-like mixin-page-base mixin-content-grid"
+        >
+            <header className="flex flex-row gap-3 items-center" {...pageSection} {...contentGridTracks.base}>
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
@@ -30,19 +42,10 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
                     ]}
                 />
             </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <form
-                className="flex flex-col gap-[inherit]"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    onSubmit();
-                }}
-                onReset={(e) => {
-                    e.preventDefault();
-                    onReset();
-                }}
-            >
-                <div className="flex flex-col gap-2">
+            <hr className="h-0 w-full border-bottom border-gray-300 rounded-lg overflow-hidden shadow-lg" {...contentGridTracks.base}></hr>
+            <section className="flex flex-col gap-3" {...pageSection} {...contentGridTracks.base}>
+                <div className="text-lg font-bold text-gray-800">Create Product</div>
+                <div className="flex flex-col gap-4">
                     <FormField name="name" errors={errors.name}>
                         <StatelessCharField
                             onChange={(value) => updateField("name", value)}
@@ -79,15 +82,16 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
                         />
                     </FormField>
                 </div>
-                <footer className="flex flex-row gap-2 justify-end">
-                    <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset">
-                        Reset
-                    </MixinButton>
-                    <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">
-                        Submit
-                    </MixinButton>
-                </footer>
-            </form>
-        </div>
+            </section>
+            <hr className="h-0 w-full border-bottom border-gray-300 rounded-lg overflow-hidden shadow-lg" {...contentGridTracks.base}></hr>
+            <footer className="flex flex-row gap-3 justify-end" {...pageSection} {...contentGridTracks.base}>
+                <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset">
+                    Reset
+                </MixinButton>
+                <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">
+                    Submit
+                </MixinButton>
+            </footer>
+        </form>
     );
 }

@@ -15,7 +15,7 @@ export default function FormField<T extends string>({
     children: React.ReactNode | ((props: { name: T; }) => React.ReactNode)
 }) {
     return (
-        <div className="flex flex-col gap-y-0.5">
+        <div className="flex flex-col gap-y-1">
             {row ?? false ? (
                 <div className="flex flex-row gap-2 items-center">
                     {typeof children === "function" ? children({ name }) : children}
