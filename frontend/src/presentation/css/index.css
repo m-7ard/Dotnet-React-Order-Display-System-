@@ -96,20 +96,42 @@
   .mixin-Pcard-base > [data-role=Pcard-section] {
     @apply px-4 py-3;
   }
+  .mixin-content-grid[data-default-track] > * {
+    width: 100%;
+    margin: 0 auto;
+  }
+  .mixin-content-grid:not([data-default-track]) > * {
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .mixin-content-grid[data-default-track=full] > * {
+    max-width: 100%;
+  }
+  .mixin-content-grid[data-default-track=lg] > * {
+    max-width: 900px;
+  }
+  .mixin-content-grid[data-default-track=base] > * {
+    max-width: 700px;
+  }
+  .mixin-content-grid[data-default-track=sm] > * {
+    max-width: 450px;
+  }
   .mixin-content-grid > [data-track] {
-    @apply w-full mx-auto;
+    width: 100%;
+    margin: 0 auto;
   }
   .mixin-content-grid > [data-track=full] {
-    @apply max-w-full;
+    max-width: 100%;
   }
   .mixin-content-grid > [data-track=lg] {
-    @apply max-w-[900px];
+    max-width: 900px;
   }
   .mixin-content-grid > [data-track=base] {
-    @apply max-w-[700px];
+    max-width: 700px;
   }
   .mixin-content-grid > [data-track=sm] {
-    @apply max-w-[450px];
+    max-width: 450px;
   }
 }
 @layer components {

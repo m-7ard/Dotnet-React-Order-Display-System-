@@ -8,7 +8,7 @@ export default function ResultsPage<T extends { product: IProduct } & Record<str
     const { results, ControlComponent } = props;
 
     return (
-        <section className="flex flex-col sm:grid sm:grid-cols-2 gap-x-2 gap-y-4 grow">
+        <section className="flex flex-col sm:grid sm:grid-cols-2 gap-3 grow">
             {results.map((result) => (
                 <ControlComponent {...result} key={result.product.id} />
             ))}

@@ -4,15 +4,23 @@ import { getLocalUrl } from "../../../viteUtils";
 import CoverImage from "../../components/Resuables/CoverImage";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 import MixinButton from "../../components/Resuables/MixinButton";
+import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
+import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
+import Divider from "../../components/Resuables/Divider";
 
 export default function FrontpagePage() {
     return (
-        <div className="mixin-page-like mixin-page-base mixin-content-grid">
-            <header className="flex flex-row gap-3 items-center justify-between" data-role="page-section" data-track="base">
+        <MixinPage
+            className={`${CONTENT_GRID.CLASS}`}
+            options={{
+                size: "mixin-page-base",
+            }}
+        >
+            <MixinPageSection className="flex flex-row gap-3 items-center justify-between">
                 <LinkBox parts={[]} />
-            </header>
-            <hr className="h-0 w-full border-bottom border-gray-300 rounded-lg overflow-hidden shadow-lg" data-track="base"></hr>
-            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3" data-role="page-section" data-track="base">
+            </MixinPageSection>
+            <Divider />
+            <MixinPageSection className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">
                 <Navigator
                     title="Products"
                     imageUrl={getLocalUrl("/src/presentation/images/_045d1801-1987-4ce3-abd9-1b8f56fcde24-removebg-preview.png")}
@@ -30,8 +38,8 @@ export default function FrontpagePage() {
                     ]}
                 />
                 <Navigator title="Product Histories" imageUrl={getLocalUrl("/src/presentation/images/_4766e2d9-54f8-48b5-9366-11485ac2198b-removebg-preview.png")} buttons={[{ label: "List", href: "/product_histories" }]} />
-            </section>
-        </div>
+            </MixinPageSection>
+        </MixinPage>
     );
 }
 

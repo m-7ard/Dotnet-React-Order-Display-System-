@@ -40,7 +40,7 @@ export default function FilterProductHistoriesFieldset(props: {
                     />
                 )}
             </FormField>
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row gap-3">
                 <div className="basis-1/2">
                     <FormField name="minPrice">
                         {({ name }) => (

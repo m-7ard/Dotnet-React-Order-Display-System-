@@ -8,6 +8,9 @@ import routeData from "../../../routes/_routeData";
 import { useCallback } from "react";
 import { ErrorSchema, ValueSchema } from "./UpdateProduct.Controller";
 import IProduct from "../../../../domain/models/IProduct";
+import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
+import Divider from "../../../components/Resuables/Divider";
+import { CONTENT_GRID } from "../../../attribute-mixins/contentGridTracks";
 
 export default function UpdateProductPage(props: { value: ValueSchema; onChange: (value: ValueSchema) => void; onReset: () => void; onSubmit: () => void; errors: ErrorSchema; product: IProduct; uploadImages: (images: File[]) => Promise<void> }) {
     const { value, onChange, onReset, onSubmit, errors, product, uploadImages } = props;
@@ -22,8 +25,22 @@ export default function UpdateProductPage(props: { value: ValueSchema; onChange:
     );
 
     return (
-        <div className="mixin-page-like mixin-page-base mx-auto">
-            <header className="flex flex-row gap-2 items-center">
+        <MixinPage
+            as="form"
+            className={`${CONTENT_GRID.CLASS}`}
+            options={{
+                size: "mixin-page-base",
+            }}
+            onSubmit={async (e) => {
+                e.preventDefault();
+                onSubmit();
+            }}
+            onReset={(e) => {
+                e.preventDefault();
+                onReset();
+            }}
+        >
+            <MixinPageSection className="flex flex-row gap-3 items-center">
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
@@ -31,65 +48,54 @@ export default function UpdateProductPage(props: { value: ValueSchema; onChange:
                         { isLink: true, to: routeData.updateProduct.build({ id: product.id }), label: "Update" },
                     ]}
                 />
-            </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <form
-                className="flex flex-col gap-[inherit]"
-                onSubmit={async (e) => {
-                    e.preventDefault();
-                    onSubmit();
-                }}
-                onReset={(e) => {
-                    e.preventDefault();
-                    onReset();
-                }}
-            >
-                <div className="flex flex-col gap-2">
-                    <FormField name="name" errors={errors.name}>
-                        <StatelessCharField
-                            onChange={(value) => updateField("name", value)}
-                            value={value.name}
-                            options={{
-                                size: "mixin-char-input-base",
-                                theme: "theme-input-generic-white",
-                            }}
-                        />
-                    </FormField>
-                    <FormField name="images" errors={errors.images?._}>
-                        <UploadImagesForm onSubmit={uploadImages} onChange={(value) => updateField("images", value)} errors={errors.images} value={value.images} />
-                    </FormField>
-                    <FormField name="price" errors={errors.price}>
-                        <StatelessCharField
-                            onChange={(value) => updateField("price", value)}
-                            value={value.price.toString()}
-                            options={{
-                                size: "mixin-char-input-base",
-                                theme: "theme-input-generic-white",
-                            }}
-                        />
-                    </FormField>
-                    <FormField name="description" errors={errors.description}>
-                        <StatelessTextArea
-                            onChange={(value) => updateField("description", value)}
-                            value={value.description}
-                            options={{
-                                size: "mixin-textarea-any",
-                                theme: "theme-textarea-generic-white",
-                            }}
-                            rows={5}
-                            maxLength={1028}
-                        />
-                    </FormField>
-                </div>
-                <footer className="flex flex-row gap-2 justify-end">
-                    <MixinButton className="  overflow-hidden" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset">
-                        Reset
-                    </MixinButton>
-                    <MixinButton className="  overflow-hidden" options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">
-                        Submit
-                    </MixinButton>
-                </footer>
-            </form>
-        </div>
+            </MixinPageSection>
+            <Divider />
+            <MixinPageSection className="flex flex-col gap-3">
+                <FormField name="name" errors={errors.name}>
+                    <StatelessCharField
+                        onChange={(value) => updateField("name", value)}
+                        value={value.name}
+                        options={{
+                            size: "mixin-char-input-base",
+                            theme: "theme-input-generic-white",
+                        }}
+                    />
+                </FormField>
+                <FormField name="images" errors={errors.images?._}>
+                    <UploadImagesForm onSubmit={uploadImages} onChange={(value) => updateField("images", value)} errors={errors.images} value={value.images} />
+                </FormField>
+                <FormField name="price" errors={errors.price}>
+                    <StatelessCharField
+                        onChange={(value) => updateField("price", value)}
+                        value={value.price.toString()}
+                        options={{
+                            size: "mixin-char-input-base",
+                            theme: "theme-input-generic-white",
+                        }}
+                    />
+                </FormField>
+                <FormField name="description" errors={errors.description}>
+                    <StatelessTextArea
+                        onChange={(value) => updateField("description", value)}
+                        value={value.description}
+                        options={{
+                            size: "mixin-textarea-any",
+                            theme: "theme-textarea-generic-white",
+                        }}
+                        rows={5}
+                        maxLength={1028}
+                    />
+                </FormField>
+            </MixinPageSection>
+            <Divider />
+            <MixinPageSection className="flex flex-row gap-3 justify-end">
+                <MixinButton className="  overflow-hidden" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset">
+                    Reset
+                </MixinButton>
+                <MixinButton className="  overflow-hidden" options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">
+                    Submit
+                </MixinButton>
+            </MixinPageSection>
+        </MixinPage>
     );
 }

@@ -55,8 +55,8 @@ export default function OrderItemDataFieldItem(props: OrderItemDataFormProps) {
                     <div className="text-sm truncate">${product.price}</div>
                 </div>
             </MixinPrototypeCardSection>
-            <MixinPrototypeCardSection className="flex flex-row gap-2">
-                <div className="flex flex-row gap-2 grow">
+            <MixinPrototypeCardSection className="flex flex-row gap-3">
+                <div className="flex flex-row gap-3 grow">
                     <MixinButton
                         options={{
                             size: "mixin-button-base",
@@ -89,7 +89,7 @@ export default function OrderItemDataFieldItem(props: OrderItemDataFormProps) {
                 </div>
             </MixinPrototypeCardSection>
             {errors == null ? null : (
-                <MixinPrototypeCardSection className="flex flex-col gap-2">
+                <MixinPrototypeCardSection className="flex flex-col gap-3">
                     <ul>
                         {Object.values(errors)
                             .reduce((acc, errors) => [...acc, ...errors], [])

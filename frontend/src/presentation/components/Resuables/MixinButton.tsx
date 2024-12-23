@@ -11,15 +11,15 @@ interface IMixinButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
 }
 
 export default function MixinButton(props: PropsWithChildren<IMixinButtonProps>) {
-    const { options, active, className, isStatic, hasShadow, ...HTMLattrs } = props;
-    const isActive = active ?? false;
-    const staticMixinClass = isStatic == null ? "" : "mixin-button-like--static";
-    const staticThemeClass = isStatic == null ? "" : `${options.theme}--static`;
-    const hasShadowClass = hasShadow == null ? "" : `shadow`;
+    const { options, active = false, className, isStatic = false, hasShadow = false, children, ...HTMLattrs } = props;
+
+    const staticMixinClass = isStatic ? "mixin-button-like--static" : "";
+    const staticThemeClass = isStatic ? `${options.theme}--static` : "";
+    const hasShadowClass = hasShadow ? `shadow` : "";
 
     return (
-        <button data-active={isActive} className={["mixin-button-like", options.size, options.theme, className, staticMixinClass, staticThemeClass, hasShadowClass].join(" ")} {...HTMLattrs}>
-            {props.children}
+        <button data-active={active} className={["mixin-button-like", options.size, options.theme, className, staticMixinClass, staticThemeClass, hasShadowClass].join(" ")} {...HTMLattrs}>
+            {children}
         </button>
     );
 }

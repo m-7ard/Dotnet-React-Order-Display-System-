@@ -17,7 +17,7 @@ export default function FormField<T extends string>({
     return (
         <div className="flex flex-col gap-y-1">
             {row ?? false ? (
-                <div className="flex flex-row gap-2 items-center">
+                <div className="flex flex-row gap-3 items-center">
                     {typeof children === "function" ? children({ name }) : children}
                     <div className="text-sm font-medium">{label ?? generateLabel(name)}</div>
                 </div>

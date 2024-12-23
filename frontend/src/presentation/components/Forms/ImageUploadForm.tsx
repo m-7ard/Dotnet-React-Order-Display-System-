@@ -84,8 +84,8 @@ function Image(props: {
     const { originalFileName, url, onDelete, errors } = props;
 
     return (
-        <MixinPrototypeCardSection className="flex flex-col gap-2">
-            <div className="flex flex-row gap-2">
+        <MixinPrototypeCardSection className="flex flex-col gap-3">
+            <div className="flex flex-row gap-3">
                 <CoverImage
                     className="w-16 h-16 min-w-16 min-h-16 border border-gray-900  overflow-hidden"
                     src={`${getApiUrl()}/${url}`}

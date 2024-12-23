@@ -1,11 +1,10 @@
 import MixinButton from "../../../components/Resuables/MixinButton";
 import LinkBox from "../../../components/Resuables/LinkBox";
-import MixinPanel from "../../../components/Resuables/MixinPanel";
+import MixinPanel, { MixinPanelSection } from "../../../components/Resuables/MixinPanel";
 import FilterProductHistoriesFieldset from "../../../components/Fieldsets/FilterProductHistoriesFieldset";
 import routeData from "../../../routes/_routeData";
 import { ValueSchema } from "./FilterProductHistories.Controller";
 import Divider from "../../../components/Resuables/Divider";
-import panelSection from "../../../attribute-mixins/panelSection";
 
 export default function FilterProductHistoriesDialogPanel(props: { value: ValueSchema; onSubmit: () => void; onReset: () => void; onClose: () => void; onChange: (value: ValueSchema) => void; onClear: () => void }) {
     const { value, onSubmit, onReset, onClose, onChange, onClear } = props;
@@ -27,7 +26,7 @@ export default function FilterProductHistoriesDialogPanel(props: { value: ValueS
                 onReset();
             }}
         >
-            <header className="flex flex-row justify-between items-center flex-wrap gap-1" {...panelSection}>
+            <MixinPanelSection className="flex flex-row justify-between items-center flex-wrap gap-3">
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listProductHistories.build({}), label: "Product Histories" },
@@ -44,13 +43,13 @@ export default function FilterProductHistoriesDialogPanel(props: { value: ValueS
                 >
                     Close
                 </MixinButton>
-            </header>
+            </MixinPanelSection>
             <Divider />
-            <fieldset className="flex flex-col gap-3" {...panelSection}>
+            <MixinPanelSection className="flex flex-col gap-3">
                 <FilterProductHistoriesFieldset value={value} onChange={onChange} />
-            </fieldset>
+            </MixinPanelSection>
             <Divider />
-            <footer className="flex flex-row gap-3" {...panelSection}>
+            <MixinPanelSection className="flex flex-row gap-3">
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="button" onClick={onClear}>
                     Clear
                 </MixinButton>
@@ -60,7 +59,7 @@ export default function FilterProductHistoriesDialogPanel(props: { value: ValueS
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">
                     Filter
                 </MixinButton>
-            </footer>
+            </MixinPanelSection>
         </MixinPanel>
     );
 }

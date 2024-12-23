@@ -19,10 +19,15 @@ export default function LinkBox(props: {
     const parts = [{ isLink: true, to: routeData.frontpage.build({}), label: "All" }, ...props.parts];
 
     return (
-        <MixinButton options={{
-            size: "mixin-button-sm",
-            theme: "theme-button-generic-white"
-        }} isStatic hasShadow>
+        <MixinButton
+            options={{
+                size: "mixin-button-sm",
+                theme: "theme-button-generic-white",
+            }}
+            isStatic
+            hasShadow
+            type="button"
+        >
             {parts.map((part, i) => (
                 <React.Fragment key={i}>
                     {part.isLink ? (
