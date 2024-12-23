@@ -7,7 +7,7 @@ import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuab
 import OrderElement from "./Orders.Page.OrderElement";
 import OrderByMenu from "./Orders.Page.OrderByMenu";
 import FilterOrdersController from "./Filter/FilterOrders.Controller";
-import pageSection from "../../attribute-mixins/PageSection";
+import pageSection from "../../attribute-mixins/pageSection";
 import contentGridTracks from "../../attribute-mixins/contentGridTracks";
 import Divider from "../../components/Resuables/Divider";
 

@@ -7,7 +7,7 @@ import routeData from "../../../routes/_routeData";
 import { ErrorState, ValueState } from "./CreateProduct.Controller";
 import { useCallback } from "react";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
-import pageSection from "../../../attribute-mixins/PageSection";
+import pageSection from "../../../attribute-mixins/pageSection";
 import contentGridTracks from "../../../attribute-mixins/contentGridTracks";
 
 export default function CreateProductPage(props: { value: ValueState; errors: ErrorState; onSubmit: () => void; onReset: () => void; onChange: (value: ValueState) => void; uploadImages: (images: File[]) => Promise<void> }) {
