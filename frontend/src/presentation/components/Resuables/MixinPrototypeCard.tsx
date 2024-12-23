@@ -15,9 +15,9 @@ export default function MixinPrototypeCard<T extends ElementType = "div">(props:
     const { options, as, className, hasShadow = false, hasBorder = false, hasDivide = false, ...HTMLattrs } = props;
     const Component = as ?? "div";
 
-    const shadowClass = hasShadow ? "" : "token-default-shadow";
-    const borderClass = hasBorder ? "" : "border token-default-border-color";
-    const divideClass = hasDivide ? "" : "divide-y token-default-divide-color";
+    const shadowClass = hasShadow ? "token-default-shadow" : "";
+    const borderClass = hasBorder ? "border token-default-border-color" : "";
+    const divideClass = hasDivide ? "divide-y token-default-divide-color" : "";
 
     return (
         <Component className={["mixin-Pcard-like", options.size, options.theme, className, shadowClass, borderClass, divideClass].join(" ")} {...HTMLattrs}>

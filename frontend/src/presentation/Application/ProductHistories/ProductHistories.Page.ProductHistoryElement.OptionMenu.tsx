@@ -33,7 +33,7 @@ export default function OptionMenu(props: { productHistory: ProductHistory }) {
                     </MixinButton>
                 </header>
                 <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3">
                     <a
                         className="w-full"
                         onClick={(e) => {

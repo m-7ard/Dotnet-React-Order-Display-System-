@@ -1,8 +1,9 @@
 import { useLocation, Link } from "@tanstack/react-router";
 import { useGlobalDialogPanelContext } from "../components/Dialog/GlobalDialog.Panel.Context";
 import MixinButton from "../components/Resuables/MixinButton";
-import MixinPanel from "../components/Resuables/MixinPanel";
+import MixinPanel, { MixinPanelSection } from "../components/Resuables/MixinPanel";
 import routeData from "../routes/_routeData";
+import Divider from "../components/Resuables/Divider";
 
 export default function SidebarMenuDialog() {
     const { onClose } = useGlobalDialogPanelContext();
@@ -14,10 +15,10 @@ export default function SidebarMenuDialog() {
                 size: "mixin-panel-base",
                 theme: "theme-panel-generic-white",
             }}
-            className="top-0 bottom-0 left-0 fixed w-72"
+            className="top-0 bottom-0 left-0 fixed w-72 rounded-none"
         >
-            <header className="flex flex-row justify-between items-center">
-                <div className="text-sm">Menu</div>
+            <MixinPanelSection className="flex flex-row justify-between items-center">
+                <div className="text-base font-semibold">Menu</div>
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",
@@ -28,9 +29,9 @@ export default function SidebarMenuDialog() {
                 >
                     Close
                 </MixinButton>
-            </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <div className="flex flex-col gap-2">
+            </MixinPanelSection>
+            <Divider />
+            <MixinPanelSection className="flex flex-col gap-3">
                 <Link className="w-full" to={routeData.frontpage.build({})}>
                     <MixinButton
                         className="w-full justify-center"
@@ -79,7 +80,7 @@ export default function SidebarMenuDialog() {
                         Product Histories
                     </MixinButton>
                 </Link>
-            </div>
+            </MixinPanelSection>
         </MixinPanel>
     );
 }

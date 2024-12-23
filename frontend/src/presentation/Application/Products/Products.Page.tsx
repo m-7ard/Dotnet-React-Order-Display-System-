@@ -8,18 +8,23 @@ import OrderByMenu from "./Products.Page.OrderByMenu";
 import IProduct from "../../../domain/models/IProduct";
 import ProductElement from "./Products.Page.ProductElement";
 import FilterProductsController from "./Filter/FilterProducts.Controller";
-import contentGridTracks from "../../attribute-mixins/contentGridTracks";
-import pageSection from "../../attribute-mixins/pageSection";
 import Divider from "../../components/Resuables/Divider";
+import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
+import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
 
 export default function ProductsPage(props: { products: IProduct[] }) {
     const { products } = props;
 
     return (
-        <div className="mixin-page-like mixin-page-base mixin-content-grid">
-            <header className="flex flex-row gap-2 items-center shrink-0 overflow-x-auto" {...pageSection} {...contentGridTracks.base}>
+        <MixinPage
+            className={`${CONTENT_GRID.CLASS}`}
+            options={{
+                size: "mixin-page-base",
+            }}
+        >
+            <MixinPageSection className="flex flex-row gap-3 items-center shrink-0 overflow-x-auto">
                 <LinkBox parts={[{ isLink: true, to: routeData.createProduct.build({}), label: "Products" }]} />
-                <div className="flex flex-row gap-2 ml-auto">
+                <div className="flex flex-row gap-3 ml-auto">
                     <Link to="/products/create">
                         <MixinButton className="justify-center w-full" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} hasShadow>
                             Create
@@ -47,13 +52,13 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                         positioning={{ top: "100%", right: "0px" }}
                     />
                 </div>
-            </header>
-            <Divider {...contentGridTracks.base} />
-            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-4" {...pageSection} {...contentGridTracks.base}>
+            </MixinPageSection>
+            <Divider />
+            <MixinPageSection className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-4">
                 {products.map((product) => (
                     <ProductElement product={product} key={product.id} />
                 ))}
-            </section>
-        </div>
+            </MixinPageSection>
+        </MixinPage>
     );
 }

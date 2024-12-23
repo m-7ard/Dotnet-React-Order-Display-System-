@@ -1,16 +1,12 @@
 import IProduct from "../../../../domain/models/IProduct";
 import MixinButton from "../../../components/Resuables/MixinButton";
-import MixinPanel from "../../../components/Resuables/MixinPanel";
+import MixinPanel, { MixinPanelSection } from "../../../components/Resuables/MixinPanel";
 import LinkBox from "../../../components/Resuables/LinkBox";
 import routeData from "../../../routes/_routeData";
 import { DeleteProductErrorSchema } from "./DeleteProduct.Controller";
+import Divider from "../../../components/Resuables/Divider";
 
-export default function DeleteProductDialogPanel(props: { 
-    product: IProduct; 
-    onSubmit: () => void;
-    errors: DeleteProductErrorSchema
-    onClose: () => void;
-}) {
+export default function DeleteProductDialogPanel(props: { product: IProduct; onSubmit: () => void; errors: DeleteProductErrorSchema; onClose: () => void }) {
     const { product, onSubmit, onClose } = props;
 
     return (
@@ -25,7 +21,7 @@ export default function DeleteProductDialogPanel(props: {
                 onSubmit();
             }}
         >
-            <header className="flex flex-row justify-between items-center">
+            <MixinPanelSection className="flex flex-row justify-between items-center">
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
@@ -38,23 +34,22 @@ export default function DeleteProductDialogPanel(props: {
                         theme: "theme-button-generic-white",
                     }}
                     onClick={onClose}
-                    className=" "
                     type="button"
                 >
                     Close
                 </MixinButton>
-            </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <section className="flex flex-col gap-2 text-sm">Do you wish to delete "{product.name}"? This Process cannot be undone</section>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <footer className="flex flex-row gap-2">
+            </MixinPanelSection>
+            <Divider />
+            <MixinPanelSection className="flex flex-col gap-3 text-sm">Do you wish to delete "{product.name}"? This Process cannot be undone</MixinPanelSection>
+            <Divider />
+            <MixinPanelSection className="flex flex-row gap-3">
                 <MixinButton onClick={onClose} className="basis-1/2 justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="button">
                     Cancel
                 </MixinButton>
                 <MixinButton className="basis-1/2 justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-red" }} type="submit">
                     Delete
                 </MixinButton>
-            </footer>
+            </MixinPanelSection>
         </MixinPanel>
     );
 }

@@ -11,7 +11,7 @@ export default function ApplicationHeader() {
     return (
         <>
             <header className="bg-gray-50 overflow-auto shrink-0 z-10 relative">
-                <div className="py-2 px-4 max-w-xl w-full flex flex-row gap-2 items-center mx-auto">
+                <div className="py-2 px-4 max-w-xl w-full flex flex-row gap-3 items-center mx-auto">
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
@@ -24,7 +24,6 @@ export default function ApplicationHeader() {
                                 onClick={onToggle}
                                 className="shrink-0 truncate"
                             >
-                                <div>☰</div>
                                 <div>Menu</div>
                             </MixinButton>
                         )}

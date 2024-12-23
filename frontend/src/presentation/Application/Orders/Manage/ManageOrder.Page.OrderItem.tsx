@@ -59,7 +59,7 @@ export default function OrderItemElement(props: { orderItem: OrderItem; onMarkOr
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection>
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row gap-3">
                     {orderItem.canMarkFinished() && (
                         <>
                             <MixinButton className="basis-1/2 justify-center" options={{ size: "mixin-button-sm", theme: "theme-button-generic-green" }} onClick={onMarkOrderItenFinished}>

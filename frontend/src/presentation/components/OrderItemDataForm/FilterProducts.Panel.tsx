@@ -5,7 +5,7 @@ import MixinButton from "../Resuables/MixinButton";
 import { useState } from "react";
 import { useGlobalDialogPanelContext } from "../Dialog/GlobalDialog.Panel.Context";
 import LinkBox from "../Resuables/LinkBox";
-import MixinPanel from "../Resuables/MixinPanel";
+import MixinPanel, { MixinPanelSection } from "../Resuables/MixinPanel";
 import productMapper from "../../../infrastructure/mappers/productMapper";
 import IListProductsResponseDTO from "../../../infrastructure/contracts/products/list/IListProductsResponseDTO";
 import { productDataAccess } from "../../deps/dataAccess";
@@ -83,7 +83,7 @@ export default function FilterProductsPanel(props: FilterProductsPanelProps) {
             className="overflow-auto"
             hasShadow
         >
-            <header className="flex flex-row gap-2 items-center justify-between" {...panelSection}>
+            <MixinPanelSection className="flex flex-row gap-3 items-center justify-between">
                 <LinkBox
                     parts={[
                         { isLink: false, label: "Products" },
@@ -100,9 +100,9 @@ export default function FilterProductsPanel(props: FilterProductsPanelProps) {
                 >
                     Close
                 </MixinButton>
-            </header>
+            </MixinPanelSection>
             <Divider />
-            <nav className="flex flex-row gap-2" {...panelSection}>
+            <MixinPanelSection className="flex flex-row gap-3">
                 <MixinButton
                     options={{
                         size: "mixin-button-base",
@@ -127,9 +127,9 @@ export default function FilterProductsPanel(props: FilterProductsPanelProps) {
                 >
                     Results
                 </MixinButton>
-            </nav>
+            </MixinPanelSection>
             <Divider />
-            <main {...panelSection}>
+            <MixinPanelSection>
                 {
                     {
                         form: <FormPage onReset={() => formValue.setAll(FORM_PAGE_INITIAL_DATA)} onSubmit={searchProductsMutation.mutate} value={formValue.items} onChange={(value) => formValue.setAll(value)} />,
@@ -150,7 +150,7 @@ export default function FilterProductsPanel(props: FilterProductsPanelProps) {
                         ),
                     }[route]
                 }
-            </main>
+            </MixinPanelSection>
         </MixinPanel>
     );
 }

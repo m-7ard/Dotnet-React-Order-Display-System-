@@ -7,18 +7,23 @@ import routeData from "../../routes/_routeData";
 import OrderByMenu from "./ProductHistories.Page.OrderByMenu";
 import FilterProductHistoriesController from "./Filter/FilterProductHistories.Controller";
 import ProductHistoryElement from "./ProductHistories.Page.ProductHistoryElement";
-import contentGridTracks from "../../attribute-mixins/contentGridTracks";
-import pageSection from "../../attribute-mixins/pageSection";
 import Divider from "../../components/Resuables/Divider";
+import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
+import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
 
 export default function ProductHistoriesPage(props: { productHistories: ProductHistory[] }) {
     const { productHistories } = props;
 
     return (
-        <div className="mixin-page-like mixin-page-base mixin-content-grid">
-            <header className="flex flex-row gap-2 items-center overflow-x-auto shrink-0" {...pageSection} {...contentGridTracks.base}>
+        <MixinPage
+            className={`${CONTENT_GRID.CLASS}`}
+            options={{
+                size: "mixin-page-base",
+            }}
+        >
+            <MixinPageSection className="flex flex-row gap-3 items-center overflow-x-auto shrink-0">
                 <LinkBox parts={[{ isLink: true, to: routeData.listProductHistories.build({}), label: "Product Histories" }]} />
-                <div className="flex flex-row gap-2 ml-auto">
+                <div className="flex flex-row gap-3 ml-auto">
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
@@ -41,13 +46,13 @@ export default function ProductHistoriesPage(props: { productHistories: ProductH
                         positioning={{ top: "100%", right: "0px" }}
                     />
                 </div>
-            </header>
-            <Divider {...contentGridTracks.base}></Divider>
-            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3" {...pageSection} {...contentGridTracks.base}>
+            </MixinPageSection>
+            <Divider></Divider>
+            <MixinPageSection className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">
                 {productHistories.map((productHistory) => (
                     <ProductHistoryElement productHistory={productHistory} key={productHistory.id} />
                 ))}
-            </section>
-        </div>
+            </MixinPageSection>
+        </MixinPage>
     );
 }

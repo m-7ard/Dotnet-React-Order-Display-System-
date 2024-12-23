@@ -28,12 +28,12 @@ export default function CountTrackerProduct(props: { product: IProduct; onAdd: (
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection>
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row gap-3">
                     <div className="text-xs font-bold">Date Created</div>
                     <div className="text-xs truncate">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>
             </MixinPrototypeCardSection>
-            <MixinPrototypeCardSection className="flex flex-row gap-2">
+            <MixinPrototypeCardSection className="flex flex-row gap-3">
                 {isAdded ? (
                     <>
                         <div className="mixin-button-like mixin-button-base bg-gray-200 border border-gray-900">x{quantity}</div>

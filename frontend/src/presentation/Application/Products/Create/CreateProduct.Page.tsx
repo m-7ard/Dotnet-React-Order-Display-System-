@@ -7,8 +7,10 @@ import routeData from "../../../routes/_routeData";
 import { ErrorState, ValueState } from "./CreateProduct.Controller";
 import { useCallback } from "react";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
-import pageSection from "../../../attribute-mixins/pageSection";
-import contentGridTracks from "../../../attribute-mixins/contentGridTracks";
+import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
+import Divider from "../../../components/Resuables/Divider";
+import { MixinContentGridTrack } from "../../../components/Resuables/MixinContentGrid";
+import { CONTENT_GRID } from "../../../attribute-mixins/contentGridTracks";
 
 export default function CreateProductPage(props: { value: ValueState; errors: ErrorState; onSubmit: () => void; onReset: () => void; onChange: (value: ValueState) => void; uploadImages: (images: File[]) => Promise<void> }) {
     const { value, errors, onSubmit, onReset, onChange, uploadImages } = props;
@@ -23,7 +25,8 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
     );
 
     return (
-        <form
+        <MixinPage
+            as="form"
             onSubmit={(e) => {
                 e.preventDefault();
                 onSubmit();
@@ -32,18 +35,21 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
                 e.preventDefault();
                 onReset();
             }}
-            className="mixin-page-like mixin-page-base mixin-content-grid"
+            options={{
+                size: "mixin-page-base",
+            }}
+            className={`${CONTENT_GRID.CLASS}`}
         >
-            <header className="flex flex-row gap-3 items-center" {...pageSection} {...contentGridTracks.base}>
+            <MixinPageSection className="flex flex-row gap-3 items-center">
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
                         { isLink: true, to: routeData.createProduct.build({}), label: "Create" },
                     ]}
                 />
-            </header>
-            <hr className="h-0 w-full border-bottom border-gray-300 rounded-lg overflow-hidden shadow-lg" {...contentGridTracks.base}></hr>
-            <section className="flex flex-col gap-3" {...pageSection} {...contentGridTracks.base}>
+            </MixinPageSection>
+            <MixinContentGridTrack track="base" as={Divider} />
+            <MixinPageSection className="flex flex-col gap-3">
                 <div className="text-lg font-bold text-gray-800">Create Product</div>
                 <div className="flex flex-col gap-4">
                     <FormField name="name" errors={errors.name}>
@@ -82,16 +88,16 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
                         />
                     </FormField>
                 </div>
-            </section>
-            <hr className="h-0 w-full border-bottom border-gray-300 rounded-lg overflow-hidden shadow-lg" {...contentGridTracks.base}></hr>
-            <footer className="flex flex-row gap-3 justify-end" {...pageSection} {...contentGridTracks.base}>
+            </MixinPageSection>
+            <MixinContentGridTrack track="base" as={Divider} />
+            <MixinPageSection className="flex flex-row gap-3 justify-end">
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset">
                     Reset
                 </MixinButton>
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">
                     Submit
                 </MixinButton>
-            </footer>
-        </form>
+            </MixinPageSection>
+        </MixinPage>
     );
 }

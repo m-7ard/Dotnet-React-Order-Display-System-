@@ -2,7 +2,7 @@ import FilterOrdersFieldset from "../../../components/Fieldsets/FilterOrdersFiel
 import Divider from "../../../components/Resuables/Divider";
 import LinkBox from "../../../components/Resuables/LinkBox";
 import MixinButton from "../../../components/Resuables/MixinButton";
-import MixinPanel from "../../../components/Resuables/MixinPanel";
+import MixinPanel, { MixinPanelSection } from "../../../components/Resuables/MixinPanel";
 import routeData from "../../../routes/_routeData";
 import { ValueSchema } from "./FilterOrders.Controller";
 import panelSection from "../../../attribute-mixins/panelSection";
@@ -26,7 +26,7 @@ export default function FilterOrdersDialogPanel(props: { value: ValueSchema; onS
                 onReset();
             }}
         >
-            <header className="flex flex-row justify-between items-center" {...panelSection}>
+            <MixinPanelSection className="flex flex-row justify-between items-center">
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listOrders.build({}), label: "Orders" },
@@ -44,13 +44,13 @@ export default function FilterOrdersDialogPanel(props: { value: ValueSchema; onS
                 >
                     Close
                 </MixinButton>
-            </header>
+            </MixinPanelSection>
             <Divider />
-            <div className="flex flex-col gap-3" {...panelSection}>
+            <MixinPanelSection className="flex flex-col gap-3">
                 <FilterOrdersFieldset value={value} onChange={onChange} />
-            </div>
+            </MixinPanelSection>
             <Divider />
-            <footer className="flex flex-row gap-3" {...panelSection}>
+            <MixinPanelSection className="flex flex-row gap-3">
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="button" onClick={onClear}>
                     Clear
                 </MixinButton>
@@ -60,7 +60,7 @@ export default function FilterOrdersDialogPanel(props: { value: ValueSchema; onS
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">
                     Filter
                 </MixinButton>
-            </footer>
+            </MixinPanelSection>
         </MixinPanel>
     );
 }
