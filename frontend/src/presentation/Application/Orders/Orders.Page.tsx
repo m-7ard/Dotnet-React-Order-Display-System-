@@ -7,8 +7,8 @@ import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuab
 import OrderElement from "./Orders.Page.OrderElement";
 import OrderByMenu from "./Orders.Page.OrderByMenu";
 import FilterOrdersController from "./Filter/FilterOrders.Controller";
-import pageSection from "../../data-attributes/PageSection";
-import contentGridTracks from "../../data-attributes/contentGridTracks";
+import pageSection from "../../attribute-mixins/PageSection";
+import contentGridTracks from "../../attribute-mixins/contentGridTracks";
 import Divider from "../../components/Resuables/Divider";
 
 export default function OrdersPage(props: { orders: Order[] }) {
@@ -20,14 +20,14 @@ export default function OrdersPage(props: { orders: Order[] }) {
                 <LinkBox parts={[{ isLink: true, to: "/orders", label: "Orders" }]} />
                 <div className="flex flex-row gap-3 ml-auto">
                     <Link to="/orders/create">
-                        <MixinButton className="" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}>
+                        <MixinButton className="" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} hasShadow>
                             Create
                         </MixinButton>
                     </Link>
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
-                            <MixinButton className=" basis-1/2" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle}>
+                            <MixinButton className=" basis-1/2" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} hasShadow>
                                 Filter
                             </MixinButton>
                         )}
@@ -37,7 +37,7 @@ export default function OrdersPage(props: { orders: Order[] }) {
                     <AbstractTooltip
                         Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
-                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open}>
+                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open} hasShadow>
                                     Order By
                                 </MixinButton>
                             </AbstractTooltipTrigger>
@@ -48,8 +48,8 @@ export default function OrdersPage(props: { orders: Order[] }) {
                 </div>
             </header>
             <Divider {...contentGridTracks.full}></Divider>
-            <section className="flex flex-col grow overflow-hidden" {...pageSection} {...contentGridTracks.full}>
-                <div className="flex flex-col max-h-full overflow-scroll gap-3 grow sm:flex-wrap sm:overflow-x-scroll sm:overflow-y-hidden sm:content-start">
+            <section className="flex flex-col grow overflow-scroll sm:overflow-x-scroll sm:overflow-y-hidden" {...pageSection} {...contentGridTracks.full}>
+                <div className="flex flex-col max-h-full  gap-3 grow sm:flex-wrap sm:content-start">
                     {orders.map((order) => (
                         <OrderElement order={order} key={order.id} />
                     ))}

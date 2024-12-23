@@ -20,26 +20,42 @@ export default function OrderItemElement(props: { orderItem: OrderItem; onMarkOr
                 size: "mixin-Pcard-base",
                 theme: "theme-Pcard-generic-white",
             }}
+            hasDivide
+            hasShadow
         >
             <MixinPrototypeCardSection className={`flex flex-col ${ORDER_ITEM_STATUS_COLORS[orderItem.status.value]}`}>
                 <div className="flex flex-row justify-between items-baseline">
-                    <div className="text-sm">Order Item #{orderItem.serialNumber}</div>
+                    <div className="text-base font-semibold">Order Item #{orderItem.serialNumber}</div>
                 </div>
             </MixinPrototypeCardSection>
-            <MixinPrototypeCardSection className="flex flex-col gap-1">
-                <div className="w-full flex flex-row justify-between px-2 py-1 shrink-0  border border-gray-900">
+            <MixinPrototypeCardSection className="flex flex-col gap-3">
+                <div className="w-full flex flex-row justify-between p-1 shrink-0 border token-default-border-color h-16 rounded-lg">
                     {Array.from({ length: 4 }).map((_, i) => (
-                        <CoverImage className="h-12 w-12 border border-gray-900  overflow-hidden bg-gray-50" src={orderItem.productHistory.images[i] == null ? undefined : `${getApiUrl()}/Media/${orderItem.productHistory.images[i]}`} key={i} />
+                        <CoverImage className="token-default-avatar" src={orderItem.productHistory.images[i] == null ? undefined : `${getApiUrl()}/Media/${orderItem.productHistory.images[i]}`} key={i} />
                     ))}
                 </div>
-                <div className="flex flex-row gap-2 items-center text-base">
-                    <div className="text-sm font-bold bg-gray-200 px-2 py-1/2  border border-gray-900">x{orderItem.quantity}</div>
-                    <div className="text-sm truncate">{orderItem.productHistory.name}</div>
-                    <div className="text-sm ml-auto">{`${orderItem.productHistory.price}$`}</div>
-                </div>
-                <div className="flex flex-row gap-2 items-center text-base">
-                    <div className={`text-sm ${ORDER_ITEM_STATUS_COLORS[orderItem.status.value]} border border-gray-900 px-2 py-px `}>{orderItem.status.value}</div>
-                    <div className="text-sm ml-auto">Total - {`${orderItem.getTotal()}$`}</div>
+                <div className="flex flex-col gap-1">
+                    <div className="token-card--list">
+                        <div className="flex flex-row gap-[inherit] items-center">
+                            <MixinButton
+                                options={{
+                                    size: "mixin-button-sm",
+                                    theme: "theme-button-generic-white",
+                                }}
+                                isStatic
+                            >
+                                x{orderItem.quantity}
+                            </MixinButton>
+                            <div className="text-base font-semibold">{orderItem.productHistory.name}</div>
+                        </div>
+                        <div className="text-base">{`${orderItem.productHistory.price}$`}</div>
+                    </div>
+                    <div className="token-card--list">
+                        <div className="flex flex-row gap-[inherit] items-center">
+                            <button className={`mixin-button-like mixin-button-like--static mixin-button-sm ${ORDER_ITEM_STATUS_COLORS[orderItem.status.value]}`}>{orderItem.status.value}</button>
+                        </div>
+                        <div className="text-base">Total - {`${orderItem.getTotal()}$`}</div>
+                    </div>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection>

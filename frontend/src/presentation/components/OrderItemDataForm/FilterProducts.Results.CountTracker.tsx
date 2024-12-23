@@ -6,26 +6,25 @@ import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/Mixi
 
 export default function CountTrackerProduct(props: { product: IProduct; onAdd: () => void; isAdded: boolean; quantity: number }) {
     const { product, onAdd, isAdded, quantity } = props;
-    const productImages = product.images;
+    const productImages = product.images.map((image) => `${getApiUrl()}/Media/${image.fileName}`);
 
     return (
-        <MixinPrototypeCard options={{
-            size: "mixin-Pcard-base",
-            theme: "theme-Pcard-generic-white"
-        }}>
-            <MixinPrototypeCardSection className="flex flex-row gap-2">
-                <CoverImage className="basis-1/3 aspect-square border border-gray-900 overflow-hidden shrink-0" src={productImages[0] == null ? undefined : `${getApiUrl()}/${productImages[0].url}`} />
-                <div className="flex flex-col gap-px overflow-hidden">
-                    <div className="overflow-hidden">
-                        <div className="text-xs font-bold">Name</div>
-                        <div className="text-sm truncate" title={product.name}>
-                            {product.name}
-                        </div>
+        <MixinPrototypeCard
+            options={{
+                size: "mixin-Pcard-base",
+                theme: "theme-Pcard-generic-white",
+            }}
+            hasBorder
+            hasShadow
+            hasDivide
+        >
+            <MixinPrototypeCardSection className="grid gap-3" style={{ gridTemplateColumns: "auto 1fr" }}>
+                <CoverImage className="token-default-avatar" src={productImages[0]} />
+                <div className="overflow-hidden">
+                    <div className="text-base font-bold truncate" title={product.name}>
+                        {product.name}
                     </div>
-                    <div>
-                        <div className="text-xs font-bold">Price</div>
-                        <div className="text-sm truncate">${product.price}</div>
-                    </div>
+                    <div className="text-sm truncate">${product.price}</div>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection>

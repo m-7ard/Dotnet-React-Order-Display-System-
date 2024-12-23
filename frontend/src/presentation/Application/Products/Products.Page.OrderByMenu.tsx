@@ -6,6 +6,8 @@ import MixinPanel from "../../components/Resuables/MixinPanel";
 import StatelessRadioCheckboxField from "../../components/StatelessFields/StatelessRadioCheckboxField";
 import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
 import routeData from "../../routes/_routeData";
+import Divider from "../../components/Resuables/Divider";
+import panelSection from "../../attribute-mixins/panelSection";
 
 export default function OrderByMenu() {
     const { onClose } = useAbstractTooltipContext();
@@ -28,44 +30,27 @@ export default function OrderByMenu() {
                     size: "mixin-panel-base",
                     theme: "theme-panel-generic-white",
                 }}
+                hasBorder
+                hasShadow
             >
-                <div className="flex flex-col gap-2">
-                    <div className="flex flex-row gap-4 items-center justify-between">
-                        <div className="text-sm">Newest</div>
-                        <StatelessRadioCheckboxField
-                            name={"orderBy"}
-                            onChange={onChange}
-                            value={"newest"}
-                            checked={orderBy === "newest"}
-                        />
-                    </div>
-                    <div className="flex flex-row gap-4 items-center justify-between">
-                        <div className="text-sm">Oldest</div>
-                        <StatelessRadioCheckboxField
-                            name={"orderBy"}
-                            onChange={onChange}
-                            value={"oldest"}
-                            checked={orderBy === "oldest"}
-                        />
-                    </div>
-                    <div className="flex flex-row gap-4 items-center justify-between">
-                        <div className="text-sm">Price - Lowest to Highest</div>
-                        <StatelessRadioCheckboxField
-                            name={"orderBy"}
-                            onChange={onChange}
-                            value={"price asc"}
-                            checked={orderBy === "price asc"}
-                        />
-                    </div>
-                    <div className="flex flex-row gap-4 items-center justify-between">
-                        <div className="text-sm">Price - Highest to Lowest</div>
-                        <StatelessRadioCheckboxField
-                            name={"orderBy"}
-                            onChange={onChange}
-                            value={"price desc"}
-                            checked={orderBy === "price desc"}
-                        />
-                    </div>
+                <div className="flex flex-row gap-5 items-center justify-between" {...panelSection}>
+                    <div className="text-sm">Newest</div>
+                    <StatelessRadioCheckboxField name={"orderBy"} onChange={onChange} value={"newest"} checked={orderBy === "newest"} />
+                </div>
+                <Divider />
+                <div className="flex flex-row gap-5 items-center justify-between" {...panelSection}>
+                    <div className="text-sm">Oldest</div>
+                    <StatelessRadioCheckboxField name={"orderBy"} onChange={onChange} value={"oldest"} checked={orderBy === "oldest"} />
+                </div>
+                <Divider />
+                <div className="flex flex-row gap-5 items-center justify-between" {...panelSection}>
+                    <div className="text-sm">Price - Lowest to Highest</div>
+                    <StatelessRadioCheckboxField name={"orderBy"} onChange={onChange} value={"price asc"} checked={orderBy === "price asc"} />
+                </div>
+                <Divider />
+                <div className="flex flex-row gap-5 items-center justify-between" {...panelSection}>
+                    <div className="text-sm">Price - Highest to Lowest</div>
+                    <StatelessRadioCheckboxField name={"orderBy"} onChange={onChange} value={"price desc"} checked={orderBy === "price desc"} />
                 </div>
             </MixinPanel>
         </AbstractTooltipDefaultPanel>

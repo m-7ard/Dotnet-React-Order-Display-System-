@@ -1,12 +1,18 @@
 @layer components {
   .mixin-button-like {
-    @apply flex items-center box-border transition-colors cursor-pointer select-none;
+    @apply flex items-center box-border select-none;
+  }
+  .mixin-button-like--static {
+    @apply cursor-auto;
+  }
+  .mixin-button-like:not(.mixin-button-like--static) {
+    @apply transition-colors cursor-pointer;
   }
   .mixin-button-sm {
-    @apply gap-1 px-4 py-1.5 text-sm leading-none;
+    @apply gap-2 px-4 py-1.5 text-sm leading-none rounded-lg;
   }
   .mixin-button-base {
-    @apply gap-2 px-4 py-1 text-base;
+    @apply gap-2 px-4 py-1 text-base rounded-lg;
   }
   .mixin-textarea-any {
     @apply rounded-md overflow-hidden;
@@ -47,10 +53,13 @@
     @apply p-4;
   }
   .mixin-panel-like {
-    @apply flex flex-col grow max-h-full;
+    @apply grow max-h-full;
   }
   .mixin-panel-base {
-    @apply px-4 py-4 gap-y-4 max-w-72 sm:max-w-prose;
+    @apply max-w-72 sm:max-w-prose rounded-lg;
+  }
+  .mixin-panel-base > [data-role=panel-section] {
+    @apply p-4;
   }
   .mixin-checkbox-like {
     @apply cursor-pointer relative rounded-full;

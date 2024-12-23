@@ -28,6 +28,7 @@ export type OrderItemDataFormProps = {
 
 export default function OrderItemDataFieldItem(props: OrderItemDataFormProps) {
     const { onUpdate, onDelete, product, value, errors } = props;
+    const productImages = product.images.map((image) => `${getApiUrl()}/Media/${image.fileName}`);
 
     const updateQuantity = (quantity: number) => {
         const isValid = Value.Check(Type.Integer({ minimum: 1 }), quantity);
@@ -37,26 +38,21 @@ export default function OrderItemDataFieldItem(props: OrderItemDataFormProps) {
     };
 
     return (
-        <MixinPrototypeCard options={{
-            size: "mixin-Pcard-base",
-            theme: "theme-Pcard-generic-white"
-        }}>
-            <MixinPrototypeCardSection className="flex flex-row gap-2">
-                <CoverImage
-                    className="basis-1/3 aspect-square border border-gray-900 overflow-hidden shrink-0"
-                    src={product.images[0] == null ? undefined : `${getApiUrl()}/Media/${product.images[0].fileName}`}
-                />
-                 <div className="flex flex-col gap-px overflow-hidden">
-                    <div className="overflow-hidden">
-                        <div className="text-xs font-bold">Name</div>
-                        <div className="text-sm truncate" title={product.name}>
-                            {product.name}
-                        </div>
+        <MixinPrototypeCard
+            options={{
+                size: "mixin-Pcard-base",
+                theme: "theme-Pcard-generic-white",
+            }}
+            hasBorder
+            hasDivide
+        >
+            <MixinPrototypeCardSection className="grid gap-3" style={{ gridTemplateColumns: "auto 1fr" }}>
+                <CoverImage className="token-default-avatar" src={productImages[0]} />
+                <div className="overflow-hidden">
+                    <div className="text-base font-bold truncate" title={product.name}>
+                        {product.name}
                     </div>
-                    <div>
-                        <div className="text-xs font-bold">Price</div>
-                        <div className="text-sm truncate">${product.price}</div>
-                    </div>
+                    <div className="text-sm truncate">${product.price}</div>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection className="flex flex-row gap-2">
@@ -95,21 +91,16 @@ export default function OrderItemDataFieldItem(props: OrderItemDataFormProps) {
             {errors == null ? null : (
                 <MixinPrototypeCardSection className="flex flex-col gap-2">
                     <ul>
-                        {Object.values(errors).reduce((acc, errors) => [...acc, ...errors], []).map((error) => (
-                            <li className="text-xs">
-                                \&bull {error}             
-                            </li>
-                        ))}
-                    </ul>   
+                        {Object.values(errors)
+                            .reduce((acc, errors) => [...acc, ...errors], [])
+                            .map((error) => (
+                                <li className="text-xs">\&bull {error}</li>
+                            ))}
+                    </ul>
                 </MixinPrototypeCardSection>
             )}
             <MixinPrototypeCardSection>
-                <MixinButton
-                    className="justify-center w-full"
-                    type="button"
-                    onClick={onDelete}
-                    options={{ size: "mixin-button-base", theme: "theme-button-generic-red" }}
-                >
+                <MixinButton className="justify-center w-full" type="button" onClick={onDelete} options={{ size: "mixin-button-base", theme: "theme-button-generic-red" }}>
                     Remove Item
                 </MixinButton>
             </MixinPrototypeCardSection>

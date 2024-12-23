@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import LinkBox from "../../components/Resuables/LinkBox";
-import MixinButton from "../../components/Resuables/MixinButton";
 import { getLocalUrl } from "../../../viteUtils";
 import CoverImage from "../../components/Resuables/CoverImage";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
+import MixinButton from "../../components/Resuables/MixinButton";
 
 export default function FrontpagePage() {
     return (
@@ -12,7 +12,7 @@ export default function FrontpagePage() {
                 <LinkBox parts={[]} />
             </header>
             <hr className="h-0 w-full border-bottom border-gray-300 rounded-lg overflow-hidden shadow-lg" data-track="base"></hr>
-            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3"  data-role="page-section" data-track="base">
+            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3" data-role="page-section" data-track="base">
                 <Navigator
                     title="Products"
                     imageUrl={getLocalUrl("/src/presentation/images/_045d1801-1987-4ce3-abd9-1b8f56fcde24-removebg-preview.png")}
@@ -45,13 +45,22 @@ function Navigator(props: { title: string; imageUrl: string; buttons: Array<{ la
                 size: "mixin-Pcard-base",
                 theme: "theme-Pcard-generic-white",
             }}
+            hasShadow
+            hasDivide
         >
             <MixinPrototypeCardSection className="flex flex-row gap-3">
                 <div className="flex gap-3 bg-white w-full">
-                    <div className="mixin-button-like mixin-button-base theme-button-generic-white grow justify-center">
+                    <MixinButton
+                        options={{
+                            size: "mixin-button-base",
+                            theme: "theme-button-generic-white",
+                        }}
+                        isStatic
+                        className="w-full justify-center"
+                    >
                         <CoverImage src={imageUrl} className="h-full aspect-square" />
                         <div className="truncate">{title}</div>
-                    </div>
+                    </MixinButton>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection className="flex flex-col gap-3">
