@@ -8,7 +8,7 @@ import Order from "../../../../domain/models/Order";
 import routeData from "../../../routes/_routeData";
 import OrderItemElement from "./ManageOrder.Page.OrderItem";
 import contentGridTracks from "../../../attribute-mixins/contentGridTracks";
-import pageSection from "../../../attribute-mixins/PageSection";
+import pageSection from "../../../attribute-mixins/pageSection";
 import Divider from "../../../components/Resuables/Divider";
 
 const ORDER_STATUS_COLORS = {

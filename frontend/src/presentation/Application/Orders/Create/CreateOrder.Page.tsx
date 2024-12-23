@@ -7,7 +7,7 @@ import LinkBox from "../../../components/Resuables/LinkBox";
 import routeData from "../../../routes/_routeData";
 import { useCallback } from "react";
 import contentGridTracks from "../../../attribute-mixins/contentGridTracks";
-import pageSection from "../../../attribute-mixins/PageSection";
+import pageSection from "../../../attribute-mixins/pageSection";
 import Divider from "../../../components/Resuables/Divider";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../../components/Resuables/MixinPrototypeCard";
 

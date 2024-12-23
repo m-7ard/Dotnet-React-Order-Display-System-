@@ -11,11 +11,11 @@ type MixinPanelProps<E extends ElementType> = PolymorphicProps<E> & {
 };
 
 export default function MixinPanel<T extends ElementType = "div">(props: PropsWithChildren<MixinPanelProps<T>>) {
-    const { options, as, className, hasShadow, hasBorder, ...HTMLattrs } = props;
+    const { options, as, className, hasShadow = false, hasBorder = false, ...HTMLattrs } = props;
     const Component = as ?? "div";
 
-    const shadowClass = hasShadow == null ? "" : "token-default-shadow";
-    const borderClass = hasBorder == null ? "" : "border token-default-border-color";
+    const shadowClass = hasShadow ? "" : "token-default-shadow";
+    const borderClass = hasBorder ? "" : "border token-default-border-color";
 
     return (
         <Component className={["mixin-panel-like", options.size, options.theme, className, shadowClass, borderClass].join(" ")} {...HTMLattrs}>
