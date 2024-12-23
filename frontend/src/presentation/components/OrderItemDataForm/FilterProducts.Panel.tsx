@@ -18,6 +18,8 @@ import parseListProductsRequestDTO from "../../../infrastructure/parsers/parseLi
 import { ValueSchema as ItemValueSchema } from "./OrderItemData.Field.Item";
 import apiToDomainCompatibleFormError from "../../mappers/apiToDomainCompatibleFormError";
 import IPlainApiError from "../../../infrastructure/interfaces/IPlainApiError";
+import Divider from "../Resuables/Divider";
+import panelSection from "../../attribute-mixins/panelSection";
 
 const FORM_PAGE_INITIAL_DATA = {
     id: "",
@@ -79,8 +81,9 @@ export default function FilterProductsPanel(props: FilterProductsPanelProps) {
                 theme: "theme-panel-generic-white",
             }}
             className="overflow-auto"
+            hasShadow
         >
-            <header className="flex flex-row gap-2 items-center justify-between">
+            <header className="flex flex-row gap-2 items-center justify-between" {...panelSection}>
                 <LinkBox
                     parts={[
                         { isLink: false, label: "Products" },
@@ -98,8 +101,8 @@ export default function FilterProductsPanel(props: FilterProductsPanelProps) {
                     Close
                 </MixinButton>
             </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            <nav className="flex flex-row gap-2">
+            <Divider />
+            <nav className="flex flex-row gap-2" {...panelSection}>
                 <MixinButton
                     options={{
                         size: "mixin-button-base",
@@ -125,27 +128,29 @@ export default function FilterProductsPanel(props: FilterProductsPanelProps) {
                     Results
                 </MixinButton>
             </nav>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-            {
+            <Divider />
+            <main {...panelSection}>
                 {
-                    form: <FormPage onReset={() => formValue.setAll(FORM_PAGE_INITIAL_DATA)} onSubmit={searchProductsMutation.mutate} value={formValue.items} onChange={(value) => formValue.setAll(value)} />,
-                    result: (
-                        <ResultsPage
-                            ControlComponent={CountTrackerProduct}
-                            results={searchResults.map((result) => {
-                                const product = Object.prototype.hasOwnProperty.call(orderItems, result.id) ? orderItems[result.id] : null;
+                    {
+                        form: <FormPage onReset={() => formValue.setAll(FORM_PAGE_INITIAL_DATA)} onSubmit={searchProductsMutation.mutate} value={formValue.items} onChange={(value) => formValue.setAll(value)} />,
+                        result: (
+                            <ResultsPage
+                                ControlComponent={CountTrackerProduct}
+                                results={searchResults.map((result) => {
+                                    const product = Object.prototype.hasOwnProperty.call(orderItems, result.id) ? orderItems[result.id] : null;
 
-                                return {
-                                    onAdd: () => onAdd(result),
-                                    product: result,
-                                    quantity: product?.quantity ?? 0,
-                                    isAdded: product != null,
-                                };
-                            })}
-                        />
-                    ),
-                }[route]
-            }
+                                    return {
+                                        onAdd: () => onAdd(result),
+                                        product: result,
+                                        quantity: product?.quantity ?? 0,
+                                        isAdded: product != null,
+                                    };
+                                })}
+                            />
+                        ),
+                    }[route]
+                }
+            </main>
         </MixinPanel>
     );
 }

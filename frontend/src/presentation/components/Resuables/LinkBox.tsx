@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import React from "react";
 import routeData from "../../routes/_routeData";
+import MixinButton from "./MixinButton";
 
 export default function LinkBox(props: {
     parts: Array<
@@ -18,7 +19,10 @@ export default function LinkBox(props: {
     const parts = [{ isLink: true, to: routeData.frontpage.build({}), label: "All" }, ...props.parts];
 
     return (
-        <div className="mixin-button-like mixin-button-sm cursor-auto bg-white rounded-lg border border-gray-300 text-gray-900">
+        <MixinButton options={{
+            size: "mixin-button-sm",
+            theme: "theme-button-generic-white"
+        }} isStatic hasShadow>
             {parts.map((part, i) => (
                 <React.Fragment key={i}>
                     {part.isLink ? (
@@ -31,6 +35,6 @@ export default function LinkBox(props: {
                     {i < parts.length - 1 && <div key={`divider-${i}`}>›</div>}
                 </React.Fragment>
             ))}
-        </div>
+        </MixinButton>
     );
 }

@@ -5,6 +5,7 @@ import OrderItemDataFieldItem, { ErrorSchema as OrderItemDataFieldErrorSchema, V
 import GlobalDialog from "../Dialog/GlobalDialog";
 import IProduct from "../../../domain/models/IProduct";
 import { useCallback } from "react";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 
 type ErrorSchema = IPresentationError<{
     [productId: number | string]: OrderItemDataFieldErrorSchema;
@@ -48,35 +49,44 @@ export default function OrderItemDataField(props: { onChange: (value: ValueSchem
     );
 
     return (
-        <div className="flex flex-col gap-3 p-3 border border-gray-900 bg-gray-100">
-            <GlobalDialog
-                zIndex={10}
-                Trigger={({ onToggle }) => (
-                    <MixinButton
-                        options={{
-                            size: "mixin-button-base",
-                            theme: "theme-button-generic-white",
-                        }}
-                        className="w-full justify-center "
-                        onClick={onToggle}
-                        type="button"
-                    >
-                        Add
-                    </MixinButton>
-                )}
-                Panel={FilterProductsPanel}
-                panelProps={{
-                    onAdd: addOrderItem,
-                    orderItems: value,
-                }}
-            />
+        <MixinPrototypeCard
+            options={{
+                size: "mixin-Pcard-base",
+                theme: "theme-Pcard-generic-white",
+            }}
+            hasBorder
+            hasDivide
+        >
+            <MixinPrototypeCardSection>
+                <GlobalDialog
+                    zIndex={10}
+                    Trigger={({ onToggle }) => (
+                        <MixinButton
+                            options={{
+                                size: "mixin-button-base",
+                                theme: "theme-button-generic-white",
+                            }}
+                            className="w-full justify-center "
+                            onClick={onToggle}
+                            type="button"
+                        >
+                            Add
+                        </MixinButton>
+                    )}
+                    Panel={FilterProductsPanel}
+                    panelProps={{
+                        onAdd: addOrderItem,
+                        orderItems: value,
+                    }}
+                />
+            </MixinPrototypeCardSection>
             {Object.entries(value).length > 0 && (
-                <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">
+                <MixinPrototypeCardSection className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">
                     {Object.entries(value).map(([productId, oiData]) => (
                         <OrderItemDataFieldItem product={oiData.product} errors={errors?.[productId]} value={value[productId]} onUpdate={updateOrderItem} onDelete={() => deleteOrderItem(productId)} key={productId} />
                     ))}
-                </section>
+                </MixinPrototypeCardSection>
             )}
-        </div>
+        </MixinPrototypeCard>
     );
 }

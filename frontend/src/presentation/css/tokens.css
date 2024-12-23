@@ -1,12 +1,12 @@
 @layer components {
   .token-card--header--primary-text {
-    @apply text-lg font-bold text-gray-900;
+    @apply text-base font-bold text-gray-900;
   }
   .token-card--header--secondary-text {
     @apply text-sm text-gray-600;
   }
   .token-card--header--tertiary-text {
-    @apply text-sm text-gray-900 font-bold;
+    @apply text-sm text-gray-900;
   }
   .token-card--label {
     @apply text-sm text-gray-900 font-semibold;
@@ -21,15 +21,18 @@
     @apply font-semibold text-gray-900;
   }
   .token-card--list-value--text {
-    @apply text-gray-600 text-sm;
+    @apply text-gray-900 text-sm;
   }
   .token-default-shadow {
-    box-shadow: 0 2px 6px 0px rgba(214, 221, 217, 0.5);
+    box-shadow: 0 2px 8px 0px rgba(0, 0, 0, 0.1);
   }
   .token-default-border-color {
     @apply border-gray-300;
   }
   .token-default-divide-color {
     @apply divide-gray-300;
+  }
+  .token-default-avatar {
+    @apply aspect-square h-full overflow-hidden shrink-0 rounded-lg bg-gray-300;
   }
 }/*# sourceMappingURL=tokens.css.map */

@@ -7,8 +7,8 @@ import LinkBox from "../../../components/Resuables/LinkBox";
 import Order from "../../../../domain/models/Order";
 import routeData from "../../../routes/_routeData";
 import OrderItemElement from "./ManageOrder.Page.OrderItem";
-import contentGridTracks from "../../../data-attributes/contentGridTracks";
-import pageSection from "../../../data-attributes/PageSection";
+import contentGridTracks from "../../../attribute-mixins/contentGridTracks";
+import pageSection from "../../../attribute-mixins/PageSection";
 import Divider from "../../../components/Resuables/Divider";
 
 const ORDER_STATUS_COLORS = {
@@ -32,11 +32,11 @@ export default function ManageOrderPage(props: { order: Order; onMarkFinished: (
             </header>
             <Divider {...contentGridTracks.base} />
             <section {...pageSection} {...contentGridTracks.base} className="flex flex-col gap-3">
-                <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}>
+                <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }} hasDivide hasShadow>
                     <MixinPrototypeCardSection className={`flex flex-col ${ORDER_STATUS_COLORS[order.status.value]}`}>
                         <div className="flex flex-row justify-between items-baseline">
-                            <div className="text-sm">Order #{order.serialNumber}</div>
-                            <div className="text-sm">{`${order.status.value}`}</div>
+                            <div className="text-base font-semibold">Order #{order.serialNumber}</div>
+                            <div className="text-base font-semibold">{`${order.status.value}`}</div>
                         </div>
                         <div className="flex flex-row justify-between items-baseline">
                             <div className="text-sm">{order.dateCreated.toLocaleTimeString()}</div>

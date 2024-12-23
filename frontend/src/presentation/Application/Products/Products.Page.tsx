@@ -8,8 +8,9 @@ import OrderByMenu from "./Products.Page.OrderByMenu";
 import IProduct from "../../../domain/models/IProduct";
 import ProductElement from "./Products.Page.ProductElement";
 import FilterProductsController from "./Filter/FilterProducts.Controller";
-import pageSection from "../../data-attributes/PageSection";
-import contentGridTracks from "../../data-attributes/contentGridTracks";
+import contentGridTracks from "../../attribute-mixins/contentGridTracks";
+import pageSection from "../../attribute-mixins/pageSection";
+import Divider from "../../components/Resuables/Divider";
 
 export default function ProductsPage(props: { products: IProduct[] }) {
     const { products } = props;
@@ -20,14 +21,14 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                 <LinkBox parts={[{ isLink: true, to: routeData.createProduct.build({}), label: "Products" }]} />
                 <div className="flex flex-row gap-2 ml-auto">
                     <Link to="/products/create">
-                        <MixinButton className="justify-center w-full" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}>
+                        <MixinButton className="justify-center w-full" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} hasShadow>
                             Create
                         </MixinButton>
                     </Link>
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
-                            <MixinButton className="justify-center w-full   basis-1/2" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle}>
+                            <MixinButton className="justify-center w-full basis-1/2" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} hasShadow>
                                 Filter
                             </MixinButton>
                         )}
@@ -37,7 +38,7 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                     <AbstractTooltip
                         Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
-                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open}>
+                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open} hasShadow>
                                     Order By
                                 </MixinButton>
                             </AbstractTooltipTrigger>
@@ -47,8 +48,8 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                     />
                 </div>
             </header>
-            <hr className="h-0 w-full border-bottom border-gray-300" {...contentGridTracks.base}></hr>
-            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3" {...pageSection} {...contentGridTracks.base}>
+            <Divider {...contentGridTracks.base} />
+            <section className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-4" {...pageSection} {...contentGridTracks.base}>
                 {products.map((product) => (
                     <ProductElement product={product} key={product.id} />
                 ))}

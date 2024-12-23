@@ -7,8 +7,8 @@ import routeData from "../../routes/_routeData";
 import OrderByMenu from "./ProductHistories.Page.OrderByMenu";
 import FilterProductHistoriesController from "./Filter/FilterProductHistories.Controller";
 import ProductHistoryElement from "./ProductHistories.Page.ProductHistoryElement";
-import contentGridTracks from "../../data-attributes/contentGridTracks";
-import pageSection from "../../data-attributes/PageSection";
+import contentGridTracks from "../../attribute-mixins/contentGridTracks";
+import pageSection from "../../attribute-mixins/pageSection";
 import Divider from "../../components/Resuables/Divider";
 
 export default function ProductHistoriesPage(props: { productHistories: ProductHistory[] }) {
@@ -22,7 +22,7 @@ export default function ProductHistoriesPage(props: { productHistories: ProductH
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
-                            <MixinButton className="justify-center w-full basis-1/2" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle}>
+                            <MixinButton className="justify-center w-full basis-1/2" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} hasShadow>
                                 Filter
                             </MixinButton>
                         )}
@@ -32,7 +32,7 @@ export default function ProductHistoriesPage(props: { productHistories: ProductH
                     <AbstractTooltip
                         Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
-                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open}>
+                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open} hasShadow>
                                     Order By
                                 </MixinButton>
                             </AbstractTooltipTrigger>

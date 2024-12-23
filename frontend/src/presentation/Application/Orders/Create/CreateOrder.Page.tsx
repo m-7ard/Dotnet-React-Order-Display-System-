@@ -6,6 +6,10 @@ import MixinButton from "../../../components/Resuables/MixinButton";
 import LinkBox from "../../../components/Resuables/LinkBox";
 import routeData from "../../../routes/_routeData";
 import { useCallback } from "react";
+import contentGridTracks from "../../../attribute-mixins/contentGridTracks";
+import pageSection from "../../../attribute-mixins/PageSection";
+import Divider from "../../../components/Resuables/Divider";
+import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../../components/Resuables/MixinPrototypeCard";
 
 interface ValueSchema {
     orderItemData: {
@@ -45,8 +49,18 @@ export default function CreateOrderPage(props: {
     );
 
     return (
-        <div className="mixin-page-like mixin-page-base mx-auto">
-            <header className="flex flex-row gap-2 items-center">
+        <form
+            onSubmit={async (e) => {
+                e.preventDefault();
+                onSubmit();
+            }}
+            onReset={(e) => {
+                e.preventDefault();
+                onReset();
+            }}
+            className="mixin-page-like mixin-page-base mixin-content-grid"
+        >
+            <header className="flex flex-row gap-2 items-center" {...pageSection} {...contentGridTracks.base}>
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listOrders.build({}), label: "Orders" },
@@ -54,28 +68,30 @@ export default function CreateOrderPage(props: {
                     ]}
                 />
             </header>
-            <hr className="h-0 w-full border-bottom border-gray-900"></hr>
+            <Divider {...contentGridTracks.base} />
             {errors._ == null ? null : (
-                <div className="flex flex-col gap-2 p-2 border border-gray-900">
-                    <ul>
-                        {errors._.map((error) => (
-                            <li>
-                                {error}             
-                            </li>
-                        ))}
-                    </ul>   
-                </div>
+                <section {...pageSection} {...contentGridTracks.base}>
+                    <MixinPrototypeCard
+                        options={{
+                            size: "mixin-Pcard-base",
+                            theme: "theme-Pcard-generic-white",
+                        }}
+                        hasBorder
+                        hasDivide
+                    >
+                        <MixinPrototypeCardSection>
+                            <div className="token-card--header--primary-text">Failed to Create Order</div>
+                            <div className="token-card--header--secondary-text">Form Errors</div>
+                        </MixinPrototypeCardSection>
+                        <MixinPrototypeCardSection>
+                            {errors._.map((error) => (
+                                <div className="text-sm">&bull; {error}</div>
+                            ))}
+                        </MixinPrototypeCardSection>
+                    </MixinPrototypeCard>
+                </section>
             )}
-            <form
-                onSubmit={async (e) => {
-                    e.preventDefault();
-                    onSubmit();
-                }}
-                onReset={(e) => {
-                    e.preventDefault();
-                    onReset();
-                }}
-            >
+            <section {...pageSection} {...contentGridTracks.base}>
                 <div className="flex flex-col gap-2">
                     <FormField name="orderItemData" errors={errors.orderItemData?._}>
                         <OrderItemDataField
@@ -87,15 +103,16 @@ export default function CreateOrderPage(props: {
                         />
                     </FormField>
                 </div>
-                <footer className="flex flex-row gap-2 justify-end">
-                    <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset">
-                        Reset
-                    </MixinButton>
-                    <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">
-                        Submit
-                    </MixinButton>
-                </footer>
-            </form>
-        </div>
+            </section>
+            <Divider {...contentGridTracks.base} />
+            <footer className="flex flex-row gap-2 justify-end" {...pageSection} {...contentGridTracks.base}>
+                <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset">
+                    Reset
+                </MixinButton>
+                <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">
+                    Submit
+                </MixinButton>
+            </footer>
+        </form>
     );
 }

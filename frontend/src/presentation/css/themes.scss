@@ -1,3 +1,6 @@
+@use "./tokens.scss" as tokens;
+
+
 @layer components {
     .theme-input-generic-white {
         @apply border border-gray-300 flex flex-grow rounded-md overflow-hidden;
@@ -9,63 +12,84 @@
 
     .theme-button-generic-white {
         $root: &;
-        @apply rounded-lg border border-gray-300 text-gray-900;
+        @apply border border-gray-300 text-gray-900;
 
         &:not(&[data-active="true"]) {
-            @apply bg-white hover:bg-gray-200;
+            @apply bg-white;
         }
 
-        &[data-active="true"] {
+        &[data-active="true"], &:not(&--static):hover {
             @apply bg-gray-200;
         }
     }
 
     .theme-button-generic-yellow {
         $root: &;
-        @apply rounded-lg text-gray-900;
+        @apply text-gray-900;
 
         &:not(&[data-active="true"]) {
-            @apply bg-yellow-300 hover:bg-yellow-400;
+            @apply bg-yellow-300;
         }
 
-        &[data-active="true"] {
+        &[data-active="true"], &:not(&--static):hover {
             @apply bg-yellow-400;
         }
     }
 
     .theme-button-generic-green {
         $root: &;
-        @apply rounded-lg text-gray-900;
+        @apply text-gray-900;
 
         &:not(&[data-active="true"]) {
-            @apply bg-green-300 hover:bg-green-400;
+            @apply bg-green-300;
         }
 
-        &[data-active="true"] {
+        &[data-active="true"], &:not(&--static):hover {
             @apply bg-green-400;
         }
     }
 
     .theme-button-generic-red {
         $root: &;
-        @apply rounded-lg text-gray-900;
+        @apply text-gray-900;
 
         &:not(&[data-active="true"]) {
-            @apply bg-red-300 hover:bg-red-400;
+            @apply bg-red-300;
         }
 
-        &[data-active="true"] {
+        &[data-active="true"], &:not(&--static):hover {
             @apply bg-red-400;
+        }
+    }
+
+    .theme-button-generic-orange {
+        $root: &;
+        @apply text-gray-900;
+
+        &:not(&[data-active="true"]) {
+            @apply bg-orange-500;
+        }
+
+        &[data-active="true"], &:not(&--static):hover {
+            @apply bg-orange-600;
         }
     }
 
     .theme-checkbox-generic-white {
         $root: &;
-        @apply border border-gray-900 bg-white hover:bg-gray-300;
+        @apply border border-gray-300 shadow;
+
+        &:not(&--active, &:has(:checked)) {
+            @apply bg-white hover:bg-gray-200;
+        }
+
+        &--active, &:has(:checked) {
+            @apply bg-gray-200;
+        }
 
         &--active [data-role="inner-part"],
         &:has(:checked) [data-role="inner-part"] {
-            @apply bg-gray-900;
+            @apply bg-gray-700;
         }
     }
 
@@ -90,6 +114,6 @@
     }
 
     .theme-panel-generic-white {
-        @apply bg-white border border-gray-900;
+        @apply bg-white;
     }
 }

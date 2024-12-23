@@ -111,7 +111,9 @@ export default function CreateOrderController(props: { orderDataAccess: IOrderDa
             onChange={(value) => {
                 itemManager.setAll(value);
             }}
-            errors={errorManager.items}
+            errors={{
+                "_": ["deez", "something went wrong", "look at this"]
+            }}
             value={itemManager.items}
         />
     );
