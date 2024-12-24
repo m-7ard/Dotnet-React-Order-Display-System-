@@ -4,7 +4,15 @@ import CoverImage from "../Resuables/CoverImage";
 import MixinButton from "../Resuables/MixinButton";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 
-export default function CountTrackerProduct(props: { product: IProduct; onAdd: () => void; isAdded: boolean; quantity: number }) {
+type CountTrackerProductProps = { product: IProduct; onAdd: () => void } & (
+    | {
+          isAdded: true;
+          quantity: number;
+      }
+    | { isAdded: false; quantity: null }
+);
+
+export default function CountTrackerProduct(props: CountTrackerProductProps) {
     const { product, onAdd, isAdded, quantity } = props;
     const productImages = product.images.map((image) => `${getApiUrl()}/Media/${image.fileName}`);
 
@@ -36,7 +44,15 @@ export default function CountTrackerProduct(props: { product: IProduct; onAdd: (
             <MixinPrototypeCardSection className="flex flex-row gap-3">
                 {isAdded ? (
                     <>
-                        <div className="mixin-button-like mixin-button-base bg-gray-200 border border-gray-900">x{quantity}</div>
+                        <MixinButton
+                            options={{
+                                size: "mixin-button-base",
+                                theme: "theme-button-generic-white",
+                            }}
+                            isStatic
+                        >
+                            x{quantity}
+                        </MixinButton>
                         <MixinButton className="grow justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}>
                             Already Added
                         </MixinButton>

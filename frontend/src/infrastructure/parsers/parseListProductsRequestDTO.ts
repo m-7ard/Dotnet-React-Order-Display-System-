@@ -16,7 +16,7 @@ const schema = Type.Object({
 type Schema = Static<typeof schema>;
 
 export default function parseListProductsRequestDTO(data: Partial<Record<keyof Schema, unknown>>): IListProductsRequestDTO {
-    return {
+    const parsedObject = {
         id: parseTypeboxSchemaOrNull(schema.properties.id, data.id),
         minPrice: parseTypeboxSchemaOrNull(schema.properties.minPrice, data.minPrice),
         maxPrice: parseTypeboxSchemaOrNull(schema.properties.maxPrice, data.maxPrice),
@@ -25,5 +25,7 @@ export default function parseListProductsRequestDTO(data: Partial<Record<keyof S
         createdBefore: parseTypeboxSchemaOrNull(schema.properties.createdBefore, data.createdBefore),
         description: parseTypeboxSchemaOrNull(schema.properties.description, data.description),
         orderBy: parseTypeboxSchemaOrNull(schema.properties.orderBy, data.orderBy),
-    }
+    };
+
+    return parsedObject;
 }

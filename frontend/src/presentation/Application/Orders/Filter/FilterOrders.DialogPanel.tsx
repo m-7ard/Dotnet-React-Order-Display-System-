@@ -5,7 +5,6 @@ import MixinButton from "../../../components/Resuables/MixinButton";
 import MixinPanel, { MixinPanelSection } from "../../../components/Resuables/MixinPanel";
 import routeData from "../../../routes/_routeData";
 import { ValueSchema } from "./FilterOrders.Controller";
-import panelSection from "../../../attribute-mixins/panelSection";
 
 export default function FilterOrdersDialogPanel(props: { value: ValueSchema; onSubmit: () => void; onReset: () => void; onClose: () => void; onChange: (value: ValueSchema) => void; onClear: () => void }) {
     const { value, onSubmit, onReset, onClose, onChange, onClear } = props;

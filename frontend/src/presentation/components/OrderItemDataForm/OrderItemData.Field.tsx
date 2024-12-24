@@ -1,11 +1,13 @@
 import IPresentationError from "../../interfaces/IPresentationError";
 import MixinButton from "../Resuables/MixinButton";
-import FilterProductsPanel from "./FilterProducts.Panel";
+import FilterProductResults from "../FilterProductResults/FilterProductResults";
 import OrderItemDataFieldItem, { ErrorSchema as OrderItemDataFieldErrorSchema, ValueSchema as OrderItemDataValueSchema } from "./OrderItemData.Field.Item";
 import GlobalDialog from "../Dialog/GlobalDialog";
 import IProduct from "../../../domain/models/IProduct";
 import { useCallback } from "react";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
+import CountTrackerProduct from "../FilterProductResults/FilterProductResults.Results.CountTracker";
+import FilterProductResultsController from "../FilterProductResults/FilterProductResults.Controller";
 
 type ErrorSchema = IPresentationError<{
     [productId: number | string]: OrderItemDataFieldErrorSchema;
@@ -73,10 +75,17 @@ export default function OrderItemDataField(props: { onChange: (value: ValueSchem
                             Add
                         </MixinButton>
                     )}
-                    Panel={FilterProductsPanel}
+                    Panel={FilterProductResultsController}
                     panelProps={{
-                        onAdd: addOrderItem,
-                        orderItems: value,
+                        getResults: (searchResults) =>
+                            searchResults.map((product) => {
+                                const orderItemData = value[product.id];
+                                if (orderItemData) {
+                                    return <CountTrackerProduct product={product} onAdd={() => addOrderItem(product)} isAdded={true} quantity={orderItemData.quantity} />;
+                                } else {
+                                    return <CountTrackerProduct product={product} onAdd={() => addOrderItem(product)} isAdded={false} quantity={null} />;
+                                }
+                            }),
                     }}
                 />
             </MixinPrototypeCardSection>

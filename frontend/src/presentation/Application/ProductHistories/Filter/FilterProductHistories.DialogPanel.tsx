@@ -6,7 +6,14 @@ import routeData from "../../../routes/_routeData";
 import { ValueSchema } from "./FilterProductHistories.Controller";
 import Divider from "../../../components/Resuables/Divider";
 
-export default function FilterProductHistoriesDialogPanel(props: { value: ValueSchema; onSubmit: () => void; onReset: () => void; onClose: () => void; onChange: (value: ValueSchema) => void; onClear: () => void }) {
+export default function FilterProductHistoriesDialogPanel(props: {
+    value: Required<ValueSchema>;
+    onSubmit: () => void;
+    onReset: () => void;
+    onClose: () => void;
+    onChange: (value: Required<ValueSchema>) => void;
+    onClear: () => void;
+}) {
     const { value, onSubmit, onReset, onClose, onChange, onClear } = props;
 
     return (
@@ -40,6 +47,7 @@ export default function FilterProductHistoriesDialogPanel(props: { value: ValueS
                     }}
                     onClick={onClose}
                     type="button"
+                    hasShadow
                 >
                     Close
                 </MixinButton>

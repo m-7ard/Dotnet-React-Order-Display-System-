@@ -19,7 +19,7 @@ function FormError(props: { title: string; errors?: string[] } & React.HtmlHTMLA
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection>
                 {errors.map((error) => (
-                    <div className="text-sm">&bull; {error}</div>
+                    <div key={error} className="text-sm">&bull; {error}</div>
                 ))}
             </MixinPrototypeCardSection>
         </MixinPrototypeCard>
