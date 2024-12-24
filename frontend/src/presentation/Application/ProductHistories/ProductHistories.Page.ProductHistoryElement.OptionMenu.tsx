@@ -2,8 +2,9 @@ import { useNavigate } from "@tanstack/react-router";
 import ProductHistory from "../../../domain/models/IProductHistory";
 import { AbstractTooltipDefaultPanel } from "../../components/Resuables/AbstractTooltip";
 import MixinButton from "../../components/Resuables/MixinButton";
-import MixinPanel from "../../components/Resuables/MixinPanel";
+import MixinPanel, { MixinPanelSection } from "../../components/Resuables/MixinPanel";
 import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
+import Divider from "../../components/Resuables/Divider";
 
 export default function OptionMenu(props: { productHistory: ProductHistory }) {
     const { productHistory } = props;
@@ -17,8 +18,10 @@ export default function OptionMenu(props: { productHistory: ProductHistory }) {
                     size: "mixin-panel-base",
                     theme: "theme-panel-generic-white",
                 }}
+                hasBorder
+                hasShadow
             >
-                <header className="flex flex-row items-center justify-between">
+                <MixinPanelSection className="flex flex-row items-center justify-between">
                     <div className="text-sm">Other Options</div>
                     <MixinButton
                         options={{
@@ -26,14 +29,14 @@ export default function OptionMenu(props: { productHistory: ProductHistory }) {
                             theme: "theme-button-generic-white",
                         }}
                         onClick={onClose}
-                        className=" "
                         type="button"
+                        hasShadow
                     >
                         Close
                     </MixinButton>
-                </header>
-                <hr className="h-0 w-full border-bottom border-gray-900"></hr>
-                <div className="flex flex-col gap-3">
+                </MixinPanelSection>
+                <Divider />
+                <MixinPanelSection className="flex flex-col gap-3">
                     <a
                         className="w-full"
                         onClick={(e) => {
@@ -45,7 +48,7 @@ export default function OptionMenu(props: { productHistory: ProductHistory }) {
                             See Products
                         </MixinButton>
                     </a>
-                </div>
+                </MixinPanelSection>
             </MixinPanel>
         </AbstractTooltipDefaultPanel>
     );

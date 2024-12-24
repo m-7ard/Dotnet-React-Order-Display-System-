@@ -6,7 +6,13 @@ import routeData from "../../../routes/_routeData";
 import { ValueSchema } from "./FilterProducts.Controller";
 import Divider from "../../../components/Resuables/Divider";
 
-export default function FilterProductsDialogPanel(props: { value: ValueSchema; onSubmit: () => void; onReset: () => void; onClose: () => void; onChange: (value: ValueSchema) => void }) {
+export default function FilterProductsDialogPanel(props: {
+    value: Required<ValueSchema>;
+    onSubmit: () => void;
+    onReset: () => void;
+    onClose: () => void;
+    onChange: (value: Required<ValueSchema>) => void;
+}) {
     const { value, onSubmit, onReset, onClose, onChange } = props;
 
     return (

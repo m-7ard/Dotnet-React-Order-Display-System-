@@ -57,7 +57,7 @@ export default function ProductElement(props: { product: IProduct }) {
                         </AbstractTooltipTrigger>
                     )}
                     Panel={<ProductOptionMenu product={product} />}
-                    positioning={{ top: "100%", left: "0px" }}
+                    positioning={{ top: "100%", left: "0px", right: "0px" }}
                 />
             </MixinPrototypeCardSection>
         </MixinPrototypeCard>
