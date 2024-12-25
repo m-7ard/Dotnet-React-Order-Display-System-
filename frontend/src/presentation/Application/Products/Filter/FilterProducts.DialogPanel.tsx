@@ -12,8 +12,9 @@ export default function FilterProductsDialogPanel(props: {
     onReset: () => void;
     onClose: () => void;
     onChange: (value: Required<ValueSchema>) => void;
+    onClear: () => void;
 }) {
-    const { value, onSubmit, onReset, onClose, onChange } = props;
+    const { value, onSubmit, onReset, onClose, onChange, onClear } = props;
 
     return (
         <MixinPanel
@@ -56,7 +57,10 @@ export default function FilterProductsDialogPanel(props: {
             </MixinPanelSection>
             <Divider />
             <MixinPanelSection className="flex flex-row gap-3 justify-end">
-                <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset">
+                                <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="button" onClick={onClear}>
+                                    Clear
+                                </MixinButton>
+                <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset" className="ml-auto">
                     Reset
                 </MixinButton>
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">

@@ -4,9 +4,18 @@ import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDi
 import { FilterProductHistoriesFieldsetValueState } from "../../../components/Fieldsets/FilterProductHistoriesFieldset";
 import FilterProductHistoriesDialogPanel from "./FilterProductHistories.DialogPanel";
 import routeData from "../../../routes/_routeData";
-import { useCallback } from "react";
 
-export type ValueSchema = { [K in keyof FilterProductHistoriesFieldsetValueState]: FilterProductHistoriesFieldsetValueState[K] | undefined };
+export type ValueSchema = { [K in keyof FilterProductHistoriesFieldsetValueState]?: FilterProductHistoriesFieldsetValueState[K] };
+
+const clearedValue: ValueSchema = {
+    name: undefined,
+    minPrice: undefined,
+    maxPrice: undefined,
+    description: undefined,
+    validTo: undefined,
+    validFrom: undefined,
+    productId: undefined,
+};
 
 export default function FilterProductHistoriesController() {
     const searchParams: Partial<Record<string, string>> = useSearch({ strict: false });
@@ -23,40 +32,27 @@ export default function FilterProductHistoriesController() {
     const itemManager = useItemManager<ValueSchema>(initialValue);
     const navigate = useNavigate();
 
-    const fromRequiredToPartial = useCallback(
-        (value: Required<ValueSchema>) => {
-            const formValue = Object.entries(value).map(([key, val]) => [key, val === "" ? undefined : val]);
-            itemManager.setAll(Object.fromEntries(formValue));
-        },
-        [itemManager],
-    );
+    const fromRequiredToPartial = (value: Required<ValueSchema>) => {
+        const entries = Object.entries(value).map(([key, val]) => [key, val === "" ? undefined : val]);
+        return Object.fromEntries(entries);
+    };
 
-    const fromPartialToRequired = useCallback((): ValueSchema => {
-        const formValue = Object.entries(itemManager.items).map(([key, val]) => [key, val ?? ""]);
-        return Object.fromEntries(formValue);
-    }, [itemManager]);
+    const fromPartialToRequired = (value: Partial<ValueSchema>): Required<ValueSchema> => {
+        const entries = Object.entries(value).map(([key, val]) => [key, val ?? ""]);
+        return Object.fromEntries(entries);
+    };
 
     return (
         <FilterProductHistoriesDialogPanel
-            value={fromPartialToRequired()}
+            value={fromPartialToRequired(itemManager.items)}
             onClose={onClose}
             onSubmit={() => {
                 navigate({ to: routeData.listProductHistories.pattern, search: itemManager.items });
                 onClose();
             }}
             onReset={() => itemManager.setAll(initialValue)}
-            onChange={fromRequiredToPartial}
-            onClear={() =>
-                itemManager.setAll({
-                    name: undefined,
-                    minPrice: undefined,
-                    maxPrice: undefined,
-                    description: undefined,
-                    validTo: undefined,
-                    validFrom: undefined,
-                    productId: undefined,
-                })
-            }
+            onChange={(value) => itemManager.setAll(fromRequiredToPartial(value))}
+            onClear={() => itemManager.setAll(clearedValue)}
         />
     );
 }
