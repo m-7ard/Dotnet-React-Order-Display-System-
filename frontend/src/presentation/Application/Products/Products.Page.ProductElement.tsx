@@ -24,16 +24,16 @@ export default function ProductElement(props: { product: IProduct }) {
             <MixinPrototypeCardSection className="grid gap-3" style={{ gridTemplateColumns: "auto 1fr" }}>
                 <CoverImage className="token-default-avatar" src={productImages[0]} />
                 <div className="overflow-hidden">
-                    <div className="text-base font-bold truncate" title={product.name}>
+                    <div className="token-card--header--primary-text truncate" title={product.name}>
                         {product.name}
                     </div>
-                    <div className="text-sm truncate">${product.price}</div>
+                    <div className="token-card--header--secondary-text truncate">${product.price}</div>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection>
-                <div className="flex flex-row justify-between">
-                    <div className="text-sm font-bold">Date Created</div>
-                    <div className="text-sm truncate">{product.dateCreated.toLocaleString("en-us")}</div>
+                <div className="token-card--list">
+                    <div className="token-card--list-label--text">Date Created</div>
+                    <div className="token-card--list-value--text truncate">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection className="flex flex-col gap-1">
@@ -44,7 +44,7 @@ export default function ProductElement(props: { product: IProduct }) {
                         navigate({ to: `/orders`, search: { productId: product.id } });
                     }}
                 >
-                    <MixinButton className="w-full justify-center truncate  " type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}>
+                    <MixinButton className="w-full justify-center truncate" type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}>
                         See Orders
                     </MixinButton>
                 </a>

@@ -4,14 +4,15 @@ import MixinButton from "../components/Resuables/MixinButton";
 import routeData from "../routes/_routeData";
 import SidebarMenuDialog from "./Application.SidebarMenu";
 import Divider from "../components/Resuables/Divider";
+import MixinContentGrid, { MixinContentGridTrack } from "../components/Resuables/MixinContentGrid";
 
 export default function ApplicationHeader() {
     const location = useLocation();
 
     return (
         <>
-            <header className="bg-gray-50 overflow-auto shrink-0 z-10 relative">
-                <div className="py-2 px-4 max-w-xl w-full flex flex-row gap-3 items-center mx-auto">
+            <MixinContentGrid className="bg-gray-50 overflow-auto shrink-0 z-10 relative">
+                <MixinContentGridTrack className="py-2 px-4 flex flex-row gap-3 items-center mx-auto border-x token-default-border-color" track={"base"}>
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
@@ -78,8 +79,8 @@ export default function ApplicationHeader() {
                             Orders
                         </MixinButton>
                     </Link>
-                </div>
-            </header>
+                </MixinContentGridTrack>
+            </MixinContentGrid>
             <div className="shadow relative">
                 <Divider />
             </div>

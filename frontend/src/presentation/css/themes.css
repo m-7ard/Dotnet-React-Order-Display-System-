@@ -1,9 +1,9 @@
 @layer components {
   .token-card--header--primary-text {
-    @apply text-base font-bold text-gray-900;
+    @apply text-base font-semibold;
   }
   .token-card--header--secondary-text {
-    @apply text-sm text-gray-600;
+    @apply text-sm;
   }
   .token-card--header--tertiary-text {
     @apply text-sm text-gray-900;

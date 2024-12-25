@@ -9,7 +9,7 @@ export default function MixinContentGrid<T extends ElementType = "div">(props: P
     const Component = as ?? "div";
 
     return (
-        <Component className={[CONTENT_GRID.CLASSES, className].join(" ")} {...HTMLattrs}>
+        <Component className={[CONTENT_GRID.CLASS, className].join(" ")} {...HTMLattrs}>
             {children}
         </Component>
     );

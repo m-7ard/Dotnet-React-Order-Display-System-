@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import GlobalDialog from '../../../presentation/components/Dialog/GlobalDialog';
-import GlobalDialogManager from '../../../presentation/components/Dialog/GlobalDialog.Manager';
+import GlobalDialog from '../presentation/components/Dialog/GlobalDialog';
+import GlobalDialogManager from '../presentation/components/Dialog/GlobalDialog.Manager';
 import '@testing-library/jest-dom';
 
 const MockPanel = jest.fn(({ message }) => <div>Mock Panel: {message}</div>);

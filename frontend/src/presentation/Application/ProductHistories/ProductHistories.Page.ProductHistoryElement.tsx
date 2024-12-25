@@ -24,10 +24,10 @@ export default function ProductHistoryElement(props: { productHistory: ProductHi
             <MixinPrototypeCardSection className="grid gap-3" style={{ gridTemplateColumns: "auto 1fr" }}>
                 <CoverImage className="token-default-avatar" src={productImages[0]} />
                 <div className="overflow-hidden">
-                    <div className="text-base font-bold truncate" title={productHistory.name}>
+                    <div className="token-card--header--primary-text truncate" title={productHistory.name}>
                         {productHistory.name}
                     </div>
-                    <div className="text-sm truncate">${productHistory.price}</div>
+                    <div className="token-card--header--secondary-text truncate">${productHistory.price}</div>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection>
@@ -44,17 +44,12 @@ export default function ProductHistoryElement(props: { productHistory: ProductHi
                     <span className="truncate token-card--list-value--text">{productHistory.isValid() ? productHistory.validTo.toLocaleString("en-us") : "N/A"}</span>
                 </div>
             </MixinPrototypeCardSection>
-            <MixinPrototypeCardSection className="flex flex-col gap-3">
+            <MixinPrototypeCardSection className="flex flex-col gap-1">
                 <a
                     className="w-full"
                     onClick={(e) => {
                         e.preventDefault();
-                        navigate({
-                            to: `/orders`,
-                            search: {
-                                productHistoryId: productHistory.id,
-                            },
-                        });
+                        navigate({ to: `/orders`, search: { productHistoryId: productHistory.id } });
                     }}
                 >
                     <MixinButton className="w-full justify-center  " type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}>
@@ -64,7 +59,13 @@ export default function ProductHistoryElement(props: { productHistory: ProductHi
                 <AbstractTooltip
                     Trigger={({ open, onToggle }) => (
                         <AbstractTooltipTrigger>
-                            <MixinButton className="justify-center w-full" type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} onClick={onToggle} active={open}>
+                            <MixinButton
+                                className="justify-center w-full"
+                                type="button"
+                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                                onClick={onToggle}
+                                active={open}
+                            >
                                 More
                             </MixinButton>
                         </AbstractTooltipTrigger>

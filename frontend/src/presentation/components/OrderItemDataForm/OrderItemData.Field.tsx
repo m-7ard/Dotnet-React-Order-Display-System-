@@ -1,13 +1,12 @@
 import IPresentationError from "../../interfaces/IPresentationError";
 import MixinButton from "../Resuables/MixinButton";
-import FilterProductResults from "../FilterProductResults/FilterProductResults";
 import OrderItemDataFieldItem, { ErrorSchema as OrderItemDataFieldErrorSchema, ValueSchema as OrderItemDataValueSchema } from "./OrderItemData.Field.Item";
 import GlobalDialog from "../Dialog/GlobalDialog";
 import IProduct from "../../../domain/models/IProduct";
 import { useCallback } from "react";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
-import CountTrackerProduct from "../FilterProductResults/FilterProductResults.Results.CountTracker";
 import FilterProductResultsController from "../FilterProductResults/FilterProductResults.Controller";
+import CountTrackerProduct from "../FilterProductResults/FilterProductResults.Pages.Results.CountTracker";
 
 type ErrorSchema = IPresentationError<{
     [productId: number | string]: OrderItemDataFieldErrorSchema;
@@ -50,6 +49,8 @@ export default function OrderItemDataField(props: { onChange: (value: ValueSchem
         [onChange, value],
     );
 
+    const hasItems = Object.entries(value).length > 0;
+
     return (
         <MixinPrototypeCard
             options={{
@@ -77,20 +78,28 @@ export default function OrderItemDataField(props: { onChange: (value: ValueSchem
                     )}
                     Panel={FilterProductResultsController}
                     panelProps={{
-                        "renderAs": "panel",
+                        renderAs: "panel",
                         getResults: (searchResults) =>
                             searchResults.map((product) => {
                                 const orderItemData = value[product.id];
                                 if (orderItemData) {
-                                    return <CountTrackerProduct product={product} onAdd={() => addOrderItem(product)} isAdded={true} quantity={orderItemData.quantity} />;
+                                    return (
+                                        <CountTrackerProduct
+                                            product={product}
+                                            onAdd={() => addOrderItem(product)}
+                                            isAdded={true}
+                                            quantity={orderItemData.quantity}
+                                            key={product.id}
+                                        />
+                                    );
                                 } else {
-                                    return <CountTrackerProduct product={product} onAdd={() => addOrderItem(product)} isAdded={false} quantity={null} />;
+                                    return <CountTrackerProduct product={product} onAdd={() => addOrderItem(product)} isAdded={false} quantity={null} key={product.id} />;
                                 }
                             }),
                     }}
                 />
             </MixinPrototypeCardSection>
-            {Object.entries(value).length > 0 && (
+            {hasItems && (
                 <MixinPrototypeCardSection className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">
                     {Object.entries(value).map(([productId, oiData]) => (
                         <OrderItemDataFieldItem
