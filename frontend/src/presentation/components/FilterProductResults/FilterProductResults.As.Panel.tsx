@@ -5,7 +5,7 @@ import MixinPanel, { MixinPanelSection } from "../Resuables/MixinPanel";
 import FormPage from "./FilterProductResults.Pages.Form";
 import ResultsPage from "./FilterProductResults.Pages.Results";
 import Divider from "../Resuables/Divider";
-import { IFilterProductResultsProps } from "./FilterProductResults.TYPES";
+import { IFilterProductResultsProps } from "./FilterProductResults.Types";
 
 export default function FilterProductResults(props: IFilterProductResultsProps) {
     const { resultComponents, route, changeRoute, form } = props;

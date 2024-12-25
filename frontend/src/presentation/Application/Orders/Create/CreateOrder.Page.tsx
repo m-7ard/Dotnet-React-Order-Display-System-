@@ -7,10 +7,10 @@ import LinkBox from "../../../components/Resuables/LinkBox";
 import routeData from "../../../routes/_routeData";
 import { useCallback } from "react";
 import Divider from "../../../components/Resuables/Divider";
-import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
 import { MixinContentGridTrack } from "../../../components/Resuables/MixinContentGrid";
 import FormError from "../../../components/Forms/FormError,";
 import { CONTENT_GRID } from "../../../attribute-mixins/contentGridTracks";
+import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
 
 interface ValueSchema {
     orderItemData: {
@@ -75,6 +75,7 @@ export default function CreateOrderPage(props: {
             </MixinPageSection>
             <Divider />
             <MixinPageSection className="flex flex-col gap-3">
+                <div className="token-page-title">Create Order</div>
                 <FormError title="Failed to Create Order" errors={errors._} />
                 <FormField name="orderItemData" errors={errors.orderItemData?._}>
                     <OrderItemDataField

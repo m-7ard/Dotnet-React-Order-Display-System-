@@ -32,7 +32,7 @@ export default function SidebarMenuDialog() {
                 </MixinButton>
             </MixinPanelSection>
             <Divider />
-            <MixinPanelSection className="flex flex-col gap-3">
+            <MixinPanelSection className="flex flex-col gap-1">
                 <Link className="w-full" to={routeData.frontpage.build({})}>
                     <MixinButton
                         className="w-full justify-center"

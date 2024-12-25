@@ -23,12 +23,12 @@ export default function OrderElement(props: { order: Order }) {
         <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }} className="overflow-hidden shrink-0 max-w-72 w-full sm:max-h-full flex flex-col" hasShadow hasDivide>
             <MixinPrototypeCardSection className={`flex flex-col ${ORDER_STATUS_COLORS[order.status.value]}`}>
                 <div className="flex flex-row justify-between items-baseline">
-                    <div className="text-base font-semibold">Order #{order.serialNumber}</div>
-                    <div className="text-base font-semibold">{`${order.status.value}`}</div>
+                    <div className="token-card--header--primary-text">Order #{order.serialNumber}</div>
+                    <div className="token-card--header--primary-text">{`${order.status.value}`}</div>
                 </div>
                 <div className="flex flex-row justify-between items-baseline">
-                    <div className="text-sm">{order.dateCreated.toLocaleTimeString()}</div>
-                    <div className="text-sm">{order.total}$</div>
+                    <div className="token-card--header--secondary-text">{order.dateCreated.toLocaleTimeString()}</div>
+                    <div className="token-card--header--secondary-text">{order.total}$</div>
                 </div>
             </MixinPrototypeCardSection>
             {order.orderItems.map((orderItem, i) => (
@@ -45,15 +45,15 @@ export default function OrderElement(props: { order: Order }) {
                                 >
                                     x{orderItem.quantity}
                                 </MixinButton>
-                                <div className="text-base font-semibold">{orderItem.productHistory.name}</div>
+                                <div className="token-card--header--primary-text">{orderItem.productHistory.name}</div>
                             </div>
-                            <div className="text-base">{`${orderItem.productHistory.price}$`}</div>
+                            <div className="token-card--header--secondary-text">{`${orderItem.productHistory.price}$`}</div>
                         </div>
                         <div className="token-card--list">
                             <div className="flex flex-row gap-[inherit] items-center">
                                 <button className={`mixin-button-like mixin-button-like--static mixin-button-sm ${ORDER_ITEM_STATUS_COLORS[orderItem.status.value]}`}>{orderItem.status.value}</button>
                             </div>
-                            <div className="text-base">Total - {`${orderItem.getTotal()}$`}</div>
+                            <div className="token-card--header--secondary-text">Total - {`${orderItem.getTotal()}$`}</div>
                         </div>
                     </div>
                 </MixinPrototypeCardSection>

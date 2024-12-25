@@ -136,10 +136,10 @@
 }
 @layer components {
   .token-card--header--primary-text {
-    @apply text-base font-bold text-gray-900;
+    @apply text-base font-semibold;
   }
   .token-card--header--secondary-text {
-    @apply text-sm text-gray-600;
+    @apply text-sm;
   }
   .token-card--header--tertiary-text {
     @apply text-sm text-gray-900;
@@ -154,10 +154,10 @@
     @apply text-base flex flex-row justify-between items-center gap-3;
   }
   .token-card--list-label--text {
-    @apply font-semibold text-gray-900;
+    @apply text-sm font-semibold;
   }
   .token-card--list-value--text {
-    @apply text-gray-900 text-sm;
+    @apply text-gray-600 text-sm;
   }
   .token-default-shadow {
     box-shadow: 0 2px 8px 0px rgba(0, 0, 0, 0.1);
@@ -170,6 +170,9 @@
   }
   .token-default-avatar {
     @apply aspect-square h-full overflow-hidden shrink-0 rounded-lg bg-gray-300;
+  }
+  .token-page-title {
+    @apply text-lg font-bold text-gray-800;
   }
 }
 @layer components {
@@ -257,10 +260,10 @@
 }
 @layer components {
   .token-card--header--primary-text {
-    @apply text-base font-bold text-gray-900;
+    @apply text-base font-semibold;
   }
   .token-card--header--secondary-text {
-    @apply text-sm text-gray-600;
+    @apply text-sm;
   }
   .token-card--header--tertiary-text {
     @apply text-sm text-gray-900;
@@ -275,10 +278,10 @@
     @apply text-base flex flex-row justify-between items-center gap-3;
   }
   .token-card--list-label--text {
-    @apply font-semibold text-gray-900;
+    @apply text-sm font-semibold;
   }
   .token-card--list-value--text {
-    @apply text-gray-900 text-sm;
+    @apply text-gray-600 text-sm;
   }
   .token-default-shadow {
     box-shadow: 0 2px 8px 0px rgba(0, 0, 0, 0.1);
@@ -291,6 +294,9 @@
   }
   .token-default-avatar {
     @apply aspect-square h-full overflow-hidden shrink-0 rounded-lg bg-gray-300;
+  }
+  .token-page-title {
+    @apply text-lg font-bold text-gray-800;
   }
 }
 html {

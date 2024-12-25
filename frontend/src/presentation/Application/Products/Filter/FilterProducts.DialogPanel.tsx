@@ -57,9 +57,9 @@ export default function FilterProductsDialogPanel(props: {
             </MixinPanelSection>
             <Divider />
             <MixinPanelSection className="flex flex-row gap-3 justify-end">
-                                <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="button" onClick={onClear}>
-                                    Clear
-                                </MixinButton>
+                <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="button" onClick={onClear}>
+                    Clear
+                </MixinButton>
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset" className="ml-auto">
                     Reset
                 </MixinButton>

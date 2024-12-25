@@ -2,10 +2,10 @@ import MixinButton from "../Resuables/MixinButton";
 import FormPage from "./FilterProductResults.Pages.Form";
 import ResultsPage from "./FilterProductResults.Pages.Results";
 import Divider from "../Resuables/Divider";
-import { IFilterProductResultsProps } from "./FilterProductResults.TYPES";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
+import { IFilterProductResultsProps } from "./FilterProductResults.Types";
 
-export default function FilterProductResultsWidget(props: IFilterProductResultsProps) {
+export default function FilterProductResultsEmbed(props: IFilterProductResultsProps) {
     const { resultComponents, route, changeRoute, form } = props;
 
     return (

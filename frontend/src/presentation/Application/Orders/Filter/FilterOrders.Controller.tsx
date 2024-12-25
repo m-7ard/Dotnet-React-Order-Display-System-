@@ -3,7 +3,6 @@ import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDi
 import { FilterOrdersFieldsetValueState } from "../../../components/Fieldsets/FilterOrdersFieldset";
 import useItemManager from "../../../hooks/useItemManager";
 import FilterOrdersDialogPanel from "./FilterOrders.DialogPanel";
-import { useCallback } from "react";
 
 export type ValueSchema = { [K in keyof FilterOrdersFieldsetValueState]?: FilterOrdersFieldsetValueState[K] };
 

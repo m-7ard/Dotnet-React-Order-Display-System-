@@ -13,7 +13,7 @@ import apiToDomainCompatibleFormError from "../../mappers/apiToDomainCompatibleF
 import IPlainApiError from "../../../infrastructure/interfaces/IPlainApiError";
 import FilterProductResultsEmbed from "./FilterProductResults.As.Embed";
 import FilterProductResultsPanel from "./FilterProductResults.As.Panel";
-import { Routes } from "./FilterProductResults.TYPES";
+import { Routes } from "./FilterProductResults.Types";
 
 const FORM_PAGE_INITIAL_DATA = {
     id: "",

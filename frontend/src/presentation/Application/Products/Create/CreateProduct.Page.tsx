@@ -11,6 +11,7 @@ import MixinPage, { MixinPageSection } from "../../../components/Resuables/Mixin
 import Divider from "../../../components/Resuables/Divider";
 import { MixinContentGridTrack } from "../../../components/Resuables/MixinContentGrid";
 import { CONTENT_GRID } from "../../../attribute-mixins/contentGridTracks";
+import FormError from "../../../components/Forms/FormError,";
 
 export default function CreateProductPage(props: { value: ValueState; errors: ErrorState; onSubmit: () => void; onReset: () => void; onChange: (value: ValueState) => void; uploadImages: (images: File[]) => Promise<void> }) {
     const { value, errors, onSubmit, onReset, onChange, uploadImages } = props;
@@ -50,7 +51,8 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
             </MixinPageSection>
             <MixinContentGridTrack track="base" as={Divider} />
             <MixinPageSection className="flex flex-col gap-3">
-                <div className="text-lg font-bold text-gray-800">Create Product</div>
+                <div className="token-page-title">Create Product</div>
+                <FormError title="Failed to Create Product" errors={errors._} />
                 <div className="flex flex-col gap-4">
                     <FormField name="name" errors={errors.name}>
                         <StatelessCharField
