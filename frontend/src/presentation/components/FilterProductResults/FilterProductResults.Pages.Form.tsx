@@ -19,29 +19,35 @@ export default function FormPage(props: { onReset: () => void; onSubmit: () => v
     const { onReset, onSubmit, value, onChange } = props;
 
     return (
-        <form
-            className="flex flex-col gap-3"
-            onReset={(e) => {
-                e.preventDefault();
-                onReset();
-            }}
-            onSubmit={(e) => {
-                e.preventDefault();
-                onSubmit();
-            }}
-        >
+        <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-3">
                 <FilterProductsFieldset value={value} onChange={onChange} />
             </div>
             <Divider />
             <footer className="flex flex-row gap-3 justify-end shrink-0">
-                <MixinButton className="overflow-hidden" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset">
+                <MixinButton
+                    className="overflow-hidden"
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                    type="button"
+                    onMouseUp={(e) => {
+                        e.preventDefault();
+                        onReset();
+                    }}
+                >
                     Reset
                 </MixinButton>
-                <MixinButton className="overflow-hidden" options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">
+                <MixinButton
+                    className="overflow-hidden"
+                    options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}
+                    type="button"
+                    onMouseUp={(e) => {
+                        e.preventDefault();
+                        onSubmit();
+                    }}
+                >
                     Submit
                 </MixinButton>
             </footer>
-        </form>
+        </div>
     );
 }

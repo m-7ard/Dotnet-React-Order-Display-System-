@@ -17,15 +17,7 @@ export default function CountTrackerProduct(props: CountTrackerProductProps) {
     const productImages = product.images.map((image) => `${getApiUrl()}/Media/${image.fileName}`);
 
     return (
-        <MixinPrototypeCard
-            options={{
-                size: "mixin-Pcard-base",
-                theme: "theme-Pcard-generic-white",
-            }}
-            hasBorder
-            hasShadow
-            hasDivide
-        >
+        <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }} hasBorder hasShadow hasDivide>
             <MixinPrototypeCardSection className="grid gap-3" style={{ gridTemplateColumns: "auto 1fr" }}>
                 <CoverImage className="token-default-avatar" src={productImages[0]} />
                 <div className="overflow-hidden">
@@ -44,21 +36,15 @@ export default function CountTrackerProduct(props: CountTrackerProductProps) {
             <MixinPrototypeCardSection className="flex flex-row gap-3">
                 {isAdded ? (
                     <>
-                        <MixinButton
-                            options={{
-                                size: "mixin-button-base",
-                                theme: "theme-button-generic-white",
-                            }}
-                            isStatic
-                        >
+                        <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} isStatic type="button">
                             x{quantity}
                         </MixinButton>
-                        <MixinButton className="grow justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}>
+                        <MixinButton className="grow justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="button">
                             Already Added
                         </MixinButton>
                     </>
                 ) : (
-                    <MixinButton className="grow justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }} onClick={onAdd}>
+                    <MixinButton className="grow justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }} onClick={onAdd} type="button">
                         Add Item
                     </MixinButton>
                 )}
