@@ -3,46 +3,57 @@ import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDi
 import { FilterOrdersFieldsetValueState } from "../../../components/Fieldsets/FilterOrdersFieldset";
 import useItemManager from "../../../hooks/useItemManager";
 import FilterOrdersDialogPanel from "./FilterOrders.DialogPanel";
+import { useCallback } from "react";
+
+export type ValueSchema = { [K in keyof FilterOrdersFieldsetValueState]?: FilterOrdersFieldsetValueState[K] };
 
 const clearedValue: ValueSchema = {
-    id: "",
-    minTotal: "",
-    maxTotal: "",
-    status: "",
-    createdBefore: "",
-    createdAfter: "",
-    productId: "",
-    productHistoryId: "",
+    id: undefined,
+    minTotal: undefined,
+    maxTotal: undefined,
+    status: undefined,
+    createdBefore: undefined,
+    createdAfter: undefined,
+    productId: undefined,
+    productHistoryId: undefined,
 };
-
-export type ValueSchema = FilterOrdersFieldsetValueState;
 
 export default function FilterOrdersController() {
     const { onClose } = useGlobalDialogPanelContext();
-    const searchParams: Record<string, string> = useSearch({ strict: false });
+    const searchParams: Partial<Record<string, string>> = useSearch({ strict: false });
     const initialValue: ValueSchema = {
-        id: searchParams.id ?? "",
-        minTotal: searchParams.minTotal ?? "",
-        maxTotal: searchParams.maxTotal ?? "",
-        status: searchParams.status ?? "",
-        createdBefore: searchParams.createdBefore ?? "",
-        createdAfter: searchParams.createdAfter ?? "",
-        productId: searchParams.productId ?? "",
-        productHistoryId: searchParams.productHistoryId ?? "",
+        id: searchParams.id,
+        minTotal: searchParams.minTotal,
+        maxTotal: searchParams.maxTotal,
+        status: searchParams.status,
+        createdBefore: searchParams.createdBefore,
+        createdAfter: searchParams.createdAfter,
+        productId: searchParams.productId,
+        productHistoryId: searchParams.productHistoryId,
     };
     const itemManager = useItemManager<ValueSchema>(initialValue);
     const navigate = useNavigate();
 
+    const fromRequiredToPartial = (value: Required<ValueSchema>) => {
+        const entries = Object.entries(value).map(([key, val]) => [key, val === "" ? undefined : val]);
+        return Object.fromEntries(entries);
+    };
+
+    const fromPartialToRequired = (value: Partial<ValueSchema>): Required<ValueSchema> => {
+        const entries = Object.entries(value).map(([key, val]) => [key, val ?? ""]);
+        return Object.fromEntries(entries);
+    };
+
     return (
         <FilterOrdersDialogPanel
-            value={itemManager.items}
+            value={fromPartialToRequired(itemManager.items)}
             onClose={onClose}
             onSubmit={() => {
                 navigate({ to: "/orders", search: itemManager.items });
                 onClose();
             }}
             onReset={() => itemManager.setAll(initialValue)}
-            onChange={itemManager.setAll}
+            onChange={(value) => itemManager.setAll(fromRequiredToPartial(value))}
             onClear={() => itemManager.setAll(clearedValue)}
         />
     );

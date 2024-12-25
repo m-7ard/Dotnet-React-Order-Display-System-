@@ -6,7 +6,7 @@ import MixinPanel, { MixinPanelSection } from "../../../components/Resuables/Mix
 import routeData from "../../../routes/_routeData";
 import { ValueSchema } from "./FilterOrders.Controller";
 
-export default function FilterOrdersDialogPanel(props: { value: ValueSchema; onSubmit: () => void; onReset: () => void; onClose: () => void; onChange: (value: ValueSchema) => void; onClear: () => void }) {
+export default function FilterOrdersDialogPanel(props: { value: Required<ValueSchema>; onSubmit: () => void; onReset: () => void; onClose: () => void; onChange: (value: Required<ValueSchema>) => void; onClear: () => void }) {
     const { value, onSubmit, onReset, onClose, onChange, onClear } = props;
 
     return (

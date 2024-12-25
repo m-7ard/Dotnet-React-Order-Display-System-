@@ -16,6 +16,7 @@
     "@sinclair/typebox": "^0.33.9",
     "@tanstack/react-query": "^5.53.3",
     "@tanstack/react-router": "^1.52.4",
+    "immutable": "^5.0.3",
     "jest-environment-jsdom": "^29.7.0",
     "jsonpointer": "^5.0.1",
     "neverthrow": "^7.1.0",

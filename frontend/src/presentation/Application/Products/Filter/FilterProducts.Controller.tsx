@@ -3,9 +3,18 @@ import useItemManager from "../../../hooks/useItemManager";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialog.Panel.Context";
 import { FilterProductsFieldsetValueState } from "../../../components/Fieldsets/FilterProductFieldset";
 import FilterProductsDialogPanel from "./FilterProducts.DialogPanel";
-import { useCallback } from "react";
 
 export type ValueSchema = { [K in keyof FilterProductsFieldsetValueState]?: FilterProductsFieldsetValueState[K] };
+
+const clearedValue: ValueSchema = {
+    id: undefined,
+    name: undefined,
+    minPrice: undefined,
+    maxPrice: undefined,
+    description: undefined,
+    createdBefore: undefined,
+    createdAfter: undefined,
+};
 
 export default function FilterProductsController() {
     const { onClose } = useGlobalDialogPanelContext();
@@ -22,29 +31,27 @@ export default function FilterProductsController() {
     const itemManager = useItemManager<ValueSchema>(initialValue);
     const navigate = useNavigate();
 
-    const fromRequiredToPartial = useCallback(
-        (value: Required<ValueSchema>) => {
-            const formValue = Object.entries(value).map(([key, val]) => [key, val === "" ? undefined : val]);
-            itemManager.setAll(Object.fromEntries(formValue));
-        },
-        [itemManager],
-    );
+    const fromRequiredToPartial = (value: Required<ValueSchema>) => {
+        const entries = Object.entries(value).map(([key, val]) => [key, val === "" ? undefined : val]);
+        return Object.fromEntries(entries);
+    };
 
-    const fromPartialToRequired = useCallback((): Required<ValueSchema> => {
-        const formValue = Object.entries(itemManager.items).map(([key, val]) => [key, val ?? ""]);
-        return Object.fromEntries(formValue);
-    }, [itemManager]);
+    const fromPartialToRequired = (value: Partial<ValueSchema>): Required<ValueSchema> => {
+        const entries = Object.entries(value).map(([key, val]) => [key, val ?? ""]);
+        return Object.fromEntries(entries);
+    };
 
     return (
         <FilterProductsDialogPanel
-            value={fromPartialToRequired()}
+            value={fromPartialToRequired(itemManager.items)}
             onClose={onClose}
             onSubmit={() => {
                 navigate({ to: "/products", search: itemManager.items });
                 onClose();
             }}
             onReset={() => itemManager.setAll(initialValue)}
-            onChange={fromRequiredToPartial}
+            onChange={(value) => itemManager.setAll(fromRequiredToPartial(value))}
+            onClear={() => itemManager.setAll(clearedValue)}
         />
     );
 }

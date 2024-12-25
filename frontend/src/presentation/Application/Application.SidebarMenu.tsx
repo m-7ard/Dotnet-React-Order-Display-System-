@@ -26,6 +26,7 @@ export default function SidebarMenuDialog() {
                     }}
                     onClick={onClose}
                     type="button"
+                    hasShadow
                 >
                     Close
                 </MixinButton>
