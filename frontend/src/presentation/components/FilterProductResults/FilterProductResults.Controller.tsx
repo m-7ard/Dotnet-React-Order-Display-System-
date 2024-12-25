@@ -11,7 +11,9 @@ import { err, ok } from "neverthrow";
 import parseListProductsRequestDTO from "../../../infrastructure/parsers/parseListProductsRequestDTO";
 import apiToDomainCompatibleFormError from "../../mappers/apiToDomainCompatibleFormError";
 import IPlainApiError from "../../../infrastructure/interfaces/IPlainApiError";
-import FilterProductResults from "./FilterProductResults";
+import FilterProductResultsEmbed from "./FilterProductResults.As.Embed";
+import FilterProductResultsPanel from "./FilterProductResults.As.Panel";
+import { Routes } from "./FilterProductResults.TYPES";
 
 const FORM_PAGE_INITIAL_DATA = {
     id: "",
@@ -23,11 +25,11 @@ const FORM_PAGE_INITIAL_DATA = {
     createdBefore: "",
 };
 
-export default function FilterProductResultsController(props: { getResults: (searchResults: IProduct[]) => Array<React.ReactNode> }) {
-    const { getResults } = props;
+export default function FilterProductResultsController(props: { getResults: (searchResults: IProduct[]) => Array<React.ReactNode>; renderAs: "embed" | "panel" }) {
+    const { getResults, renderAs } = props;
     const responseHandler = useDefaultErrorHandling();
-    const [route, setRoute] = useState<"form" | "result">("form");
-    const changeRoute = useCallback((newRoute: "form" | "result") => setRoute(newRoute), []);
+    const [route, setRoute] = useState<Routes>("form");
+    const changeRoute = useCallback((newRoute: Routes) => setRoute(newRoute), []);
 
     const formValue = useItemManager<FormPageValueState>(FORM_PAGE_INITIAL_DATA);
     const formErrors = useItemManager<FormPageErrorState>({});
@@ -57,9 +59,13 @@ export default function FilterProductResultsController(props: { getResults: (sea
     });
 
     const searchResults = searchProductsMutation.data ?? [];
+    const Component = {
+        embed: FilterProductResultsEmbed,
+        panel: FilterProductResultsPanel,
+    }[renderAs];
 
     return (
-        <FilterProductResults
+        <Component
             resultComponents={getResults(searchResults)}
             route={route}
             changeRoute={changeRoute}

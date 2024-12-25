@@ -2,23 +2,12 @@ import MixinButton from "../Resuables/MixinButton";
 import { useGlobalDialogPanelContext } from "../Dialog/GlobalDialog.Panel.Context";
 import LinkBox from "../Resuables/LinkBox";
 import MixinPanel, { MixinPanelSection } from "../Resuables/MixinPanel";
-import FormPage, { FormPageErrorState, FormPageValueState } from "./FilterProductResults.Pages.Form";
+import FormPage from "./FilterProductResults.Pages.Form";
 import ResultsPage from "./FilterProductResults.Pages.Results";
 import Divider from "../Resuables/Divider";
-import React from "react";
+import { IFilterProductResultsProps } from "./FilterProductResults.TYPES";
 
-export default function FilterProductResults(props: {
-    resultComponents: Array<React.ReactNode>;
-    route: "form" | "result";
-    changeRoute: (route: "form" | "result") => void;
-    form: {
-        onReset: () => void;
-        onSubmit: () => void;
-        onChange: (value: FormPageValueState) => void;
-        value: FormPageValueState;
-        errors: FormPageErrorState;
-    };
-}) {
+export default function FilterProductResults(props: IFilterProductResultsProps) {
     const { resultComponents, route, changeRoute, form } = props;
     const { onClose } = useGlobalDialogPanelContext();
 
