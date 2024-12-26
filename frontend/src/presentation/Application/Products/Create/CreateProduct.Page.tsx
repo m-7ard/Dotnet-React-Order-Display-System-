@@ -51,7 +51,7 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
             </MixinPageSection>
             <MixinContentGridTrack track="base" as={Divider} />
             <MixinPageSection className="flex flex-col gap-3">
-                <div className="token-page-title">Create Product</div>
+                <div className="token-default-title">Create Product</div>
                 <FormError title="Failed to Create Product" errors={errors._} />
                 <div className="flex flex-col gap-4">
                     <FormField name="name" errors={errors.name}>

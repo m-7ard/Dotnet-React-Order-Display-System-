@@ -14,13 +14,13 @@
   .token-card--default-text {
     @apply text-base text-gray-900;
   }
-  .token-card--list {
+  .token-default-list {
     @apply text-base flex flex-row justify-between items-center gap-3;
   }
-  .token-card--list-label--text {
+  .token-default-list__label {
     @apply text-sm font-semibold;
   }
-  .token-card--list-value--text {
+  .token-default-list__value {
     @apply text-gray-700 text-sm;
   }
   .token-default-shadow {
@@ -35,7 +35,7 @@
   .token-default-avatar {
     @apply aspect-square h-full overflow-hidden shrink-0 rounded-lg bg-gray-300;
   }
-  .token-page-title {
+  .token-default-title {
     @apply text-lg font-bold text-gray-800;
   }
 }

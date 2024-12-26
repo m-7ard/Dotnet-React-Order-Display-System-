@@ -31,17 +31,17 @@ export default function ProductHistoryElement(props: { productHistory: ProductHi
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection>
-                <div className="token-card--list">
-                    <span className="token-card--list-label--text shrink-0">Original Product Id</span>
-                    <span className="truncate token-card--list-value--text">{productHistory.productId}</span>
+                <div className="token-default-list">
+                    <span className="token-default-list__label shrink-0">Original Product Id</span>
+                    <span className="truncate token-default-list__value">{productHistory.productId}</span>
                 </div>
-                <div className="token-card--list">
-                    <span className="token-card--list-label--text shrink-0">Valid From</span>
-                    <span className="truncate token-card--list-value--text">{productHistory.validFrom.toLocaleString("en-us")}</span>
+                <div className="token-default-list">
+                    <span className="token-default-list__label shrink-0">Valid From</span>
+                    <span className="truncate token-default-list__value">{productHistory.validFrom.toLocaleString("en-us")}</span>
                 </div>
-                <div className="token-card--list">
-                    <span className="token-card--list-label--text shrink-0">Valid To</span>
-                    <span className="truncate token-card--list-value--text">{productHistory.isValid() ? productHistory.validTo.toLocaleString("en-us") : "N/A"}</span>
+                <div className="token-default-list">
+                    <span className="token-default-list__label shrink-0">Valid To</span>
+                    <span className="truncate token-default-list__value">{productHistory.isValid() ? productHistory.validTo.toLocaleString("en-us") : "N/A"}</span>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection className="flex flex-col gap-1">

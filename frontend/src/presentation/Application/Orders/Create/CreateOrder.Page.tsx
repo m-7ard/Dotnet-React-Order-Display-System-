@@ -75,7 +75,7 @@ export default function CreateOrderPage(props: {
             </MixinPageSection>
             <Divider />
             <MixinPageSection className="flex flex-col gap-3">
-                <div className="token-page-title">Create Order</div>
+                <div className="token-default-title">Create Order</div>
                 <FormError title="Failed to Create Order" errors={errors._} />
                 <FormField name="orderItemData" errors={errors.orderItemData?._}>
                     <OrderItemDataField

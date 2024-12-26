@@ -46,6 +46,7 @@ export default function FilterOrdersDialogPanel(props: { value: Required<ValueSc
             </MixinPanelSection>
             <Divider />
             <MixinPanelSection className="flex flex-col gap-3">
+                <div className="token-default-title">Filter Orders</div>
                 <FilterOrdersFieldset value={value} onChange={onChange} />
             </MixinPanelSection>
             <Divider />

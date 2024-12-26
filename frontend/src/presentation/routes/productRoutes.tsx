@@ -1,4 +1,4 @@
-import { createRoute, redirect } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
 import rootRoute from "./_rootRoute";
 import UpdateProductController from "../Application/Products/Update/UpdateProduct.Controller";
 import routeData from "./_routeData";
@@ -9,8 +9,7 @@ import IReadProductResponseDTO from "../../infrastructure/contracts/products/rea
 import productMapper from "../../infrastructure/mappers/productMapper";
 import IListProductsResponseDTO from "../../infrastructure/contracts/products/list/IListProductsResponseDTO";
 import parseListProductsRequestDTO from "../../infrastructure/parsers/parseListProductsRequestDTO";
-import handleLoaderRequest from "../utils/handleLoaderRequest";
-import handleLoaderResponse from "../utils/handleLoaderResponse";
+import TanstackRouterUtils from "../utils/TanstackRouterUtils";
 
 const baseProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -28,9 +27,9 @@ const baseProductsRoute = createRoute({
             orderBy: deps.orderBy,
         });
 
-        const response = await handleLoaderRequest(productDataAccess.listProducts(params));
+        const response = await TanstackRouterUtils.handleRequest(productDataAccess.listProducts(params));
         if (!response.ok) {
-            await handleLoaderResponse(response);
+            await TanstackRouterUtils.handleInvalidResponse(response);
         }
 
         const data: IListProductsResponseDTO = await response.json();
@@ -51,11 +50,11 @@ const updateProductRoute = createRoute({
     component: UpdateProductController,
     loader: async ({ params }) => {
         const id = params.id;
-        const response = await handleLoaderRequest(productDataAccess.readProduct({ id: id }));
+        const response = await TanstackRouterUtils.handleRequest(productDataAccess.readProduct({ id: id }));
         if (!response.ok) {
-            await handleLoaderResponse(response);
+            await TanstackRouterUtils.handleInvalidResponse(response);
         }
-        
+
         const dto: IReadProductResponseDTO = await response.json();
         const product = productMapper.apiToDomain(dto.product);
 

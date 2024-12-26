@@ -1,3 +1,6 @@
+import Divider from "../components/Resuables/Divider";
+import MixinButton from "../components/Resuables/MixinButton";
+import MixinPanel, { MixinPanelSection } from "../components/Resuables/MixinPanel";
 import { useApplicationExceptionContext } from "./Application.ExceptionProvider.Context";
 
 export default function ApplicationExceptionNotice() {
@@ -8,13 +11,33 @@ export default function ApplicationExceptionNotice() {
     }
 
     return (
-        <div className="fixed mx-auto top-4 left-4 right-4 flex flex-col bg-red-400 border border-gray-900 p-4 gap-4 text-gray-900 max-w-96" style={{ zIndex: 1000000 }}>
-            <div className="flex flex-row gap-4 justify-between items-center">
-                <div className="text-sm">{exception.message}</div>
-                <div className="mixin-button-like" onClick={dismissException}>
-                    ✖
-                </div>
-            </div>
-        </div>
+        <MixinPanel
+            className="fixed mx-auto top-4 left-4 right-4"
+            options={{
+                size: "mixin-panel-base",
+                theme: "theme-panel-generic-white",
+            }}
+            style={{ zIndex: 1_000_000 }}
+            hasBorder
+            hasShadow
+        >
+            <MixinPanelSection as="header" className="flex flex-row gap-3 items-center justify-between">
+                <div className="token-default-title">Exception</div>
+                <MixinButton
+                    options={{
+                        size: "mixin-button-sm",
+                        theme: "theme-button-generic-white",
+                    }}
+                    hasShadow
+                    onClick={dismissException}
+                >
+                    Close
+                </MixinButton>
+            </MixinPanelSection>
+            <Divider />
+            <MixinPanelSection>
+                <div>{exception.message}</div>
+            </MixinPanelSection>
+        </MixinPanel>
     );
 }

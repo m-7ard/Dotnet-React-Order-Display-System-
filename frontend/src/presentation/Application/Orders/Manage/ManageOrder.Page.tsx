@@ -10,6 +10,8 @@ import OrderItemElement from "./ManageOrder.Page.OrderItem";
 import { CONTENT_GRID } from "../../../attribute-mixins/contentGridTracks";
 import Divider from "../../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
+import GlobalDialog from "../../../components/Dialog/GlobalDialog";
+import OrderProgressPanel from "./ManageOrder.Page.ProgressPanel";
 
 const ORDER_STATUS_COLORS = {
     [OrderStatus.FINISHED.value]: "bg-green-600/50",
@@ -71,9 +73,20 @@ export default function ManageOrderPage(props: {
                             )}
                             {order.status === OrderStatus.FINISHED && (
                                 <>
-                                    <MixinButton className="basis-1/2 justify-center" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}>
-                                        Order Progress
-                                    </MixinButton>
+                                    <GlobalDialog
+                                        zIndex={10}
+                                        Trigger={({ onToggle }) => (
+                                            <MixinButton
+                                                className="basis-1/2 justify-center"
+                                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                                onClick={onToggle}
+                                            >
+                                                Order Progress
+                                            </MixinButton>
+                                        )}
+                                        Panel={OrderProgressPanel}
+                                        panelProps={{ order: order }}
+                                    />
                                     <MixinButton className="basis-1/2 justify-center" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}>
                                         Other Options
                                     </MixinButton>
