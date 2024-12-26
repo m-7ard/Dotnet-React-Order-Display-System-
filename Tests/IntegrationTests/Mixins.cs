@@ -108,6 +108,12 @@ public class Mixins
         }
 
         await _orderRespository.CreateAsync(newOrder);
-        return newOrder;
+        var insertedOrder = await _orderRespository.GetByIdAsync(newOrder.Id);
+        if (insertedOrder is null)
+        {
+            throw new Exception("Order was not inserted.");
+        }
+
+        return insertedOrder;
     }
 }

@@ -15,7 +15,9 @@ public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<Application
         Guid? id,
         Guid? productId,
         Guid? productHistoryId,
-        string? orderBy)
+        string? orderBy,
+        int? orderSerialNumber,
+        int? orderItemSerialNumber)
     {
         MinTotal = minTotal;
         MaxTotal = maxTotal;
@@ -26,6 +28,8 @@ public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<Application
         ProductId = productId;
         ProductHistoryId = productHistoryId;
         OrderBy = orderBy;
+        OrderSerialNumber = orderSerialNumber;
+        OrderItemSerialNumber = orderItemSerialNumber;
     }
 
     public decimal? MinTotal { get; set; }
@@ -37,4 +41,6 @@ public class ListOrdersQuery : IRequest<OneOf<ListOrdersResult, List<Application
     public Guid? ProductId { get; set; }
     public Guid? ProductHistoryId { get; set; }
     public string? OrderBy { get; set; }
+    public int? OrderSerialNumber { get; set; }
+    public int? OrderItemSerialNumber { get; set; }
 }

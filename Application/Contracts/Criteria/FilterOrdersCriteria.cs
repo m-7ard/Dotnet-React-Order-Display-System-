@@ -13,7 +13,9 @@ public class FilterOrdersCriteria : IEquatable<FilterOrdersCriteria>
         Guid? productId,
         Guid? id,
         Guid? productHistoryId,
-        Tuple<string, bool>? orderBy)
+        Tuple<string, bool>? orderBy,
+        int? orderSerialNumber,
+        int? orderItemSerialNumber)
     {
         MinTotal = minTotal;
         MaxTotal = maxTotal;
@@ -24,6 +26,8 @@ public class FilterOrdersCriteria : IEquatable<FilterOrdersCriteria>
         Id = id;
         ProductHistoryId = productHistoryId;
         OrderBy = orderBy;
+        OrderSerialNumber = orderSerialNumber;
+        OrderItemSerialNumber = orderItemSerialNumber;
     }
 
     public decimal? MinTotal { get; set; }
@@ -35,6 +39,8 @@ public class FilterOrdersCriteria : IEquatable<FilterOrdersCriteria>
     public Guid? Id { get; set; }
     public Guid? ProductHistoryId { get; set; }
     public Tuple<string, bool>? OrderBy { get; set; }
+    public int? OrderSerialNumber { get; set; }
+    public int? OrderItemSerialNumber { get; set; }
 
     // For Unit Testing
     public bool Equals(FilterOrdersCriteria? other)
@@ -50,7 +56,9 @@ public class FilterOrdersCriteria : IEquatable<FilterOrdersCriteria>
                 ProductId == other.ProductId &&
                 Id == other.Id &&
                 ProductHistoryId == other.ProductHistoryId &&
-                Equals(OrderBy, other.OrderBy);
+                Equals(OrderBy, other.OrderBy) &&
+                OrderSerialNumber == other.OrderSerialNumber &&
+                OrderItemSerialNumber == other.OrderItemSerialNumber;
     }
 
     public override bool Equals(object? obj)
@@ -70,6 +78,8 @@ public class FilterOrdersCriteria : IEquatable<FilterOrdersCriteria>
         hash.Add(Id);
         hash.Add(ProductHistoryId);
         hash.Add(OrderBy);
+        hash.Add(OrderSerialNumber);
+        hash.Add(OrderItemSerialNumber);
         return hash.ToHashCode();
     }
 }

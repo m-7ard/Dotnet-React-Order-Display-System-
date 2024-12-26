@@ -78,6 +78,17 @@ public class OrderRepository : IOrderRepository
             query = query.Where(order => order.OrderItems.Any(item => item.ProductHistoryId == criteria.ProductHistoryId));
         }
 
+        
+        if (criteria.OrderSerialNumber is not null)
+        {
+            query = query.Where(order => order.SerialNumber == criteria.OrderSerialNumber.Value);
+        }
+
+        if (criteria.OrderItemSerialNumber is not null)
+        {
+            query = query.Where(order => order.OrderItems.Any(item => item.SerialNumber == criteria.OrderItemSerialNumber));
+        }
+
         if (criteria.OrderBy is not null)
         {
             Dictionary<string, Expression<Func<OrderDbEntity, object>>> fieldMappings = new()
