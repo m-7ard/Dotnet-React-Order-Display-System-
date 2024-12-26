@@ -18,7 +18,7 @@ export default function SidebarMenuDialog() {
             className="top-0 bottom-0 left-0 fixed w-72 rounded-none"
         >
             <MixinPanelSection className="flex flex-row justify-between items-center">
-                <div className="text-base font-semibold">Menu</div>
+                <div className="text-sm font-semibold">Menu</div>
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",

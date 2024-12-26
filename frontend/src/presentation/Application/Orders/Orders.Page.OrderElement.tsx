@@ -20,7 +20,12 @@ export default function OrderElement(props: { order: Order }) {
     const navigate = useNavigate();
 
     return (
-        <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }} className="overflow-hidden shrink-0 max-w-72 w-full sm:max-h-full flex flex-col" hasShadow hasDivide>
+        <MixinPrototypeCard
+            options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}
+            className="overflow-hidden shrink-0 max-w-72 w-full sm:max-h-full flex flex-col"
+            hasShadow
+            hasDivide
+        >
             <MixinPrototypeCardSection className={`flex flex-col ${ORDER_STATUS_COLORS[order.status.value]}`}>
                 <div className="flex flex-row justify-between items-baseline">
                     <div className="token-card--header--primary-text">Order #{order.serialNumber}</div>
@@ -45,15 +50,17 @@ export default function OrderElement(props: { order: Order }) {
                                 >
                                     x{orderItem.quantity}
                                 </MixinButton>
-                                <div className="token-card--header--primary-text">{orderItem.productHistory.name}</div>
+                                <div className="token-card--list-label--text">{orderItem.productHistory.name}</div>
                             </div>
-                            <div className="token-card--header--secondary-text">{`${orderItem.productHistory.price}$`}</div>
+                            <div className="token-card--list-value--text">{`${orderItem.productHistory.price}$`}</div>
                         </div>
                         <div className="token-card--list">
                             <div className="flex flex-row gap-[inherit] items-center">
-                                <button className={`mixin-button-like mixin-button-like--static mixin-button-sm ${ORDER_ITEM_STATUS_COLORS[orderItem.status.value]}`}>{orderItem.status.value}</button>
+                                <button className={`mixin-button-like mixin-button-like--static mixin-button-sm ${ORDER_ITEM_STATUS_COLORS[orderItem.status.value]}`}>
+                                    {orderItem.status.value}
+                                </button>
                             </div>
-                            <div className="token-card--header--secondary-text">Total - {`${orderItem.getTotal()}$`}</div>
+                            <div className="token-card--list-value--text">Total - {`${orderItem.getTotal()}$`}</div>
                         </div>
                     </div>
                 </MixinPrototypeCardSection>

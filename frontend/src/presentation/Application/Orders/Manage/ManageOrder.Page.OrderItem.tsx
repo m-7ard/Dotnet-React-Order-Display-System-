@@ -25,7 +25,7 @@ export default function OrderItemElement(props: { orderItem: OrderItem; onMarkOr
         >
             <MixinPrototypeCardSection className={`flex flex-col ${ORDER_ITEM_STATUS_COLORS[orderItem.status.value]}`}>
                 <div className="flex flex-row justify-between items-baseline">
-                    <div className="text-base font-semibold">Order Item #{orderItem.serialNumber}</div>
+                    <div className="token-card--header--primary-text">Order Item #{orderItem.serialNumber}</div>
                 </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection className="flex flex-col gap-3">
@@ -46,15 +46,15 @@ export default function OrderItemElement(props: { orderItem: OrderItem; onMarkOr
                             >
                                 x{orderItem.quantity}
                             </MixinButton>
-                            <div className="text-base font-semibold">{orderItem.productHistory.name}</div>
+                            <div className="token-card--list-label--text">{orderItem.productHistory.name}</div>
                         </div>
-                        <div className="text-base">{`${orderItem.productHistory.price}$`}</div>
+                        <div className="token-card--list-value--text">{`${orderItem.productHistory.price}$`}</div>
                     </div>
                     <div className="token-card--list">
                         <div className="flex flex-row gap-[inherit] items-center">
                             <button className={`mixin-button-like mixin-button-like--static mixin-button-sm ${ORDER_ITEM_STATUS_COLORS[orderItem.status.value]}`}>{orderItem.status.value}</button>
                         </div>
-                        <div className="text-base">Total - {`${orderItem.getTotal()}$`}</div>
+                        <div className="token-card--list-value--text">Total - {`${orderItem.getTotal()}$`}</div>
                     </div>
                 </div>
             </MixinPrototypeCardSection>
