@@ -9,6 +9,8 @@ import IReadProductResponseDTO from "../../infrastructure/contracts/products/rea
 import productMapper from "../../infrastructure/mappers/productMapper";
 import IListProductsResponseDTO from "../../infrastructure/contracts/products/list/IListProductsResponseDTO";
 import parseListProductsRequestDTO from "../../infrastructure/parsers/parseListProductsRequestDTO";
+import handleLoaderRequest from "../utils/handleLoaderRequest";
+import handleLoaderResponse from "../utils/handleLoaderResponse";
 
 const baseProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -25,13 +27,13 @@ const baseProductsRoute = createRoute({
             description: deps.description,
             orderBy: deps.orderBy,
         });
-        const response = await productDataAccess.listProducts(params);
+
+        const response = await handleLoaderRequest(productDataAccess.listProducts(params));
         if (!response.ok) {
-            throw redirect({ to: "/" });
+            await handleLoaderResponse(response);
         }
 
         const data: IListProductsResponseDTO = await response.json();
-
         return data.products.map(productMapper.apiToDomain);
     },
     component: ProductsController,
@@ -49,12 +51,11 @@ const updateProductRoute = createRoute({
     component: UpdateProductController,
     loader: async ({ params }) => {
         const id = params.id;
-        const response = await productDataAccess.readProduct({ id: id });
-
+        const response = await handleLoaderRequest(productDataAccess.readProduct({ id: id }));
         if (!response.ok) {
-            throw redirect({ to: "/products" });
+            await handleLoaderResponse(response);
         }
-
+        
         const dto: IReadProductResponseDTO = await response.json();
         const product = productMapper.apiToDomain(dto.product);
 

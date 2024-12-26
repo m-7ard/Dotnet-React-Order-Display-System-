@@ -6,6 +6,8 @@ import IListProductHistoriesResponseDTO from "../../infrastructure/contracts/pro
 import productHistoryMapper from "../../infrastructure/mappers/productHistoryMapper";
 import ProductHistoriesController from "../Application/ProductHistories/ProductHistories.Controller";
 import parseListProductHistoriesRequestDTO from "../../infrastructure/parsers/parseListProductHistoriesRequestDTO";
+import handleLoaderRequest from "../utils/handleLoaderRequest";
+import handleLoaderResponse from "../utils/handleLoaderResponse";
 
 const listProductHistoriesRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -13,10 +15,10 @@ const listProductHistoriesRoute = createRoute({
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
     loader: async ({ deps }) => {
         const params = parseListProductHistoriesRequestDTO(deps);
-        const response = await productHistoryDataAccess.listProductHistories(params);
-
+        
+        const response = await handleLoaderRequest(productHistoryDataAccess.listProductHistories(params));
         if (!response.ok) {
-            throw redirect({ to: "/" });
+            await handleLoaderResponse(response);
         }
 
         const dto: IListProductHistoriesResponseDTO = await response.json();

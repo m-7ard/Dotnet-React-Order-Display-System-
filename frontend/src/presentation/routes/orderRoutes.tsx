@@ -10,6 +10,8 @@ import orderMapper from "../../infrastructure/mappers/orderMapper";
 import OrdersController from "../Application/Orders/Orders.Controller";
 import IReadOrderResponseDTO from "../../infrastructure/contracts/orders/read/IReadOrderResponseDTO";
 import parseListOrdersCommandParameters from "../../infrastructure/parsers/parseListOrdersCommandParameters";
+import handleLoaderRequest from "../utils/handleLoaderRequest";
+import handleLoaderResponse from "../utils/handleLoaderResponse";
 
 const baseOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -17,10 +19,10 @@ const baseOrdersRoute = createRoute({
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
     loader: async ({ deps }) => {
         const parsedParams = parseListOrdersCommandParameters(deps);
-        const response = await orderDataAccess.listOrders(parsedParams);
 
+        const response = await handleLoaderRequest(orderDataAccess.listOrders(parsedParams));
         if (!response.ok) {
-            throw redirect({ to: "/" });
+            await handleLoaderResponse(response);
         }
 
         const data: IListOrdersResponseDTO = await response.json();
@@ -41,10 +43,10 @@ const manageOrderRoute = createRoute({
     path: routeData.manageOrder.pattern,
     loader: async ({ params }): Promise<Order> => {
         const id = params.id;
-        const response = await orderDataAccess.readOrder({ id: id });
 
+        const response = await handleLoaderRequest(orderDataAccess.readOrder({ id: id }));
         if (!response.ok) {
-            throw redirect({ "to": "/" });
+            await handleLoaderResponse(response);
         }
 
         const dto: IReadOrderResponseDTO = await response.json();
