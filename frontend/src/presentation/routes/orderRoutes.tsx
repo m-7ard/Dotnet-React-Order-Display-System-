@@ -1,4 +1,4 @@
-import { createRoute, redirect } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
 import rootRoute from "./_rootRoute";
 import Order from "../../domain/models/Order";
 import ManageOrderRoute from "../Application/Orders/Manage/ManageOrder.Controller";
@@ -10,8 +10,7 @@ import orderMapper from "../../infrastructure/mappers/orderMapper";
 import OrdersController from "../Application/Orders/Orders.Controller";
 import IReadOrderResponseDTO from "../../infrastructure/contracts/orders/read/IReadOrderResponseDTO";
 import parseListOrdersCommandParameters from "../../infrastructure/parsers/parseListOrdersCommandParameters";
-import handleLoaderRequest from "../utils/handleLoaderRequest";
-import handleLoaderResponse from "../utils/handleLoaderResponse";
+import TanstackRouterUtils from "../utils/TanstackRouterUtils";
 
 const baseOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -20,9 +19,9 @@ const baseOrdersRoute = createRoute({
     loader: async ({ deps }) => {
         const parsedParams = parseListOrdersCommandParameters(deps);
 
-        const response = await handleLoaderRequest(orderDataAccess.listOrders(parsedParams));
+        const response = await TanstackRouterUtils.handleRequest(orderDataAccess.listOrders(parsedParams));
         if (!response.ok) {
-            await handleLoaderResponse(response);
+            await TanstackRouterUtils.handleInvalidResponse(response);
         }
 
         const data: IListOrdersResponseDTO = await response.json();
@@ -44,9 +43,9 @@ const manageOrderRoute = createRoute({
     loader: async ({ params }): Promise<Order> => {
         const id = params.id;
 
-        const response = await handleLoaderRequest(orderDataAccess.readOrder({ id: id }));
+        const response = await TanstackRouterUtils.handleRequest(orderDataAccess.readOrder({ id: id }));
         if (!response.ok) {
-            await handleLoaderResponse(response);
+            await TanstackRouterUtils.handleInvalidResponse(response);
         }
 
         const dto: IReadOrderResponseDTO = await response.json();

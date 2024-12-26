@@ -39,7 +39,7 @@ export default function OrderElement(props: { order: Order }) {
             {order.orderItems.map((orderItem, i) => (
                 <MixinPrototypeCardSection className={`flex flex-col gap-3 ${i === 0 ? "" : "border-gray-900 border-t"}`} key={orderItem.id}>
                     <div className="flex flex-col gap-1">
-                        <div className="token-card--list">
+                        <div className="token-default-list">
                             <div className="flex flex-row gap-[inherit] items-center">
                                 <MixinButton
                                     options={{
@@ -50,17 +50,17 @@ export default function OrderElement(props: { order: Order }) {
                                 >
                                     x{orderItem.quantity}
                                 </MixinButton>
-                                <div className="token-card--list-label--text">{orderItem.productHistory.name}</div>
+                                <div className="token-default-list__label">{orderItem.productHistory.name}</div>
                             </div>
-                            <div className="token-card--list-value--text">{`${orderItem.productHistory.price}$`}</div>
+                            <div className="token-default-list__value">{`${orderItem.productHistory.price}$`}</div>
                         </div>
-                        <div className="token-card--list">
+                        <div className="token-default-list">
                             <div className="flex flex-row gap-[inherit] items-center">
                                 <button className={`mixin-button-like mixin-button-like--static mixin-button-sm ${ORDER_ITEM_STATUS_COLORS[orderItem.status.value]}`}>
                                     {orderItem.status.value}
                                 </button>
                             </div>
-                            <div className="token-card--list-value--text">Total - {`${orderItem.getTotal()}$`}</div>
+                            <div className="token-default-list__value">Total - {`${orderItem.getTotal()}$`}</div>
                         </div>
                     </div>
                 </MixinPrototypeCardSection>

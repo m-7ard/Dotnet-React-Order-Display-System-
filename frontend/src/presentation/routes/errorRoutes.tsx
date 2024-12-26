@@ -37,5 +37,4 @@ const clientSideErrorPage = createRoute({
     component: ClientSideErrorPage,
 });
 
-
 export default [loaderErrorPage, unkownErrorPage, notFoundErrorPage, internalServerErrorPage, clientSideErrorPage];

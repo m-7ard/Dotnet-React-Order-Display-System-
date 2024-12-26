@@ -54,6 +54,7 @@ export default function FilterProductHistoriesDialogPanel(props: {
             </MixinPanelSection>
             <Divider />
             <MixinPanelSection className="flex flex-col gap-3">
+                <div className="token-default-title">Filter Product Histories</div>
                 <FilterProductHistoriesFieldset value={value} onChange={onChange} />
             </MixinPanelSection>
             <Divider />
