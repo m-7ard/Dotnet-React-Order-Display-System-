@@ -11,7 +11,9 @@ public class ListOrdersRequestDTO
         Guid? id,
         Guid? productId,
         Guid? productHistoryId,
-        string? orderBy)
+        string? orderBy,
+        int? orderSerialNumber,
+        int? orderItemSerialNumber)
     {
         MinTotal = minTotal;
         MaxTotal = maxTotal;
@@ -22,6 +24,8 @@ public class ListOrdersRequestDTO
         ProductId = productId;
         ProductHistoryId = productHistoryId;
         OrderBy = orderBy;
+        OrderSerialNumber = orderSerialNumber;
+        OrderItemSerialNumber = orderItemSerialNumber;
     }
 
     public decimal? MinTotal { get; set; }
@@ -33,4 +37,6 @@ public class ListOrdersRequestDTO
     public Guid? ProductId { get; set; }
     public Guid? ProductHistoryId { get; set; }
     public string? OrderBy { get; set; }
+    public int? OrderSerialNumber { get; set; }
+    public int? OrderItemSerialNumber { get; set; }
 }

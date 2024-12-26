@@ -9,6 +9,7 @@ public class ListOrdersHandlerUnitTest
 {
     private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly ListOrdersHandler _handler;
+    private readonly ListOrdersQuery _query;
 
     public ListOrdersHandlerUnitTest()
     {
@@ -16,26 +17,29 @@ public class ListOrdersHandlerUnitTest
         _handler = new ListOrdersHandler(
             orderRepository: _mockOrderRepository.Object
         );
+        _query = new ListOrdersQuery(
+            minTotal: null,
+            maxTotal: null,
+            status: null,
+            createdBefore: null,
+            createdAfter: null,
+            id: null,
+            productId: null,
+            productHistoryId: null,
+            orderBy: null,
+            orderSerialNumber: null,
+            orderItemSerialNumber: null
+        );
     }
 
     [Fact]
     public async Task ListOrders_NoArgs_Success()
     {
         // ARRANGE
-        var command = new ListOrdersQuery(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        );
+        var query = _query;
 
         // ACT
-        var result = await _handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
         // ASSERT
         var criteria = new FilterOrdersCriteria(
@@ -47,7 +51,9 @@ public class ListOrdersHandlerUnitTest
             productId: null,
             id: null,
             productHistoryId: null,
-            orderBy: new Tuple<string, bool>("DateCreated", false)
+            orderBy: new Tuple<string, bool>("DateCreated", false),
+            orderSerialNumber: null,
+            orderItemSerialNumber: null
         );
         Assert.True(result.IsT0);
         _mockOrderRepository.Verify(
@@ -63,20 +69,10 @@ public class ListOrdersHandlerUnitTest
     public async Task ListOrders_OrderByTranslation_Success(string orderBy, string expectedField, bool expectedAscending)
     {
         // ARRANGE
-        var query = new ListOrdersQuery(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            orderBy
-        );
+        _query.OrderBy = orderBy;
 
         // ACT
-        var result = await _handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(_query, CancellationToken.None);
         
         // ASSERT
         var criteria = new FilterOrdersCriteria(
@@ -88,7 +84,9 @@ public class ListOrdersHandlerUnitTest
             productId: null,
             id: null,
             productHistoryId: null,
-            orderBy: new Tuple<string, bool>(expectedField, expectedAscending)
+            orderBy: new Tuple<string, bool>(expectedField, expectedAscending),
+            orderSerialNumber: null,
+            orderItemSerialNumber: null
         );
         Assert.True(result.IsT0);
         _mockOrderRepository.Verify(

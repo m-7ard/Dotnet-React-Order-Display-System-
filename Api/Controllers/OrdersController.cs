@@ -103,7 +103,9 @@ public class OrdersController : ControllerBase
         [FromQuery] DateTime? createdAfter,
         [FromQuery] Guid? productId,
         [FromQuery] Guid? productHistoryId,
-        [FromQuery] string? orderBy)
+        [FromQuery] string? orderBy,
+        [FromQuery] int? orderSerialNumber,
+        [FromQuery] int? orderItemSerialNumber)
     {
 
         var parameters = new ListOrdersRequestDTO(
@@ -115,7 +117,9 @@ public class OrdersController : ControllerBase
             createdAfter: createdAfter,
             productId: productId,
             productHistoryId: productHistoryId,
-            orderBy: orderBy
+            orderBy: orderBy,
+            orderSerialNumber: orderSerialNumber,
+            orderItemSerialNumber: orderItemSerialNumber
         );
 
         if (parameters.MinTotal is not null && parameters.MinTotal < 0)
@@ -135,6 +139,14 @@ public class OrdersController : ControllerBase
             parameters.CreatedAfter = null;
         }
 
+        if (parameters.OrderSerialNumber.HasValue && parameters.OrderSerialNumber <= 0) {
+            parameters.OrderSerialNumber = 0;
+        }
+
+        if (parameters.OrderItemSerialNumber.HasValue && parameters.OrderItemSerialNumber <= 0) {
+            parameters.OrderItemSerialNumber = 0;
+        }
+
         var query = new ListOrdersQuery(
             minTotal: parameters.MinTotal,
             maxTotal: parameters.MaxTotal,
@@ -144,7 +156,9 @@ public class OrdersController : ControllerBase
             id: parameters.Id,
             productId: parameters.ProductId,
             productHistoryId: parameters.ProductHistoryId,
-            orderBy: parameters.OrderBy
+            orderBy: parameters.OrderBy,
+            orderSerialNumber: orderSerialNumber,
+            orderItemSerialNumber: orderItemSerialNumber
         );
 
         var result = await _mediator.Send(query);

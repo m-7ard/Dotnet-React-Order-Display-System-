@@ -45,7 +45,9 @@ public class ListOrdersHandler : IRequestHandler<ListOrdersQuery, OneOf<ListOrde
             id: request.Id,
             productId: request.ProductId,
             productHistoryId: request.ProductHistoryId,
-            orderBy: orderBy
+            orderBy: orderBy,
+            orderSerialNumber: request.OrderSerialNumber,
+            orderItemSerialNumber: request.OrderItemSerialNumber
         );
 
         var orders = await _orderRepository.FilterAllAsync(criteria);
