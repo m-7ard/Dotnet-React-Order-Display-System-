@@ -5,12 +5,8 @@ import GlobalDialog from "../../../components/Dialog/GlobalDialog";
 import CoverImage from "../../../components/Resuables/CoverImage";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../../components/Resuables/MixinPrototypeCard";
+import { ORDER_ITEM_STATUS_COLORS } from "../Orders.Constants";
 import OrderItemProgressPanel from "./ManageOrder.Page.OrderItem.ProgressPanel";
-
-const ORDER_ITEM_STATUS_COLORS = {
-    [OrderItemStatus.FINISHED.value]: "bg-green-600/50",
-    [OrderItemStatus.PENDING.value]: "bg-orange-400/70",
-};
 
 export default function OrderItemElement(props: { orderItem: OrderItem; onMarkOrderItenFinished: () => void }) {
     const { orderItem, onMarkOrderItenFinished } = props;

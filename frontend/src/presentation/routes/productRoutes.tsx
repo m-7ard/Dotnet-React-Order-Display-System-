@@ -16,17 +16,8 @@ const baseProductsRoute = createRoute({
     path: routeData.listProducts.pattern,
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
     loader: async ({ deps }) => {
-        const params = parseListProductsRequestDTO({
-            id: deps.id,
-            minPrice: deps.minPrice,
-            maxPrice: deps.maxPrice,
-            name: deps.name,
-            createdBefore: deps.createdBefore,
-            createdAfter: deps.createdAfter,
-            description: deps.description,
-            orderBy: deps.orderBy,
-        });
-
+        const params = parseListProductsRequestDTO(deps);
+        
         const response = await TanstackRouterUtils.handleRequest(productDataAccess.listProducts(params));
         if (!response.ok) {
             await TanstackRouterUtils.handleInvalidResponse(response);

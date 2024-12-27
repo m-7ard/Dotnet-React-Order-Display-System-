@@ -17,8 +17,8 @@ export default function FilterProductResults(props: IFilterProductResultsProps) 
                 size: "mixin-panel-base",
                 theme: "theme-panel-generic-white",
             }}
-            className="overflow-auto"
             hasShadow
+            className="flex flex-col"
         >
             <MixinPanelSection className="flex flex-row gap-3 items-center justify-between">
                 <LinkBox
@@ -66,7 +66,7 @@ export default function FilterProductResults(props: IFilterProductResultsProps) 
                 </MixinButton>
             </MixinPanelSection>
             <Divider />
-            <MixinPanelSection>
+            <MixinPanelSection className="overflow-auto">
                 {
                     {
                         form: <FormPage onReset={form.onReset} onSubmit={form.onSubmit} value={form.value} onChange={form.onChange} />,

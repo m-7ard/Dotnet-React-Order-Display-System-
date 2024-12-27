@@ -15,6 +15,7 @@ export default function FilterOrdersDialogPanel(props: { value: Required<ValueSc
                 size: "mixin-panel-base",
                 theme: "theme-panel-generic-white",
             }}
+            className="flex flex-col"
             as={"form"}
             onSubmit={(e) => {
                 e.preventDefault();
@@ -25,7 +26,7 @@ export default function FilterOrdersDialogPanel(props: { value: Required<ValueSc
                 onReset();
             }}
         >
-            <MixinPanelSection className="flex flex-row justify-between items-center">
+            <MixinPanelSection className="flex flex-row justify-between items-center shrink-0">
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listOrders.build({}), label: "Orders" },
@@ -45,7 +46,7 @@ export default function FilterOrdersDialogPanel(props: { value: Required<ValueSc
                 </MixinButton>
             </MixinPanelSection>
             <Divider />
-            <MixinPanelSection className="flex flex-col gap-3">
+            <MixinPanelSection className="flex flex-col gap-3 overflow-auto">
                 <div className="token-default-title">Filter Orders</div>
                 <FilterOrdersFieldset value={value} onChange={onChange} />
             </MixinPanelSection>
