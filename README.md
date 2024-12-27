@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Local Setup](#run-locally)
 2. [Features](#features)
-3. [Screenshots](#screenshots)
+3. [Demo Videos](#demo-videos)
 4. [Lessons Learned](#lessons-learned)
 5. [API Reference](#api-reference)
     - [Products API](#products-api-endpoints)
