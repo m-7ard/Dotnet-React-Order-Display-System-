@@ -1,2 +1,1 @@
-Look into implementing 404 for frotend as side effect in loader(?).
 Make product history use a UTC date(?)

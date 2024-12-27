@@ -62,40 +62,16 @@ npm run dev
 - Backend Application Layer Unit Tests
 - Frontend Validation
 
-## Screenshots
+## Demo Videos
 
-### Create Product Page
-![Create Product Page](https://i.imgur.com/4phmheO.png)
+### Main Workflow
+![Watch the video](readmeVids/main-workflow.mp4)
 
-### Create Product Page (Mobile)
-![Create Product Page (mobile)](https://i.imgur.com/OXKlJDs.png)
+### Product Filter
+![Watch the video](readmeVids/filtering-products.mp4)
 
-### List Products Page
-![List Products Page](https://i.imgur.com/384j8h9.png)
-
-### List Product Page (Mobile)
-![List Product Page (mobile)](https://i.imgur.com/A6KCk51.png)
-
-### Filter Products Modal Form Tab
-![Filter Products Modal Form Tab](https://i.imgur.com/YWLV503.png)
-
-### Filter Products Modal Results Tab
-![Filter Products Modal Results Tab](https://i.imgur.com/7FGUg1x.png)
-
-### Create Order Page
-![Create Order Page](https://i.imgur.com/oEkJ1Q5.png)
-
-### List Orders Page (Mobile)
-![List Orders Page (mobile)](https://i.imgur.com/uQOf7Df.png)
-
-### List Orders Page (Full)
-![List Orders Page (full)](https://i.imgur.com/E9fZJWk.png)
-
-### List Product Histories Page
-![List Product Histories Page](https://i.imgur.com/NLnu3S2.png)
-
-### Frontpage
-![Frontpage](https://i.imgur.com/SGHS78r.png)
+### Main Workflow
+![Watch the video](readmeVids/filtering-orders.mp4)
 
 ## Lessons Learned
 
