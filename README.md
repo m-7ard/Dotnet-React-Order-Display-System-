@@ -67,11 +67,8 @@ npm run dev
 ### Main Workflow
 ![Watch the video](readmeVids/main-workflow.gif)
 
-### Product Filter
-![Watch the video](readmeVids/filtering-products.mp4)
-
-### Main Workflow
-![Watch the video](readmeVids/filtering-orders.mp4)
+### Filter Products
+![Watch the video](readmeVids/filter-products.gif)
 
 ## Lessons Learned
 
