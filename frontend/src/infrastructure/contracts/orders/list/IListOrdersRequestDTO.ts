@@ -12,4 +12,6 @@ export default interface IListOrdersRequestDTO {
     productId: IProduct["id"] | null;
     productHistoryId: ProductHistory["id"] | null;
     orderBy: string | null;
+    orderSerialNumber: number | null;
+    orderItemSerialNumber: number | null;
 }

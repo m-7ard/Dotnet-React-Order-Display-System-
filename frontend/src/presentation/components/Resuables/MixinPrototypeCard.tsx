@@ -26,14 +26,16 @@ export default function MixinPrototypeCard<T extends ElementType = "div">(props:
     );
 }
 
-type MixinPrototypeCardSectionProps<E extends ElementType> = PolymorphicProps<E> & {};
+type MixinPrototypeCardSectionProps<E extends ElementType> = PolymorphicProps<E> & { fillBg?: boolean };
 
 export function MixinPrototypeCardSection<T extends ElementType = "section">(props: PropsWithChildren<MixinPrototypeCardSectionProps<T>>) {
-    const { as, className, ...HTMLattrs } = props;
+    const { as, className, fillBg = false, ...HTMLattrs } = props;
     const Component = as ?? "section";
 
+    const bgClass = fillBg ? "bg-white" : "";
+
     return (
-        <Component className={[className].join(" ")} {...HTMLattrs} data-role="Pcard-section">
+        <Component className={[className, bgClass].join(" ")} {...HTMLattrs} data-role="Pcard-section">
             {props.children}
         </Component>
     );

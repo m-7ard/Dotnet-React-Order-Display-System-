@@ -22,6 +22,7 @@ export default function FilterProductsDialogPanel(props: {
                 size: "mixin-panel-base",
                 theme: "theme-panel-generic-white",
             }}
+            className="flex flex-col"
             hasShadow
             as="form"
             onSubmit={(e) => {
@@ -52,7 +53,7 @@ export default function FilterProductsDialogPanel(props: {
                 </MixinButton>
             </MixinPanelSection>
             <Divider />
-            <MixinPanelSection className="flex flex-col gap-3">
+            <MixinPanelSection className="flex flex-col gap-3 overflow-auto">
                 <div className="token-default-title">Filter Products</div>
                 <FilterProductsFieldset value={value} onChange={(value) => onChange(value)} />
             </MixinPanelSection>

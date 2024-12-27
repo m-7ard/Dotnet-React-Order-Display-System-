@@ -12,6 +12,8 @@ const schema = Type.Object({
     productId: Type.String({ minLength: 1 }),
     productHistoryId: Type.String({ minLength: 1 }),
     orderBy: Type.String({ minLength: 1 }),
+    orderSerialNumber: Type.Number({ minimum: 1 }),
+    orderItemSerialNumber: Type.Number({ minimum: 1 }),
 });
 
 type Schema = Static<typeof schema>;
@@ -27,5 +29,7 @@ export default function parseListOrdersCommandParameters(data: Partial<Record<ke
         productId: parseTypeboxSchemaOrNull(schema.properties.productId, data.productId),
         productHistoryId: parseTypeboxSchemaOrNull(schema.properties.productHistoryId, data.productHistoryId),
         orderBy: parseTypeboxSchemaOrNull(schema.properties.orderBy, data.orderBy),
+        orderSerialNumber: parseTypeboxSchemaOrNull(schema.properties.orderSerialNumber, data.orderSerialNumber),
+        orderItemSerialNumber: parseTypeboxSchemaOrNull(schema.properties.orderItemSerialNumber, data.orderItemSerialNumber),
     };
 }

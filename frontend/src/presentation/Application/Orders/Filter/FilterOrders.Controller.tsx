@@ -15,6 +15,8 @@ const clearedValue: ValueSchema = {
     createdAfter: undefined,
     productId: undefined,
     productHistoryId: undefined,
+    orderSerialNumber: undefined,
+    orderItemSerialNumber: undefined,
 };
 
 export default function FilterOrdersController() {
@@ -29,6 +31,8 @@ export default function FilterOrdersController() {
         createdAfter: searchParams.createdAfter,
         productId: searchParams.productId,
         productHistoryId: searchParams.productHistoryId,
+        orderSerialNumber: searchParams.orderSerialNumber,
+        orderItemSerialNumber: searchParams.orderItemSerialNumber,
     };
     const itemManager = useItemManager<ValueSchema>(initialValue);
     const navigate = useNavigate();

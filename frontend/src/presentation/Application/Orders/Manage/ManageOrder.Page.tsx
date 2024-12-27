@@ -12,11 +12,7 @@ import Divider from "../../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
 import GlobalDialog from "../../../components/Dialog/GlobalDialog";
 import OrderProgressPanel from "./ManageOrder.Page.ProgressPanel";
-
-const ORDER_STATUS_COLORS = {
-    [OrderStatus.FINISHED.value]: "bg-green-600/50",
-    [OrderStatus.PENDING.value]: "bg-orange-400/70",
-};
+import { ORDER_STATUS_COLORS } from "../Orders.Constants";
 
 export default function ManageOrderPage(props: {
     order: Order;

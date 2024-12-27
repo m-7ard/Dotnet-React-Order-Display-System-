@@ -13,6 +13,8 @@ export type FilterOrdersFieldsetValueState = {
     createdAfter: string;
     productId: string;
     productHistoryId: string;
+    orderSerialNumber: string;
+    orderItemSerialNumber: string;
 };
 
 export default function FilterOrdersFieldset(props: {
@@ -131,6 +133,30 @@ export default function FilterOrdersFieldset(props: {
                 )}
             </FormField>
             <FormField name="productHistoryId">
+                {({ name }) => (
+                    <StatelessCharField
+                        options={{
+                            size: "mixin-char-input-base",
+                            theme: "theme-input-generic-white",
+                        }}
+                        value={value[name]}
+                        onChange={(value) => updateField(name, value)}
+                    />
+                )}
+            </FormField>
+            <FormField name="orderSerialNumber">
+                {({ name }) => (
+                    <StatelessCharField
+                        options={{
+                            size: "mixin-char-input-base",
+                            theme: "theme-input-generic-white",
+                        }}
+                        value={value[name]}
+                        onChange={(value) => updateField(name, value)}
+                    />
+                )}
+            </FormField>
+            <FormField name="orderItemSerialNumber">
                 {({ name }) => (
                     <StatelessCharField
                         options={{

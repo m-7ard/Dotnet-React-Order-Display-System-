@@ -32,6 +32,7 @@ export default function FilterProductHistoriesDialogPanel(props: {
                 e.preventDefault();
                 onReset();
             }}
+            className="flex flex-col"
         >
             <MixinPanelSection className="flex flex-row justify-between items-center flex-wrap gap-3">
                 <LinkBox
@@ -53,7 +54,7 @@ export default function FilterProductHistoriesDialogPanel(props: {
                 </MixinButton>
             </MixinPanelSection>
             <Divider />
-            <MixinPanelSection className="flex flex-col gap-3">
+            <MixinPanelSection className="flex flex-col gap-3 overflow-auto">
                 <div className="token-default-title">Filter Product Histories</div>
                 <FilterProductHistoriesFieldset value={value} onChange={onChange} />
             </MixinPanelSection>

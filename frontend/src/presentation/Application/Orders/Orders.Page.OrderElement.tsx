@@ -2,18 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import Order from "../../../domain/models/Order";
 import MixinButton from "../../components/Resuables/MixinButton";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
-import OrderStatus from "../../../domain/valueObjects/Order/OrderStatus";
-import OrderItemStatus from "../../../domain/valueObjects/OrderItem/OrderItemStatus";
-
-const ORDER_ITEM_STATUS_COLORS = {
-    [OrderItemStatus.FINISHED.value]: "bg-green-600/40",
-    [OrderItemStatus.PENDING.value]: "bg-orange-400/60",
-};
-
-const ORDER_STATUS_COLORS = {
-    [OrderStatus.FINISHED.value]: "bg-green-600/40",
-    [OrderStatus.PENDING.value]: "bg-orange-400/60",
-};
+import { ORDER_STATUS_COLORS, ORDER_ITEM_STATUS_COLORS } from "./Orders.Constants";
 
 export default function OrderElement(props: { order: Order }) {
     const { order } = props;
@@ -22,11 +11,11 @@ export default function OrderElement(props: { order: Order }) {
     return (
         <MixinPrototypeCard
             options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }}
-            className="overflow-hidden shrink-0 max-w-72 w-full sm:max-h-full flex flex-col"
+            className="shrink-0 max-w-72 w-full sm:max-h-full flex flex-col overflow-auto"
             hasShadow
             hasDivide
         >
-            <MixinPrototypeCardSection className={`flex flex-col ${ORDER_STATUS_COLORS[order.status.value]}`}>
+            <MixinPrototypeCardSection className={`flex flex-col sticky top-0 ${ORDER_STATUS_COLORS[order.status.value]}`}>
                 <div className="flex flex-row justify-between items-baseline">
                     <div className="token-card--header--primary-text">Order #{order.serialNumber}</div>
                     <div className="token-card--header--primary-text">{`${order.status.value}`}</div>
@@ -72,7 +61,8 @@ export default function OrderElement(props: { order: Order }) {
                     e.preventDefault();
                     navigate({ to: `/orders/${order.id}/manage` });
                 }}
-                className="flex flex-row shrink-0"
+                className="flex flex-row shrink-0 sticky bottom-0"
+                fillBg
             >
                 <MixinButton
                     options={{
