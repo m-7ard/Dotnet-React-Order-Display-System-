@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef } from "react";
 import IPresentationError from "../../interfaces/IPresentationError";
 import FilterProductsFieldset, { FilterProductsFieldsetValueState } from "../Fieldsets/FilterProductFieldset";
 import Divider from "../Resuables/Divider";
@@ -18,8 +19,15 @@ export type FormPageErrorState = IPresentationError<{
 export default function FormPage(props: { onReset: () => void; onSubmit: () => void; value: FormPageValueState; onChange: (value: FormPageValueState) => void }) {
     const { onReset, onSubmit, value, onChange } = props;
 
+    const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            onSubmit();
+        }
+    }, [onSubmit]);
+
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3" onKeyDown={handleKeyDown}>
             <div className="flex flex-col gap-3">
                 <FilterProductsFieldset value={value} onChange={onChange} />
             </div>

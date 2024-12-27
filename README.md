@@ -65,7 +65,7 @@ npm run dev
 ## Demo Videos
 
 ### Main Workflow
-![Watch the video](https://streamable.com/xe6w3e)
+![Watch the video](readmeVids/main-workflow.gif)
 
 ### Product Filter
 ![Watch the video](readmeVids/filtering-products.mp4)
