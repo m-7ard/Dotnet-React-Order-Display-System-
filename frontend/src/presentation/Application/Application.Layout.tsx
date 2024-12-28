@@ -6,7 +6,7 @@ import ApplicationProvider from "./Application.Provider";
 export default function ApplicationLayout() {
     return (
         <ApplicationProvider>
-            <main className="flex flex-col h-full w-full mx-auto  overflow-hidden text-gray-900">
+            <main className="flex flex-col h-full w-full mx-auto overflow-hidden text-gray-800">
                 <ApplicationExceptionNotice />
                 <ApplicationHeader />
                 <div className="flex flex-col grow overflow-auto">
