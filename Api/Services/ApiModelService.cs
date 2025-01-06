@@ -1,45 +1,61 @@
 using Api.ApiModels;
 using Api.Interfaces;
 using Api.Mappers;
-using Application.Errors;
-using Application.Handlers.ProductHistories.Read;
+using Application.Interfaces.Persistence;
 using Domain.Models;
-using MediatR;
-using OneOf;
 
 namespace Api.Services;
 
 public class ApiModelService : IApiModelService
 {
-    private readonly ISender _mediator;
+    private readonly Dictionary<Guid, ProductHistory?> ProductHistoryCache = new Dictionary<Guid, ProductHistory?>();
+    private readonly IProductHistoryRepository _productHistoryRepository;
 
-    public ApiModelService(ISender mediator)
+    public ApiModelService(IProductHistoryRepository productHistoryRepository)
     {
-        _mediator = mediator;
+        _productHistoryRepository = productHistoryRepository;
     }
 
-    public async Task<OneOf<OrderApiModel, List<ApplicationError>>> TryCreateOrderApiModel(Order order)
+
+    private async Task<ProductHistory?> GetProductHistoryFromCacheOrDb(Guid id) 
+    {
+        if (ProductHistoryCache.TryGetValue(id, out var cachedProductHistory))
+        {
+            return cachedProductHistory;
+        } 
+
+        var productHistory = await _productHistoryRepository.GetLatestByProductIdAsync(id);
+        ProductHistoryCache[id] = productHistory;
+        return productHistory;
+    }
+
+    public async Task<OrderApiModel> CreateOrderApiModel(Order order)
     {
         var orderItems = new List<OrderItemApiModel>();
 
         foreach (var orderItem in order.OrderItems)
         {
-            var query = new ReadProductHistoryQuery(orderItem.ProductHistoryId);
-            var result = await _mediator.Send(query);
-            if (result.TryPickT1(out var errors, out var value))
+            var productHistory = await GetProductHistoryFromCacheOrDb(orderItem.ProductHistoryId);
+            if (productHistory == null)
             {
-                return errors;
+                throw new Exception($"ProductHistory of Id \"{orderItem.ProductHistoryId}\" from OrderItem of Id \"${orderItem.Id}\"");
             }
 
-            var orderItemApiModel = ApiModelMapper.OrderItemToApiModel(
-                orderItem: orderItem,
-                productHistory: value.ProductHistory
-            );
+            orderItems.Add(ApiModelMapper.OrderItemToApiModel(orderItem, productHistory));
+        }
+        
+        return ApiModelMapper.OrderToApiModel(order, orderItems);
+    }
 
-            orderItems.Add(orderItemApiModel);
+    public async Task<List<OrderApiModel>> CreateManyOrderApiModel(List<Order> orders)
+    {
+        var orderApiModels = new List<OrderApiModel>();
+        
+        foreach (var order in orders)
+        {
+            orderApiModels.Add(await CreateOrderApiModel(order));
         }
 
-        var orderApiModel = ApiModelMapper.OrderToApiModel(order: order, orderItems: orderItems);
-        return orderApiModel;
+        return orderApiModels;
     }
 }

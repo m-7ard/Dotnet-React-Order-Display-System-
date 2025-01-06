@@ -1,1 +1,2 @@
 Make product history use a UTC date(?)
+Make components take a directives argument to decorate the dom element
