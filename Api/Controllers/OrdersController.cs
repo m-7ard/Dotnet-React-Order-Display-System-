@@ -62,10 +62,7 @@ public class OrdersController : ControllerBase
                 continue;
             }
 
-            errors.AddRange(ApiErrorFactory.FluentToApiErrors(
-                validationFailures: validation.Errors,
-                path: ["orderItemData", uid]
-            ));
+            errors.AddRange(ApiErrorFactory.FluentToApiErrors(validationFailures: validation.Errors, path: ["orderItemData", uid]));
         }
 
         if (errors.Count > 0)
@@ -83,6 +80,7 @@ public class OrdersController : ControllerBase
                 )
             )
         );
+
         var result = await _mediator.Send(command);
         if (result.TryPickT1(out var handlerErrors, out var value))
         {
@@ -168,19 +166,7 @@ public class OrdersController : ControllerBase
             return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
         }
 
-        var orders = new List<OrderApiModel>();
-        foreach (var order in value.Orders)
-        {
-            var apiModelResult = await _apiModelService.TryCreateOrderApiModel(order);
-            if (apiModelResult.TryPickT1(out var apiModelErrors, out var apiModelValue))
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ApiErrorFactory.TranslateApplicationErrors(apiModelErrors));
-            }
-
-            orders.Add(apiModelValue);
-        }
-
-        var response = new ListOrdersResponseDTO(orders: orders);
+        var response = new ListOrdersResponseDTO(orders: await _apiModelService.CreateManyOrderApiModel(value.Orders));
         return Ok(response);
     }
 
@@ -203,13 +189,7 @@ public class OrdersController : ControllerBase
                 : StatusCode((int)HttpStatusCode.InternalServerError, ApiErrorFactory.TranslateApplicationErrors(errors));
         };
 
-        var apiModelResult = await _apiModelService.TryCreateOrderApiModel(value.Order);
-        if (apiModelResult.TryPickT1(out var apiModelErrors, out var apiModelValue))
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, ApiErrorFactory.TranslateApplicationErrors(apiModelErrors));
-        }
-
-        var response = new ReadOrderResponseDTO(order: apiModelValue);
+        var response = new ReadOrderResponseDTO(order: await _apiModelService.CreateOrderApiModel(value.Order));
         return Ok(response);
     }
 

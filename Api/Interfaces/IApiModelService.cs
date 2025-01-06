@@ -1,11 +1,10 @@
 using Api.ApiModels;
-using Application.Errors;
 using Domain.Models;
-using OneOf;
 
 namespace Api.Interfaces;
 
 public interface IApiModelService
 {
-    public Task<OneOf<OrderApiModel, List<ApplicationError>>> TryCreateOrderApiModel(Order order);
+    public Task<OrderApiModel> CreateOrderApiModel(Order order);
+    public Task<List<OrderApiModel>> CreateManyOrderApiModel(List<Order> orders);
 }

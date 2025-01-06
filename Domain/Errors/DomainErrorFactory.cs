@@ -14,9 +14,4 @@ public class DomainErrorFactory
             )
         };
     }
-
-    internal static void CreateSingleListError(string message, object path, object code)
-    {
-        throw new NotImplementedException();
-    }
 }
