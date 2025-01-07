@@ -1,5 +1,6 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
+using Application.Validators;
 using Domain.DomainFactories;
 using Domain.Models;
 using MediatR;
@@ -12,43 +13,41 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
     private readonly IProductRepository _productRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
     private readonly IDraftImageRepository _draftImageRepository;
+    private readonly ProductExistsValidatorAsync _productExistsValidator;
+    private readonly LatestProductHistoryExistsValidatorAsync _latestProductHistoryExistsValidator;
+    private readonly DraftImageExistsValidatorAsync _draftImageExistsValidator;
 
     public UpdateProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IDraftImageRepository draftImageRepository)
     {
         _productRepository = productRepository;
         _productHistoryRepository = productHistoryRepository;
         _draftImageRepository = draftImageRepository;
+        _productExistsValidator = new ProductExistsValidatorAsync(productRepository);
+        _latestProductHistoryExistsValidator = new LatestProductHistoryExistsValidatorAsync(productHistoryRepository);
+        _draftImageExistsValidator = new DraftImageExistsValidatorAsync(draftImageRepository);
     }
 
     public async Task<OneOf<UpdateProductResult, List<ApplicationError>>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
-        var errors = new List<ApplicationError>();
-
-        var product = await _productRepository.GetByIdAsync(request.Id);
-        if (product is null)
+        var productExistsResult = await _productExistsValidator.Validate(request.Id);
+        if (productExistsResult.TryPickT1(out var errors, out var product))
         {
-            return ApplicationErrorFactory.CreateSingleListError(
-                message: $"Product of Id \"{request.Id}\" does not exist.",
-                path: ["_"],
-                code: ApplicationErrorCodes.ModelDoesNotExist
-            );
+            return errors;
         }
 
-        var latestProductHistory = await _productHistoryRepository.GetLatestByProductIdAsync(product.Id);
-        if (latestProductHistory is null)
+        var latestProductHistoryExistsResult = await _latestProductHistoryExistsValidator.Validate(request.Id);
+        if (latestProductHistoryExistsResult.TryPickT1(out errors, out var productHistory))
         {
-            return ApplicationErrorFactory.CreateSingleListError(
-                message: $"Product of Id \"{request.Id}\" does not exist.",
-                path: ["_"],
-                code: ApplicationErrorCodes.IntegrityError
-            );
+            return errors;
         }
 
         var newProductImagesValue = new List<ProductImage>();
         var draftsUsed = new List<DraftImage>();
+        var imageErrors = new List<ApplicationError>();
 
         foreach (var fileName in request.Images)
         {
+            // Product Image already exists
             var productImage = product.Images.Find(image => image.FileName == fileName);
             if (productImage is not null)
             {
@@ -56,38 +55,42 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
                 continue;
             }
 
-            var draftImage = await _draftImageRepository.GetByFileNameAsync(fileName);
-            if (draftImage is null)
+            // Draft image exists
+            var draftImageExistsResult = await _draftImageExistsValidator.Validate(fileName);
+            if (draftImageExistsResult.TryPickT1(out errors, out var draftImage))
             {
-                errors.Add(new ApplicationError(
-                    message: $"ProductImage of fileName \"{fileName}\" does not exist.",
-                    path: ["images", fileName],
-                    code: ApplicationErrorCodes.ModelDoesNotExist
-                ));
+                imageErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [fileName, ..error.Path])));
                 continue;
             }
 
-            var newImage = product.CreateProductImageFromDraft(draftImage);
+            // Can add product imagee / valid data validation
+            var canAddProductImageValidator = new CanAddProductImageValidator(product);
+            var canAddProductImageResult = canAddProductImageValidator.Validate(new CanAddProductImageValidator.Input(
+                fileName: draftImage.FileName,
+                originalFileName: draftImage.OriginalFileName,
+                url: draftImage.Url
+            ));
+            if (canAddProductImageResult.TryPickT1(out errors, out var _))
+            {
+                imageErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [fileName, ..error.Path])));
+                continue;
+            }
+
+            // Create product image (does not add it to the Product domain object yet)
+            var newImage = product.CreateProductImage(fileName: draftImage.FileName, originalFileName: draftImage.OriginalFileName, url: draftImage.Url);
             newProductImagesValue.Add(newImage);
             draftsUsed.Add(draftImage);
         }
 
-        if (errors.Count > 0)
+        if (imageErrors.Count > 0)
         {
-            return errors;
+            return imageErrors;
         }
 
-        var updateResult = product.TryUpdate(
-            name: request.Name,
-            price: request.Price,
-            description: request.Description,
-            images: newProductImagesValue
-        );
-        if (updateResult.TryPickT1(out var updateErrors, out var _))
-        {
-            return ApplicationErrorFactory.DomainErrorsToApplicationErrors(updateErrors);
-        }
-
+        product.UpdateImages(newProductImagesValue);
+        product.Description = request.Description;
+        product.Name = request.Name;
+        product.Price = request.Price;
         await _productRepository.UpdateAsync(product);
 
         // Delete used drafts
@@ -97,12 +100,12 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
         }
 
         // Invalidate old history
-        latestProductHistory.Invalidate();
-        await _productHistoryRepository.UpdateAsync(latestProductHistory);
+        productHistory.Invalidate();
+        await _productHistoryRepository.UpdateAsync(productHistory);
 
         // Create new Product History
-        var inputProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(product: product);
-        await _productHistoryRepository.CreateAsync(inputProductHistory);
+        var newProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(product: product);
+        await _productHistoryRepository.CreateAsync(newProductHistory);
 
         return new UpdateProductResult(id: product.Id);
     }

@@ -5,14 +5,14 @@ import useResponseHandler from "./useResponseHandler";
 import IPlainApiError from "../../infrastructure/interfaces/IPlainApiError";
 import IUploadDraftImagesResponseDTO from "../../infrastructure/contracts/uploadImages/IUploadDraftImagesResponseDTO";
 
-export default function useUploadProductImages(props: { onSuccess: (dto: IUploadDraftImagesResponseDTO) => void; onError: (errors: IPlainApiError) => void }) {
+export default function useUploadProductImages(props: { onSuccess: (dto: IUploadDraftImagesResponseDTO) => void; onError: (errors: IPlainApiError[]) => void }) {
     const responseHandler = useResponseHandler();
     const { onSuccess, onError } = props;
 
     return useCallback(
         
         async (files: File[]) => {
-            const errors: IPlainApiError = [];
+            const errors: IPlainApiError[] = [];
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
@@ -27,7 +27,7 @@ export default function useUploadProductImages(props: { onSuccess: (dto: IUpload
                             onSuccess(value);
                             return ok(undefined);
                         } else if (response.status < 500 && response.status >= 400) {
-                            const apiErrors: IPlainApiError = await response.json();
+                            const apiErrors: IPlainApiError[] = await response.json();
                             errors.push(...apiErrors);
                             return ok(undefined);
                         }

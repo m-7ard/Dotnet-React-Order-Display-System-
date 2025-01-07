@@ -24,7 +24,7 @@ public class ApiModelService : IApiModelService
             return cachedProductHistory;
         } 
 
-        var productHistory = await _productHistoryRepository.GetLatestByProductIdAsync(id);
+        var productHistory = await _productHistoryRepository.GetByIdAsync(id);
         ProductHistoryCache[id] = productHistory;
         return productHistory;
     }

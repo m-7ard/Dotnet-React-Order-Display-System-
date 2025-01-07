@@ -92,7 +92,7 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task ListAllOrders_CreatedBefore_Success()
     {
-        _baseRequest.CreatedBefore = _order001.DateCreated;
+        _baseRequest.CreatedBefore = _order001.OrderDates.DateCreated;
 
         var queryString = ObjToQueryString.Convert(_baseRequest);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");

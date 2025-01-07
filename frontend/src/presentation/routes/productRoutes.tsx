@@ -46,7 +46,7 @@ const updateProductRoute = createRoute({
             await TanstackRouterUtils.handleInvalidResponse(response);
         }
 
-        const dto: IReadProductResponseDTO = await response.json();
+    const dto: IReadProductResponseDTO = await response.json();
         const product = productMapper.apiToDomain(dto.product);
 
         return product;

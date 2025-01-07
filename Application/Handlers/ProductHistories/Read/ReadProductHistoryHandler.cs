@@ -1,5 +1,6 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
+using Application.Validators;
 using MediatR;
 using OneOf;
 
@@ -8,22 +9,20 @@ namespace Application.Handlers.ProductHistories.Read;
 public class ReadProductHistoryHandler : IRequestHandler<ReadProductHistoryQuery, OneOf<ReadProductHistoryResult, List<ApplicationError>>>
 {
     private readonly IProductHistoryRepository _productHistoryRepository;
+    private readonly ProductHistoryExistsValidatorAsync _productHistoryExistsValidator;
 
     public ReadProductHistoryHandler(IProductHistoryRepository productHistoryRepository)
     {
         _productHistoryRepository = productHistoryRepository;
+        _productHistoryExistsValidator = new ProductHistoryExistsValidatorAsync(productHistoryRepository);
     }
 
     public async Task<OneOf<ReadProductHistoryResult, List<ApplicationError>>> Handle(ReadProductHistoryQuery request, CancellationToken cancellationToken)
     {
-        var productHistory = await _productHistoryRepository.GetByIdAsync(request.Id);
-        if (productHistory is null)
+         var productHistoryExistsResult = await _productHistoryExistsValidator.Validate(request.Id);
+        if (productHistoryExistsResult.TryPickT1(out var errors, out var productHistory))
         {
-            return ApplicationErrorFactory.CreateSingleListError(
-                message: $"ProductHistory with Id \"{request.Id}\" does not exist.",
-                path: ["_"],
-                code: ApplicationErrorCodes.ModelDoesNotExist
-           );
+            return errors;
         }
 
         var result = new ReadProductHistoryResult(productHistory: productHistory);

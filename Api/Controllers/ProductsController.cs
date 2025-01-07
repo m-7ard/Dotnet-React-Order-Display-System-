@@ -4,8 +4,8 @@ using Api.DTOs.Products.List;
 using Api.DTOs.Products.Read;
 using Api.DTOs.Products.Update;
 using Api.Errors;
-using Api.Interfaces;
 using Api.Mappers;
+using Api.Services;
 using Application.Errors;
 using Application.Handlers.Products.Create;
 using Application.Handlers.Products.Delete;
@@ -44,18 +44,15 @@ public class ProductsController : ControllerBase
         if (!validation.IsValid)
         {
             validationErrors.AddRange(
-                ApiErrorFactory.FluentToApiErrors(
-                    validationFailures: validation.Errors,
-                    path: []
-                )
+                PlainApiErrorHandlingService.FluentToApiErrors(validationFailures: validation.Errors, [])
             );
         }
 
         if (request.Images.Count > 8) {
-            validationErrors.Add(ApiErrorFactory.CreateError(
+            validationErrors.AddRange(PlainApiErrorHandlingService.CreateSingleListError(
                 path: ["images", "_"],
                 message: "Only up to 8 images are allowed.",
-                fieldName: "images"
+                code: ApiErrorCodes.VALIDATION_ERROR
             ));
         }
 
@@ -73,7 +70,14 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(
+                errors: errors, 
+                codeDictionary: new Dictionary<string, List<string>>()
+                {
+                    { ApplicationValidatorErrorCodes.DRAFT_IMAGE_EXISTS_ERROR, ["images"] },
+                    { ApplicationValidatorErrorCodes.CAN_ADD_PRODUCT_IMAGE, ["images"] },
+                }
+            ));
         }
         
         return StatusCode(StatusCodes.Status201Created, new CreateProductResponseDTO(id: value.Id.ToString()));
@@ -142,7 +146,7 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));
         }
 
         var response = new ListProductsResponseDTO(products: value.Products.Select(ApiModelMapper.ProductToApiModel).ToList());
@@ -157,9 +161,13 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
-                ? NotFound(ApiErrorFactory.TranslateApplicationErrors(errors))
-                : BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));        
+            var expectedError = errors.First();
+            if (expectedError.Code is ApplicationValidatorErrorCodes.PRODUCT_EXISTS_ERROR)
+            {
+                return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
+            }
+
+            return StatusCode(statusCode: 500, value: PlainApiErrorHandlingService.MapApplicationErrors(errors));   
         }
 
         var response = new ReadProductResponseDTO(product: ApiModelMapper.ProductToApiModel(value.Product));
@@ -173,7 +181,7 @@ public class ProductsController : ControllerBase
         var validationErrors = new List<ApiError>();
         if (!validation.IsValid)
         {
-            validationErrors.AddRange(ApiErrorFactory.FluentToApiErrors(
+            validationErrors.AddRange(PlainApiErrorHandlingService.FluentToApiErrors(
                 validationFailures: validation.Errors,
                 path: []
             ));
@@ -181,10 +189,10 @@ public class ProductsController : ControllerBase
         }
 
         if (request.Images.Count > 8) {
-            validationErrors.Add(ApiErrorFactory.CreateError(
+            validationErrors.AddRange(PlainApiErrorHandlingService.CreateSingleListError(
                 path: ["images", "_"],
                 message: "Only up to 8 images are allowed.",
-                fieldName: "images"
+                code: ApiErrorCodes.VALIDATION_ERROR
             ));
         }
 
@@ -203,16 +211,25 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            if (errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist))
+            var expectedError = errors.First();
+            if (expectedError.Code is ApplicationValidatorErrorCodes.PRODUCT_EXISTS_ERROR)
             {
-                return NotFound(ApiErrorFactory.TranslateApplicationErrors(errors));
-            }
-            else if (errors.Any(err => err.Code is ApplicationErrorCodes.IntegrityError))
-            {
-                return Conflict(ApiErrorFactory.TranslateApplicationErrors(errors));
+                return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }
 
-            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors)); 
+            if (expectedError.Code is ApplicationValidatorErrorCodes.LATEST_PRODUCT_HISTORY_EXISTS_ERROR)
+            {
+                return Conflict(PlainApiErrorHandlingService.MapApplicationErrors(errors));
+            }
+
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(
+                errors: errors, 
+                codeDictionary: new Dictionary<string, List<string>>()
+                {
+                    { ApplicationValidatorErrorCodes.DRAFT_IMAGE_EXISTS_ERROR, ["images"] },
+                    { ApplicationValidatorErrorCodes.CAN_ADD_PRODUCT_IMAGE, ["images"] },
+                }
+            ));
         }
 
         return Ok(new UpdateProductResponseDTO(id: value.Id.ToString()));
@@ -221,21 +238,24 @@ public class ProductsController : ControllerBase
     [HttpPost("{id}/delete")]
     public async Task<ActionResult<DeleteProductResponseDTO>> Delete(Guid id)
     {
-        var query = new DeleteProductCommand(id: id);
-        var result = await _mediator.Send(query);
+        var command = new DeleteProductCommand(id: id);
+        var result = await _mediator.Send(command);
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            if (errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist))
+            var expectedError = errors.First();
+            if (expectedError.Code is ApplicationValidatorErrorCodes.PRODUCT_EXISTS_ERROR)
             {
-                return NotFound(ApiErrorFactory.TranslateApplicationErrors(errors));
-            }
-            else if (errors.Any(err => err.Code is ApplicationErrorCodes.IntegrityError))
-            {
-                return Conflict(ApiErrorFactory.TranslateApplicationErrors(errors));
+                return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }
 
-            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
+            if (expectedError.Code is ApplicationValidatorErrorCodes.LATEST_PRODUCT_HISTORY_EXISTS_ERROR)
+            {
+                return Conflict(PlainApiErrorHandlingService.MapApplicationErrors(errors));
+            
+            }
+
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));
         }
 
         var response = new DeleteProductResponseDTO();

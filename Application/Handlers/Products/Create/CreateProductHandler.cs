@@ -1,5 +1,6 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
+using Application.Validators;
 using Domain.DomainFactories;
 using Domain.Models;
 using MediatR;
@@ -12,17 +13,18 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
     private readonly IProductRepository _productRepository;
     private readonly IDraftImageRepository _draftImageRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
+    private readonly DraftImageExistsValidatorAsync _draftImageExistsValidator;
 
     public CreateProductHandler(IProductRepository productRepository, IDraftImageRepository draftImageRepository, IProductHistoryRepository productHistoryRepository)
     {
         _productRepository = productRepository;
         _draftImageRepository = draftImageRepository;
         _productHistoryRepository = productHistoryRepository;
+        _draftImageExistsValidator = new DraftImageExistsValidatorAsync(draftImageRepository);
     }
 
     public async Task<OneOf<CreateProductResult, List<ApplicationError>>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
-        var errors = new List<ApplicationError>();
         var product = ProductFactory.BuildNewProduct(
             id: Guid.NewGuid(),
             name: request.Name,
@@ -31,33 +33,32 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
             images: []
         );
         var draftImagesUsed = new List<DraftImage>();
+        var imageErrors = new List<ApplicationError>();
 
         foreach (var fileName in request.Images)
         {
-            var draftImage = await _draftImageRepository.GetByFileNameAsync(fileName);
-            if (draftImage is null)
+            var draftImageExistsResult = await _draftImageExistsValidator.Validate(fileName);
+            if (draftImageExistsResult.TryPickT1(out var errors, out var draftImage))
             {
-                errors.AddRange(ApplicationErrorFactory.CreateSingleListError(
-                    message: $"DraftImage of fileName \"{fileName}\" does not exist.",
-                    path: ["images", fileName],
-                    code: ApplicationErrorCodes.ModelDoesNotExist
-                ));
+                imageErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [fileName, ..error.Path])));
                 continue;
             }
 
-            if (product.TryAddImageFromDraftImage(draftImage).TryPickT1(out var domainErrors, out var _))
+            var canAddProductImageValidator = new CanAddProductImageValidator(product);
+            var canAddProductImageResult = canAddProductImageValidator.Validate(new CanAddProductImageValidator.Input(fileName: draftImage.FileName, originalFileName: draftImage.OriginalFileName, url: draftImage.Url ));
+            if (canAddProductImageResult.TryPickT1(out errors, out var _))
             {
-                errors.AddRange(ApplicationErrorFactory.DomainErrorsToApplicationErrors(domainErrors));
+                imageErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [fileName, ..error.Path])));
+                continue;
             }
-            else
-            {
-                draftImagesUsed.Add(draftImage);
-            }
+
+            product.ExecuteAddProductImage(fileName: draftImage.FileName, originalFileName: draftImage.OriginalFileName, url: draftImage.Url);
+            draftImagesUsed.Add(draftImage);
         }
 
-        if (errors.Count > 0)
+        if (imageErrors.Count > 0)
         {
-            return errors;
+            return imageErrors;
         }
 
         // Delete used Draft

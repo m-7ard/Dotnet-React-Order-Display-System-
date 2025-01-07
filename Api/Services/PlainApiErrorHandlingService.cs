@@ -1,27 +1,31 @@
 
 using Api.Errors;
-using Api.Interfaces;
 using Application.Common;
 using Application.Errors;
 using FluentValidation.Results;
 
 namespace Api.Services;
 
-public class PlainApiErrorHandlingService : IPlainErrorHandlingService
+public class PlainApiErrorHandlingService
 {
-    // "_" = form error
-    // "field" = field error
-    // "field/_" = field form error
-    public ApiError CreateError(List<string> path, string message, string fieldName)
+    public static ApiError CreateError(List<string> path, string message, string code)
     {
         return new ApiError(
-            fieldName: fieldName,
-            path: string.Join("/", path),
+            code: code,
+            path: "/" + string.Join("/", path),
             message: message
         );
     }
 
-    public List<ApiError> FluentToApiErrors(List<ValidationFailure> validationFailures, List<string> path)
+    public static List<ApiError> CreateSingleListError(List<string> path, string message, string code)
+    {
+        return new List<ApiError>()
+        {
+            CreateError(path: path, message: message, code: code)
+        };
+    }
+
+    public static List<ApiError> FluentToApiErrors(List<ValidationFailure> validationFailures, List<string> path)
     {
         return validationFailures.Select((error) =>
         {
@@ -31,22 +35,38 @@ public class PlainApiErrorHandlingService : IPlainErrorHandlingService
                 : $"/{camelCaseFieldName}/{string.Join("/", path)}";
 
             return new ApiError(
-                fieldName: camelCaseFieldName,
+                code: ApiErrorCodes.VALIDATION_ERROR,
                 path: fullPath,
                 message: error.ErrorMessage
             );
         }).ToList();
     }
 
-    public List<ApiError> TranslateServiceErrors(List<ApplicationError> errors)
+    public static List<ApiError> MapApplicationErrors(List<ApplicationError> errors, Dictionary<string, List<string>>? codeDictionary = null, List<string>? defaultPath = null)
     {
-        return errors.Select((error) =>
+        var result = new List<ApiError>();
+
+        errors.ForEach((error) =>
         {
-            return new ApiError(
-                fieldName: error.Path[0],
-                path: string.Join("/", error.Path),
-                message: error.Message
+            List<string> finalPath = [..error.Path];
+
+            if (codeDictionary is not null && codeDictionary.TryGetValue(error.Code, out var pathPrefix))
+            {
+                finalPath.InsertRange(0, pathPrefix);
+            }
+            else
+            {
+                finalPath = defaultPath ?? ["_"];
+            }
+
+            var apiError = CreateError(
+                message: error.Message,
+                path: finalPath,
+                code: ApiErrorCodes.APPLICATION_ERROR
             );
-        }).ToList();
+            result.Add(apiError);
+        });
+
+        return result;
     }
 }

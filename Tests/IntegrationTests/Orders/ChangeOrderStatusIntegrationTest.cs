@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Api.DTOs.Orders.MarkFinished;
+using Domain.DomainService;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Infrastructure.DbEntities;
@@ -37,7 +38,7 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
         var repo = new OrderRepository(db);
         foreach (var orderItem in _order001.OrderItems)
         {
-            _order001.TryMarkOrderItemFinished(orderItemId: orderItem.Id);
+            OrderDomainService.ExecuteMarkOrderItemFinished(_order001, orderItem.Id);
         }
         await repo.UpdateAsync(_order001);
 
@@ -70,7 +71,8 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
     {
         var db = _factory.CreateDbContext();
         var repo = new OrderRepository(db);
-        _order001.TryMarkFinished();
+        _order001.OrderItems.ForEach(orderItem => OrderDomainService.ExecuteMarkOrderItemFinished(_order001, orderItem.Id));
+        OrderDomainService.ExecuteMarkFinished(_order001);
         await repo.UpdateAsync(_order001);
 
         var request = new MarkOrderFinishedRequestDTO();

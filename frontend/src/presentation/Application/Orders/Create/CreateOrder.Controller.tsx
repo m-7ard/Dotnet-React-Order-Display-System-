@@ -13,7 +13,7 @@ import ICreateOrderRequestDTO from "../../../../infrastructure/contracts/orders/
 import useResponseHandler from "../../../hooks/useResponseHandler";
 import { err, ok } from "neverthrow";
 import IPlainApiError from "../../../../infrastructure/interfaces/IPlainApiError";
-import apiToDomainCompatibleFormError from "../../../mappers/apiToDomainCompatibleFormError";
+import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
 
 const validatorSchema = Type.Object({
     orderItemData: Type.Record(
@@ -89,8 +89,8 @@ export default function CreateOrderController(props: { orderDataAccess: IOrderDa
                     }
                     
                     if (response.status === 400) {
-                        const errors: IPlainApiError = await response.json();
-                        errorManager.setAll(apiToDomainCompatibleFormError(errors));
+                        const errors: IPlainApiError[] = await response.json();
+                        errorManager.setAll(PresentationErrorFactory.ApiErrorsToPresentationErrors(errors));
                         return ok(undefined);
                     }
 

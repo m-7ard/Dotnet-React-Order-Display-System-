@@ -1,10 +1,7 @@
 using Api.DTOs.ProductHistories.List;
-using Api.DTOs.Products.Create;
-using Api.DTOs.Products.Update;
-using Api.Interfaces;
 using Api.Mappers;
+using Api.Services;
 using Application.Handlers.ProductHistories.List;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +14,10 @@ namespace Api.Controllers;
 public class ProductHistoryController : ControllerBase
 {
     private readonly ISender _mediator;
-    private readonly IPlainErrorHandlingService _errorHandlingService;
 
-    public ProductHistoryController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IValidator<CreateProductRequestDTO> createProductValidator, IValidator<UpdateProductRequestDTO> updateProductValidator)
+    public ProductHistoryController(ISender mediator)
     {
         _mediator = mediator;
-        _errorHandlingService = errorHandlingService;
     }
 
     [HttpGet("list")]
@@ -87,7 +82,7 @@ public class ProductHistoryController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));
         }
 
         var response = new ListProductHistoriesResponseDTO(productHistories: value.ProductHistories.Select(ApiModelMapper.ProductHistoryToApiModel).ToList());

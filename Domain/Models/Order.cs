@@ -9,23 +9,21 @@ using OneOf;
 namespace Domain.Models;
 public class Order
 {
-    public Order(Guid id, decimal total, DateTime dateCreated, DateTime? dateFinished, List<OrderItem> orderItems, OrderStatus status, int serialNumber)
+    public Order(Guid id, decimal total, List<OrderItem> orderItems, OrderStatus status, int serialNumber, OrderDates orderDates)
     {
         Id = id;
         Total = total;
-        DateCreated = dateCreated;
-        DateFinished = dateFinished;
         OrderItems = orderItems;
         Status = status;
         SerialNumber = serialNumber;
+        OrderDates = orderDates;
     }
 
     public Guid Id { get; private set; }
     public int SerialNumber { get; private set; }
     public decimal Total { get; set; }
     public OrderStatus Status { get; set; }
-    public DateTime DateCreated { get; private set; }
-    public DateTime? DateFinished { get; set; }
+    public OrderDates OrderDates { get; set; }
     public List<OrderItem> OrderItems { get; set; }
     public List<DomainEvent> DomainEvents { get; set; } = [];
     public void ClearEvents()
@@ -33,75 +31,92 @@ public class Order
         DomainEvents = [];
     }
 
-    private void UpdateStatus(OrderStatus status)
+    private Dictionary<string, List<OrderStatus>> ValidStatusStatusTransitions = new Dictionary<string, List<OrderStatus>>()
     {
-        Status = status;
-
-        if (status == OrderStatus.Finished)
+        { OrderStatus.Pending.Name, [OrderStatus.Finished] },
+        { OrderStatus.Finished.Name, [] },
+    };
+    
+    public OneOf<OrderStatus, string> CanTransitionStatus(string value)
+    {
+        var statusCreationResult = OrderStatus.CanCreate(value);
+        if (statusCreationResult.TryPickT1(out var errors, out var _))
         {
-            DateFinished = DateTime.Now;
+            return errors;
         }
+
+        if (!ValidStatusStatusTransitions.TryGetValue(Status.Name, out var transitionList))
+        {
+            return $"Invalid status transition from {Status.Name} to {value}.";
+        }
+
+        var newStatusObject = transitionList.Find(status => status.Name == value); 
+        if (newStatusObject is null)
+        {
+            return $"Invalid status transition from {Status.Name} to {value}.";
+        }
+
+        return newStatusObject;
     }
 
-    private void UpdateOrderItemStatus(Guid orderItemId, OrderItemStatus status)
+    public void ExecuteTransitionStatus(string value)
     {
-        var orderItem = OrderItems.Find(orderItem => orderItem.Id == orderItemId);
-        if (orderItem is null)
+        var canTransitionStatus = CanTransitionStatus(value);
+        if (canTransitionStatus.TryPickT1(out var error, out var newStatus))
         {
-            throw new Exception($"OrderItem of Id \"{orderItemId}\" does not exist on Order of Id \"{Id}\"");
+            throw new Exception(error);
         }
 
-        orderItem.UpdateStatus(status);
-        DomainEvents.Add(new OrderItemPendingUpdatingEvent(orderItem));
+        Status = newStatus;
     }
 
-    public OneOf<bool, List<DomainError>> TryMarkFinished()
+    public OneOf<bool, string> CanAddOrderItem(Product product, ProductHistory productHistory, int quantity)
     {
-        if (OrderItems.Any(d => d.Status != OrderItemStatus.Finished))
+        if (product.Id != productHistory.ProductId)
         {
-            return DomainErrorFactory.CreateSingleListError(
-                message: $"All OrderItems must be finished in order to mark it as finished.",
-                path: ["_"],
-                code: "ORDER_ITEMS_NOT_FINISHED"
-            );
+            return "Product History's Product Id does not match Product Id.";
         }
 
-        if (Status == OrderStatus.Finished)
+        if (!productHistory.IsValid())
         {
-            return DomainErrorFactory.CreateSingleListError(
-                message: $"Order is already finished.",
-                path: ["_"],
-                code: "ORDER_ALREADY_FINISHED"
-            );
+            return $"Product History for Product of Id \"{product.Id}\" is not valid.";
         }
 
-        UpdateStatus(OrderStatus.Finished);
+        if (quantity <= 0)
+        {
+            return "Order Item quantity must be greater than 0";
+        }
+
+        var existingOrderItem = OrderItems.Find(orderItem => orderItem.ProductId == product.Id);
+        if (existingOrderItem is not null)
+        {
+            return "Product has already been added as an Order Item.";
+        }
+
         return true;
     }
 
-    public OneOf<bool, List<DomainError>> TryMarkOrderItemFinished(Guid orderItemId)
+    public OrderItem ExecuteAddOrderItem(Product product, ProductHistory productHistory, int quantity) 
     {
-        var orderItem = OrderItems.Find(orderItem => orderItem.Id == orderItemId);
-        if (orderItem is null)
+        var canAddOrderItemResult = CanAddOrderItem(product: product, productHistory: productHistory, quantity: quantity);
+        if (canAddOrderItemResult.TryPickT1(out var error, out var _))
         {
-            return DomainErrorFactory.CreateSingleListError(
-                message: $"OrderItem with Id \"{orderItemId}\" does not exist does not exist in Order of id \"${Id}\".",
-                path: ["_"],
-                code: "ORDER_ITEM_DOES_NOT_EXIST"
-            );
+            throw new Exception(error);
         }
 
-        if (orderItem.Status == OrderItemStatus.Finished)
-        {
-            return DomainErrorFactory.CreateSingleListError(
-                message: $"OrderItem with Id \"{orderItemId}\" is already finished.",
-                path: ["_"],
-                code: "ORDER_ITEM_ALREADY_FINISHED"
-            );
-        }
+        var orderItem = OrderItemFactory.BuildNewOrderItem(
+            id: Guid.NewGuid(),
+            orderId: Id,
+            quantity: quantity,
+            status: OrderItemStatus.Pending,
+            productHistoryId: productHistory.Id,
+            productId: productHistory.ProductId
+        );
 
-        UpdateOrderItemStatus(orderItemId, OrderItemStatus.Finished);
-        return true;
+        Total += productHistory.Price * quantity;
+        OrderItems.Add(orderItem);
+
+        return orderItem;
     }
 
     public OneOf<OrderItem, List<DomainError>> TryAddOrderItem(ProductHistory productHistory, int quantity)
@@ -119,5 +134,10 @@ public class Order
         OrderItems.Add(orderItem);
 
         return orderItem;
+    }
+
+    public OrderItem? GetOrderItemById(Guid id)
+    {
+        return OrderItems.Find(orderItem => orderItem.Id == id);
     }
 }

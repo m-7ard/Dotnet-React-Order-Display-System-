@@ -1,5 +1,4 @@
 using System.Net;
-using Api.ApiModels;
 using Api.DTOs.OrderItems.MarkFinished;
 using Api.DTOs.Orders.Create;
 using Api.DTOs.Orders.List;
@@ -7,6 +6,7 @@ using Api.DTOs.Orders.MarkFinished;
 using Api.DTOs.Orders.Read;
 using Api.Errors;
 using Api.Interfaces;
+using Api.Services;
 using Application.Errors;
 using Application.Handlers.OrderItems.MarkFinished;
 using Application.Handlers.Orders.Create;
@@ -44,10 +44,10 @@ public class OrdersController : ControllerBase
             return BadRequest(
                 new List<ApiError>()
                 {
-                    ApiErrorFactory.CreateError(
+                    PlainApiErrorHandlingService.CreateError(
                         path: ["orderItemData", "_"],
                         message: "Order Item Data cannot be empty.",
-                        fieldName: "orderItemData"
+                        code: ApiErrorCodes.VALIDATION_ERROR
                     )
                 }
             );
@@ -62,7 +62,7 @@ public class OrdersController : ControllerBase
                 continue;
             }
 
-            errors.AddRange(ApiErrorFactory.FluentToApiErrors(validationFailures: validation.Errors, path: ["orderItemData", uid]));
+            errors.AddRange(PlainApiErrorHandlingService.FluentToApiErrors(validationFailures: validation.Errors, path: ["orderItemData", uid]));
         }
 
         if (errors.Count > 0)
@@ -84,7 +84,7 @@ public class OrdersController : ControllerBase
         var result = await _mediator.Send(command);
         if (result.TryPickT1(out var handlerErrors, out var value))
         {
-            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(handlerErrors));
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(handlerErrors));
         }
 
         var respone = new CreateOrderResponseDTO(orderId: value.OrderId.ToString());
@@ -163,7 +163,7 @@ public class OrdersController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));
         }
 
         var response = new ListOrdersResponseDTO(orders: await _apiModelService.CreateManyOrderApiModel(value.Orders));
@@ -184,9 +184,13 @@ public class OrdersController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
-                ? NotFound(ApiErrorFactory.TranslateApplicationErrors(errors))
-                : StatusCode((int)HttpStatusCode.InternalServerError, ApiErrorFactory.TranslateApplicationErrors(errors));
+            var expectedError = errors.First();
+            if (expectedError.Code is ApplicationValidatorErrorCodes.ORDER_EXISTS_ERROR)
+            {
+                return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
+            }
+            
+            return StatusCode((int)HttpStatusCode.InternalServerError, PlainApiErrorHandlingService.MapApplicationErrors(errors));
         };
 
         var response = new ReadOrderResponseDTO(order: await _apiModelService.CreateOrderApiModel(value.Order));
@@ -194,30 +198,25 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPut("{orderId}/item/{orderItemId}/mark_finished")]
-    public async Task<ActionResult<MarkOrderItemFinishedResponseDTO>> MarkOrderItemFinished(string orderId, string orderItemId)
+    public async Task<ActionResult<MarkOrderItemFinishedResponseDTO>> MarkOrderItemFinished(Guid orderId, Guid orderItemId)
     {
-        if (!Guid.TryParse(orderId, out var parsedOrderId))
-        {
-            return NotFound();
-        }
-
-        if (!Guid.TryParse(orderItemId, out var parsedOrderItemId))
-        {
-            return NotFound();
-        }
-        
         var query = new MarkOrderItemFinishedCommand(
-            orderId: parsedOrderId,
-            orderItemId: parsedOrderItemId
+            orderId: orderId,
+            orderItemId: orderItemId
         );
 
         var result = await _mediator.Send(query);
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
-                ? NotFound(ApiErrorFactory.TranslateApplicationErrors(errors))
-                : BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
+            var expectedError = errors.First();
+            if (expectedError.Code is ApplicationValidatorErrorCodes.ORDER_EXISTS_ERROR)
+            {
+                return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
+            }
+
+
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));
         };
 
         var response = new MarkOrderItemFinishedResponseDTO(orderId: value.OrderId.ToString(), orderItemId: value.OrderItemId.ToString());
@@ -225,24 +224,23 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPut("{orderId}/mark_finished")]
-    public async Task<ActionResult<MarkOrderFinishedResponseDTO>> MarkFinished(string orderId)
+    public async Task<ActionResult<MarkOrderFinishedResponseDTO>> MarkFinished(Guid orderId)
     {
-        if (!Guid.TryParse(orderId, out var parsedOrderId))
-        {
-            return NotFound();
-        }
-
         var query = new MarkOrderFinishedCommand(
-            orderId: parsedOrderId
+            orderId: orderId
         );
 
         var result = await _mediator.Send(query);
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return errors.Any(err => err.Code is ApplicationErrorCodes.ModelDoesNotExist)
-                ? NotFound(ApiErrorFactory.TranslateApplicationErrors(errors))
-                : BadRequest(ApiErrorFactory.TranslateApplicationErrors(errors));
+            var expectedError = errors.First();
+            if (expectedError.Code is ApplicationValidatorErrorCodes.ORDER_EXISTS_ERROR)
+            {
+                return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
+            }
+
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));
         };
 
         var response = new MarkOrderFinishedResponseDTO(orderId: value.OrderId.ToString());

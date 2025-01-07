@@ -20,7 +20,6 @@ public class ReadProductIntegrationTest : ProductsIntegrationTest
     [Fact]
     public async Task ReadProduct_ValidData_Success()
     {
-        var request = new ReadProductRequestDTO();
         var response = await _client.GetAsync($"{_route}/{_product001.Id}");
 
         Assert.NotNull(response);

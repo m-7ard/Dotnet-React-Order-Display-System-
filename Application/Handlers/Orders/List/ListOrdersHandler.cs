@@ -39,7 +39,7 @@ public class ListOrdersHandler : IRequestHandler<ListOrdersQuery, OneOf<ListOrde
         var criteria = new FilterOrdersCriteria(
             minTotal: request.MinTotal,
             maxTotal: request.MaxTotal,
-            status: request.Status is null || !OrderStatus.IsValid(request.Status) ? null : new OrderStatus(name: request.Status),
+            status: null,
             createdBefore: request.CreatedBefore,
             createdAfter: request.CreatedAfter,
             id: request.Id,
@@ -50,8 +50,16 @@ public class ListOrdersHandler : IRequestHandler<ListOrdersQuery, OneOf<ListOrde
             orderItemSerialNumber: request.OrderItemSerialNumber
         );
 
-        var orders = await _orderRepository.FilterAllAsync(criteria);
+        if (request.Status is not null)
+        {
+            var canCreateOrderStatusResult = OrderStatus.CanCreate(request.Status);
+            if (canCreateOrderStatusResult.IsT0)
+            {
+                criteria.Status = OrderStatus.ExecuteCreate(request.Status);
+            }
+        }
 
+        var orders = await _orderRepository.FilterAllAsync(criteria);
         var result = new ListOrdersResult(orders: orders);
         return result;
     }

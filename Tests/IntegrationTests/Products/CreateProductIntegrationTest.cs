@@ -17,7 +17,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
         var mixins = new Mixins(db);
         _validImage = await mixins.CreateDraftImage(
             fileRoute: TestFileRoute.ValidImage,
-            destinationFileName: "saved-valid-image"
+            destinationFileName: "saved-valid-image.png"
         );
     }
 
@@ -48,11 +48,11 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
     }
 
     [Fact]
-    public async Task CreateMenuItem_WithImages_Success()
+    public async Task CreateProduct_WithImages_Success()
     {
         var images = new List<string>(){ _validImage.FileName };
         var request = new CreateProductRequestDTO(
-            name: "MenuItem #1",
+            name: "Product #1",
             price: (decimal)123.12,
             description: "description",
             images: images
@@ -68,7 +68,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
     }
 
     [Fact]
-    public async Task CreateMenuItem_TooManyImages_Failure()
+    public async Task CreateProduct_TooManyImages_Failure()
     {
         var images = new List<string>();
         for (var i = 0; i < 9; i++)
@@ -77,7 +77,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
         }
 
         var request = new CreateProductRequestDTO(
-            name: "MenuItem #1",
+            name: "Product #1",
             price: (decimal)123.12,
             description: "description",
             images: images
@@ -90,11 +90,11 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
     }
 
     [Fact]
-    public async Task CreateMenuItem_NonExistingImage_Failure()
+    public async Task CreateProduct_NonExistingImage_Failure()
     {
         var images = new List<string>() { "non-existing-image-jpg" };
         var request = new CreateProductRequestDTO(
-            name: "MenuItem #1",
+            name: "Product #1",
             price: (decimal)123.12,
             description: "description",
             images: images

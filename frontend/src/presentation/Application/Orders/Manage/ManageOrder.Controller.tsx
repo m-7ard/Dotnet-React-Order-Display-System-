@@ -36,7 +36,7 @@ export default function ManageOrderRoute(props: { orderDataAccess: IOrderDataAcc
                     }
 
                     if (response.status === 400) {
-                        const errors: IPlainApiError = await response.json();
+                        const errors: IPlainApiError[] = await response.json();
                         errorsManager.updateItem(
                             "_",
                             errors.map(({ message }) => message),
@@ -71,7 +71,7 @@ export default function ManageOrderRoute(props: { orderDataAccess: IOrderDataAcc
                     }
 
                     if (response.status === 400) {
-                        const errors: IPlainApiError = await response.json();
+                        const errors: IPlainApiError[] = await response.json();
                         errorsManager.updateItem(
                             orderItem.id,
                             errors.map(({ message }) => message),

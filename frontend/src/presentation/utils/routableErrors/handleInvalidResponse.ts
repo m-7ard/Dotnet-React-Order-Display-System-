@@ -8,8 +8,8 @@ import ClientSideErrorException from "../../routableException/ClientSideErrorExc
 
 async function tryGetError(response: Response) {
     try {
-        const errors: IPlainApiError = await response.json();
-        const errorMessage = errors.join(" ");
+        const errors: IPlainApiError[] = await response.json();
+        const errorMessage = errors.map(({ message }) => message).join("\n");
         return errorMessage;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err: unknown) {
@@ -27,6 +27,7 @@ export default async function handleInvalidResponse(response: Response): Promise
         }
 
         if (response.status === 404) {
+            console.log("-------> ", errorMessage)
             throw new NotFoundException(errorMessage);
         }
 

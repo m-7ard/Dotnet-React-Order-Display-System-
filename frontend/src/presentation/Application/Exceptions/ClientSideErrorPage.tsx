@@ -18,7 +18,7 @@ export default function ClientSideErrorPage() {
             className={`${CONTENT_GRID.CLASS} flex flex-col items-center justify-center`}
         >
             <MixinPageSection className="text-4xl font-bold text-gray-800 text-center">A Client Side Error has Occured.</MixinPageSection>
-            <MixinPageSection className="text-xl font-bold text-gray-700 text-center">{errorRef.current.message}</MixinPageSection>
+            <MixinPageSection className="text-xl font-bold text-gray-700 text-center whitespace-pre">{errorRef.current.message}</MixinPageSection>
         </MixinPage>
     );
 }

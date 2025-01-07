@@ -50,4 +50,11 @@ public class BaseIntegrationTest : IAsyncLifetime
         // Delete saved test files after all tests have finished
         DeleteTestFiles();
     }
+
+    public Mixins GetMixins()
+    {
+        var db = _factory.CreateDbContext();
+        var mixins = new Mixins(db);
+        return mixins;
+    }
 }

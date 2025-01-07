@@ -1,5 +1,6 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
+using Application.Validators;
 using MediatR;
 using OneOf;
 
@@ -8,22 +9,20 @@ namespace Application.Handlers.Orders.Read;
 public class ReadOrderHandler : IRequestHandler<ReadOrderQuery, OneOf<ReadOrderResult, List<ApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly OrderExistsValidatorAsync _orderExistsValidator;
 
     public ReadOrderHandler(IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
+        _orderExistsValidator = new OrderExistsValidatorAsync(orderRepository);
     }
 
     public async Task<OneOf<ReadOrderResult, List<ApplicationError>>> Handle(ReadOrderQuery request, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.GetByIdAsync(id: request.Id);
-        if (order is null)
+        var orderExistsResult = await _orderExistsValidator.Validate(request.Id);
+        if (orderExistsResult.TryPickT1(out var errors, out var order))
         {
-            return ApplicationErrorFactory.CreateSingleListError(
-                message: $"Order with Id \"{request.Id}\" does not exist.",
-                path: ["_"],
-                code: ApplicationErrorCodes.ModelDoesNotExist
-            );
+            return errors;
         }
 
         var result = new ReadOrderResult(order: order);

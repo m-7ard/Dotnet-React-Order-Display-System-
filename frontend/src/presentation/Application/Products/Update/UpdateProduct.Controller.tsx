@@ -5,13 +5,13 @@ import { UploadImageFormValue, GeneratedFileName } from "../../../components/For
 import useItemManager from "../../../hooks/useItemManager";
 import { useMutation } from "@tanstack/react-query";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
-import apiToDomainCompatibleFormError from "../../../mappers/apiToDomainCompatibleFormError";
 import typeboxToDomainCompatibleFormError from "../../../mappers/typeboxToDomainCompatibleFormError";
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
 import useResponseHandler from "../../../hooks/useResponseHandler";
 import { productDataAccess } from "../../../deps/dataAccess";
 import { err, ok } from "neverthrow";
 import useUploadProductImages from "../../../hooks/useUploadProductImages";
+import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -99,7 +99,7 @@ export default function UpdateProductController() {
                         navigate({ to: "/products" });
                         return ok(undefined);
                     } else if (response.status === 400) {
-                        const errors = apiToDomainCompatibleFormError(await response.json());
+                        const errors = PresentationErrorFactory.ApiErrorsToPresentationErrors(await response.json());
                         errorManager.setAll(errors);
                         return ok(undefined);
                     }

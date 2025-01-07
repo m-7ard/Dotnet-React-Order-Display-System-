@@ -5,6 +5,8 @@ export default function ExceptionProvider({ children }: PropsWithChildren) {
     const [exception, setException] = useState<Error | null>(null);
 
     const dispatchException = useCallback((error: unknown) => {
+        console.log(error);
+        
         if (error instanceof Error) {
             setException(error);
         } else {

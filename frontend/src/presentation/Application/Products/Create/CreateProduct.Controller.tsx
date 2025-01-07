@@ -9,9 +9,9 @@ import { useMutation } from "@tanstack/react-query";
 import useResponseHandler from "../../../hooks/useResponseHandler";
 import { productDataAccess } from "../../../deps/dataAccess";
 import { err, ok } from "neverthrow";
-import apiToDomainCompatibleFormError from "../../../mappers/apiToDomainCompatibleFormError";
 import typeboxToDomainCompatibleFormError from "../../../mappers/typeboxToDomainCompatibleFormError";
 import useUploadProductImages from "../../../hooks/useUploadProductImages";
+import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -111,7 +111,7 @@ export default function CreateProductController() {
                         return ok(undefined);
                     } else if (response.status === 400) {
                         const apiErrors = await response.json();
-                        const errors = apiToDomainCompatibleFormError<ErrorState>(apiErrors);
+                        const errors = PresentationErrorFactory.ApiErrorsToPresentationErrors(apiErrors);
                         errorManager.setAll(errors);
                         return ok(undefined);
                     }

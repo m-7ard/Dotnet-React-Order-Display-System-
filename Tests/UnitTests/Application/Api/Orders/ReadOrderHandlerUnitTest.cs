@@ -23,8 +23,10 @@ public class ReadOrderHandlerUnitTest
         _mockOrder = OrderFactory.BuildExistingOrder(
             id: Guid.NewGuid(),
             total: 100,
-            dateCreated: DateTime.Today,
-            dateFinished: DateTime.MinValue,
+            orderDates: OrderDates.ExecuteCreate(
+                dateCreated: DateTime.Today,
+                dateFinished: null
+            ),
             orderItems: [],
             status: OrderStatus.Pending,
             serialNumber: 1
