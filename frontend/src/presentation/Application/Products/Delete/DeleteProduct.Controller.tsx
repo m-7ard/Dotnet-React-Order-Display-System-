@@ -7,8 +7,8 @@ import { err, ok } from "neverthrow";
 import useItemManager from "../../../hooks/useItemManager";
 import IPresentationError from "../../../interfaces/IPresentationError";
 import DeleteProductDialogPanel from "./DeleteProduct.DialogPanel";
-import apiToDomainCompatibleFormError from "../../../mappers/apiToDomainCompatibleFormError";
 import IProductDataAccess from "../../../interfaces/dataAccess/IProductDataAccess";
+import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
 
 export type DeleteProductErrorSchema = IPresentationError<unknown>;
 
@@ -30,8 +30,8 @@ export default function DeleteProductController(props: { product: IProduct; prod
                         return ok(undefined);
                     }
 
-                    const errors: IPlainApiError = await response.json();
-                    errorManager.setAll(apiToDomainCompatibleFormError(errors));
+                    const errors: IPlainApiError[] = await response.json();
+                    errorManager.setAll(PresentationErrorFactory.ApiErrorsToPresentationErrors(errors));
                     return err(undefined);
                 },
             });

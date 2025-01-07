@@ -1,4 +1,3 @@
-using System.IO.Pipes;
 using System.Linq.Expressions;
 using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;

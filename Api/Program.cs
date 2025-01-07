@@ -100,7 +100,6 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IDraftImageRepository, DraftImageRepository>();
 
-builder.Services.AddScoped<IPlainErrorHandlingService, PlainApiErrorHandlingService>();
 builder.Services.AddScoped<IApiModelService, ApiModelService>();
 builder.Services.AddSingleton<IFileStorage, FileStorage>();
 

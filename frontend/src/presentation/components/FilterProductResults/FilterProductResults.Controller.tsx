@@ -9,11 +9,11 @@ import { FormPageErrorState, FormPageValueState } from "./FilterProductResults.P
 import useDefaultErrorHandling from "../../hooks/useResponseHandler";
 import { err, ok } from "neverthrow";
 import parseListProductsRequestDTO from "../../../infrastructure/parsers/parseListProductsRequestDTO";
-import apiToDomainCompatibleFormError from "../../mappers/apiToDomainCompatibleFormError";
 import IPlainApiError from "../../../infrastructure/interfaces/IPlainApiError";
 import FilterProductResultsEmbed from "./FilterProductResults.As.Embed";
 import FilterProductResultsPanel from "./FilterProductResults.As.Panel";
 import { Routes } from "./FilterProductResults.Types";
+import PresentationErrorFactory from "../../mappers/PresentationErrorFactory";
 
 const FORM_PAGE_INITIAL_DATA = {
     id: "",
@@ -46,8 +46,8 @@ export default function FilterProductResultsController(props: { getResults: (sea
                         const products = data.products.map(productMapper.apiToDomain);
                         return ok(products);
                     } else if (response.status === 400) {
-                        const errors: IPlainApiError = await response.json();
-                        formErrors.setAll(apiToDomainCompatibleFormError(errors));
+                        const errors: IPlainApiError[] = await response.json();
+                        formErrors.setAll(PresentationErrorFactory.ApiErrorsToPresentationErrors(errors));
                         return ok(undefined);
                     }
 

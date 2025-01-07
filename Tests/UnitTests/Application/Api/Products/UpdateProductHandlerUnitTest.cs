@@ -71,9 +71,9 @@ public class UpdateProductHandlerUnitTest
     public async Task UpdateProduct_WithImages_Success()
     {
         // ARRANGE
-        var deleteProductImage = ProductImageFactory.BuildExistingProductImage(id: Guid.NewGuid(), fileName: "file-1", originalFileName: "abc", url: "url", dateCreated: new DateTime(), productId: Guid.NewGuid());
-        var keepProductImage = ProductImageFactory.BuildExistingProductImage(id: Guid.NewGuid(), fileName: "file-2", originalFileName: "abc", url: "url", dateCreated: new DateTime(), productId: Guid.NewGuid());
-        var newProductImage = ProductImageFactory.BuildExistingProductImage(id: Guid.NewGuid(), fileName: "file-3", originalFileName: "abc", url: "url", dateCreated: new DateTime(), productId: Guid.NewGuid());
+        var deleteProductImage = ProductImageFactory.BuildExistingProductImage(id: Guid.NewGuid(), fileName: "file-1.png", originalFileName: "abc.png", url: "url/file-1.png", dateCreated: new DateTime(), productId: Guid.NewGuid());
+        var keepProductImage = ProductImageFactory.BuildExistingProductImage(id: Guid.NewGuid(), fileName: "file-2.png", originalFileName: "abc.png", url: "url/file-2.png", dateCreated: new DateTime(), productId: Guid.NewGuid());
+        var newProductImage = ProductImageFactory.BuildExistingProductImage(id: Guid.NewGuid(), fileName: "file-3.png", originalFileName: "abc.png", url: "url/file-3.png", dateCreated: new DateTime(), productId: Guid.NewGuid());
 
         var oldMockProduct = Mixins.CreateProduct(
             seed: 1,

@@ -28,7 +28,7 @@ export default function UnknownErrorPage() {
             className={`${CONTENT_GRID.CLASS} flex flex-col items-center justify-center`}
         >
             <MixinPageSection className="text-4xl font-bold text-gray-800 text-center">An Unknown Error Occured.</MixinPageSection>
-            <MixinPageSection className="text-xl font-bold text-gray-700 text-center">{errorRef.current.name}</MixinPageSection>
+            <MixinPageSection className="text-xl font-bold text-gray-700 text-center whitespace-pre">{errorRef.current.name}</MixinPageSection>
         </MixinPage>
     );
 }

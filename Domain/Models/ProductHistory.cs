@@ -35,4 +35,9 @@ public class ProductHistory
     {
         ValidTo = DateTime.Now;
     }
+
+    public bool IsValid()
+    {
+        return ValidTo is null;
+    }
 }

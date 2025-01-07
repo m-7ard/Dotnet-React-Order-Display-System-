@@ -12,8 +12,10 @@ public static class OrderItemMapper
             id: source.Id,
             quantity: source.Quantity,
             status: new OrderItemStatus(source.Status.ToString()),
-            dateCreated: source.DateCreated,
-            dateFinished: source.DateFinished,
+            orderItemDates: OrderItemDates.ExecuteCreate(
+                dateCreated: source.DateCreated,
+                dateFinished: source.DateFinished
+            ),
             orderId: source.OrderId,
             productHistoryId: source.ProductHistoryId,
             productId: source.ProductId,
@@ -27,8 +29,8 @@ public static class OrderItemMapper
             id: source.Id,
             quantity: source.Quantity,
             status: ToDbEntityStatus(source.Status),
-            dateCreated: source.DateCreated,
-            dateFinished: source.DateFinished,
+            dateCreated: source.OrderItemDates.DateCreated,
+            dateFinished: source.OrderItemDates.DateFinished,
             orderId: source.OrderId,
             productHistoryId: source.ProductHistoryId,
             productId: source.ProductId,

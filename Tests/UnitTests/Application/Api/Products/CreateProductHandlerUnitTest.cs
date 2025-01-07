@@ -74,9 +74,9 @@ public class CreateProductHandlerUnitTest
         );
 
         _mockDraftImageRepository.Setup(repo => repo.GetByFileNameAsync(It.IsAny<string>())).ReturnsAsync(DraftImageFactory.BuildNewDraftImage(
-            fileName: "fileName", 
-            originalFileName: "originalFileName", 
-            url: "url"
+            fileName: "fileName.png", 
+            originalFileName: "originalFileName.png", 
+            url: "url/fileName.png"
         ));
         _mockProductRepository.Setup(repo => repo.CreateAsync(It.Is<Product>(product => product.Images.Count == 2))).ReturnsAsync(mockProduct);
 
@@ -91,5 +91,37 @@ public class CreateProductHandlerUnitTest
         //** Create product and product history
         _mockProductRepository.Verify(repo => repo.CreateAsync(It.IsAny<Product>()), Times.Once);
         _mockProductHistoryRepository.Verify(repo => repo.CreateAsync(It.IsAny<ProductHistory>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateProduct_WithImagesAndInvalidFileExtension_Success()
+    {
+        // ARRANGE
+        var mockProduct = Mixins.CreateProduct(
+            seed: 1,
+            images: [
+                Mixins.CreateProductImage(1)
+            ]
+        );
+
+        var command = new CreateProductCommand(
+            name: mockProduct.Name,
+            price: mockProduct.Price,
+            description: mockProduct.Description,
+            images: mockProduct.Images.Select(image => image.FileName).ToList()
+        );
+
+        _mockDraftImageRepository.Setup(repo => repo.GetByFileNameAsync(It.IsAny<string>())).ReturnsAsync(DraftImageFactory.BuildNewDraftImage(
+            fileName: "fileName.txt", 
+            originalFileName: "originalFileName.txt", 
+            url: "url/fileName.txt"
+        ));
+        _mockProductRepository.Setup(repo => repo.CreateAsync(It.Is<Product>(product => product.Images.Count == 1))).ReturnsAsync(mockProduct);
+
+        // ACT
+        var result = await _handler.Handle(command, CancellationToken.None);
+        
+        // ASSERT
+        Assert.True(result.IsT1);
     }
 }

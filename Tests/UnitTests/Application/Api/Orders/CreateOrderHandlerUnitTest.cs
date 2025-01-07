@@ -57,15 +57,15 @@ public class CreateOrderHandlerUnitTest
         var command = new CreateOrderCommand(
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id, quantity: 1) },
-                { "UID-2", new CreateOrderCommand.OrderItem(productId: _mockProductHistory002.Id, quantity: 2) }
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProduct001.Id, quantity: 1) },
+                { "UID-2", new CreateOrderCommand.OrderItem(productId: _mockProduct002.Id, quantity: 2) }
             }
         );
 
         var total = _mockProduct001.Price + _mockProduct002.Price * 2;
 
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(_mockProductHistory001.Id)).ReturnsAsync(_mockProduct001);
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(_mockProductHistory002.Id)).ReturnsAsync(_mockProduct002);
+        _mockProductRepository.Setup(repo => repo.GetByIdAsync(_mockProduct001.Id)).ReturnsAsync(_mockProduct001);
+        _mockProductRepository.Setup(repo => repo.GetByIdAsync(_mockProduct002.Id)).ReturnsAsync(_mockProduct002);
 
         _mockProductHistoryRepository.Setup(repo => repo.GetLatestByProductIdAsync(_mockProduct001.Id)).ReturnsAsync(_mockProductHistory001);
         _mockProductHistoryRepository.Setup(repo => repo.GetLatestByProductIdAsync(_mockProduct002.Id)).ReturnsAsync(_mockProductHistory002);

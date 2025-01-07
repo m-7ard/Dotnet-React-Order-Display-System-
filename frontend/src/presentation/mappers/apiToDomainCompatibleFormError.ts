@@ -46,7 +46,7 @@ export class ErrorBuilder {
     }
 }
 
-export default function apiToDomainCompatibleFormError<T extends ErrorStructure>(errors: IPlainApiError) {
+export default function apiToDomainCompatibleFormError<T extends ErrorStructure>(errors: IPlainApiError[]) {
     const Builder = new ErrorBuilder();
     
     errors.forEach((error) => {

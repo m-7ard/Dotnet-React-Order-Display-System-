@@ -3,6 +3,7 @@ using Api.DTOs.DraftImages.UploadImages;
 using Api.Errors;
 using Api.Interfaces;
 using Api.Mappers;
+using Api.Services;
 using Application.Handlers.DraftImages.UploadImages;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -16,14 +17,12 @@ namespace Api.Controllers;
 public class DraftImagesController : ControllerBase
 {
     private readonly ISender _mediator;
-    private readonly IPlainErrorHandlingService _errorHandlingService;
     private readonly List<string> _permittedExtensions = [".jpg", ".jpeg", ".png"];
     private readonly long _fileSizeLimit = 8 * 1024 * 1024; // 8 MB
 
-    public DraftImagesController(ISender mediator, IPlainErrorHandlingService errorHandlingService, IApiModelService apiModelService)
+    public DraftImagesController(ISender mediator)
     {
         _mediator = mediator;
-        _errorHandlingService = errorHandlingService;
     }
 
     [HttpPost("upload_images")]
@@ -32,10 +31,10 @@ public class DraftImagesController : ControllerBase
         if (files == null || files.Count == 0)
         {
             return BadRequest(new List<ApiError>() {
-                _errorHandlingService.CreateError(
+                PlainApiErrorHandlingService.CreateError(
                     path: ["_"],
                     message: "Must upload at least 1 file.",
-                    fieldName: "_"
+                    code: "VALIDATION_ERROR"
                 )
             });
         }
@@ -43,10 +42,10 @@ public class DraftImagesController : ControllerBase
         if (files.Count > 8)
         {
             return BadRequest(new List<ApiError>() {
-                _errorHandlingService.CreateError(
+                PlainApiErrorHandlingService.CreateError(
                     path: ["_"],
                     message: "Cannot upload more than 8 files.",
-                    fieldName: "_"
+                    code: "VALIDATION_ERROR"
                 )
             });
         }
@@ -58,10 +57,10 @@ public class DraftImagesController : ControllerBase
             if (file.Length > _fileSizeLimit)
             {
                 contentTooLargeErrors.Add(
-                    _errorHandlingService.CreateError(
+                    PlainApiErrorHandlingService.CreateError(
                         path: [file.FileName],
                         message: $"File \"{file.FileName}\" exceeds the 8 MB size limit.",
-                        fieldName: file.FileName
+                        code: "VALIDATION_ERROR"
                     )
                 );
             }
@@ -80,10 +79,10 @@ public class DraftImagesController : ControllerBase
             if (string.IsNullOrEmpty(extension) || !_permittedExtensions.Contains(extension))
             {
                 invalidFileFormatErrors.Add(
-                    _errorHandlingService.CreateError(
+                    PlainApiErrorHandlingService.CreateError(
                         path: [file.FileName],
                         message: $"File \"{file.FileName}\" has an invalid file extension.",
-                        fieldName: file.FileName
+                        code: "VALIDATION_ERROR"
                     )
                 );
             }
@@ -99,7 +98,7 @@ public class DraftImagesController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return BadRequest(_errorHandlingService.TranslateServiceErrors(errors));
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));
         }
 
         var response = new UploadDraftImagesResponseDTO(images: value.DraftImage.Select(ApiModelMapper.DraftImageToImageData).ToList());

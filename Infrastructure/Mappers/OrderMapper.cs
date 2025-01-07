@@ -11,10 +11,9 @@ public static class OrderMapper
         return new Order(
             id: source.Id,
             total: source.Total,
-            dateCreated: source.DateCreated,
-            dateFinished: source.DateFinished,
+            orderDates: OrderDates.ExecuteCreate(dateCreated: source.DateCreated, dateFinished: source.DateFinished),
             orderItems: source.OrderItems.Select(OrderItemMapper.ToDomain).ToList(),
-            status: new OrderStatus(source.Status.ToString()),
+            status: OrderStatus.ExecuteCreate(source.Status.ToString()),
             serialNumber: source.SerialNumber
         );
     }
@@ -24,8 +23,8 @@ public static class OrderMapper
         return new OrderDbEntity(
             id: source.Id,
             total: source.Total,
-            dateCreated: source.DateCreated,
-            dateFinished: source.DateFinished,
+            dateCreated: source.OrderDates.DateCreated,
+            dateFinished: source.OrderDates.DateFinished,
             status: ToDbEntityStatus(source.Status),
             serialNumber: source.SerialNumber
         )

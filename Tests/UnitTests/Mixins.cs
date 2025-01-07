@@ -6,14 +6,16 @@ namespace Tests.UnitTests;
 
 public class Mixins
 {
-    public static OrderItem CreateOrderItem(Guid orderId, OrderItemStatus status, DateTime dateCreated, DateTime dateFinished)
+    public static OrderItem CreateOrderItem(Guid orderId, OrderItemStatus status, DateTime dateCreated, DateTime? dateFinished)
     {
         return new OrderItem(
             id: Guid.NewGuid(), 
             quantity: 1, 
             status: status, 
-            dateCreated: dateCreated, 
-            dateFinished: dateFinished, 
+            orderItemDates: OrderItemDates.ExecuteCreate(
+                dateCreated: dateCreated, 
+                dateFinished: dateFinished
+            ),
             orderId: orderId,
             productHistoryId: Guid.NewGuid(), 
             productId: Guid.NewGuid(),
@@ -51,9 +53,9 @@ public class Mixins
     {
         return new ProductImage(
             id: Guid.NewGuid(),
-            fileName: $"filename {seed}",
-            originalFileName: $"original filename {seed}",
-            url: $"url ${seed}",
+            fileName: $"filename_{seed}.png",
+            originalFileName: $"original filename_{seed}.png",
+            url: $"url_{seed}.png",
             dateCreated: new DateTime(),
             productId: Guid.NewGuid()
         );

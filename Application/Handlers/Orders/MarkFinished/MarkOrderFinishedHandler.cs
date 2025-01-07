@@ -1,5 +1,7 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
+using Application.Validators;
+using Domain.DomainService;
 using MediatR;
 using OneOf;
 
@@ -8,32 +10,34 @@ namespace Application.Handlers.Orders.MarkFinished;
 public class MarkOrderFinishedHandler : IRequestHandler<MarkOrderFinishedCommand, OneOf<MarkOrderFinishedResult, List<ApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly OrderExistsValidatorAsync _orderExistsValidator;
 
     public MarkOrderFinishedHandler(IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
+        _orderExistsValidator = new OrderExistsValidatorAsync(orderRepository);
     }
 
     public async Task<OneOf<MarkOrderFinishedResult, List<ApplicationError>>> Handle(MarkOrderFinishedCommand request, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.GetByIdAsync(id: request.OrderId);
-        if (order is null)
-        {   
+        var orderExistsResult = await _orderExistsValidator.Validate(request.OrderId);
+        if (orderExistsResult.TryPickT1(out var errors, out var order))
+        {
+            return errors;
+        }
+
+        var canMarkOrderFinishedResult = OrderDomainService.CanMarkFinished(order);
+        if (canMarkOrderFinishedResult.TryPickT1(out var error, out var _))
+        {
             return ApplicationErrorFactory.CreateSingleListError(
-                message: $"Order with Id \"{request.OrderId}\" does not exist.",
-                path: ["_"],
-                code: ApplicationErrorCodes.ModelDoesNotExist
+                message: error,
+                path: [],
+                code: ApplicationErrorCodes.NotAllowed
             );
         }
 
-        var result = order.TryMarkFinished();
-        if (result.TryPickT1(out var errors, out var _))
-        {
-            return ApplicationErrorFactory.DomainErrorsToApplicationErrors(errors);
-        }
-
+        OrderDomainService.ExecuteMarkFinished(order);
         await _orderRepository.UpdateAsync(order);
-        
         return new MarkOrderFinishedResult(orderId: request.OrderId);
     }
 }

@@ -3,6 +3,7 @@ using Domain.DomainEvents.Product;
 using Domain.DomainFactories;
 using Domain.Errors;
 using OneOf;
+using OneOf.Types;
 
 namespace Domain.Models;
 public class Product
@@ -36,43 +37,68 @@ public class Product
     }
     public const int MAX_IMAGE_LENGTH = 8;
 
-    public OneOf<bool, List<DomainError>> TryAddImageFromDraftImage(DraftImage draftImage)
+    public readonly List<string> ALLOWED_FILE_EXTENSIONS = [".jpg, .jpeg", ".png"];
+
+    public ProductImage CreateProductImage(string fileName, string originalFileName, string url)
     {
-        var productImage = CreateProductImageFromDraft(draftImage);
+        var productImage = ProductImageFactory.BuildNewProductImage(
+            id: Guid.NewGuid(),
+            fileName: fileName,
+            originalFileName: originalFileName,
+            url: url,
+            productId: Id
+        );
+
+        return productImage;
+    }
+
+    public OneOf<bool, string> CanAddProductImage(string fileName, string originalFileName, string url)
+    {
         if (Images.Count >= MAX_IMAGE_LENGTH)
         {
-            return DomainErrorFactory.CreateSingleListError(
-                message: "Product cannot have more than 8 images.",
-                path: ["images"],
-                code: "MAX_PRODUCT_IMAGE_LENGTH_EXCEEDED"
-            );
+            return "Product cannot have more than 8 images.";
         }
 
-        Images.Add(productImage);
+        var fileNameExtension = Path.GetExtension(fileName);
+        if (!ALLOWED_FILE_EXTENSIONS.Contains(fileNameExtension))
+        {
+            return "Saved filename extension is invalid.";
+        }
+
+        var originalFileNameExtension = Path.GetExtension(originalFileName);
+        if (!ALLOWED_FILE_EXTENSIONS.Contains(originalFileNameExtension))
+        {
+            return "Original filename extension is invalid.";
+        }
+
+        if (!url.EndsWith(fileName))
+        {
+            return $"Url must end with the saved filename \"{fileName}\"";
+        }
+
         return true;
     }
 
-
-    public OneOf<bool, List<DomainError>> TryUpdate(string name, decimal price, string description, List<ProductImage> images)
+    public ProductImage ExecuteAddProductImage(string fileName, string originalFileName, string url)
     {
-        if (images.Count > MAX_IMAGE_LENGTH)
+        var canAddProductImageResult = CanAddProductImage(fileName: fileName, originalFileName: originalFileName, url: url);
+        if (canAddProductImageResult.TryPickT1(out var error, out var _))
         {
-            return DomainErrorFactory.CreateSingleListError(
-                message: "Product cannot have more than 8 images.",
-                path: ["images"],
-                code: "MAX_PRODUCT_IMAGE_LENGTH_EXCEEDED"
-            );
+            throw new Exception(error);
         }
 
-        Name = name;
-        Price = price;
-        Description = description;
+        var productImage = CreateProductImage(fileName: fileName, originalFileName: originalFileName, url: url);
+        Images.Add(productImage);
+        return productImage;
+    }
 
+    public void UpdateImages(List<ProductImage> newImages)
+    {
         var currentImagesById = Images.ToDictionary(
             image => image.Id,
             image => image
         );
-        var updatedImagesById = images.ToDictionary(
+        var updatedImagesById = newImages.ToDictionary(
             image => image.Id,
             image => image
         );
@@ -97,18 +123,6 @@ public class Product
             }
         }
 
-        Images = images;
-        return true;
-    }
-
-    public ProductImage CreateProductImageFromDraft(DraftImage draftImage)
-    {
-        var productImage = ProductImageFactory.BuildNewProductImageFromDraftImage(
-            source: draftImage,
-            id: Guid.NewGuid(),
-            productId: Id
-        );
-
-        return productImage;
+        Images = newImages;
     }
 }

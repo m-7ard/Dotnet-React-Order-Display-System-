@@ -24,8 +24,10 @@ public class MarkOrderItemFinishedHandlerUnitTest
         _mockOrder = OrderFactory.BuildExistingOrder(
             id: new Guid(),
             total: 100,
-            dateCreated: DateTime.Today,
-            dateFinished: DateTime.MinValue,
+            orderDates: OrderDates.ExecuteCreate(
+                dateCreated: DateTime.Today,
+                dateFinished: null
+            ),
             orderItems: [],
             status: OrderStatus.Pending,
             serialNumber: 1
@@ -39,8 +41,8 @@ public class MarkOrderItemFinishedHandlerUnitTest
         var mockOrderItem = Mixins.CreateOrderItem(
             orderId: _mockOrder.Id,
             status: OrderItemStatus.Pending,
-            dateCreated: _mockOrder.DateCreated,
-            dateFinished: DateTime.MinValue
+            dateCreated: _mockOrder.OrderDates.DateCreated,
+            dateFinished: null
         );
         _mockOrder.OrderItems.Add(mockOrderItem);
 
@@ -102,8 +104,8 @@ public class MarkOrderItemFinishedHandlerUnitTest
         var mockOrderItem = Mixins.CreateOrderItem(
             orderId: _mockOrder.Id,
             status: OrderItemStatus.Finished,
-            dateCreated: _mockOrder.DateCreated,
-            dateFinished: DateTime.MinValue
+            dateCreated: _mockOrder.OrderDates.DateCreated,
+            dateFinished: null
         );
         _mockOrder.OrderItems.Add(mockOrderItem);
         

@@ -1,9 +1,8 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
+using Application.Validators;
 using Domain.DomainFactories;
-using Domain.Models;
 using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 using MediatR;
 using OneOf;
 
@@ -14,17 +13,21 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
     private readonly IProductRepository _productRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
     private readonly IOrderRepository _orderRepository;
+    private readonly ProductExistsValidatorAsync _productExistsValidator;
+    private readonly LatestProductHistoryExistsValidatorAsync _latestProductHistoryExistsValidator;
 
     public CreateOrderHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IOrderRepository orderRepository)
     {
         _productRepository = productRepository;
         _productHistoryRepository = productHistoryRepository;
         _orderRepository = orderRepository;
+        _productExistsValidator = new ProductExistsValidatorAsync(productRepository);
+        _latestProductHistoryExistsValidator = new LatestProductHistoryExistsValidatorAsync(productHistoryRepository);
     }
 
     public async Task<OneOf<CreateOrderResult, List<ApplicationError>>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        var errors = new List<ApplicationError>();
+        var validationErrors = new List<ApplicationError>();
         var order = OrderFactory.BuildNewOrder(
             id: Guid.NewGuid(),
             total: 0,
@@ -34,44 +37,34 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
 
         foreach (var (uid, orderItem) in request.OrderItemData)
         {
-            var product = await _productRepository.GetByIdAsync(orderItem.ProductId);
-            if (product is null)
+            var productExistsResult = await _productExistsValidator.Validate(orderItem.ProductId);
+            if (productExistsResult.TryPickT1(out var errors, out var product))
             {
-                errors.AddRange(
-                    ApplicationErrorFactory.CreateSingleListError(
-                        message: $"Product with Id \"{orderItem.ProductId}\" does not exist.",
-                        path: ["orderItems", uid, "_"],
-                        code: ApplicationErrorCodes.ModelDoesNotExist
-                    )
-                );
+                validationErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [uid, ..error.Path])));
                 continue;
             }
 
-            var latestProductHistory = await _productHistoryRepository.GetLatestByProductIdAsync(product.Id);
-            if (latestProductHistory is null)
+            var latestProductHistoryExistsResult = await _latestProductHistoryExistsValidator.Validate(orderItem.ProductId);
+            if (latestProductHistoryExistsResult.TryPickT1(out errors, out var productHistory))
             {
-                errors.Add(
-                    new ApplicationError(
-                        message: $"Product with Id \"{orderItem.ProductId}\" does not have a ProductHistory. All Products should have a ProductHistory when created and updated.",
-                        path: ["orderItems", uid, "_"],
-                        code: ApplicationErrorCodes.IntegrityError
-                    )
-                );
-                
+                validationErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [uid, ..error.Path])));
                 continue;
             }
 
-            var result = order.TryAddOrderItem(productHistory: latestProductHistory, quantity: orderItem.Quantity);
-            if (result.TryPickT1(out var domainErrors, out var _))
+            var canAddOrderItem = new CanAddOrderItemValidator(order);
+            var canAddOrderItemResult = canAddOrderItem.Validate(new CanAddOrderItemValidator.Input(product: product, productHistory: productHistory, quantity: orderItem.Quantity));
+            if (canAddOrderItemResult.TryPickT1(out errors, out var _))
             {
-                var translated = ApplicationErrorFactory.DomainErrorsToApplicationErrors(domainErrors);
-                errors.AddRange(translated.AsEnumerable());
+                validationErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [uid, ..error.Path])));
+                continue;
             }
+
+            order.ExecuteAddOrderItem(product: product, productHistory: productHistory, quantity: orderItem.Quantity);
         }
 
-        if (errors.Count > 0)
+        if (validationErrors.Count > 0)
         {
-            return errors;
+            return validationErrors;
         }
 
         await _orderRepository.CreateAsync(order);

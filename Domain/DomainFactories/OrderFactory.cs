@@ -5,13 +5,12 @@ namespace Domain.DomainFactories;
 
 public class OrderFactory
 {
-    public static Order BuildExistingOrder(Guid id, decimal total, DateTime dateCreated, DateTime? dateFinished, List<OrderItem> orderItems, OrderStatus status, int serialNumber)
+    public static Order BuildExistingOrder(Guid id, decimal total, OrderDates orderDates, List<OrderItem> orderItems, OrderStatus status, int serialNumber)
     {
         return new Order(
             id: id,
             total: total,
-            dateCreated: dateCreated,
-            dateFinished: dateFinished,
+            orderDates: orderDates,
             orderItems: orderItems,
             status: status,
             serialNumber: serialNumber
@@ -20,11 +19,12 @@ public class OrderFactory
 
     public static Order BuildNewOrder(Guid id, decimal total, List<OrderItem> orderItems, OrderStatus status)
     {
+        var orderDates = OrderDates.ExecuteCreate(dateCreated: DateTime.UtcNow, dateFinished: null);
+
         return new Order(
             id: id,
             total: total,
-            dateCreated: DateTime.UtcNow,
-            dateFinished: null,
+            orderDates: orderDates,
             orderItems: orderItems,
             status: status,
             serialNumber: 0
