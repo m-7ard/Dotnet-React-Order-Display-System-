@@ -26,7 +26,7 @@ const validatorSchema = Type.Object({
     ),
 });
 
-interface ValueSchema {
+export interface ValueSchema {
     orderItemData: {
         [productId: number | string]: {
             product: IProduct;
@@ -35,7 +35,7 @@ interface ValueSchema {
     };
 }
 
-type ErrorState = IPresentationError<{
+export type ErrorState = IPresentationError<{
     orderItemData: {
         [productId: number | string]: {
             productId: string[];

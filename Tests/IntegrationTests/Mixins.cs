@@ -100,11 +100,7 @@ public class Mixins
                 throw new Exception("A Product's ProductHistory cannot be null when creating an Order because an Order's OrderItems need a non-null ProductHistoryId.");
             }
             
-            var result = newOrder.TryAddOrderItem(productHistory, seed);
-            if (result.TryPickT1(out var errors, out var orderItem))
-            {
-                throw new Exception("Something went wrong in Mixins.CreateOrder trying to add an OrderItem to an Order");
-            }
+            newOrder.ExecuteAddOrderItem(product: product, productHistory: productHistory, quantity: seed);
         }
 
         await _orderRespository.CreateAsync(newOrder);
