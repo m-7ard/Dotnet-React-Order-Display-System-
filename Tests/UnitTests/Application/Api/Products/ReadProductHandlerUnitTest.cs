@@ -1,5 +1,6 @@
 using Application.Handlers.Products.Read;
 using Application.Interfaces.Persistence;
+using Application.Validators;
 using Moq;
 
 namespace Tests.UnitTests.Application.Api.Products;
@@ -12,7 +13,7 @@ public class ReadProductsHandlerUnitTest
     {
         _mockProductRepository = new Mock<IProductRepository>();
         _handler = new ReadProductHandler(
-            productRepository: _mockProductRepository.Object
+            productExistsValidator: new ProductExistsValidatorAsync(_mockProductRepository.Object)
         );
     }
 

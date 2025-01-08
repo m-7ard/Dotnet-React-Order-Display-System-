@@ -1,5 +1,6 @@
 using Application.Handlers.Orders.MarkFinished;
 using Application.Interfaces.Persistence;
+using Application.Validators;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
@@ -18,7 +19,8 @@ public class MarkOrderFinishedHandlerUnitTest
     {
         _mockOrderRepository = new Mock<IOrderRepository>();
         _handler = new MarkOrderFinishedHandler(
-            orderRepository: _mockOrderRepository.Object
+            orderRepository: _mockOrderRepository.Object,
+            orderExistsValidator: new OrderExistsValidatorAsync(_mockOrderRepository.Object)
         );
 
         _mockOrder = OrderFactory.BuildExistingOrder(

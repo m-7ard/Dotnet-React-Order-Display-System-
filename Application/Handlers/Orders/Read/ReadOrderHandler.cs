@@ -8,13 +8,11 @@ namespace Application.Handlers.Orders.Read;
 
 public class ReadOrderHandler : IRequestHandler<ReadOrderQuery, OneOf<ReadOrderResult, List<ApplicationError>>>
 {
-    private readonly IOrderRepository _orderRepository;
-    private readonly OrderExistsValidatorAsync _orderExistsValidator;
+  private readonly OrderExistsValidatorAsync _orderExistsValidator;
 
-    public ReadOrderHandler(IOrderRepository orderRepository)
+    public ReadOrderHandler(OrderExistsValidatorAsync orderExistsValidator)
     {
-        _orderRepository = orderRepository;
-        _orderExistsValidator = new OrderExistsValidatorAsync(orderRepository);
+        _orderExistsValidator = orderExistsValidator;
     }
 
     public async Task<OneOf<ReadOrderResult, List<ApplicationError>>> Handle(ReadOrderQuery request, CancellationToken cancellationToken)

@@ -17,14 +17,14 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
     private readonly LatestProductHistoryExistsValidatorAsync _latestProductHistoryExistsValidator;
     private readonly DraftImageExistsValidatorAsync _draftImageExistsValidator;
 
-    public UpdateProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IDraftImageRepository draftImageRepository)
+    public UpdateProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IDraftImageRepository draftImageRepository, ProductExistsValidatorAsync productExistsValidator, LatestProductHistoryExistsValidatorAsync latestProductHistoryExistsValidator, DraftImageExistsValidatorAsync draftImageExistsValidator)
     {
         _productRepository = productRepository;
         _productHistoryRepository = productHistoryRepository;
         _draftImageRepository = draftImageRepository;
-        _productExistsValidator = new ProductExistsValidatorAsync(productRepository);
-        _latestProductHistoryExistsValidator = new LatestProductHistoryExistsValidatorAsync(productHistoryRepository);
-        _draftImageExistsValidator = new DraftImageExistsValidatorAsync(draftImageRepository);
+        _productExistsValidator = productExistsValidator;
+        _latestProductHistoryExistsValidator = latestProductHistoryExistsValidator;
+        _draftImageExistsValidator = draftImageExistsValidator;
     }
 
     public async Task<OneOf<UpdateProductResult, List<ApplicationError>>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)

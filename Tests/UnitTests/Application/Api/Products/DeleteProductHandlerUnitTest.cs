@@ -1,5 +1,6 @@
 using Application.Handlers.Products.Delete;
 using Application.Interfaces.Persistence;
+using Application.Validators;
 using Domain.DomainFactories;
 using Domain.Models;
 using Moq;
@@ -18,7 +19,9 @@ public class DeleteProductHandlerUnitTest
         _mockProductHistoryRepository = new Mock<IProductHistoryRepository>();
         _handler = new DeleteProductHandler(
             productRepository: _mockProductRepository.Object,
-            productHistoryRepository: _mockProductHistoryRepository.Object
+            productHistoryRepository: _mockProductHistoryRepository.Object,
+            productExistsValidator: new ProductExistsValidatorAsync(_mockProductRepository.Object),
+            latestProductHistoryExistsValidator: new LatestProductHistoryExistsValidatorAsync(_mockProductHistoryRepository.Object)
         );
     }
 

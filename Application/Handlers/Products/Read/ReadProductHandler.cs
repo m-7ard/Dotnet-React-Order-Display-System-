@@ -8,13 +8,11 @@ namespace Application.Handlers.Products.Read;
 
 public class ReadProductHandler : IRequestHandler<ReadProductQuery, OneOf<ReadProductResult, List<ApplicationError>>>
 {
-    private readonly IProductRepository _productRepository;
     private readonly ProductExistsValidatorAsync _productExistsValidator;
 
-    public ReadProductHandler(IProductRepository productRepository)
+    public ReadProductHandler(ProductExistsValidatorAsync productExistsValidator)
     {
-        _productRepository = productRepository;
-        _productExistsValidator = new ProductExistsValidatorAsync(productRepository);
+        _productExistsValidator = productExistsValidator;
     }
 
     public async Task<OneOf<ReadProductResult, List<ApplicationError>>> Handle(ReadProductQuery request, CancellationToken cancellationToken)
