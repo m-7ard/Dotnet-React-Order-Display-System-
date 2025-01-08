@@ -1,5 +1,4 @@
 using Domain.DomainEvents;
-using Domain.DomainEvents.Order;
 using Domain.DomainFactories;
 using Domain.Errors;
 using Domain.ValueObjects.Order;

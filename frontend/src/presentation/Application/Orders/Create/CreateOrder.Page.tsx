@@ -11,24 +11,7 @@ import { MixinContentGridTrack } from "../../../components/Resuables/MixinConten
 import FormError from "../../../components/Forms/FormError,";
 import { CONTENT_GRID } from "../../../attribute-mixins/contentGridTracks";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
-
-interface ValueSchema {
-    orderItemData: {
-        [productId: string | number]: {
-            product: IProduct;
-            quantity: number;
-        };
-    };
-}
-
-type ErrorState = IPresentationError<{
-    orderItemData: {
-        [productId: string | number]: {
-            productId: string[];
-            quantity: string[];
-        };
-    };
-}>;
+import { ErrorState, ValueSchema } from "./CreateOrder.Controller";
 
 export default function CreateOrderPage(props: {
     onSubmit: () => void;
@@ -87,7 +70,7 @@ export default function CreateOrderPage(props: {
                     />
                 </FormField>
             </MixinPageSection>
-            <MixinContentGridTrack track="base" as={Divider} />
+            <Divider />
             <MixinPageSection className="flex flex-row gap-3 justify-end">
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset">
                     Reset
