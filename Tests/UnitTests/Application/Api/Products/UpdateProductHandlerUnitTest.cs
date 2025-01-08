@@ -1,5 +1,6 @@
 using Application.Handlers.Products.Update;
 using Application.Interfaces.Persistence;
+using Application.Validators;
 using Domain.DomainFactories;
 using Domain.Models;
 using Moq;
@@ -21,7 +22,10 @@ public class UpdateProductHandlerUnitTest
         _handler = new UpdateProductHandler(
             productRepository: _mockProductRepository.Object,
             draftImageRepository: _mockDraftImageRepository.Object,
-            productHistoryRepository: _mockProductHistoryRepository.Object
+            productHistoryRepository: _mockProductHistoryRepository.Object,
+            productExistsValidator: new ProductExistsValidatorAsync(_mockProductRepository.Object),
+            latestProductHistoryExistsValidator: new LatestProductHistoryExistsValidatorAsync(_mockProductHistoryRepository.Object),
+            draftImageExistsValidator: new DraftImageExistsValidatorAsync(_mockDraftImageRepository.Object)
         );
     }
 

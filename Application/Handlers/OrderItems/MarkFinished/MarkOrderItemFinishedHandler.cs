@@ -12,10 +12,10 @@ public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishe
     private readonly IOrderRepository _orderRepository;
     private readonly OrderExistsValidatorAsync _orderExistsValidator;
 
-    public MarkOrderItemFinishedHandler(IOrderRepository orderRepository)
+    public MarkOrderItemFinishedHandler(IOrderRepository orderRepository, OrderExistsValidatorAsync orderExistsValidator)
     {
         _orderRepository = orderRepository;
-        _orderExistsValidator = new OrderExistsValidatorAsync(orderRepository);
+        _orderExistsValidator = orderExistsValidator;
     }
 
     public async Task<OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>> Handle(MarkOrderItemFinishedCommand request, CancellationToken cancellationToken)

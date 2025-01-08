@@ -6,6 +6,7 @@ using Application.Common;
 using Application.Handlers.Products.Create;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
+using Application.Validators;
 using FluentValidation;
 using Infrastructure;
 using Infrastructure.Files;
@@ -102,6 +103,12 @@ builder.Services.AddScoped<IDraftImageRepository, DraftImageRepository>();
 
 builder.Services.AddScoped<IApiModelService, ApiModelService>();
 builder.Services.AddSingleton<IFileStorage, FileStorage>();
+
+builder.Services.AddTransient<ProductExistsValidatorAsync>();
+builder.Services.AddTransient<OrderExistsValidatorAsync>();
+builder.Services.AddTransient<LatestProductHistoryExistsValidatorAsync>();
+builder.Services.AddTransient<ProductHistoryExistsValidatorAsync>();
+builder.Services.AddTransient<DraftImageExistsValidatorAsync>();
 
 ///
 ///

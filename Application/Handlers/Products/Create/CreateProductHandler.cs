@@ -15,12 +15,12 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
     private readonly IProductHistoryRepository _productHistoryRepository;
     private readonly DraftImageExistsValidatorAsync _draftImageExistsValidator;
 
-    public CreateProductHandler(IProductRepository productRepository, IDraftImageRepository draftImageRepository, IProductHistoryRepository productHistoryRepository)
+    public CreateProductHandler(IProductRepository productRepository, IDraftImageRepository draftImageRepository, IProductHistoryRepository productHistoryRepository, DraftImageExistsValidatorAsync draftImageExistsValidator)
     {
         _productRepository = productRepository;
         _draftImageRepository = draftImageRepository;
         _productHistoryRepository = productHistoryRepository;
-        _draftImageExistsValidator = new DraftImageExistsValidatorAsync(draftImageRepository);
+        _draftImageExistsValidator = draftImageExistsValidator;
     }
 
     public async Task<OneOf<CreateProductResult, List<ApplicationError>>> Handle(CreateProductCommand request, CancellationToken cancellationToken)

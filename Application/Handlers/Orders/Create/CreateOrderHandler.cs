@@ -10,19 +10,15 @@ namespace Application.Handlers.Orders.Create;
 
 public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<CreateOrderResult, List<ApplicationError>>>
 {
-    private readonly IProductRepository _productRepository;
-    private readonly IProductHistoryRepository _productHistoryRepository;
     private readonly IOrderRepository _orderRepository;
     private readonly ProductExistsValidatorAsync _productExistsValidator;
     private readonly LatestProductHistoryExistsValidatorAsync _latestProductHistoryExistsValidator;
 
-    public CreateOrderHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IOrderRepository orderRepository)
+    public CreateOrderHandler(IOrderRepository orderRepository, ProductExistsValidatorAsync productExistsValidator, LatestProductHistoryExistsValidatorAsync latestProductHistoryExistsValidator)
     {
-        _productRepository = productRepository;
-        _productHistoryRepository = productHistoryRepository;
         _orderRepository = orderRepository;
-        _productExistsValidator = new ProductExistsValidatorAsync(productRepository);
-        _latestProductHistoryExistsValidator = new LatestProductHistoryExistsValidatorAsync(productHistoryRepository);
+        _productExistsValidator = productExistsValidator;
+        _latestProductHistoryExistsValidator = latestProductHistoryExistsValidator;
     }
 
     public async Task<OneOf<CreateOrderResult, List<ApplicationError>>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)

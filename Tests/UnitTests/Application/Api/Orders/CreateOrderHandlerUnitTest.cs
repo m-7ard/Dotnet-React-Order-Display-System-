@@ -1,5 +1,6 @@
 using Application.Handlers.Orders.Create;
 using Application.Interfaces.Persistence;
+using Application.Validators;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
@@ -24,8 +25,8 @@ public class CreateOrderHandlerUnitTest
         _mockOrderRepository = new Mock<IOrderRepository>();
         _mockProductHistoryRepository = new Mock<IProductHistoryRepository>();
         _handler = new CreateOrderHandler(
-            productRepository: _mockProductRepository.Object,
-            productHistoryRepository: _mockProductHistoryRepository.Object,
+            productExistsValidator: new ProductExistsValidatorAsync(_mockProductRepository.Object),
+            latestProductHistoryExistsValidator: new LatestProductHistoryExistsValidatorAsync(_mockProductHistoryRepository.Object),
             orderRepository: _mockOrderRepository.Object
         );
     

@@ -10,12 +10,12 @@ namespace Application.Handlers.Orders.MarkFinished;
 public class MarkOrderFinishedHandler : IRequestHandler<MarkOrderFinishedCommand, OneOf<MarkOrderFinishedResult, List<ApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly OrderExistsValidatorAsync _orderExistsValidator;
+  private readonly OrderExistsValidatorAsync _orderExistsValidator;
 
-    public MarkOrderFinishedHandler(IOrderRepository orderRepository)
+    public MarkOrderFinishedHandler(IOrderRepository orderRepository, OrderExistsValidatorAsync orderExistsValidator)
     {
         _orderRepository = orderRepository;
-        _orderExistsValidator = new OrderExistsValidatorAsync(orderRepository);
+        _orderExistsValidator = orderExistsValidator;
     }
 
     public async Task<OneOf<MarkOrderFinishedResult, List<ApplicationError>>> Handle(MarkOrderFinishedCommand request, CancellationToken cancellationToken)

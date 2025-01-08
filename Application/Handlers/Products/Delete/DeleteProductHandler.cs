@@ -13,12 +13,12 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, OneOf<
     private readonly ProductExistsValidatorAsync _productExistsValidator;
     private readonly LatestProductHistoryExistsValidatorAsync _latestProductHistoryExistsValidator;
 
-    public DeleteProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository)
+    public DeleteProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, ProductExistsValidatorAsync productExistsValidator, LatestProductHistoryExistsValidatorAsync latestProductHistoryExistsValidator)
     {
         _productRepository = productRepository;
         _productHistoryRepository = productHistoryRepository;
-        _productExistsValidator = new ProductExistsValidatorAsync(productRepository);
-        _latestProductHistoryExistsValidator = new LatestProductHistoryExistsValidatorAsync(productHistoryRepository);
+        _productExistsValidator = productExistsValidator;
+        _latestProductHistoryExistsValidator = latestProductHistoryExistsValidator;
     }
 
     public async Task<OneOf<DeleteProductResult, List<ApplicationError>>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)

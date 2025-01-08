@@ -8,13 +8,11 @@ namespace Application.Handlers.ProductHistories.Read;
 
 public class ReadProductHistoryHandler : IRequestHandler<ReadProductHistoryQuery, OneOf<ReadProductHistoryResult, List<ApplicationError>>>
 {
-    private readonly IProductHistoryRepository _productHistoryRepository;
     private readonly ProductHistoryExistsValidatorAsync _productHistoryExistsValidator;
 
-    public ReadProductHistoryHandler(IProductHistoryRepository productHistoryRepository)
+    public ReadProductHistoryHandler(ProductHistoryExistsValidatorAsync productHistoryExistsValidator)
     {
-        _productHistoryRepository = productHistoryRepository;
-        _productHistoryExistsValidator = new ProductHistoryExistsValidatorAsync(productHistoryRepository);
+        _productHistoryExistsValidator = productHistoryExistsValidator;
     }
 
     public async Task<OneOf<ReadProductHistoryResult, List<ApplicationError>>> Handle(ReadProductHistoryQuery request, CancellationToken cancellationToken)
