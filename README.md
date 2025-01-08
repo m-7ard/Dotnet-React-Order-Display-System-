@@ -699,6 +699,8 @@ The application underwent a significant refactoring process, which included:
 - Changing autoincrement keys to GUID
 - Creating domain events
 - Implementing domain methods
+- Implementing value objects
+- Refactoring application layer validation
 
 Unit Tests and Integration Tests were crucial in ensuring the correctness of the refactoring, making the process much more manageable.
 
