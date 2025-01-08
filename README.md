@@ -71,6 +71,27 @@ npm run dev
 - Backend Integration Tests
 - Backend Application Layer Unit Tests
 - Frontend Validation
+- Frontend Request Error Handling
+
+## Technical Stack
+### Backend
+- Framework: .NET Core 8.0, ASP.NET MVC
+- ORM: Entity Framework Core with MSSQL
+- Architecture: CQRS with MediatR
+- Validation: FluentValidation
+- Testing: xUnit, Moq
+### Frontend
+- UI: React, Typescript
+- React Libs: Tanstack Query, Tanstack Router
+- CSS: Tailwind CSS, SCSS
+- Other: Superstruct, neverthrow, jsonpointer, typebox
+
+## Architecture
+The application follows Clean Architecture principles with distinct layers:
+- MVC (Presentation Layer)
+- Application (Business Logic, Business Logic-Linked Validation)
+- Domain (Business Rules)
+- Infrastructure (Data Access)
 
 ## Demo Videos
 
