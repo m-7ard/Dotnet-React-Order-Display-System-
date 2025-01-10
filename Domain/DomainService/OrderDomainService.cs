@@ -16,7 +16,7 @@ public class OrderDomainService
             return error;
         }
 
-        var canCreateOrderDates = OrderDates.CanCreate(dateCreated: order.OrderDates.DateCreated, dateFinished: DateTime.Now);
+        var canCreateOrderDates = OrderDates.CanCreate(dateCreated: order.OrderDates.DateCreated, dateFinished: DateTime.UtcNow);
         if (canCreateOrderDates.TryPickT1(out error, out _))
         {
             return error;
@@ -40,7 +40,7 @@ public class OrderDomainService
         }
 
         order.ExecuteTransitionStatus(OrderStatus.Finished.Name);
-        var orderDates = OrderDates.ExecuteCreate(dateCreated: order.OrderDates.DateCreated, dateFinished: DateTime.Now);
+        var orderDates = OrderDates.ExecuteCreate(dateCreated: order.OrderDates.DateCreated, dateFinished: DateTime.UtcNow);
         order.OrderDates = orderDates;
     }
 
@@ -58,7 +58,7 @@ public class OrderDomainService
             return error;
         }
 
-        var canCreateOrderDates = OrderDates.CanCreate(dateCreated: orderItem.OrderItemDates.DateCreated, dateFinished: DateTime.Now);
+        var canCreateOrderDates = OrderDates.CanCreate(dateCreated: orderItem.OrderItemDates.DateCreated, dateFinished: DateTime.UtcNow);
         if (canCreateOrderDates.TryPickT1(out error, out _))
         {
             return error;
@@ -76,7 +76,7 @@ public class OrderDomainService
         }
 
         orderItem.ExecuteTransitionStatus(OrderStatus.Finished.Name);
-        var orderItemDates = OrderItemDates.ExecuteCreate(dateCreated: orderItem.OrderItemDates.DateCreated, dateFinished: DateTime.Now);
+        var orderItemDates = OrderItemDates.ExecuteCreate(dateCreated: orderItem.OrderItemDates.DateCreated, dateFinished: DateTime.UtcNow);
         orderItem.OrderItemDates = orderItemDates;
         order.DomainEvents.Add(new OrderItemPendingUpdatingEvent(orderItem));
     }

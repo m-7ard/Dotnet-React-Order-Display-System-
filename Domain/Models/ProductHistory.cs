@@ -33,7 +33,7 @@ public class ProductHistory
 
     public void Invalidate()
     {
-        ValidTo = DateTime.Now;
+        ValidTo = DateTime.UtcNow;
     }
 
     public bool IsValid()

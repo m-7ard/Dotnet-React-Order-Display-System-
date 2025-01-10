@@ -6,8 +6,5 @@ namespace Infrastructure.Configurations;
 
 public class DraftImageConfigurations : IEntityTypeConfiguration<DraftImageDbEntity>
 {
-    public void Configure(EntityTypeBuilder<DraftImageDbEntity> builder)
-    {
-        builder.Property(d => d.DateCreated).HasDefaultValueSql("GETDATE()");
-    }
+    public void Configure(EntityTypeBuilder<DraftImageDbEntity> builder) {}
 }

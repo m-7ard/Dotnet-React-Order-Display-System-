@@ -13,12 +13,14 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
     private readonly IOrderRepository _orderRepository;
     private readonly ProductExistsValidatorAsync _productExistsValidator;
     private readonly LatestProductHistoryExistsValidatorAsync _latestProductHistoryExistsValidator;
+    private readonly ISequenceService _sequenceService;
 
-    public CreateOrderHandler(IOrderRepository orderRepository, ProductExistsValidatorAsync productExistsValidator, LatestProductHistoryExistsValidatorAsync latestProductHistoryExistsValidator)
+    public CreateOrderHandler(IOrderRepository orderRepository, ProductExistsValidatorAsync productExistsValidator, LatestProductHistoryExistsValidatorAsync latestProductHistoryExistsValidator, ISequenceService sequenceService)
     {
         _orderRepository = orderRepository;
         _productExistsValidator = productExistsValidator;
         _latestProductHistoryExistsValidator = latestProductHistoryExistsValidator;
+        _sequenceService = sequenceService;
     }
 
     public async Task<OneOf<CreateOrderResult, List<ApplicationError>>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -28,7 +30,8 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             id: Guid.NewGuid(),
             total: 0,
             orderItems: [],
-            status: OrderStatus.Pending
+            status: OrderStatus.Pending,
+            serialNumber: await _sequenceService.GetNextOrderValueAsync()
         );
 
         foreach (var (uid, orderItem) in request.OrderItemData)
@@ -55,7 +58,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
                 continue;
             }
 
-            order.ExecuteAddOrderItem(product: product, productHistory: productHistory, quantity: orderItem.Quantity);
+            order.ExecuteAddOrderItem(product: product, productHistory: productHistory, quantity: orderItem.Quantity, serialNumber: await _sequenceService.GetNextOrderItemValueAsync());
         }
 
         if (validationErrors.Count > 0)

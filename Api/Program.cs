@@ -16,9 +16,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
-// dotnet ef migrations add <Name> --project Api --startup-project Api
+// dotnet ef migrations add <Name> --project Infrastructure --startup-project Api
 // API/.env DefaultConnection="Server=localhost;Database=XXX;Trusted_Connection=True;TrustServerCertificate=True;"
 // frontend/.env VITE_API_URL=http://localhost:5102
+
+var dbProvider = builder.Configuration["Database:Provider"];
+var connectionString = builder.Configuration["Database:ConnectionString"];
 
 ///
 ///
@@ -34,7 +37,21 @@ var DefaultConnection = Environment.GetEnvironmentVariable("DefaultConnection");
 /// 
 
 builder.Services.AddDbContext<SimpleProductOrderServiceDbContext>(options =>
-    options.UseSqlServer(DefaultConnection, b => b.MigrationsAssembly("Api")));
+    {
+        if (dbProvider == "Sqlite")
+        {
+            options.UseSqlite("Data Source=mydatabase.db");
+        }
+        else if (dbProvider == "SqlServer")
+        {
+            options.UseSqlServer(DefaultConnection, b => b.MigrationsAssembly("Api"));
+        }
+        else
+        {
+            throw new InvalidOperationException("Unsupported database provider.");
+        }
+    }
+);
 
 var services = builder.Services;
 
@@ -94,6 +111,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Creat
 ///
 /// Dependency Injection / DI / Services
 /// 
+
+builder.Services.AddScoped<ISequenceService, SequenceService>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductHistoryRepository, ProductHistoryRespository>();

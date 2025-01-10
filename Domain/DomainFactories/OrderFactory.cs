@@ -17,7 +17,7 @@ public class OrderFactory
         );
     }
 
-    public static Order BuildNewOrder(Guid id, decimal total, List<OrderItem> orderItems, OrderStatus status)
+    public static Order BuildNewOrder(Guid id, decimal total, List<OrderItem> orderItems, OrderStatus status, int serialNumber)
     {
         var orderDates = OrderDates.ExecuteCreate(dateCreated: DateTime.UtcNow, dateFinished: null);
 
@@ -27,7 +27,7 @@ public class OrderFactory
             orderDates: orderDates,
             orderItems: orderItems,
             status: status,
-            serialNumber: 0
+            serialNumber: serialNumber
         );
     }
 }

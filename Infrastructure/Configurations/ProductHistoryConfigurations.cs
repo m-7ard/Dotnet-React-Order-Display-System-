@@ -21,9 +21,6 @@ public class ProductHistoryConfigurations : IEntityTypeConfiguration<ProductHist
             .HasMaxLength(1028)
             .IsRequired();
 
-        builder.Property(d => d.ValidFrom)
-            .HasDefaultValueSql("GETDATE()");
-        
         builder
             .HasOne(h => h.Product)
             .WithMany(p => p.ProductHistories)

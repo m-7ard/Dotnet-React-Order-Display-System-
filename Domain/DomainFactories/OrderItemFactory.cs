@@ -19,7 +19,7 @@ public class OrderItemFactory
         );
     }
 
-    public static OrderItem BuildNewOrderItem(Guid id, Guid orderId, int quantity, OrderItemStatus status, Guid productHistoryId, Guid productId)
+    public static OrderItem BuildNewOrderItem(Guid id, Guid orderId, int quantity, OrderItemStatus status, Guid productHistoryId, Guid productId, int serialNumber)
     {
         var orderDates = OrderItemDates.ExecuteCreate(dateCreated: DateTime.UtcNow, dateFinished: null);
 
@@ -31,7 +31,7 @@ public class OrderItemFactory
             orderId: orderId,
             productHistoryId: productHistoryId,
             productId: productId,
-            serialNumber: 0
+            serialNumber: serialNumber
         );
     }
 }

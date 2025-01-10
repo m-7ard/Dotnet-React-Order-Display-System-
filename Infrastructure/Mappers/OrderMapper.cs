@@ -27,10 +27,7 @@ public static class OrderMapper
             dateFinished: source.OrderDates.DateFinished,
             status: ToDbEntityStatus(source.Status),
             serialNumber: source.SerialNumber
-        )
-        {
-            OrderItems = source.OrderItems.Select(OrderItemMapper.ToDbModel).ToList()
-        };
+        );
     }
 
     public static OrderDbEntity.Statuses ToDbEntityStatus(OrderStatus status)

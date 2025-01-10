@@ -13,6 +13,7 @@ public class OrderRepository : IOrderRepository
 {
     private readonly SimpleProductOrderServiceDbContext _dbContext;
 
+
     public OrderRepository(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext)
     {
         _dbContext = simpleProductOrderServiceDbContext;
@@ -22,6 +23,13 @@ public class OrderRepository : IOrderRepository
     {
         var orderDbEntity = OrderMapper.ToDbModel(order);
         _dbContext.Add(orderDbEntity);
+
+        var orderItemDbEntities = order.OrderItems.Select(OrderItemMapper.ToDbModel);
+        foreach (var orderItemDbEntity in orderItemDbEntities)
+        {
+            _dbContext.Add(orderItemDbEntity);
+        }
+
         await _dbContext.SaveChangesAsync();
     }
 
