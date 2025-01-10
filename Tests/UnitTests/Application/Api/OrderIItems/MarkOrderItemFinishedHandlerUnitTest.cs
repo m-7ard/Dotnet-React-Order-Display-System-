@@ -27,7 +27,7 @@ public class MarkOrderItemFinishedHandlerUnitTest
             id: new Guid(),
             total: 100,
             orderDates: OrderDates.ExecuteCreate(
-                dateCreated: DateTime.Today,
+                dateCreated: DateTime.UtcNow,
                 dateFinished: null
             ),
             orderItems: [],

@@ -21,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 // frontend/.env VITE_API_URL=http://localhost:5102
 
 var dbProvider = builder.Configuration["Database:Provider"];
-var connectionString = builder.Configuration["Database:ConnectionString"];
+var connectionString = builder.Configuration[$"{dbProvider}_Database"];
 
 ///
 ///

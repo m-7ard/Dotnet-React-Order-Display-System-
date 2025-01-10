@@ -10,6 +10,8 @@ import OrderItem from "../../../../domain/models/OrderItem";
 import IOrderDataAccess from "../../../interfaces/dataAccess/IOrderDataAccess";
 import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import OrderItemStatus from "../../../../domain/valueObjects/OrderItem/OrderItemStatus";
+import IMarkOrderFinishedResponseDTO from "../../../../infrastructure/contracts/orders/markFinished/IMarkOrderFinishedResponseDTO";
+import IMarkOrderItemFinishedResponseDTO from "../../../../infrastructure/contracts/orderItems/markFinished/IMarkOrderItemFinishedResponseDTO";
 
 export default function ManageOrderRoute(props: { orderDataAccess: IOrderDataAccess }) {
     const { orderDataAccess } = props;
@@ -31,7 +33,9 @@ export default function ManageOrderRoute(props: { orderDataAccess: IOrderDataAcc
                     }),
                 onResponseFn: async (response) => {
                     if (response.ok) {
+                        const body: IMarkOrderFinishedResponseDTO = await response.json();
                         order.status = OrderStatus.FINISHED;
+                        order.dateFinished = new Date(body.dateFinished);
                         return ok(undefined);
                     }
 
@@ -66,7 +70,9 @@ export default function ManageOrderRoute(props: { orderDataAccess: IOrderDataAcc
                     }),
                 onResponseFn: async (response) => {
                     if (response.ok) {
+                        const body: IMarkOrderItemFinishedResponseDTO = await response.json();
                         orderItem.status = OrderItemStatus.FINISHED;
+                        orderItem.dateFinished = new Date(body.dateFinished);
                         return ok(undefined);
                     }
 

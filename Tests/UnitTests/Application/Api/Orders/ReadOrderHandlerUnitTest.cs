@@ -25,7 +25,7 @@ public class ReadOrderHandlerUnitTest
             id: Guid.NewGuid(),
             total: 100,
             orderDates: OrderDates.ExecuteCreate(
-                dateCreated: DateTime.Today,
+                dateCreated: DateTime.UtcNow,
                 dateFinished: null
             ),
             orderItems: [],

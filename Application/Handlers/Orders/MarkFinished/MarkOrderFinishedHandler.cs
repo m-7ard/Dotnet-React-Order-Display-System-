@@ -36,8 +36,8 @@ public class MarkOrderFinishedHandler : IRequestHandler<MarkOrderFinishedCommand
             );
         }
 
-        OrderDomainService.ExecuteMarkFinished(order);
+        var dateFinished = OrderDomainService.ExecuteMarkFinished(order);
         await _orderRepository.UpdateAsync(order);
-        return new MarkOrderFinishedResult(orderId: request.OrderId);
+        return new MarkOrderFinishedResult(orderId: request.OrderId, dateFinished: dateFinished);
     }
 }
