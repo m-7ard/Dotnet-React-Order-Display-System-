@@ -22,7 +22,7 @@ public class DraftImageFactory
             fileName: fileName,
             originalFileName: originalFileName,
             url: url,
-            dateCreated: new DateTime()
+            dateCreated: DateTime.UtcNow
         );
     }
 }

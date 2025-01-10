@@ -12,6 +12,7 @@ public class CreateOrderHandlerUnitTest
 {
     private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<IProductHistoryRepository> _mockProductHistoryRepository;
+    private readonly Mock<ISequenceService> _mockSequenceService;
     private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly Product _mockProduct001;
     private readonly Product _mockProduct002;
@@ -24,10 +25,12 @@ public class CreateOrderHandlerUnitTest
         _mockProductRepository = new Mock<IProductRepository>();
         _mockOrderRepository = new Mock<IOrderRepository>();
         _mockProductHistoryRepository = new Mock<IProductHistoryRepository>();
+        _mockSequenceService = new Mock<ISequenceService>();
         _handler = new CreateOrderHandler(
             productExistsValidator: new ProductExistsValidatorAsync(_mockProductRepository.Object),
             latestProductHistoryExistsValidator: new LatestProductHistoryExistsValidatorAsync(_mockProductHistoryRepository.Object),
-            orderRepository: _mockOrderRepository.Object
+            orderRepository: _mockOrderRepository.Object,
+            sequenceService: _mockSequenceService.Object
         );
     
         _mockProduct001 = ProductFactory.BuildExistingProduct(

@@ -15,7 +15,7 @@ public class OrderItemDates
 
     public static OneOf<bool, string> CanCreate(DateTime dateCreated, DateTime? dateFinished)
     {
-        if (dateCreated > DateTime.Now)
+        if (dateCreated > DateTime.UtcNow)
         {
             return "Date created cannot be larger than current date.";
         }

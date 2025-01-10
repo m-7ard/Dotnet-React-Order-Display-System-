@@ -12,7 +12,5 @@ public class ProductImageConfigurations : IEntityTypeConfiguration<ProductImageD
 
         builder.Property(d => d.Id)
             .ValueGeneratedNever();
-            
-        builder.Property(d => d.DateCreated).HasDefaultValueSql("GETDATE()");
     }
 }

@@ -31,7 +31,7 @@ public class OrderItemDbEntity
     }
 
     public Guid Id { get; private set; }
-    public int SerialNumber { get; private set; }
+    public int SerialNumber { get; set; }
     public int Quantity { get; set; }
     public Statuses Status { get; set; }
     public DateTime DateCreated { get; private set; }

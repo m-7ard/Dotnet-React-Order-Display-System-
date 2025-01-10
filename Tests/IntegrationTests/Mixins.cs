@@ -1,10 +1,12 @@
 using Application.Common;
 using Application.Interfaces.Persistence;
+using Castle.Core.Logging;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Infrastructure;
 using Infrastructure.Persistence;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Tests.IntegrationTests;
 
@@ -15,6 +17,7 @@ public class Mixins
     private readonly IDraftImageRepository _draftImageRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
     private readonly IOrderRepository _orderRespository;
+    private readonly ISequenceService _sequenceService;
 
     public Mixins(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext)
     {
@@ -23,6 +26,7 @@ public class Mixins
         _draftImageRepository = new DraftImageRepository(_dbContexts);
         _productHistoryRepository = new ProductHistoryRespository(_dbContexts);
         _orderRespository = new OrderRepository(_dbContexts);
+        _sequenceService = new SequenceService(_dbContexts, NullLogger<SequenceService>.Instance);
     }
 
     public async Task<Product> CreateProduct(int number, List<DraftImage> images)
@@ -89,7 +93,8 @@ public class Mixins
             id: Guid.NewGuid(),
             total: 0,
             orderItems: [],
-            status: orderStatus
+            status: orderStatus,
+            serialNumber: await _sequenceService.GetNextOrderValueAsync()
         );
 
         foreach (var product in products)
@@ -100,7 +105,7 @@ public class Mixins
                 throw new Exception("A Product's ProductHistory cannot be null when creating an Order because an Order's OrderItems need a non-null ProductHistoryId.");
             }
             
-            newOrder.ExecuteAddOrderItem(product: product, productHistory: productHistory, quantity: seed);
+            newOrder.ExecuteAddOrderItem(product: product, productHistory: productHistory, quantity: seed, serialNumber: await _sequenceService.GetNextOrderItemValueAsync());
         }
 
         await _orderRespository.CreateAsync(newOrder);

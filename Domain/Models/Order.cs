@@ -95,7 +95,7 @@ public class Order
         return true;
     }
 
-    public OrderItem ExecuteAddOrderItem(Product product, ProductHistory productHistory, int quantity) 
+    public OrderItem ExecuteAddOrderItem(Product product, ProductHistory productHistory, int quantity, int serialNumber) 
     {
         var canAddOrderItemResult = CanAddOrderItem(product: product, productHistory: productHistory, quantity: quantity);
         if (canAddOrderItemResult.TryPickT1(out var error, out var _))
@@ -109,24 +109,8 @@ public class Order
             quantity: quantity,
             status: OrderItemStatus.Pending,
             productHistoryId: productHistory.Id,
-            productId: productHistory.ProductId
-        );
-
-        Total += productHistory.Price * quantity;
-        OrderItems.Add(orderItem);
-
-        return orderItem;
-    }
-
-    public OneOf<OrderItem, List<DomainError>> TryAddOrderItem(ProductHistory productHistory, int quantity)
-    {
-        var orderItem = OrderItemFactory.BuildNewOrderItem(
-            id: Guid.NewGuid(),
-            orderId: Id,
-            quantity: quantity,
-            status: OrderItemStatus.Pending,
-            productHistoryId: productHistory.Id,
-            productId: productHistory.ProductId
+            productId: productHistory.ProductId,
+            serialNumber: serialNumber
         );
 
         Total += productHistory.Price * quantity;

@@ -20,7 +20,7 @@ public class ProductFactory
     {
         return new Product(
             id: id,
-            dateCreated: new DateTime(),
+            dateCreated: DateTime.UtcNow,
             name: name,
             price: price,
             description: description,

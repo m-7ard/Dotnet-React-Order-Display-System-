@@ -1,4 +1,5 @@
 using Api.ApiModels;
+using Api.Services;
 using Domain.Models;
 
 namespace Api.Mappers;
@@ -30,7 +31,7 @@ public class ApiModelMapper
             name: product.Name,
             price: product.Price,
             description: product.Description,
-            dateCreated: product.DateCreated,
+            dateCreated: TimeZoneService.ConvertUtcToLocalTime(product.DateCreated),
             images: product.Images.Select(ProductImageToImageData).ToList()
         );
     }
@@ -44,8 +45,8 @@ public class ApiModelMapper
             description: productHistory.Description,
             price: productHistory.Price,
             productId: productHistory.ProductId.ToString(),
-            validFrom: productHistory.ValidFrom,
-            validTo: productHistory.ValidTo
+            validFrom: TimeZoneService.ConvertUtcToLocalTime(productHistory.ValidFrom),
+            validTo: productHistory.ValidTo is null ? null : TimeZoneService.ConvertUtcToLocalTime(productHistory.ValidTo.Value)
         );
     }
 
@@ -55,8 +56,8 @@ public class ApiModelMapper
             id: orderItem.Id.ToString(),
             quantity: orderItem.Quantity,
             status: orderItem.Status.Name,
-            dateCreated: orderItem.OrderItemDates.DateCreated,
-            dateFinished: orderItem.OrderItemDates.DateFinished,
+            dateCreated: TimeZoneService.ConvertUtcToLocalTime(orderItem.OrderItemDates.DateCreated),
+            dateFinished: orderItem.OrderItemDates.DateFinished is null ? null : TimeZoneService.ConvertUtcToLocalTime(orderItem.OrderItemDates.DateFinished.Value),
             orderId: orderItem.OrderId.ToString(),
             productHistory: ProductHistoryToApiModel(productHistory),
             serialNumber: orderItem.SerialNumber

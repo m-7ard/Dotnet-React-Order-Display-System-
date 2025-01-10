@@ -18,7 +18,7 @@ public class OrderDbEntity
     }
 
     public Guid Id { get; private set; }
-    public int SerialNumber { get; private set; }
+    public int SerialNumber { get; set; }
     public decimal Total { get; set; }
     public Statuses Status { get; set; }
     public DateTime DateCreated { get; private set; }

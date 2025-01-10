@@ -40,7 +40,7 @@ public class ProductHistoryFactory
             images: images,
             price: price,
             productId: productId,
-            validFrom: new DateTime(),
+            validFrom: DateTime.UtcNow,
             validTo: null, 
             description: description
         );
