@@ -31,7 +31,7 @@ public class OrderDomainService
         return true;
     }
 
-    public static void ExecuteMarkFinished(Order order)
+    public static DateTime ExecuteMarkFinished(Order order)
     {
         var canMarkFinished = CanMarkFinished(order);
         if (canMarkFinished.TryPickT1(out var error, out var _))
@@ -40,8 +40,12 @@ public class OrderDomainService
         }
 
         order.ExecuteTransitionStatus(OrderStatus.Finished.Name);
-        var orderDates = OrderDates.ExecuteCreate(dateCreated: order.OrderDates.DateCreated, dateFinished: DateTime.UtcNow);
+        
+        var dateFinished = DateTime.UtcNow;
+        var orderDates = OrderDates.ExecuteCreate(dateCreated: order.OrderDates.DateCreated, dateFinished: dateFinished);
         order.OrderDates = orderDates;
+
+        return dateFinished;
     }
 
     public static OneOf<OrderItem, string> CanMarkOrderItemFinished(Order order, Guid orderItemId)
@@ -67,7 +71,7 @@ public class OrderDomainService
         return orderItem;
     }
 
-    public static void ExecuteMarkOrderItemFinished(Order order, Guid orderItemId)
+    public static DateTime ExecuteMarkOrderItemFinished(Order order, Guid orderItemId)
     {
         var canMarkOrderItemFinished = CanMarkOrderItemFinished(order, orderItemId);
         if (canMarkOrderItemFinished.TryPickT1(out var error, out var orderItem))
@@ -76,8 +80,12 @@ public class OrderDomainService
         }
 
         orderItem.ExecuteTransitionStatus(OrderStatus.Finished.Name);
-        var orderItemDates = OrderItemDates.ExecuteCreate(dateCreated: orderItem.OrderItemDates.DateCreated, dateFinished: DateTime.UtcNow);
+
+        var dateFinished = DateTime.UtcNow;
+        var orderItemDates = OrderItemDates.ExecuteCreate(dateCreated: orderItem.OrderItemDates.DateCreated, dateFinished: dateFinished);
         orderItem.OrderItemDates = orderItemDates;
+
         order.DomainEvents.Add(new OrderItemPendingUpdatingEvent(orderItem));
+        return dateFinished;
     }
 }

@@ -219,7 +219,7 @@ public class OrdersController : ControllerBase
             return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));
         };
 
-        var response = new MarkOrderItemFinishedResponseDTO(orderId: value.OrderId.ToString(), orderItemId: value.OrderItemId.ToString());
+        var response = new MarkOrderItemFinishedResponseDTO(orderId: value.OrderId.ToString(), orderItemId: value.OrderItemId.ToString(), dateFinished: value.DateFinished);
         return Ok(response);
     }
 
@@ -243,7 +243,7 @@ public class OrdersController : ControllerBase
             return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));
         };
 
-        var response = new MarkOrderFinishedResponseDTO(orderId: value.OrderId.ToString());
+        var response = new MarkOrderFinishedResponseDTO(orderId: value.OrderId.ToString(), dateFinished: TimeZoneService.ConvertUtcToLocalTime(value.DateFinished));
         return Ok(response);
     }
 }
