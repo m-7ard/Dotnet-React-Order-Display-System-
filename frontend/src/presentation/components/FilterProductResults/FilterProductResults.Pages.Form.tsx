@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
 import IPresentationError from "../../interfaces/IPresentationError";
 import FilterProductsFieldset, { FilterProductsFieldsetValueState } from "../Fieldsets/FilterProductFieldset";
 import Divider from "../Resuables/Divider";

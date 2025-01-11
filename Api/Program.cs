@@ -17,19 +17,13 @@ using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 // dotnet ef migrations add <Name> --project Infrastructure --startup-project Api
-// API/.env DefaultConnection="Server=localhost;Database=XXX;Trusted_Connection=True;TrustServerCertificate=True;"
-// frontend/.env VITE_API_URL=http://localhost:5102
 
 var dbProvider = builder.Configuration["Database:Provider"];
 var connectionString = builder.Configuration[$"{dbProvider}_Database"];
 
-///
-///
-/// Env
-/// 
-
-DotNetEnv.Env.Load();
-var DefaultConnection = Environment.GetEnvironmentVariable("DefaultConnection");
+/// Env ** Unused **
+// DotNetEnv.Env.Load();
+// var DefaultConnection = Environment.GetEnvironmentVariable("DefaultConnection");
 
 ///
 ///
@@ -40,11 +34,11 @@ builder.Services.AddDbContext<SimpleProductOrderServiceDbContext>(options =>
     {
         if (dbProvider == "Sqlite")
         {
-            options.UseSqlite("Data Source=mydatabase.db");
+            options.UseSqlite(connectionString);
         }
         else if (dbProvider == "SqlServer")
         {
-            options.UseSqlServer(DefaultConnection, b => b.MigrationsAssembly("Api"));
+            options.UseSqlServer(connectionString);
         }
         else
         {
@@ -205,6 +199,10 @@ app.UseFileServer(new FileServerOptions
     RequestPath = "/media",
     EnableDirectoryBrowsing = true
 });
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.MapFallbackToFile("react/index.html");
 
 app.UseHttpsRedirection();
 app.MapControllers();

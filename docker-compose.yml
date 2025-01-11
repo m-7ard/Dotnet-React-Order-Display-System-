@@ -1,0 +1,17 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"  # Now mapping container port 5000 to host port 5000
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+      - DOCKER_ENVIRONMENT=true
+      - NODE_ENV=production
+    volumes:
+      - uploaded-media:/app/media
+
+volumes:
+  uploaded-media:
