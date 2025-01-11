@@ -17,6 +17,7 @@ const routeTree = rootRoute.addChildren([
 
 const router = createRouter({
     routeTree,
+    defaultGcTime: 0
 });
 
 declare module "@tanstack/react-router" {
