@@ -36,7 +36,7 @@ export default function OptionMenu(props: { productHistory: ProductHistory }) {
                     </MixinButton>
                 </MixinPanelSection>
                 <Divider />
-                <MixinPanelSection className="flex flex-col gap-3">
+                <MixinPanelSection className="flex flex-col gap-1">
                     <a
                         className="w-full"
                         onClick={(e) => {
