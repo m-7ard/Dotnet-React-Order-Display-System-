@@ -1,9 +1,9 @@
+@use "./mixins.scss";
+@use "./themes.scss";
+@use "./tokens.scss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "./mixins.scss";
-@import "./themes.scss";
-@import "./tokens.scss";
 
 html {
     @apply text-gray-800;
