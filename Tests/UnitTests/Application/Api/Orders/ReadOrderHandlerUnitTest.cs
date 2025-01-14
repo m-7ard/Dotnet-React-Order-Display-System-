@@ -1,24 +1,26 @@
+using Application.Errors;
 using Application.Handlers.Orders.Read;
-using Application.Interfaces.Persistence;
-using Application.Validators;
+using Application.Validators.OrderExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Moq;
+using OneOf;
 
 namespace Tests.UnitTests.Application.Api.Orders;
 
 public class ReadOrderHandlerUnitTest
 {
-    private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly Order _mockOrder;
     private readonly ReadOrderHandler _handler;
+    private readonly Mock<IOrderExistsValidator<OrderId>> _mockOrderExistsValidator;
 
     public ReadOrderHandlerUnitTest()
     {
-        _mockOrderRepository = new Mock<IOrderRepository>();
+        _mockOrderExistsValidator = new Mock<IOrderExistsValidator<OrderId>>();
+
         _handler = new ReadOrderHandler(
-            orderExistsValidator: new OrderExistsValidatorAsync(_mockOrderRepository.Object)
+            orderExistsValidator: _mockOrderExistsValidator.Object
         );
 
         _mockOrder = OrderFactory.BuildExistingOrder(
@@ -42,7 +44,7 @@ public class ReadOrderHandlerUnitTest
             id: _mockOrder.Id
         );
 
-        _mockOrderRepository.Setup(repo => repo.GetByIdAsync(_mockOrder.Id)).ReturnsAsync(_mockOrder);
+        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id.Value == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -59,6 +61,8 @@ public class ReadOrderHandlerUnitTest
         var command = new ReadOrderQuery(
             id: _mockOrder.Id
         );
+        
+        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id.Value == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT1([]));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
