@@ -24,7 +24,7 @@ public class ReadOrderHandlerUnitTest
         );
 
         _mockOrder = OrderFactory.BuildExistingOrder(
-            id: Guid.NewGuid(),
+            id: OrderId.ExecuteCreate(new Guid()),
             total: 100,
             orderDates: OrderDates.ExecuteCreate(
                 dateCreated: DateTime.UtcNow,
@@ -41,10 +41,10 @@ public class ReadOrderHandlerUnitTest
     {
         // ARRANGE
         var command = new ReadOrderQuery(
-            id: _mockOrder.Id
+            id: _mockOrder.Id.Value
         );
 
-        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id.Value == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
+        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -59,10 +59,10 @@ public class ReadOrderHandlerUnitTest
     {
         // ARRANGE
         var command = new ReadOrderQuery(
-            id: _mockOrder.Id
+            id: _mockOrder.Id.Value
         );
-        
-        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id.Value == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT1([]));
+
+        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT1([]));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);

@@ -1,4 +1,5 @@
 using Domain.Models;
+using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Infrastructure.DbEntities;
 
@@ -16,7 +17,7 @@ public static class OrderItemMapper
                 dateCreated: source.DateCreated,
                 dateFinished: source.DateFinished
             ),
-            orderId: source.OrderId,
+            orderId: OrderId.ExecuteCreate(source.OrderId),
             productHistoryId: source.ProductHistoryId,
             productId: source.ProductId,
             serialNumber: source.SerialNumber
@@ -31,7 +32,7 @@ public static class OrderItemMapper
             status: ToDbEntityStatus(source.Status),
             dateCreated: source.OrderItemDates.DateCreated,
             dateFinished: source.OrderItemDates.DateFinished,
-            orderId: source.OrderId,
+            orderId: source.OrderId.Value,
             productHistoryId: source.ProductHistoryId,
             productId: source.ProductId,
             serialNumber: source.SerialNumber

@@ -1,11 +1,13 @@
+using Domain.ValueObjects.Order;
+
 namespace Application.Handlers.Orders.Create;
 
 public class CreateOrderResult
 {
-    public CreateOrderResult(Guid orderId)
+    public CreateOrderResult(OrderId orderId)
     {
         OrderId = orderId;
     }
 
-    public Guid OrderId { get; set; }
+    public OrderId OrderId { get; set; }
 }

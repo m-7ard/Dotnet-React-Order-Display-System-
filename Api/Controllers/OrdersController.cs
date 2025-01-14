@@ -87,7 +87,7 @@ public class OrdersController : ControllerBase
             return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(handlerErrors));
         }
 
-        var respone = new CreateOrderResponseDTO(orderId: value.OrderId.ToString());
+        var respone = new CreateOrderResponseDTO(orderId: value.OrderId.Value.ToString());
         return StatusCode(StatusCodes.Status201Created, respone);
     }
 
@@ -226,11 +226,11 @@ public class OrdersController : ControllerBase
     [HttpPut("{orderId}/mark_finished")]
     public async Task<ActionResult<MarkOrderFinishedResponseDTO>> MarkFinished(Guid orderId)
     {
-        var query = new MarkOrderFinishedCommand(
+        var command = new MarkOrderFinishedCommand(
             orderId: orderId
         );
 
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(command);
 
         if (result.TryPickT1(out var errors, out var value))
         {

@@ -27,7 +27,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
     {
         var validationErrors = new List<ApplicationError>();
         var order = OrderFactory.BuildNewOrder(
-            id: Guid.NewGuid(),
+            id: OrderId.ExecuteCreate(Guid.NewGuid()),
             total: 0,
             orderItems: [],
             status: OrderStatus.Pending,

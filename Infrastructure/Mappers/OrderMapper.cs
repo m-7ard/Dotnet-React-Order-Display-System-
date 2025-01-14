@@ -9,7 +9,7 @@ public static class OrderMapper
     public static Order ToDomain(OrderDbEntity source)
     {
         return new Order(
-            id: source.Id,
+            id: OrderId.ExecuteCreate(source.Id),
             total: source.Total,
             orderDates: OrderDates.ExecuteCreate(dateCreated: source.DateCreated, dateFinished: source.DateFinished),
             orderItems: source.OrderItems.Select(OrderItemMapper.ToDomain).ToList(),
@@ -21,7 +21,7 @@ public static class OrderMapper
     public static OrderDbEntity ToDbModel(Order source)
     {
         return new OrderDbEntity(
-            id: source.Id,
+            id: source.Id.Value,
             total: source.Total,
             dateCreated: source.OrderDates.DateCreated,
             dateFinished: source.OrderDates.DateFinished,

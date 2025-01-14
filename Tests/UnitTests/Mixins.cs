@@ -1,12 +1,13 @@
 
 using Domain.Models;
+using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 
 namespace Tests.UnitTests;
 
 public class Mixins
 {
-    public static OrderItem CreateOrderItem(Guid orderId, OrderItemStatus status, DateTime dateCreated, DateTime? dateFinished)
+    public static OrderItem CreateOrderItem(OrderId orderId, OrderItemStatus status, DateTime dateCreated, DateTime? dateFinished)
     {
         return new OrderItem(
             id: Guid.NewGuid(), 

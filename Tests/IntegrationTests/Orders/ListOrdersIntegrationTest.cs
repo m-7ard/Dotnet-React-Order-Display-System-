@@ -126,7 +126,7 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task ListAllOrders_ValidId_Success()
     {
-        _baseRequest.Id = _order001.Id;
+        _baseRequest.Id = _order001.Id.Value;
 
         var queryString = ObjToQueryString.Convert(_baseRequest);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -192,9 +192,9 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
         Assert.NotNull(content);
         Assert.NotNull(content.Orders);
 
-        Assert.Equal(_order003.Id.ToString(), content.Orders[0].Id);
-        Assert.Equal(_order002.Id.ToString(), content.Orders[1].Id);
-        Assert.Equal(_order001.Id.ToString(), content.Orders[2].Id);
+        Assert.Equal(_order003.Id.Value.ToString(), content.Orders[0].Id);
+        Assert.Equal(_order002.Id.Value.ToString(), content.Orders[1].Id);
+        Assert.Equal(_order001.Id.Value.ToString(), content.Orders[2].Id);
     }
 
     [Fact]
@@ -212,9 +212,9 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
         Assert.NotNull(content);
         Assert.NotNull(content.Orders);
 
-        Assert.Equal(_order003.Id.ToString(), content.Orders[2].Id);
-        Assert.Equal(_order002.Id.ToString(), content.Orders[1].Id);
-        Assert.Equal(_order001.Id.ToString(), content.Orders[0].Id);
+        Assert.Equal(_order003.Id.Value.ToString(), content.Orders[2].Id);
+        Assert.Equal(_order002.Id.Value.ToString(), content.Orders[1].Id);
+        Assert.Equal(_order001.Id.Value.ToString(), content.Orders[0].Id);
     }
 
     [Fact]
@@ -232,7 +232,7 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
         Assert.NotNull(content);
         Assert.NotNull(content.Orders);
         Assert.StrictEqual(1, content.Orders.Count);
-        Assert.Equal(_order001.Id.ToString(), content.Orders[0].Id);
+        Assert.Equal(_order001.Id.Value.ToString(), content.Orders[0].Id);
     }
 
     [Fact]
@@ -251,7 +251,7 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
         Assert.NotNull(content);
         Assert.NotNull(content.Orders);
         Assert.StrictEqual(1, content.Orders.Count);
-        Assert.Equal(_order001.Id.ToString(), content.Orders[0].Id);
+        Assert.Equal(_order001.Id.Value.ToString(), content.Orders[0].Id);
         Assert.Contains(_order001.OrderItems, item => item.SerialNumber == orderItem.SerialNumber);
     }
 }
