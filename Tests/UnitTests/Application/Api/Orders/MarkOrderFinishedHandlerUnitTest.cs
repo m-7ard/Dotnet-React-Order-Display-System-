@@ -1,11 +1,14 @@
+using Application.Errors;
 using Application.Handlers.Orders.MarkFinished;
 using Application.Interfaces.Persistence;
 using Application.Validators;
+using Application.Validators.OrderExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Moq;
+using OneOf;
 
 namespace Tests.UnitTests.Application.Api.Orders;
 
@@ -14,13 +17,16 @@ public class MarkOrderFinishedHandlerUnitTest
     private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly Order _mockOrder;
     private readonly MarkOrderFinishedHandler _handler;
+    private readonly Mock<IOrderExistsValidator<OrderId>> _mockOrderExistsValidator;
 
     public MarkOrderFinishedHandlerUnitTest()
     {
         _mockOrderRepository = new Mock<IOrderRepository>();
+        _mockOrderExistsValidator = new Mock<IOrderExistsValidator<OrderId>>();
+
         _handler = new MarkOrderFinishedHandler(
             orderRepository: _mockOrderRepository.Object,
-            orderExistsValidator: new OrderExistsValidatorAsync(_mockOrderRepository.Object)
+            orderExistsValidator: _mockOrderExistsValidator.Object
         );
 
         _mockOrder = OrderFactory.BuildExistingOrder(
@@ -52,7 +58,8 @@ public class MarkOrderFinishedHandlerUnitTest
                 dateFinished: null
             )
         ];
-        _mockOrderRepository.Setup(repo => repo.GetByIdAsync(_mockOrder.Id)).ReturnsAsync(_mockOrder);
+
+        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id.Value == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -69,6 +76,7 @@ public class MarkOrderFinishedHandlerUnitTest
         var command = new MarkOrderFinishedCommand(
             orderId: Guid.Empty
         );
+        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id.Value == command.OrderId))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT1([]));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -94,7 +102,7 @@ public class MarkOrderFinishedHandlerUnitTest
             )
         ];
 
-        _mockOrderRepository.Setup(repo => repo.GetByIdAsync(_mockOrder.Id)).ReturnsAsync(_mockOrder);
+        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id.Value == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -110,6 +118,7 @@ public class MarkOrderFinishedHandlerUnitTest
         var command = new MarkOrderFinishedCommand(
             orderId: _mockOrder.Id
         );
+        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id.Value == command.OrderId))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT1([]));
 
         _mockOrder.OrderItems = [
             Mixins.CreateOrderItem(

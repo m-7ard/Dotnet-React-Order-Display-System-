@@ -1,6 +1,8 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Application.Validators;
+using Application.Validators.OrderExistsValidator;
+using Domain.ValueObjects.Order;
 using MediatR;
 using OneOf;
 
@@ -8,16 +10,17 @@ namespace Application.Handlers.Orders.Read;
 
 public class ReadOrderHandler : IRequestHandler<ReadOrderQuery, OneOf<ReadOrderResult, List<ApplicationError>>>
 {
-  private readonly OrderExistsValidatorAsync _orderExistsValidator;
+    private readonly IOrderExistsValidator<OrderId> _orderExistsValidator;
 
-    public ReadOrderHandler(OrderExistsValidatorAsync orderExistsValidator)
+    public ReadOrderHandler(IOrderExistsValidator<OrderId> orderExistsValidator)
     {
         _orderExistsValidator = orderExistsValidator;
     }
 
     public async Task<OneOf<ReadOrderResult, List<ApplicationError>>> Handle(ReadOrderQuery request, CancellationToken cancellationToken)
     {
-        var orderExistsResult = await _orderExistsValidator.Validate(request.Id);
+        var orderId = OrderId.ExecuteCreate(request.Id);
+        var orderExistsResult = await _orderExistsValidator.Validate(orderId);
         if (orderExistsResult.TryPickT1(out var errors, out var order))
         {
             return errors;

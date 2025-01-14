@@ -1,7 +1,8 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
-using Application.Validators;
+using Application.Validators.OrderExistsValidator;
 using Domain.DomainService;
+using Domain.ValueObjects.Order;
 using MediatR;
 using OneOf;
 
@@ -10,9 +11,9 @@ namespace Application.Handlers.OrderItems.MarkFinished;
 public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishedCommand, OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly OrderExistsValidatorAsync _orderExistsValidator;
+    private readonly IOrderExistsValidator<OrderId> _orderExistsValidator;
 
-    public MarkOrderItemFinishedHandler(IOrderRepository orderRepository, OrderExistsValidatorAsync orderExistsValidator)
+    public MarkOrderItemFinishedHandler(IOrderRepository orderRepository, IOrderExistsValidator<OrderId> orderExistsValidator)
     {
         _orderRepository = orderRepository;
         _orderExistsValidator = orderExistsValidator;
@@ -20,7 +21,8 @@ public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishe
 
     public async Task<OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>> Handle(MarkOrderItemFinishedCommand request, CancellationToken cancellationToken)
     {
-        var orderExistsResult = await _orderExistsValidator.Validate(request.OrderId);
+        var orderId = OrderId.ExecuteCreate(request.OrderId);
+        var orderExistsResult = await _orderExistsValidator.Validate(orderId);
         if (orderExistsResult.TryPickT1(out var errors, out var order))
         {
             return errors;
