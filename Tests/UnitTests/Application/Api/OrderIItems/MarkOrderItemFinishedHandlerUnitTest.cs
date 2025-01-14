@@ -29,7 +29,7 @@ public class MarkOrderItemFinishedHandlerUnitTest
         );
 
         _mockOrder = OrderFactory.BuildExistingOrder(
-            id: new Guid(),
+            id: OrderId.ExecuteCreate(new Guid()),
             total: 100,
             orderDates: OrderDates.ExecuteCreate(
                 dateCreated: DateTime.UtcNow,
@@ -54,11 +54,11 @@ public class MarkOrderItemFinishedHandlerUnitTest
         _mockOrder.OrderItems.Add(mockOrderItem);
 
         var command = new MarkOrderItemFinishedCommand(
-            orderId: _mockOrder.Id,
+            orderId: _mockOrder.Id.Value,
             orderItemId: mockOrderItem.Id
         );
 
-        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id.Value == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
+        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -92,11 +92,11 @@ public class MarkOrderItemFinishedHandlerUnitTest
         _mockOrder.OrderItems = [];
         
         var command = new MarkOrderItemFinishedCommand(
-            orderId: _mockOrder.Id,
+            orderId: _mockOrder.Id.Value,
             orderItemId: Guid.Empty
         );
 
-        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id.Value == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
+        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -118,11 +118,11 @@ public class MarkOrderItemFinishedHandlerUnitTest
         _mockOrder.OrderItems.Add(mockOrderItem);
         
         var command = new MarkOrderItemFinishedCommand(
-            orderId: _mockOrder.Id,
+            orderId: _mockOrder.Id.Value,
             orderItemId: mockOrderItem.Id
         );
 
-        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id.Value == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
+        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);

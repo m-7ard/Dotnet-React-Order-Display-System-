@@ -90,7 +90,7 @@ public class Mixins
 
     public async Task<Order> CreateOrder(List<Product> products, int seed, OrderStatus orderStatus) {
         var newOrder = OrderFactory.BuildNewOrder(
-            id: Guid.NewGuid(),
+            id: OrderId.ExecuteCreate(Guid.NewGuid()),
             total: 0,
             orderItems: [],
             status: orderStatus,
@@ -109,7 +109,7 @@ public class Mixins
         }
 
         await _orderRespository.CreateAsync(newOrder);
-        var insertedOrder = await _orderRespository.GetByIdAsync(newOrder.Id);
+        var insertedOrder = await _orderRespository.GetByIdAsync(newOrder.Id.Value);
         if (insertedOrder is null)
         {
             throw new Exception("Order was not inserted.");

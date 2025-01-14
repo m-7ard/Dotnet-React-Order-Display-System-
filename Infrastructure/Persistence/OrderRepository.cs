@@ -118,7 +118,7 @@ public class OrderRepository : IOrderRepository
     public async Task UpdateAsync(Order updatedOrder) 
     {
         var updatedOrderEntity = OrderMapper.ToDbModel(updatedOrder);
-        var currentOrderEntity = await _dbContext.Order.SingleAsync(d => d.Id == updatedOrder.Id);
+        var currentOrderEntity = await _dbContext.Order.SingleAsync(d => d.Id == updatedOrder.Id.Value);
         _dbContext.Entry(currentOrderEntity).CurrentValues.SetValues(updatedOrderEntity);
 
         foreach (var domainEvent in updatedOrder.DomainEvents)

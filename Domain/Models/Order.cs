@@ -1,6 +1,5 @@
 using Domain.DomainEvents;
 using Domain.DomainFactories;
-using Domain.Errors;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using OneOf;
@@ -8,7 +7,7 @@ using OneOf;
 namespace Domain.Models;
 public class Order
 {
-    public Order(Guid id, decimal total, List<OrderItem> orderItems, OrderStatus status, int serialNumber, OrderDates orderDates)
+    public Order(OrderId id, decimal total, List<OrderItem> orderItems, OrderStatus status, int serialNumber, OrderDates orderDates)
     {
         Id = id;
         Total = total;
@@ -18,7 +17,7 @@ public class Order
         OrderDates = orderDates;
     }
 
-    public Guid Id { get; private set; }
+    public OrderId Id { get; private set; }
     public int SerialNumber { get; private set; }
     public decimal Total { get; set; }
     public OrderStatus Status { get; set; }
