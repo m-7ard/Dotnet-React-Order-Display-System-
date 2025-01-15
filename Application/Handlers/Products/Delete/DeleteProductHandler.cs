@@ -1,6 +1,9 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Application.Validators;
+using Application.Validators.LatestProductHistoryExistsValidator;
+using Application.Validators.ProductExistsValidator;
+using Domain.ValueObjects.Product;
 using MediatR;
 using OneOf;
 
@@ -10,10 +13,10 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, OneOf<
 {
     private readonly IProductRepository _productRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
-    private readonly ProductExistsValidatorAsync _productExistsValidator;
-    private readonly LatestProductHistoryExistsValidatorAsync _latestProductHistoryExistsValidator;
+    private readonly IProductExistsValidator<ProductId> _productExistsValidator;
+    private readonly ILatestProductHistoryExistsValidator<ProductId> _latestProductHistoryExistsValidator;
 
-    public DeleteProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, ProductExistsValidatorAsync productExistsValidator, LatestProductHistoryExistsValidatorAsync latestProductHistoryExistsValidator)
+    public DeleteProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IProductExistsValidator<ProductId> productExistsValidator, ILatestProductHistoryExistsValidator<ProductId> latestProductHistoryExistsValidator)
     {
         _productRepository = productRepository;
         _productHistoryRepository = productHistoryRepository;
@@ -23,13 +26,14 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, OneOf<
 
     public async Task<OneOf<DeleteProductResult, List<ApplicationError>>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
-        var productExistsResult = await _productExistsValidator.Validate(request.Id);
+        var productId = ProductId.ExecuteCreate(request.Id);
+        var productExistsResult = await _productExistsValidator.Validate(productId);
         if (productExistsResult.TryPickT1(out var errors, out var product))
         {
             return errors;
         }
 
-        var latestProductHistoryExistsResult = await _latestProductHistoryExistsValidator.Validate(request.Id);
+        var latestProductHistoryExistsResult = await _latestProductHistoryExistsValidator.Validate(ProductId.ExecuteCreate(request.Id));
         if (latestProductHistoryExistsResult.TryPickT1(out errors, out var productHistory))
         {
             return errors;

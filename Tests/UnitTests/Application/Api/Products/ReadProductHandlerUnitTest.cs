@@ -1,19 +1,26 @@
+using Application.Errors;
 using Application.Handlers.Products.Read;
 using Application.Interfaces.Persistence;
 using Application.Validators;
+using Application.Validators.ProductExistsValidator;
+using Domain.Models;
+using Domain.ValueObjects.Product;
 using Moq;
+using OneOf;
 
 namespace Tests.UnitTests.Application.Api.Products;
 
 public class ReadProductsHandlerUnitTest
 {
-    private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly ReadProductHandler _handler;
+    private readonly Mock<IProductExistsValidator<ProductId>> _mockProductExistsValidator;
+
     public ReadProductsHandlerUnitTest()
     {
-        _mockProductRepository = new Mock<IProductRepository>();
+        _mockProductExistsValidator = new Mock<IProductExistsValidator<ProductId>>(); 
+
         _handler = new ReadProductHandler(
-            productExistsValidator: new ProductExistsValidatorAsync(_mockProductRepository.Object)
+            productExistsValidator: _mockProductExistsValidator.Object
         );
     }
 
@@ -26,9 +33,11 @@ public class ReadProductsHandlerUnitTest
             images: []
         );
 
-        var query = new ReadProductQuery(mockProduct.Id);
+        var query = new ReadProductQuery(mockProduct.Id.Value);
 
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(mockProduct.Id)).ReturnsAsync(mockProduct);
+        _mockProductExistsValidator
+            .Setup(validator => validator.Validate(It.Is<ProductId>(id => id.Value == mockProduct.Id.Value)))
+            .ReturnsAsync(OneOf<Product, List<ApplicationError>>.FromT0(mockProduct));
 
         // ACT
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -42,10 +51,13 @@ public class ReadProductsHandlerUnitTest
     {
         // ARRANGE
         var query = new ReadProductQuery(Guid.Empty);
+        _mockProductExistsValidator
+            .Setup(validator => validator.Validate(It.IsAny<ProductId>()))
+            .ReturnsAsync(OneOf<Product, List<ApplicationError>>.FromT1([]));
 
         // ACT
         var result = await _handler.Handle(query, CancellationToken.None);
-        
+
         // ASSERT
         Assert.True(result.IsT1);
     }

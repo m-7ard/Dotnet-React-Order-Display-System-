@@ -7,8 +7,11 @@ using Application.Handlers.Products.Create;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
 using Application.Validators;
+using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.OrderExistsValidator;
+using Application.Validators.ProductExistsValidator;
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.Product;
 using FluentValidation;
 using Infrastructure;
 using Infrastructure.Files;
@@ -119,9 +122,10 @@ builder.Services.AddScoped<IDraftImageRepository, DraftImageRepository>();
 builder.Services.AddScoped<IApiModelService, ApiModelService>();
 builder.Services.AddSingleton<IFileStorage, FileStorage>();
 
-builder.Services.AddTransient<ProductExistsValidatorAsync>();
 builder.Services.AddTransient<IOrderExistsValidator<OrderId>, OrderExistsByIdValidator>();
-builder.Services.AddTransient<LatestProductHistoryExistsValidatorAsync>();
+builder.Services.AddTransient<IProductExistsValidator<ProductId>, ProductExistsByIdValidator>();
+builder.Services.AddTransient<ILatestProductHistoryExistsValidator<ProductId>, LatestProductHistoryExistsByProductIdValidator>();
+
 builder.Services.AddTransient<ProductHistoryExistsValidatorAsync>();
 builder.Services.AddTransient<DraftImageExistsValidatorAsync>();
 

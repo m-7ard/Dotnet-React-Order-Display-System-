@@ -1,9 +1,11 @@
 using Application.Handlers.Products.Delete;
 using Application.Interfaces.Persistence;
-using Application.Validators;
-using Domain.DomainFactories;
+using Application.Validators.LatestProductHistoryExistsValidator;
+using Application.Validators.ProductExistsValidator;
 using Domain.Models;
+using Domain.ValueObjects.Product;
 using Moq;
+using Tests.UnitTests.Utils;
 
 namespace Tests.UnitTests.Application.Api.Products;
 
@@ -11,17 +13,22 @@ public class DeleteProductHandlerUnitTest
 {
     private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<IProductHistoryRepository> _mockProductHistoryRepository;
+    private readonly Mock<ILatestProductHistoryExistsValidator<ProductId>> _latestProductHistoryExistsByIdValidator;
     private readonly DeleteProductHandler _handler;
+    private readonly Mock<IProductExistsValidator<ProductId>> _mockProductExistsValidator;
 
     public DeleteProductHandlerUnitTest()
     {
         _mockProductRepository = new Mock<IProductRepository>();
         _mockProductHistoryRepository = new Mock<IProductHistoryRepository>();
+        _mockProductExistsValidator = new Mock<IProductExistsValidator<ProductId>>(); 
+        _latestProductHistoryExistsByIdValidator = new Mock<ILatestProductHistoryExistsValidator<ProductId>>();
+
         _handler = new DeleteProductHandler(
             productRepository: _mockProductRepository.Object,
             productHistoryRepository: _mockProductHistoryRepository.Object,
-            productExistsValidator: new ProductExistsValidatorAsync(_mockProductRepository.Object),
-            latestProductHistoryExistsValidator: new LatestProductHistoryExistsValidatorAsync(_mockProductHistoryRepository.Object)
+            productExistsValidator: _mockProductExistsValidator.Object,
+            latestProductHistoryExistsValidator: _latestProductHistoryExistsByIdValidator.Object
         );
     }
 
@@ -37,18 +44,14 @@ public class DeleteProductHandlerUnitTest
         var mockProductHistory = Mixins.CreateProductHistory(1);
 
         var command = new DeleteProductCommand(
-            id: mockProduct.Id
+            id: mockProduct.Id.Value
         );
 
         // Product Exists
-        _mockProductRepository
-            .Setup(repo => repo.GetByIdAsync(mockProduct.Id))
-            .ReturnsAsync(mockProduct);
+        SetupMockServices.SetupProductExistsValidatorSuccess(_mockProductExistsValidator, mockProduct.Id, mockProduct);
 
         // ProductHistory Exists
-        _mockProductHistoryRepository
-            .Setup(repo => repo.GetLatestByProductIdAsync(mockProduct.Id))
-            .ReturnsAsync(mockProductHistory);
+        SetupMockServices.SetupLatestProductHistoryExistsValidatorSuccess(_latestProductHistoryExistsByIdValidator, mockProduct.Id, mockProductHistory);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -69,15 +72,17 @@ public class DeleteProductHandlerUnitTest
         );
 
         var command = new DeleteProductCommand(
-            id: mockProduct.Id
+            id: mockProduct.Id.Value
         );
 
+        SetupMockServices.SetupProductExistsValidatorFailure(_mockProductExistsValidator);
+       
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
         
         // ASSERT
         Assert.True(result.IsT1);
-        _mockProductRepository.Verify(repo => repo.GetByIdAsync(mockProduct.Id), Times.Once);
+        _mockProductExistsValidator.Verify(repo => repo.Validate(It.Is<ProductId>(id => id == mockProduct.Id)), Times.Once);
     }
     
     [Fact]
@@ -90,17 +95,18 @@ public class DeleteProductHandlerUnitTest
         );
 
         var command = new DeleteProductCommand(
-            id: mockProduct.Id
+            id: mockProduct.Id.Value
         );
 
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(mockProduct.Id)).ReturnsAsync(mockProduct);
+        SetupMockServices.SetupProductExistsValidatorSuccess(_mockProductExistsValidator, mockProduct.Id, mockProduct);
+        SetupMockServices.SetupLatestProductHistoryExistsValidatorFailure(_latestProductHistoryExistsByIdValidator);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
         
         // ASSERT
         Assert.True(result.IsT1);
-        _mockProductRepository.Verify(repo => repo.GetByIdAsync(mockProduct.Id), Times.Once);
-        _mockProductHistoryRepository.Verify(repo => repo.GetLatestByProductIdAsync(mockProduct.Id), Times.Once);
+        _mockProductExistsValidator.Verify(validator => validator.Validate(It.Is<ProductId>(id => id == mockProduct.Id)), Times.Once);
+        _latestProductHistoryExistsByIdValidator.Verify(validator => validator.Validate(mockProduct.Id), Times.Once);
     }
 }

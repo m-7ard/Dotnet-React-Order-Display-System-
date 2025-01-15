@@ -1,9 +1,11 @@
+using Domain.ValueObjects.Product;
+
 namespace Application.Contracts.Criteria;
 
 public class FilterProductsCriteria : IEquatable<FilterProductsCriteria>
 {
     public FilterProductsCriteria(
-        Guid? id,
+        ProductId? id,
         string? name,
         decimal? minPrice,
         decimal? maxPrice,
@@ -22,7 +24,7 @@ public class FilterProductsCriteria : IEquatable<FilterProductsCriteria>
         OrderBy = orderBy;
     }
 
-    public Guid? Id { get; set; }
+    public ProductId? Id { get; set; }
     public string? Name { get; set; }
     public decimal? MinPrice { get; set; }
     public decimal? MaxPrice { get; set; }
@@ -37,7 +39,7 @@ public class FilterProductsCriteria : IEquatable<FilterProductsCriteria>
         if (other == null)
             return false;
 
-        return Id == other.Id &&
+        return Equals(Id, other.Id) &&
                Name == other.Name &&
                MinPrice == other.MinPrice &&
                MaxPrice == other.MaxPrice &&

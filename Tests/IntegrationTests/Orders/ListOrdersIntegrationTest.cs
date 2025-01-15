@@ -143,7 +143,7 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task ListAllOrders_ValidProductId_Success()
     {
-        _baseRequest.ProductId = _product001.Id;
+        _baseRequest.ProductId = _product001.Id.Value;
 
         var queryString = ObjToQueryString.Convert(_baseRequest);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");
@@ -161,7 +161,7 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
     public async Task ListAllOrders_ValidProductHistoryId_Success()
     {
         var db = _factory.CreateDbContext();
-        var product001History = await db.ProductHistory.SingleAsync(d => d.ProductId == _product001.Id);
+        var product001History = await db.ProductHistory.SingleAsync(d => d.ProductId == _product001.Id.Value);
 
         _baseRequest.ProductHistoryId = product001History.Id;
 

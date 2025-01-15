@@ -1,27 +1,28 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Domain.Models;
+using Domain.ValueObjects.Product;
 using OneOf;
 
-namespace Application.Validators;
+namespace Application.Validators.ProductExistsValidator;
 
-public class ProductExistsValidatorAsync : IValidatorAsync<Guid, Product>
+public class ProductExistsByIdValidator : IProductExistsValidator<ProductId>
 {
     private readonly IProductRepository _productRepository;
 
-    public ProductExistsValidatorAsync(IProductRepository productRepository)
+    public ProductExistsByIdValidator(IProductRepository productRepository)
     {
         _productRepository = productRepository;
     }
 
-    public async Task<OneOf<Product, List<ApplicationError>>> Validate(Guid input)
+    public async Task<OneOf<Product, List<ApplicationError>>> Validate(ProductId id)
     {
-     var product = await _productRepository.GetByIdAsync(input);
+        var product = await _productRepository.GetByIdAsync(id);
 
         if (product is null)
         {
             return ApplicationErrorFactory.CreateSingleListError(
-                message: $"Product of Id \"{input}\" does not exist.",
+                message: $"Product of Id \"{id}\" does not exist.",
                 code: ApplicationValidatorErrorCodes.PRODUCT_EXISTS_ERROR,
                 path: []
             );

@@ -1,6 +1,7 @@
 using Application.Contracts.Criteria;
 using Application.Errors;
 using Application.Interfaces.Persistence;
+using Domain.ValueObjects.Product;
 using MediatR;
 using OneOf;
 
@@ -35,8 +36,13 @@ public class ListProductsHandler : IRequestHandler<ListProductsQuery, OneOf<List
             orderBy = new Tuple<string, bool>("Price", true);
         }
 
+        if (request.Id is not null && ProductId.CanCreate(request.Id.Value).IsT1)
+        {
+            request.Id = null;
+        }
+
         var criteria = new FilterProductsCriteria(
-            id: request.Id,
+            id: request.Id is null ? null : ProductId.ExecuteCreate(request.Id.Value),
             name: request.Name,
             minPrice: request.MinPrice,
             maxPrice: request.MaxPrice,

@@ -4,6 +4,7 @@ using Castle.Core.Logging;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.Product;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -33,7 +34,7 @@ public class Mixins
     {
         var productId = Guid.NewGuid();
         var product = ProductFactory.BuildNewProduct(
-            id: productId,
+            id: ProductId.ExecuteCreate(productId),
             name: $"Product #{number}",
             price: number,
             description: $"Product #{number} Description",

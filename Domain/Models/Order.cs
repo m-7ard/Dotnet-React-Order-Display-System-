@@ -2,6 +2,7 @@ using Domain.DomainEvents;
 using Domain.DomainFactories;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
+using Domain.ValueObjects.Product;
 using OneOf;
 
 namespace Domain.Models;

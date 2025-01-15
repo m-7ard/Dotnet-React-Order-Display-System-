@@ -1,11 +1,13 @@
+using Domain.ValueObjects.Product;
+
 namespace Application.Handlers.Products.Create;
 
 public class CreateProductResult
 {
-    public CreateProductResult(Guid id)
+    public CreateProductResult(ProductId id)
     {
         Id = id;
     }
 
-    public Guid Id { get; set; }
+    public ProductId Id { get; set; }
 }

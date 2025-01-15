@@ -1,5 +1,6 @@
 using Domain.Models;
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.Product;
 using Infrastructure.DbEntities;
 
 namespace Infrastructure.Mappers;

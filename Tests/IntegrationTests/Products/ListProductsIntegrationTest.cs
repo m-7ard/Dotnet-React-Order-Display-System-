@@ -194,7 +194,7 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
     {
         var request = new ListProductsRequestDTO
         (
-            id: _price1_NameDescProduct1.Id,
+            id: _price1_NameDescProduct1.Id.Value,
             name: null,
             minPrice: null,
             maxPrice: null,

@@ -1,8 +1,11 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Application.Validators;
+using Application.Validators.LatestProductHistoryExistsValidator;
+using Application.Validators.ProductExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
+using Domain.ValueObjects.Product;
 using MediatR;
 using OneOf;
 
@@ -13,11 +16,11 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
     private readonly IProductRepository _productRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
     private readonly IDraftImageRepository _draftImageRepository;
-    private readonly ProductExistsValidatorAsync _productExistsValidator;
-    private readonly LatestProductHistoryExistsValidatorAsync _latestProductHistoryExistsValidator;
+    private readonly IProductExistsValidator<ProductId> _productExistsValidator;
+    private readonly ILatestProductHistoryExistsValidator<ProductId> _latestProductHistoryExistsValidator;
     private readonly DraftImageExistsValidatorAsync _draftImageExistsValidator;
 
-    public UpdateProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IDraftImageRepository draftImageRepository, ProductExistsValidatorAsync productExistsValidator, LatestProductHistoryExistsValidatorAsync latestProductHistoryExistsValidator, DraftImageExistsValidatorAsync draftImageExistsValidator)
+    public UpdateProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IDraftImageRepository draftImageRepository, IProductExistsValidator<ProductId> productExistsValidator, ILatestProductHistoryExistsValidator<ProductId> latestProductHistoryExistsValidator, DraftImageExistsValidatorAsync draftImageExistsValidator)
     {
         _productRepository = productRepository;
         _productHistoryRepository = productHistoryRepository;
@@ -29,13 +32,14 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
 
     public async Task<OneOf<UpdateProductResult, List<ApplicationError>>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
-        var productExistsResult = await _productExistsValidator.Validate(request.Id);
+        var productId = ProductId.ExecuteCreate(request.Id);
+        var productExistsResult = await _productExistsValidator.Validate(productId);
         if (productExistsResult.TryPickT1(out var errors, out var product))
         {
             return errors;
         }
 
-        var latestProductHistoryExistsResult = await _latestProductHistoryExistsValidator.Validate(request.Id);
+        var latestProductHistoryExistsResult = await _latestProductHistoryExistsValidator.Validate(ProductId.ExecuteCreate(request.Id));
         if (latestProductHistoryExistsResult.TryPickT1(out errors, out var productHistory))
         {
             return errors;
