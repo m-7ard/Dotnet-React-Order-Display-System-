@@ -104,7 +104,7 @@ public class Order
         }
 
         var orderItem = OrderItemFactory.BuildNewOrderItem(
-            id: Guid.NewGuid(),
+            id: OrderItemId.ExecuteCreate(Guid.NewGuid()),
             orderId: Id,
             quantity: quantity,
             status: OrderItemStatus.Pending,
@@ -119,7 +119,7 @@ public class Order
         return orderItem;
     }
 
-    public OrderItem? GetOrderItemById(Guid id)
+    public OrderItem? GetOrderItemById(OrderItemId id)
     {
         return OrderItems.Find(orderItem => orderItem.Id == id);
     }

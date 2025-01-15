@@ -56,7 +56,7 @@ public class MarkOrderItemFinishedHandlerUnitTest
 
         var command = new MarkOrderItemFinishedCommand(
             orderId: _mockOrder.Id.Value,
-            orderItemId: mockOrderItem.Id
+            orderItemId: mockOrderItem.Id.Value
         );
 
         _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
@@ -120,7 +120,7 @@ public class MarkOrderItemFinishedHandlerUnitTest
         
         var command = new MarkOrderItemFinishedCommand(
             orderId: _mockOrder.Id.Value,
-            orderItemId: mockOrderItem.Id
+            orderItemId: mockOrderItem.Id.Value
         );
 
         _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));

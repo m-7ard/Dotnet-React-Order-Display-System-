@@ -1,13 +1,11 @@
 using Application.Errors;
 using Application.Handlers.Orders.MarkFinished;
 using Application.Interfaces.Persistence;
-using Application.Validators;
 using Application.Validators.OrderExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
-using Domain.ValueObjects.Product;
 using Moq;
 using OneOf;
 
@@ -131,7 +129,7 @@ public class MarkOrderFinishedHandlerUnitTest
         ];
         _mockOrder.Status = OrderStatus.Finished;
 
-        _mockOrderRepository.Setup(repo => repo.GetByIdAsync(_mockOrder.Id.Value)).ReturnsAsync(_mockOrder);
+        _mockOrderRepository.Setup(repo => repo.GetByIdAsync(_mockOrder.Id)).ReturnsAsync(_mockOrder);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);

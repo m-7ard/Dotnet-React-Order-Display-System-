@@ -15,14 +15,14 @@ public class OrderExistsByIdValidator : IOrderExistsValidator<OrderId>
         _orderRepository = orderRepository;
     }
 
-    public async Task<OneOf<Order, List<ApplicationError>>> Validate(OrderId input)
+    public async Task<OneOf<Order, List<ApplicationError>>> Validate(OrderId id)
     {
-        var order = await _orderRepository.GetByIdAsync(input.Value);
+        var order = await _orderRepository.GetByIdAsync(id);
 
         if (order is null)
         {
             return ApplicationErrorFactory.CreateSingleListError(
-                message: $"Order of Id \"{input}\" does not exist.",
+                message: $"Order of Id \"{id}\" does not exist.",
                 code: ApplicationValidatorErrorCodes.ORDER_EXISTS_ERROR,
                 path: []
             );

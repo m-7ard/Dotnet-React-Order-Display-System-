@@ -48,7 +48,7 @@ public class OrderDomainService
         return dateFinished;
     }
 
-    public static OneOf<OrderItem, string> CanMarkOrderItemFinished(Order order, Guid orderItemId)
+    public static OneOf<OrderItem, string> CanMarkOrderItemFinished(Order order, OrderItemId orderItemId)
     {
         var orderItem = order.GetOrderItemById(orderItemId);
         if (orderItem is null)
@@ -71,7 +71,7 @@ public class OrderDomainService
         return orderItem;
     }
 
-    public static DateTime ExecuteMarkOrderItemFinished(Order order, Guid orderItemId)
+    public static DateTime ExecuteMarkOrderItemFinished(Order order, OrderItemId orderItemId)
     {
         var canMarkOrderItemFinished = CanMarkOrderItemFinished(order, orderItemId);
         if (canMarkOrderItemFinished.TryPickT1(out var error, out var orderItem))

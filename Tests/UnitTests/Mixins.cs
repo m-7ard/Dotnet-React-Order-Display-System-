@@ -11,7 +11,7 @@ public class Mixins
     public static OrderItem CreateOrderItem(OrderId orderId, OrderItemStatus status, DateTime dateCreated, DateTime? dateFinished)
     {
         return new OrderItem(
-            id: Guid.NewGuid(), 
+            id: OrderItemId.ExecuteCreate(Guid.NewGuid()), 
             quantity: 1, 
             status: status, 
             orderItemDates: OrderItemDates.ExecuteCreate(

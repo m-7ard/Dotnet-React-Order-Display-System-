@@ -11,7 +11,7 @@ public static class OrderItemMapper
     public static OrderItem ToDomain(OrderItemDbEntity source)
     {
         return new OrderItem(
-            id: source.Id,
+            id: OrderItemId.ExecuteCreate(source.Id),
             quantity: source.Quantity,
             status: new OrderItemStatus(source.Status.ToString()),
             orderItemDates: OrderItemDates.ExecuteCreate(
@@ -28,7 +28,7 @@ public static class OrderItemMapper
     public static OrderItemDbEntity ToDbModel(OrderItem source)
     {
         return new OrderItemDbEntity(
-            id: source.Id,
+            id: source.Id.Value,
             quantity: source.Quantity,
             status: ToDbEntityStatus(source.Status),
             dateCreated: source.OrderItemDates.DateCreated,

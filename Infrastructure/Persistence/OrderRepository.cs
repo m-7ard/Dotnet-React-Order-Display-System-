@@ -3,6 +3,7 @@ using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
 using Domain.DomainEvents.Order;
 using Domain.Models;
+using Domain.ValueObjects.Order;
 using Infrastructure.DbEntities;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -33,11 +34,11 @@ public class OrderRepository : IOrderRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<Order?> GetByIdAsync(Guid id)
+    public async Task<Order?> GetByIdAsync(OrderId id)
     {
         var orderDbEntity = await _dbContext.Order
             .Include(d => d.OrderItems)
-            .SingleOrDefaultAsync(d => d.Id == id);
+            .SingleOrDefaultAsync(d => d.Id == id.Value);
             
         return orderDbEntity is null ? null : OrderMapper.ToDomain(orderDbEntity);
     }
@@ -126,7 +127,7 @@ public class OrderRepository : IOrderRepository
             if (domainEvent is OrderItemPendingUpdatingEvent updateEvent)
             {
                 var payload = updateEvent.Payload;
-                var orderItemDbEntity = await _dbContext.OrderItem.SingleAsync(orderItem => orderItem.Id == payload.Id);
+                var orderItemDbEntity = await _dbContext.OrderItem.SingleAsync(orderItem => orderItem.Id == payload.Id.Value);
                 _dbContext.Entry(orderItemDbEntity).CurrentValues.SetValues(OrderItemMapper.ToDbModel(payload));
             }
         }

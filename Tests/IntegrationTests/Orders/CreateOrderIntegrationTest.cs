@@ -51,7 +51,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
         Assert.True(isValidGuid);
 
         var repo = new OrderRepository(_factory.CreateDbContext());
-        var order = await repo.GetByIdAsync(parsedId);
+        var order = await repo.GetByIdAsync(OrderId.ExecuteCreate(parsedId));
         Assert.NotNull(order);
         Assert.NotEmpty(order.OrderItems);
 

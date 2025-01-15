@@ -7,7 +7,7 @@ namespace Domain.DomainFactories;
 
 public class OrderItemFactory
 {
-    public static OrderItem BuildExistingOrderItem(Guid id, int quantity, OrderItemStatus status, OrderItemDates orderItemDates, OrderId orderId, Guid productHistoryId, ProductId productId, int serialNumber)
+    public static OrderItem BuildExistingOrderItem(OrderItemId id, int quantity, OrderItemStatus status, OrderItemDates orderItemDates, OrderId orderId, Guid productHistoryId, ProductId productId, int serialNumber)
     {
         return new OrderItem(
             id: id,
@@ -21,7 +21,7 @@ public class OrderItemFactory
         );
     }
 
-    public static OrderItem BuildNewOrderItem(Guid id, OrderId orderId, int quantity, OrderItemStatus status, Guid productHistoryId, ProductId productId, int serialNumber)
+    public static OrderItem BuildNewOrderItem(OrderItemId id, OrderId orderId, int quantity, OrderItemStatus status, Guid productHistoryId, ProductId productId, int serialNumber)
     {
         var orderDates = OrderItemDates.ExecuteCreate(dateCreated: DateTime.UtcNow, dateFinished: null);
 
