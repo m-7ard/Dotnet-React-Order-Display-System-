@@ -1,13 +1,14 @@
 using Domain.Models;
+using Domain.ValueObjects.Product;
 
 namespace Application.Handlers.Products.Update;
 
 public class UpdateProductResult
 {
-    public UpdateProductResult(Guid id)
+    public UpdateProductResult(ProductId id)
     {
         Id = id;
     }
 
-    public Guid Id { get; set; }
+    public ProductId Id { get; set; }
 }

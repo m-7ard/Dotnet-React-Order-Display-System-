@@ -3,6 +3,7 @@ using Application.Interfaces.Persistence;
 using Application.Validators;
 using Application.Validators.OrderExistsValidator;
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.Product;
 using MediatR;
 using OneOf;
 

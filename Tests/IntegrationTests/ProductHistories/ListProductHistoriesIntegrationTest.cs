@@ -116,7 +116,7 @@ public class ListProductHistoriesIntegrationTest : ProductHistoriesIntegrationTe
             description: null,
             validFrom: null,
             validTo: null,
-            productId: _price2_NameDescProduct2.Id,
+            productId: _price2_NameDescProduct2.Id.Value,
             orderBy: null
         );
         var queryString = ObjToQueryString.Convert(request);

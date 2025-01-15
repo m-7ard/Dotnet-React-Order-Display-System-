@@ -1,4 +1,5 @@
 using Domain.Models;
+using Domain.ValueObjects.Product;
 using Infrastructure.DbEntities;
 
 namespace Infrastructure.Mappers;
@@ -8,7 +9,7 @@ public static class ProductMapper
     public static ProductDbEntity FromDomainToDbEntity(Product domain)
     {
         return new ProductDbEntity(
-            id: domain.Id, 
+            id: domain.Id.Value, 
             dateCreated: domain.DateCreated, 
             name: domain.Name,
             description: domain.Description,
@@ -21,7 +22,7 @@ public static class ProductMapper
     public static Product FromDbEntityToDomain(ProductDbEntity dbEntity)
     {
         return new Product(
-            id: dbEntity.Id, 
+            id: ProductId.ExecuteCreate(dbEntity.Id), 
             name: dbEntity.Name,
             price: dbEntity.Price,
             description: dbEntity.Description,

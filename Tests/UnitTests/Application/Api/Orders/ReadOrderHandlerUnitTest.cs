@@ -4,6 +4,7 @@ using Application.Validators.OrderExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.Product;
 using Moq;
 using OneOf;
 

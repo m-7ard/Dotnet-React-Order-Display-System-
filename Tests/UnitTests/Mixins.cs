@@ -2,6 +2,7 @@
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
+using Domain.ValueObjects.Product;
 
 namespace Tests.UnitTests;
 
@@ -19,7 +20,7 @@ public class Mixins
             ),
             orderId: orderId,
             productHistoryId: Guid.NewGuid(), 
-            productId: Guid.NewGuid(),
+            productId: ProductId.ExecuteCreate(Guid.NewGuid()),
             serialNumber: 1
         );
     }
@@ -31,7 +32,7 @@ public class Mixins
             name: $"Product History {seed}",
             images: [],
             price: seed,
-            productId: Guid.NewGuid(),
+            productId: ProductId.ExecuteCreate(Guid.NewGuid()),
             validFrom: new DateTime(),
             validTo: new DateTime(),
             description: $"Product History {seed} description"
@@ -41,7 +42,7 @@ public class Mixins
     public static Product CreateProduct(int seed, List<ProductImage> images)
     {
         return new Product(
-            id: Guid.NewGuid(),
+            id: ProductId.ExecuteCreate(Guid.NewGuid()),
             dateCreated: new DateTime(),
             name: $"Product #{seed}",
             price: seed,

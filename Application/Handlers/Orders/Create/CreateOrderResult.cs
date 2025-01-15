@@ -1,4 +1,5 @@
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.Product;
 
 namespace Application.Handlers.Orders.Create;
 

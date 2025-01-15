@@ -23,7 +23,7 @@ public class DeleteProductIntegrationTest : ProductsIntegrationTest
             destinationFileName: "saved-valid-image"
         );
         _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: [_validImage]);
-        _product001History = await db.ProductHistory.SingleAsync(d => d.ProductId == _product001.Id);
+        _product001History = await db.ProductHistory.SingleAsync(d => d.ProductId == _product001.Id.Value);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class DeleteProductIntegrationTest : ProductsIntegrationTest
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         var db = _factory.CreateDbContext();
-        var product = await db.Product.SingleOrDefaultAsync(dbProduct => dbProduct.Id == _product001.Id);
+        var product = await db.Product.SingleOrDefaultAsync(dbProduct => dbProduct.Id == _product001.Id.Value);
         Assert.Null(product);
 
         var image = await db.ProductImage.SingleOrDefaultAsync(dbImage => dbImage.Id == _product001.Images[0].Id);

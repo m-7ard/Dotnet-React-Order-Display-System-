@@ -1,3 +1,5 @@
+using Domain.ValueObjects.Product;
+
 namespace Domain.Models;
 
 public class ProductHistory
@@ -7,7 +9,7 @@ public class ProductHistory
         string name,
         List<string> images,
         decimal price,
-        Guid productId,
+        ProductId productId,
         DateTime validFrom,
         DateTime? validTo,
         string description)
@@ -27,7 +29,7 @@ public class ProductHistory
     public List<string> Images { get; set; }
     public string Description { get; set; }
     public decimal Price { get; set; }
-    public Guid ProductId { get; set; }
+    public ProductId ProductId { get; set; }
     public DateTime ValidFrom { get; set; }
     public DateTime? ValidTo { get; set; }
 

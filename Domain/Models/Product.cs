@@ -1,15 +1,14 @@
 using Domain.DomainEvents;
 using Domain.DomainEvents.Product;
 using Domain.DomainFactories;
-using Domain.Errors;
+using Domain.ValueObjects.Product;
 using OneOf;
-using OneOf.Types;
 
 namespace Domain.Models;
 public class Product
 {
     public Product(
-        Guid id, 
+        ProductId id, 
         string name, 
         decimal price, 
         string description, 
@@ -24,7 +23,7 @@ public class Product
         Images = images;
     }
 
-    public Guid Id { get; private set; }
+    public ProductId Id { get; private set; }
     public string Name { get; set; }
     public decimal Price { get; set; }
     public string Description { get; set; }
@@ -46,7 +45,7 @@ public class Product
             fileName: fileName,
             originalFileName: originalFileName,
             url: url,
-            productId: Id
+            productId: Id.Value
         );
 
         return productImage;

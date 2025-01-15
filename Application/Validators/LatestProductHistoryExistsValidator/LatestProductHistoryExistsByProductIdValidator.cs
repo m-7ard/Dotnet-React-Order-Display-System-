@@ -1,22 +1,24 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Domain.Models;
+using Domain.ValueObjects.Product;
 using OneOf;
 
-namespace Application.Validators;
+namespace Application.Validators.LatestProductHistoryExistsValidator;
 
-public class LatestProductHistoryExistsValidatorAsync : IValidatorAsync<Guid, ProductHistory>
+public class LatestProductHistoryExistsByProductIdValidator : ILatestProductHistoryExistsValidator<ProductId>
 {
     private readonly IProductHistoryRepository _productHistoryRepository;
 
-    public LatestProductHistoryExistsValidatorAsync(IProductHistoryRepository productHistoryRepository)
+    public LatestProductHistoryExistsByProductIdValidator(IProductHistoryRepository productHistoryRepository)
     {
         _productHistoryRepository = productHistoryRepository;
     }
 
-    public async Task<OneOf<ProductHistory, List<ApplicationError>>> Validate(Guid input)
+    public async Task<OneOf<ProductHistory, List<ApplicationError>>> Validate(ProductId input)
     {
         var productHistory = await _productHistoryRepository.GetLatestByProductIdAsync(input);
+
         if (productHistory is null)
         {
             return ApplicationErrorFactory.CreateSingleListError(

@@ -1,4 +1,5 @@
 using Domain.Models;
+using Domain.ValueObjects.Product;
 using Infrastructure.DbEntities;
 
 namespace Infrastructure.Mappers;
@@ -12,7 +13,7 @@ public static class ProductHistoryMapper
             name: source.Name,
             images: source.Images,
             price: source.Price,
-            productId: source.OriginalProductId,
+            productId: ProductId.ExecuteCreate(source.OriginalProductId),
             validFrom: source.ValidFrom,
             validTo: source.ValidTo,
             description: source.Description
@@ -27,8 +28,8 @@ public static class ProductHistoryMapper
             images: source.Images,
             description: source.Description,
             price: source.Price,
-            productId: source.ProductId,
-            originalProductId: source.ProductId,
+            productId: source.ProductId.Value,
+            originalProductId: source.ProductId.Value,
             validFrom: source.ValidFrom,
             validTo: source.ValidTo
         );

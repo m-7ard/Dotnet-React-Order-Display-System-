@@ -1,12 +1,13 @@
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
+using Domain.ValueObjects.Product;
 using OneOf;
 
 namespace Domain.Models;
 
 public class OrderItem
 {
-    public OrderItem(Guid id, int quantity, OrderItemStatus status, OrderId orderId, Guid productHistoryId, Guid productId, int serialNumber, OrderItemDates orderItemDates)
+    public OrderItem(Guid id, int quantity, OrderItemStatus status, OrderId orderId, Guid productHistoryId, ProductId productId, int serialNumber, OrderItemDates orderItemDates)
     {
         Id = id;
         Quantity = quantity;
@@ -24,7 +25,7 @@ public class OrderItem
     public OrderItemStatus Status { get; set; }
     public OrderItemDates OrderItemDates { get; set; }
     public OrderId OrderId { get; set; }
-    public Guid ProductId { get; set; }
+    public ProductId ProductId { get; set; }
     public Guid ProductHistoryId { get; set; }
 
     private Dictionary<string, List<OrderItemStatus>> ValidStatusStatusTransitions = new Dictionary<string, List<OrderItemStatus>>()

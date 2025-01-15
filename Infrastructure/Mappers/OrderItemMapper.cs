@@ -1,6 +1,7 @@
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
+using Domain.ValueObjects.Product;
 using Infrastructure.DbEntities;
 
 namespace Infrastructure.Mappers;
@@ -19,7 +20,7 @@ public static class OrderItemMapper
             ),
             orderId: OrderId.ExecuteCreate(source.OrderId),
             productHistoryId: source.ProductHistoryId,
-            productId: source.ProductId,
+            productId: ProductId.ExecuteCreate(source.ProductId),
             serialNumber: source.SerialNumber
         );
     }
@@ -34,7 +35,7 @@ public static class OrderItemMapper
             dateFinished: source.OrderItemDates.DateFinished,
             orderId: source.OrderId.Value,
             productHistoryId: source.ProductHistoryId,
-            productId: source.ProductId,
+            productId: source.ProductId.Value,
             serialNumber: source.SerialNumber
         );
     }

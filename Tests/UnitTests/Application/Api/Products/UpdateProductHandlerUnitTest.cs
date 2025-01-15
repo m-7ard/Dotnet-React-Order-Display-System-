@@ -1,9 +1,14 @@
+using Application.Errors;
 using Application.Handlers.Products.Update;
 using Application.Interfaces.Persistence;
 using Application.Validators;
+using Application.Validators.LatestProductHistoryExistsValidator;
+using Application.Validators.ProductExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
+using Domain.ValueObjects.Product;
 using Moq;
+using OneOf;
 
 namespace Tests.UnitTests.Application.Api.Products;
 
@@ -12,19 +17,24 @@ public class UpdateProductHandlerUnitTest
     private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<IDraftImageRepository> _mockDraftImageRepository;
     private readonly Mock<IProductHistoryRepository> _mockProductHistoryRepository;
+    private readonly Mock<ILatestProductHistoryExistsValidator<ProductId>> _latestProductHistoryExistsByIdValidator;
     private readonly UpdateProductHandler _handler;
+    private readonly Mock<IProductExistsValidator<ProductId>> _mockProductExistsValidator;
+
     public UpdateProductHandlerUnitTest()
     {
         _mockProductRepository = new Mock<IProductRepository>();
         _mockDraftImageRepository = new Mock<IDraftImageRepository>();
         _mockProductHistoryRepository = new Mock<IProductHistoryRepository>();
+        _mockProductExistsValidator = new Mock<IProductExistsValidator<ProductId>>(); 
+        _latestProductHistoryExistsByIdValidator = new Mock<ILatestProductHistoryExistsValidator<ProductId>>();
         
         _handler = new UpdateProductHandler(
             productRepository: _mockProductRepository.Object,
             draftImageRepository: _mockDraftImageRepository.Object,
             productHistoryRepository: _mockProductHistoryRepository.Object,
-            productExistsValidator: new ProductExistsValidatorAsync(_mockProductRepository.Object),
-            latestProductHistoryExistsValidator: new LatestProductHistoryExistsValidatorAsync(_mockProductHistoryRepository.Object),
+            productExistsValidator: _mockProductExistsValidator.Object,
+            latestProductHistoryExistsValidator: _latestProductHistoryExistsByIdValidator.Object,
             draftImageExistsValidator: new DraftImageExistsValidatorAsync(_mockDraftImageRepository.Object)
         );
     }
@@ -48,7 +58,7 @@ public class UpdateProductHandlerUnitTest
         );
 
         var query = new UpdateProductCommand(
-            id: newMockProduct.Id,
+            id: newMockProduct.Id.Value,
             name: newMockProduct.Name,
             price: newMockProduct.Price,
             description: newMockProduct.Description,
@@ -58,8 +68,13 @@ public class UpdateProductHandlerUnitTest
         var oldMockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(oldMockProduct);
         var newMockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(newMockProduct);
 
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(oldMockProduct.Id)).ReturnsAsync(oldMockProduct);
-        _mockProductHistoryRepository.Setup(repo => repo.GetLatestByProductIdAsync(oldMockProduct.Id)).ReturnsAsync(oldMockProductHistory);
+        _mockProductExistsValidator
+            .Setup(validator => validator.Validate(It.Is<ProductId>(id => id == oldMockProduct.Id)))
+            .ReturnsAsync(OneOf<Product, List<ApplicationError>>.FromT0(oldMockProduct));
+
+        _latestProductHistoryExistsByIdValidator
+            .Setup(validator => validator.Validate(It.Is<ProductId>(id => id == oldMockProduct.Id)))
+            .ReturnsAsync(oldMockProductHistory);
 
         // ACT
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -94,7 +109,7 @@ public class UpdateProductHandlerUnitTest
         );
 
         var query = new UpdateProductCommand(
-            id: newMockProduct.Id,
+            id: newMockProduct.Id.Value,
             name: newMockProduct.Name,
             price: newMockProduct.Price,
             description: newMockProduct.Description,
@@ -104,12 +119,12 @@ public class UpdateProductHandlerUnitTest
         var oldMockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(oldMockProduct);
         var newMockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(newMockProduct);
 
-        _mockProductRepository
-            .Setup(repo => repo.GetByIdAsync(oldMockProduct.Id))
-            .ReturnsAsync(oldMockProduct);
+        _mockProductExistsValidator
+            .Setup(validator => validator.Validate(It.Is<ProductId>(id => id == oldMockProduct.Id)))
+            .ReturnsAsync(OneOf<Product, List<ApplicationError>>.FromT0(oldMockProduct));
 
-        _mockProductHistoryRepository
-            .Setup(repo => repo.GetLatestByProductIdAsync(oldMockProduct.Id))
+        _latestProductHistoryExistsByIdValidator
+            .Setup(validator => validator.Validate(It.Is<ProductId>(id => id == oldMockProduct.Id)))
             .ReturnsAsync(oldMockProductHistory);
 
         _mockDraftImageRepository

@@ -3,6 +3,7 @@ using Application.Interfaces.Persistence;
 using Application.Validators;
 using Domain.DomainFactories;
 using Domain.Models;
+using Domain.ValueObjects.Product;
 using MediatR;
 using OneOf;
 
@@ -26,7 +27,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
     public async Task<OneOf<CreateProductResult, List<ApplicationError>>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
         var product = ProductFactory.BuildNewProduct(
-            id: Guid.NewGuid(),
+            id: ProductId.ExecuteCreate(Guid.NewGuid()),
             name: request.Name,
             price: request.Price,
             description: request.Description,

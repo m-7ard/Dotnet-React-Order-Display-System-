@@ -27,11 +27,11 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     {
         var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
         orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
-            productId: _PRODUCT_001.Id,
+            productId: _PRODUCT_001.Id.Value,
             quantity: 1
         );
         orderItemData["product_2"] = new CreateOrderRequestDTO.OrderItem(
-            productId: _PRODUCT_002.Id,
+            productId: _PRODUCT_002.Id.Value,
             quantity: 1
         );
 

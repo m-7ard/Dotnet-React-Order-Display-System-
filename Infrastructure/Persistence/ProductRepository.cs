@@ -3,6 +3,7 @@ using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
 using Domain.DomainEvents.Product;
 using Domain.Models;
+using Domain.ValueObjects.Product;
 using Infrastructure.DbEntities;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -26,11 +27,11 @@ public class ProductRepository : IProductRepository
         return ProductMapper.FromDbEntityToDomain(productDbEntity);
     }
 
-    public async Task<Product?> GetByIdAsync(Guid id)
+    public async Task<Product?> GetByIdAsync(ProductId id)
     {
         var productDbEntity = await _dbContext.Product
             .Include(d => d.Images)
-            .SingleOrDefaultAsync(d => d.Id == id);
+            .SingleOrDefaultAsync(d => d.Id == id.Value);
         return productDbEntity is null ? null : ProductMapper.FromDbEntityToDomain(productDbEntity);
     }
 
@@ -39,7 +40,7 @@ public class ProductRepository : IProductRepository
         IQueryable<ProductDbEntity> query = _dbContext.Product.Include(d => d.Images);
         if (criteria.Id is not null)
         {
-            query = query.Where(item => item.Id == criteria.Id);
+            query = query.Where(item => item.Id == criteria.Id.Value);
         }
 
         if (!string.IsNullOrEmpty(criteria.Name))
@@ -96,7 +97,7 @@ public class ProductRepository : IProductRepository
     {
         var currentEntity = await _dbContext.Product
             .Include(d => d.Images)
-            .SingleAsync(d => d.Id == product.Id);
+            .SingleAsync(d => d.Id == product.Id.Value);
         var updatedEntity = ProductMapper.FromDomainToDbEntity(product);
         _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
 
@@ -120,11 +121,11 @@ public class ProductRepository : IProductRepository
         product.ClearEvents();
     }
 
-    public async Task DeleteByIdAsync(Guid id)
+    public async Task DeleteByIdAsync(ProductId id)
     {
         var entity = await _dbContext.Product
             .Include(d => d.Images)
-            .SingleAsync(d => d.Id == id);
+            .SingleAsync(d => d.Id == id.Value);
 
         foreach (var image in entity.Images)
         {

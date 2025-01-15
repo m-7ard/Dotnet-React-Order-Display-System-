@@ -1,4 +1,5 @@
 using Domain.Models;
+using Domain.ValueObjects.Product;
 
 namespace Domain.DomainFactories;
 
@@ -9,7 +10,7 @@ public class ProductHistoryFactory
         string name,
         List<string> images,
         decimal price,
-        Guid productId,
+        ProductId productId,
         DateTime validFrom,
         DateTime? validTo,
         string description)
@@ -31,7 +32,7 @@ public class ProductHistoryFactory
         string name,
         List<string> images,
         decimal price,
-        Guid productId,
+        ProductId productId,
         string description)
     {
         return new ProductHistory(

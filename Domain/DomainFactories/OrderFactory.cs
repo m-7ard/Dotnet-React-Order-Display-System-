@@ -1,5 +1,6 @@
 using Domain.Models;
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.Product;
 
 namespace Domain.DomainFactories;
 

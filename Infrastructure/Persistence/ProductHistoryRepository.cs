@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
 using Domain.Models;
+using Domain.ValueObjects.Product;
 using Infrastructure.DbEntities;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -25,9 +26,9 @@ public class ProductHistoryRespository : IProductHistoryRepository
         return ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 
-    public async Task<ProductHistory?> GetLatestByProductIdAsync(Guid id)
+    public async Task<ProductHistory?> GetLatestByProductIdAsync(ProductId id)
     {
-        var productHistoryDbEntity = await _dbContext.ProductHistory.OrderByDescending(prodHist => prodHist.ValidFrom).FirstOrDefaultAsync(prodHist => prodHist.ProductId == id && prodHist.ValidTo == null);
+        var productHistoryDbEntity = await _dbContext.ProductHistory.OrderByDescending(prodHist => prodHist.ValidFrom).FirstOrDefaultAsync(prodHist => prodHist.ProductId == id.Value && prodHist.ValidTo == null);
         return productHistoryDbEntity is null ? null : ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 
