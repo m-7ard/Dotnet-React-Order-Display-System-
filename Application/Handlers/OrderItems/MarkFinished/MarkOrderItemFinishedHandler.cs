@@ -1,8 +1,10 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Application.Validators.OrderExistsValidator;
+using Application.Validators.OrderItemExistsValidator;
 using Domain.DomainService;
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using MediatR;
 using OneOf;
@@ -13,6 +15,7 @@ public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishe
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderExistsValidator<OrderId> _orderExistsValidator;
+
 
     public MarkOrderItemFinishedHandler(IOrderRepository orderRepository, IOrderExistsValidator<OrderId> orderExistsValidator)
     {
@@ -29,7 +32,8 @@ public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishe
             return errors;
         }
 
-        var canMarkOrderItemFinishedResult = OrderDomainService.CanMarkOrderItemFinished(order, request.OrderItemId);
+        var orderItemId = OrderItemId.ExecuteCreate(request.OrderItemId);
+        var canMarkOrderItemFinishedResult = OrderDomainService.CanMarkOrderItemFinished(order, orderItemId);
         if (canMarkOrderItemFinishedResult.TryPickT1(out var error, out var _))
         {
             return ApplicationErrorFactory.CreateSingleListError(
@@ -39,7 +43,7 @@ public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishe
             );
         }
 
-        var dateFinished = OrderDomainService.ExecuteMarkOrderItemFinished(order, request.OrderItemId);
+        var dateFinished = OrderDomainService.ExecuteMarkOrderItemFinished(order, orderItemId);
         await _orderRepository.UpdateAsync(order);
         return new MarkOrderItemFinishedResult(orderId: request.OrderId, orderItemId: request.OrderItemId, dateFinished: dateFinished);
     }
