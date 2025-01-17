@@ -1,5 +1,6 @@
 using Application.Interfaces.Persistence;
 using Domain.Models;
+using Domain.ValueObjects.DraftImage;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,16 +23,16 @@ public class DraftImageRepository : IDraftImageRepository
         return DraftImageMapper.ToDomain(draftImageDbEntity);
     }
 
-    public async Task DeleteByFileNameAsync(string fileName)
+    public async Task DeleteByFileNameAsync(DraftImageFileName fileName)
     {
-        var draftImageDbEntity = await _dbContext.DraftImage.SingleAsync(d => d.FileName == fileName);
+        var draftImageDbEntity = await _dbContext.DraftImage.SingleAsync(d => d.FileName == fileName.Value);
         _dbContext.Remove(draftImageDbEntity);
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<DraftImage?> GetByFileNameAsync(string fileName)
+    public async Task<DraftImage?> GetByFileNameAsync(DraftImageFileName fileName)
     {
-        var draftImageDbEntity = await _dbContext.DraftImage.SingleOrDefaultAsync(d => d.FileName == fileName);
+        var draftImageDbEntity = await _dbContext.DraftImage.SingleOrDefaultAsync(d => d.FileName == fileName.Value);
         return draftImageDbEntity is null ? null : DraftImageMapper.ToDomain(draftImageDbEntity);
     }
 }

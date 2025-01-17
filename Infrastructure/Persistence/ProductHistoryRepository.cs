@@ -3,6 +3,7 @@ using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
 using Domain.Models;
 using Domain.ValueObjects.Product;
+using Domain.ValueObjects.ProductHistory;
 using Infrastructure.DbEntities;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -32,9 +33,9 @@ public class ProductHistoryRespository : IProductHistoryRepository
         return productHistoryDbEntity is null ? null : ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 
-    public async Task<ProductHistory?> GetByIdAsync(Guid id)
+    public async Task<ProductHistory?> GetByIdAsync(ProductHistoryId id)
     {
-        var productHistoryDbEntity = await _dbContext.ProductHistory.FirstOrDefaultAsync(prodHist => prodHist.Id == id);
+        var productHistoryDbEntity = await _dbContext.ProductHistory.FirstOrDefaultAsync(prodHist => prodHist.Id == id.Value);
         return productHistoryDbEntity is null ? null : ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 
@@ -107,7 +108,7 @@ public class ProductHistoryRespository : IProductHistoryRepository
 
     public async Task UpdateAsync(ProductHistory productHistory)
     {
-        var currentEntity = await _dbContext.ProductHistory.SingleAsync(prodHist => prodHist.Id == productHistory.Id);
+        var currentEntity = await _dbContext.ProductHistory.SingleAsync(prodHist => prodHist.Id == productHistory.Id.Value);
 
         var updatedEntity = ProductHistoryMapper.ToDbModel(productHistory);
         _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);

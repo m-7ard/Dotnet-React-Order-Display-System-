@@ -4,7 +4,7 @@ using OneOf;
 
 namespace Application.Validators.ProductExistsValidator;
 
-public interface IProductExistsValidator<InputType> 
+public interface IProductHistoryExistsValidator<InputType> 
 {
-    public Task<OneOf<Product, List<ApplicationError>>> Validate(InputType input);
+    public Task<OneOf<ProductHistory, List<ApplicationError>>> Validate(InputType input);
 }

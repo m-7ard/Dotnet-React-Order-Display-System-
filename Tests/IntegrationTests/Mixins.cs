@@ -5,6 +5,7 @@ using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.Product;
+using Domain.ValueObjects.ProductHistory;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -60,7 +61,7 @@ public class Mixins
     {
         var product = await CreateProduct(number: number, images: images);
         var inputProductHistory = ProductHistoryFactory.BuildNewProductHistory(
-            id: Guid.NewGuid(),
+            id: ProductHistoryId.ExecuteCreate(Guid.NewGuid()),
             name: product.Name,
             images: product.Images.Select(image => image.FileName).ToList(),
             price: product.Price,

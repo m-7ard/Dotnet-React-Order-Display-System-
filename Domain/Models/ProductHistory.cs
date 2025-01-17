@@ -1,11 +1,12 @@
 using Domain.ValueObjects.Product;
+using Domain.ValueObjects.ProductHistory;
 
 namespace Domain.Models;
 
 public class ProductHistory
 {
     public ProductHistory(
-        Guid id,
+        ProductHistoryId id,
         string name,
         List<string> images,
         decimal price,
@@ -24,7 +25,7 @@ public class ProductHistory
         Description = description;
     }
 
-    public Guid Id { get; private set; }
+    public ProductHistoryId Id { get; private set; }
     public string Name { get; set; }
     public List<string> Images { get; set; }
     public string Description { get; set; }

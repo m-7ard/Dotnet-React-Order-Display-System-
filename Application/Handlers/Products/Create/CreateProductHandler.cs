@@ -1,8 +1,10 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Application.Validators;
+using Application.Validators.DraftImageExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
+using Domain.ValueObjects.DraftImage;
 using Domain.ValueObjects.Product;
 using MediatR;
 using OneOf;
@@ -14,9 +16,9 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
     private readonly IProductRepository _productRepository;
     private readonly IDraftImageRepository _draftImageRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
-    private readonly DraftImageExistsValidatorAsync _draftImageExistsValidator;
+    private readonly IDraftImageExistsValidator<DraftImageFileName> _draftImageExistsValidator;
 
-    public CreateProductHandler(IProductRepository productRepository, IDraftImageRepository draftImageRepository, IProductHistoryRepository productHistoryRepository, DraftImageExistsValidatorAsync draftImageExistsValidator)
+    public CreateProductHandler(IProductRepository productRepository, IDraftImageRepository draftImageRepository, IProductHistoryRepository productHistoryRepository, IDraftImageExistsValidator<DraftImageFileName> draftImageExistsValidator)
     {
         _productRepository = productRepository;
         _draftImageRepository = draftImageRepository;
@@ -38,22 +40,36 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
 
         foreach (var fileName in request.Images)
         {
-            var draftImageExistsResult = await _draftImageExistsValidator.Validate(fileName);
+            // Is valid filename
+            var canCreateFileName = DraftImageFileName.CanCreate(fileName);
+            if (canCreateFileName.TryPickT1(out var error, out var _))
+            {
+                return ApplicationErrorFactory.CreateSingleListError(message: error, path: [], code: ApplicationErrorCodes.OperationFailed);
+            }
+
+            var draftImageFileName = DraftImageFileName.ExecuteCreate(fileName);
+            
+            // Draft image exists
+            var draftImageExistsResult = await _draftImageExistsValidator.Validate(draftImageFileName);
             if (draftImageExistsResult.TryPickT1(out var errors, out var draftImage))
             {
                 imageErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [fileName, ..error.Path])));
                 continue;
             }
 
-            var canAddProductImageValidator = new CanAddProductImageValidator(product);
-            var canAddProductImageResult = canAddProductImageValidator.Validate(new CanAddProductImageValidator.Input(fileName: draftImage.FileName, originalFileName: draftImage.OriginalFileName, url: draftImage.Url ));
-            if (canAddProductImageResult.TryPickT1(out errors, out var _))
+            var productImageIdGuid = Guid.NewGuid();
+            var canAddProductImageResult = product.CanAddProductImage(id: productImageIdGuid, fileName: draftImage.FileName.Value, originalFileName: draftImage.OriginalFileName.Value, url: draftImage.Url);
+            if (canAddProductImageResult.TryPickT1(out error, out var _))
             {
-                imageErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [fileName, ..error.Path])));
+                imageErrors.AddRange(ApplicationErrorFactory.CreateSingleListError(
+                    message: error,
+                    path: [fileName],
+                    code: ApplicationValidatorErrorCodes.CAN_ADD_PRODUCT_IMAGE
+                ));
                 continue;
             }
 
-            product.ExecuteAddProductImage(fileName: draftImage.FileName, originalFileName: draftImage.OriginalFileName, url: draftImage.Url);
+            product.ExecuteAddProductImage(id: productImageIdGuid, fileName: draftImage.FileName.Value, originalFileName: draftImage.OriginalFileName.Value, url: draftImage.Url);
             draftImagesUsed.Add(draftImage);
         }
 

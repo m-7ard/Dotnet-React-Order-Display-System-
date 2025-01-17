@@ -1,12 +1,11 @@
 using Application.Errors;
 using Application.Handlers.Products.Read;
-using Application.Interfaces.Persistence;
-using Application.Validators;
 using Application.Validators.ProductExistsValidator;
 using Domain.Models;
 using Domain.ValueObjects.Product;
 using Moq;
 using OneOf;
+using Tests.UnitTests.Utils;
 
 namespace Tests.UnitTests.Application.Api.Products;
 
@@ -34,10 +33,7 @@ public class ReadProductsHandlerUnitTest
         );
 
         var query = new ReadProductQuery(mockProduct.Id.Value);
-
-        _mockProductExistsValidator
-            .Setup(validator => validator.Validate(It.Is<ProductId>(id => id.Value == mockProduct.Id.Value)))
-            .ReturnsAsync(OneOf<Product, List<ApplicationError>>.FromT0(mockProduct));
+        SetupMockServices.SetupProductExistsValidatorSuccess(_mockProductExistsValidator, mockProduct.Id, mockProduct);
 
         // ACT
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -51,10 +47,8 @@ public class ReadProductsHandlerUnitTest
     {
         // ARRANGE
         var query = new ReadProductQuery(Guid.Empty);
-        _mockProductExistsValidator
-            .Setup(validator => validator.Validate(It.IsAny<ProductId>()))
-            .ReturnsAsync(OneOf<Product, List<ApplicationError>>.FromT1([]));
-
+        SetupMockServices.SetupProductExistsValidatorFailure(_mockProductExistsValidator);
+    
         // ACT
         var result = await _handler.Handle(query, CancellationToken.None);
 

@@ -3,12 +3,13 @@ using Api.Interfaces;
 using Api.Mappers;
 using Application.Interfaces.Persistence;
 using Domain.Models;
+using Domain.ValueObjects.ProductHistory;
 
 namespace Api.Services;
 
 public class ApiModelService : IApiModelService
 {
-    private readonly Dictionary<Guid, ProductHistory?> ProductHistoryCache = new Dictionary<Guid, ProductHistory?>();
+    private readonly Dictionary<ProductHistoryId, ProductHistory?> ProductHistoryCache = new Dictionary<ProductHistoryId, ProductHistory?>();
     private readonly IProductHistoryRepository _productHistoryRepository;
 
     public ApiModelService(IProductHistoryRepository productHistoryRepository)
@@ -17,7 +18,7 @@ public class ApiModelService : IApiModelService
     }
 
 
-    private async Task<ProductHistory?> GetProductHistoryFromCacheOrDb(Guid id) 
+    private async Task<ProductHistory?> GetProductHistoryFromCacheOrDb(ProductHistoryId id) 
     {
         if (ProductHistoryCache.TryGetValue(id, out var cachedProductHistory))
         {

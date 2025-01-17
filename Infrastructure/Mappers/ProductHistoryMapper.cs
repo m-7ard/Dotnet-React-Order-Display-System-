@@ -1,5 +1,6 @@
 using Domain.Models;
 using Domain.ValueObjects.Product;
+using Domain.ValueObjects.ProductHistory;
 using Infrastructure.DbEntities;
 
 namespace Infrastructure.Mappers;
@@ -9,7 +10,7 @@ public static class ProductHistoryMapper
     public static ProductHistory ToDomain(ProductHistoryDbEntity source)
     {
         return new ProductHistory(
-            id: source.Id,
+            id: ProductHistoryId.ExecuteCreate(source.Id),
             name: source.Name,
             images: source.Images,
             price: source.Price,
@@ -23,7 +24,7 @@ public static class ProductHistoryMapper
     public static ProductHistoryDbEntity ToDbModel(ProductHistory source)
     {
         return new ProductHistoryDbEntity(
-            id: source.Id,
+            id: source.Id.Value,
             name: source.Name,
             images: source.Images,
             description: source.Description,

@@ -1,8 +1,10 @@
 using Application.Handlers.Products.Create;
 using Application.Interfaces.Persistence;
 using Application.Validators;
+using Application.Validators.DraftImageExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
+using Domain.ValueObjects.DraftImage;
 using Moq;
 
 namespace Tests.UnitTests.Application.Api.Products;
@@ -12,6 +14,7 @@ public class CreateProductHandlerUnitTest
     private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<IDraftImageRepository> _mockDraftImageRepository;
     private readonly Mock<IProductHistoryRepository> _mockProductHistoryRepository;
+    private readonly Mock<IDraftImageExistsValidator<DraftImageFileName>> _mockDraftImageExistsValidator;
     private readonly CreateProductHandler _handler;
 
     public CreateProductHandlerUnitTest()
@@ -19,11 +22,13 @@ public class CreateProductHandlerUnitTest
         _mockProductRepository = new Mock<IProductRepository>();
         _mockDraftImageRepository = new Mock<IDraftImageRepository>();
         _mockProductHistoryRepository = new Mock<IProductHistoryRepository>();
+        _mockDraftImageExistsValidator = new Mock<IDraftImageExistsValidator<DraftImageFileName>>();
+
         _handler = new CreateProductHandler(
             productRepository: _mockProductRepository.Object,
             draftImageRepository: _mockDraftImageRepository.Object,
             productHistoryRepository: _mockProductHistoryRepository.Object,
-            draftImageExistsValidator: new DraftImageExistsValidatorAsync(_mockDraftImageRepository.Object)
+            draftImageExistsValidator: _mockDraftImageExistsValidator.Object
         );
     }
 

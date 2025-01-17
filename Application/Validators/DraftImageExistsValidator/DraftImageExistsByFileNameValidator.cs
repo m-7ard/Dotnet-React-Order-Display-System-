@@ -1,20 +1,21 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Domain.Models;
+using Domain.ValueObjects.DraftImage;
 using OneOf;
 
-namespace Application.Validators;
+namespace Application.Validators.DraftImageExistsValidator;
 
-public class DraftImageExistsValidatorAsync : IValidatorAsync<string, DraftImage>
+public class DraftImageExistsByFileNameValidator : IDraftImageExistsValidator<DraftImageFileName>
 {
     private readonly IDraftImageRepository _draftImageRepository;
 
-    public DraftImageExistsValidatorAsync(IDraftImageRepository draftImageRepository)
+    public DraftImageExistsByFileNameValidator(IDraftImageRepository draftImageRepository)
     {
         _draftImageRepository = draftImageRepository;
     }
 
-    public async Task<OneOf<DraftImage, List<ApplicationError>>> Validate(string input)
+    public async Task<OneOf<DraftImage, List<ApplicationError>>> Validate(DraftImageFileName input)
     {
         var draftImage = await _draftImageRepository.GetByFileNameAsync(input);
 

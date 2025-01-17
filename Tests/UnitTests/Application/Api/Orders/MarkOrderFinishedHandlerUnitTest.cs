@@ -8,6 +8,7 @@ using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Moq;
 using OneOf;
+using Tests.UnitTests.Utils;
 
 namespace Tests.UnitTests.Application.Api.Orders;
 
@@ -58,7 +59,7 @@ public class MarkOrderFinishedHandlerUnitTest
             )
         ];
 
-        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
+        SetupMockServices.SetupOrderExistsValidatorSuccess(_mockOrderExistsValidator, _mockOrder.Id, _mockOrder);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -101,7 +102,7 @@ public class MarkOrderFinishedHandlerUnitTest
             )
         ];
 
-        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
+        SetupMockServices.SetupOrderExistsValidatorFailure(_mockOrderExistsValidator);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -129,7 +130,7 @@ public class MarkOrderFinishedHandlerUnitTest
         ];
         _mockOrder.Status = OrderStatus.Finished;
 
-        _mockOrderRepository.Setup(repo => repo.GetByIdAsync(_mockOrder.Id)).ReturnsAsync(_mockOrder);
+        SetupMockServices.SetupOrderExistsValidatorSuccess(_mockOrderExistsValidator, _mockOrder.Id, _mockOrder);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);

@@ -9,6 +9,7 @@ using Domain.Models;
 using Domain.ValueObjects.Product;
 using Moq;
 using OneOf;
+using Tests.UnitTests.Utils;
 
 namespace Tests.UnitTests.Application.Api.Products;
 
@@ -68,13 +69,8 @@ public class UpdateProductHandlerUnitTest
         var oldMockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(oldMockProduct);
         var newMockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(newMockProduct);
 
-        _mockProductExistsValidator
-            .Setup(validator => validator.Validate(It.Is<ProductId>(id => id == oldMockProduct.Id)))
-            .ReturnsAsync(OneOf<Product, List<ApplicationError>>.FromT0(oldMockProduct));
-
-        _latestProductHistoryExistsByIdValidator
-            .Setup(validator => validator.Validate(It.Is<ProductId>(id => id == oldMockProduct.Id)))
-            .ReturnsAsync(oldMockProductHistory);
+        SetupMockServices.SetupProductExistsValidatorSuccess(_mockProductExistsValidator, oldMockProduct.Id, oldMockProduct);
+        SetupMockServices.SetupLatestProductHistoryExistsValidatorSuccess(_latestProductHistoryExistsByIdValidator, oldMockProduct.Id, oldMockProductHistory);
 
         // ACT
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -119,13 +115,8 @@ public class UpdateProductHandlerUnitTest
         var oldMockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(oldMockProduct);
         var newMockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(newMockProduct);
 
-        _mockProductExistsValidator
-            .Setup(validator => validator.Validate(It.Is<ProductId>(id => id == oldMockProduct.Id)))
-            .ReturnsAsync(OneOf<Product, List<ApplicationError>>.FromT0(oldMockProduct));
-
-        _latestProductHistoryExistsByIdValidator
-            .Setup(validator => validator.Validate(It.Is<ProductId>(id => id == oldMockProduct.Id)))
-            .ReturnsAsync(oldMockProductHistory);
+        SetupMockServices.SetupProductExistsValidatorSuccess(_mockProductExistsValidator, oldMockProduct.Id, oldMockProduct);
+        SetupMockServices.SetupLatestProductHistoryExistsValidatorSuccess(_latestProductHistoryExistsByIdValidator, oldMockProduct.Id, oldMockProductHistory);
 
         _mockDraftImageRepository
             .Setup(repo => repo.GetByFileNameAsync(newProductImage.FileName))
