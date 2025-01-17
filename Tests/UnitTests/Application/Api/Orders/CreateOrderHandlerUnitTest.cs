@@ -99,7 +99,7 @@ public class CreateOrderHandlerUnitTest
         var command = new CreateOrderCommand(
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id, quantity: 1) },
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id.Value, quantity: 1) },
             }
         );
         
@@ -119,7 +119,7 @@ public class CreateOrderHandlerUnitTest
         var command = new CreateOrderCommand(
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id, quantity: 1) },
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id.Value, quantity: 1) },
             }
         );
 

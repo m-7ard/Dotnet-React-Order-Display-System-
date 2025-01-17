@@ -14,4 +14,5 @@ public class ApplicationErrorCodes
     public const string FileNoFiles = "FileNoFiles";
     public const string DomainError = "DomainError";
     public const string NotAllowed = "NotAllowed";
+    public const string OperationFailed = "OperationFailed";
 }

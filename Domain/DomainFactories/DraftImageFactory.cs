@@ -1,10 +1,11 @@
 using Domain.Models;
+using Domain.ValueObjects.DraftImage;
 
 namespace Domain.DomainFactories;
 
 public class DraftImageFactory
 {
-    public static DraftImage BuildExistingDraftImage(int id, string fileName, string originalFileName, string url, DateTime dateCreated)
+    public static DraftImage BuildExistingDraftImage(int id, DraftImageFileName fileName, DraftImageFileName originalFileName, string url, DateTime dateCreated)
     {
         return new DraftImage(
             id: id,
@@ -15,7 +16,7 @@ public class DraftImageFactory
         );
     }
 
-    public static DraftImage BuildNewDraftImage(string fileName,string originalFileName, string url)
+    public static DraftImage BuildNewDraftImage(DraftImageFileName fileName, DraftImageFileName originalFileName, string url)
     {
         return new DraftImage(
             id: 0,

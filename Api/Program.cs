@@ -7,13 +7,17 @@ using Application.Handlers.Products.Create;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
 using Application.Validators;
+using Application.Validators.DraftImageExistsValidator;
 using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.OrderExistsValidator;
 using Application.Validators.OrderItemExistsValidator;
 using Application.Validators.ProductExistsValidator;
+using Application.Validators.ProductHistoryExistsValidator;
+using Domain.ValueObjects.DraftImage;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
+using Domain.ValueObjects.ProductHistory;
 using FluentValidation;
 using Infrastructure;
 using Infrastructure.Files;
@@ -129,8 +133,8 @@ builder.Services.AddTransient<IProductExistsValidator<ProductId>, ProductExistsB
 builder.Services.AddTransient<ILatestProductHistoryExistsValidator<ProductId>, LatestProductHistoryExistsByProductIdValidator>();
 builder.Services.AddTransient<IOrderItemExistsValidatorFactory<OrderItemId>, OrderItemExistsByIdValidatorFactory>();
 
-builder.Services.AddTransient<ProductHistoryExistsValidatorAsync>();
-builder.Services.AddTransient<DraftImageExistsValidatorAsync>();
+builder.Services.AddTransient<IProductHistoryExistsValidator<ProductHistoryId>, ProductHistoryExistsByIdValidator>();
+builder.Services.AddTransient<IDraftImageExistsValidator<DraftImageFileName>, DraftImageExistsByFileNameValidator>();
 
 ///
 ///

@@ -1,8 +1,11 @@
+using Domain.ValueObjects.Product;
+using Domain.ValueObjects.ProductImage;
+
 namespace Domain.Models;
 
 public class ProductImage
 {
-    public ProductImage(Guid id, string fileName, string originalFileName, string url, DateTime dateCreated, Guid? productId)
+    public ProductImage(ProductImageId id, ProductImageFileName fileName, ProductImageFileName originalFileName, string url, DateTime dateCreated, ProductId? productId)
     {
         Id = id;
         FileName = fileName;
@@ -12,10 +15,10 @@ public class ProductImage
         ProductId = productId;
     }
 
-    public Guid Id { get; private set; }
-    public string FileName { get; private set; }
-    public string OriginalFileName { get; private set; }
+    public ProductImageId Id { get; private set; }
+    public ProductImageFileName FileName { get; private set; }
+    public ProductImageFileName OriginalFileName { get; private set; }
     public string Url { get; private set; }
     public DateTime DateCreated { get; private set; }
-    public Guid? ProductId { get; private set; }
+    public ProductId? ProductId { get; private set; }
 }

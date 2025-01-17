@@ -1,12 +1,13 @@
 using Domain.Models;
 using Domain.ValueObjects.Product;
+using Domain.ValueObjects.ProductHistory;
 
 namespace Domain.DomainFactories;
 
 public class ProductHistoryFactory
 {
     public static ProductHistory BuildExistingProductHistory(
-        Guid id,
+        ProductHistoryId id,
         string name,
         List<string> images,
         decimal price,
@@ -28,7 +29,7 @@ public class ProductHistoryFactory
     }
 
     public static ProductHistory BuildNewProductHistory(
-        Guid id,
+        ProductHistoryId id,
         string name,
         List<string> images,
         decimal price,
@@ -50,9 +51,9 @@ public class ProductHistoryFactory
     public static ProductHistory BuildNewProductHistoryFromProduct(Product product)
     {
         return BuildNewProductHistory(
-            id: Guid.NewGuid(),
+            id: ProductHistoryId.ExecuteCreate(Guid.NewGuid()),
             name: product.Name,
-            images: product.Images.Select(image => image.FileName).ToList(),
+            images: product.Images.Select(image => image.FileName.Value).ToList(),
             price: product.Price,
             productId: product.Id,
             description: product.Description

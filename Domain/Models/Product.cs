@@ -2,6 +2,7 @@ using Domain.DomainEvents;
 using Domain.DomainEvents.Product;
 using Domain.DomainFactories;
 using Domain.ValueObjects.Product;
+using Domain.ValueObjects.ProductImage;
 using OneOf;
 
 namespace Domain.Models;
@@ -36,38 +37,29 @@ public class Product
     }
     public const int MAX_IMAGE_LENGTH = 8;
 
-    public readonly List<string> ALLOWED_FILE_EXTENSIONS = [".jpg, .jpeg", ".png"];
-
-    public ProductImage CreateProductImage(string fileName, string originalFileName, string url)
+    public OneOf<bool, string> CanAddProductImage(Guid id, string fileName, string originalFileName, string url)
     {
-        var productImage = ProductImageFactory.BuildNewProductImage(
-            id: Guid.NewGuid(),
-            fileName: fileName,
-            originalFileName: originalFileName,
-            url: url,
-            productId: Id.Value
-        );
+        var canCreateProductImageId = ProductImageId.CanCreate(id);
+        if (canCreateProductImageId.TryPickT1(out var error, out var _))
+        {
+            return error;
+        }
 
-        return productImage;
-    }
+        var canCreateProductImageFileName = ProductImageFileName.CanCreate(fileName);
+        if (canCreateProductImageFileName.TryPickT1(out error, out var _))
+        {
+            return error;
+        }
 
-    public OneOf<bool, string> CanAddProductImage(string fileName, string originalFileName, string url)
-    {
+        var canCreateProductImageOriginalFileName = ProductImageFileName.CanCreate(originalFileName);
+        if (canCreateProductImageOriginalFileName.TryPickT1(out error, out var _))
+        {
+            return error;
+        }
+
         if (Images.Count >= MAX_IMAGE_LENGTH)
         {
             return "Product cannot have more than 8 images.";
-        }
-
-        var fileNameExtension = Path.GetExtension(fileName);
-        if (!ALLOWED_FILE_EXTENSIONS.Contains(fileNameExtension))
-        {
-            return "Saved filename extension is invalid.";
-        }
-
-        var originalFileNameExtension = Path.GetExtension(originalFileName);
-        if (!ALLOWED_FILE_EXTENSIONS.Contains(originalFileNameExtension))
-        {
-            return "Original filename extension is invalid.";
         }
 
         if (!url.EndsWith(fileName))
@@ -78,17 +70,19 @@ public class Product
         return true;
     }
 
-    public ProductImage ExecuteAddProductImage(string fileName, string originalFileName, string url)
+    public ProductImageId ExecuteAddProductImage(Guid id, string fileName, string originalFileName, string url)
     {
-        var canAddProductImageResult = CanAddProductImage(fileName: fileName, originalFileName: originalFileName, url: url);
-        if (canAddProductImageResult.TryPickT1(out var error, out var _))
-        {
-            throw new Exception(error);
-        }
+        var productImageId = ProductImageId.ExecuteCreate(id);
+        var productImage = ProductImageFactory.BuildNewProductImage(
+            id: productImageId,
+            fileName: ProductImageFileName.ExecuteCreate(fileName),
+            originalFileName: ProductImageFileName.ExecuteCreate(originalFileName),
+            url: url,
+            productId: ProductId.ExecuteCreate(Id.Value)
+        );
 
-        var productImage = CreateProductImage(fileName: fileName, originalFileName: originalFileName, url: url);
         Images.Add(productImage);
-        return productImage;
+        return productImageId;
     }
 
     public void UpdateImages(List<ProductImage> newImages)
@@ -123,5 +117,62 @@ public class Product
         }
 
         Images = newImages;
+    }
+
+    public ProductImage? FindProductImageByFileName(ProductImageFileName productImageFileName)
+    {
+        return Images.Find(image => image.Id == productImageFileName);
+    }
+
+    public ProductImage? FindProductImageById(ProductImageId productImageId)
+    {
+        return Images.Find(image => image.Id == productImageId);
+    }
+
+    public OneOf<ProductImage, string> TryFindProductImageById(ProductImageId productImageId)
+    {
+        var productImage = FindProductImageById(productImageId);
+        if (productImage is null)
+        {
+            return $"ProductImage of Id \"{productImageId}\" does not exist on Product of Id \"${Id}\".";
+        }
+
+        return productImage;
+    }
+
+    public ProductImage ExecuteFindProductImageById(ProductImageId productImageId)
+    {
+        var tryFindProductImageByIdResult = TryFindProductImageById(productImageId);
+        if (tryFindProductImageByIdResult.TryPickT1(out var error, out var productImage))
+        {
+            throw new Exception(error);
+        }        
+
+        return productImage;
+    }
+
+
+    public OneOf<bool, string> CanDeleteProductImage(ProductImageId productImageId)
+    {
+        var tryFindProductImageByIdResult = TryFindProductImageById(productImageId);
+        if (tryFindProductImageByIdResult.TryPickT1(out var error, out var _))
+        {
+            return error;
+        }
+
+        return true;
+    }
+
+    public void ExecuteDeleteProductImage(ProductImageId productImageId)
+    {
+        var canDeleteProductImageResult = CanDeleteProductImage(productImageId);
+        if (canDeleteProductImageResult.TryPickT1(out var error, out _))
+        {
+            throw new Exception(error);
+        }
+
+        var productImage = ExecuteFindProductImageById(productImageId);
+        Images = Images.Where(image => image.Id != productImageId).ToList();
+        DomainEvents.Add(new ProductImagePendingDeletionEvent(productImage));
     }
 }
