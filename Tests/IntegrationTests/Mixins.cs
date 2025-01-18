@@ -3,9 +3,11 @@ using Application.Interfaces.Persistence;
 using Castle.Core.Logging;
 using Domain.DomainFactories;
 using Domain.Models;
+using Domain.ValueObjects.DraftImage;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
+using Domain.ValueObjects.ProductImage;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -41,8 +43,8 @@ public class Mixins
             description: $"Product #{number} Description",
             images: images.Select((image) => ProductImageFactory.BuildNewProductImageFromDraftImage(
                 source: image,
-                id: Guid.NewGuid(),
-                productId: productId
+                id: ProductImageId.ExecuteCreate(Guid.NewGuid()),
+                productId: ProductId.ExecuteCreate(productId)
             )).ToList()
         );
 
@@ -63,7 +65,7 @@ public class Mixins
         var inputProductHistory = ProductHistoryFactory.BuildNewProductHistory(
             id: ProductHistoryId.ExecuteCreate(Guid.NewGuid()),
             name: product.Name,
-            images: product.Images.Select(image => image.FileName).ToList(),
+            images: product.Images.Select(image => image.FileName.Value).ToList(),
             price: product.Price,
             productId: product.Id,
             description: product.Description
@@ -81,8 +83,8 @@ public class Mixins
         
         var menuItemImage = await _draftImageRepository.CreateAsync(
             DraftImageFactory.BuildNewDraftImage(
-                fileName: destinationFileName, 
-                originalFileName: "originalFileName.png", 
+                fileName: FileName.ExecuteCreate(destinationFileName), 
+                originalFileName: FileName.ExecuteCreate("originalFileName.png"), 
                 url: $"Media/{destinationFileName}"
             )
         );

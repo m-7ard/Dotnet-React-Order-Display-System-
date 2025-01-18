@@ -1,6 +1,7 @@
 using Domain.DomainEvents;
 using Domain.DomainEvents.Product;
 using Domain.DomainFactories;
+using Domain.ValueObjects.DraftImage;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductImage;
 using OneOf;
@@ -45,13 +46,13 @@ public class Product
             return error;
         }
 
-        var canCreateProductImageFileName = ProductImageFileName.CanCreate(fileName);
+        var canCreateProductImageFileName = FileName.CanCreate(fileName);
         if (canCreateProductImageFileName.TryPickT1(out error, out var _))
         {
             return error;
         }
 
-        var canCreateProductImageOriginalFileName = ProductImageFileName.CanCreate(originalFileName);
+        var canCreateProductImageOriginalFileName = FileName.CanCreate(originalFileName);
         if (canCreateProductImageOriginalFileName.TryPickT1(out error, out var _))
         {
             return error;
@@ -75,13 +76,14 @@ public class Product
         var productImageId = ProductImageId.ExecuteCreate(id);
         var productImage = ProductImageFactory.BuildNewProductImage(
             id: productImageId,
-            fileName: ProductImageFileName.ExecuteCreate(fileName),
-            originalFileName: ProductImageFileName.ExecuteCreate(originalFileName),
+            fileName: FileName.ExecuteCreate(fileName),
+            originalFileName: FileName.ExecuteCreate(originalFileName),
             url: url,
             productId: ProductId.ExecuteCreate(Id.Value)
         );
 
         Images.Add(productImage);
+        DomainEvents.Add(new ProductImagePendingCreationEvent(productImage));
         return productImageId;
     }
 
@@ -119,14 +121,14 @@ public class Product
         Images = newImages;
     }
 
-    public ProductImage? FindProductImageByFileName(ProductImageFileName productImageFileName)
+    public ProductImage? FindProductImageByFileName(FileName productImageFileName)
     {
-        return Images.Find(image => image.Id == productImageFileName);
+        return Images.Find(image => Equals(image.FileName, productImageFileName));
     }
 
     public ProductImage? FindProductImageById(ProductImageId productImageId)
     {
-        return Images.Find(image => image.Id == productImageId);
+        return Images.Find(image => Equals(image.Id, productImageId));
     }
 
     public OneOf<ProductImage, string> TryFindProductImageById(ProductImageId productImageId)

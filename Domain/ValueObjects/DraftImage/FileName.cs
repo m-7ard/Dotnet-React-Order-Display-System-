@@ -2,10 +2,10 @@ using OneOf;
 
 namespace Domain.ValueObjects.DraftImage;
 
-public class DraftImageFileName : ValueObject
+public class FileName : ValueObject
 {
-    public static readonly List<string> ALLOWED_FILE_EXTENSIONS = [".jpg, .jpeg", ".png"];
-    private DraftImageFileName(string value)
+    public static readonly List<string> ALLOWED_FILE_EXTENSIONS = [".jpg", ".jpeg", ".png"];
+    private FileName(string value)
     {
         Value = value;
     }
@@ -24,9 +24,9 @@ public class DraftImageFileName : ValueObject
         return true;
     }
 
-    public static DraftImageFileName ExecuteCreate(string value)
+    public static FileName ExecuteCreate(string value)
     {
-        return new DraftImageFileName(value);
+        return new FileName(value);
     }
 
     public override IEnumerable<object> GetEqualityComponents()

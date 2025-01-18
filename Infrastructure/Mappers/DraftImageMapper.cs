@@ -1,4 +1,5 @@
 using Domain.Models;
+using Domain.ValueObjects.DraftImage;
 using Infrastructure.DbEntities;
 
 namespace Infrastructure.Mappers;
@@ -9,8 +10,8 @@ public static class DraftImageMapper
     {
         return new DraftImage(
             id: source.Id,
-            fileName: source.FileName,
-            originalFileName: source.OriginalFileName,
+            fileName: FileName.ExecuteCreate(source.FileName),
+            originalFileName: FileName.ExecuteCreate(source.OriginalFileName),
             dateCreated: source.DateCreated,
             url: source.Url
         );
@@ -20,8 +21,8 @@ public static class DraftImageMapper
     {
         return new DraftImageDbEntity(
             id: source.Id,
-            fileName: source.FileName,
-            originalFileName: source.OriginalFileName,
+            fileName: source.FileName.Value,
+            originalFileName: source.OriginalFileName.Value,
             dateCreated: source.DateCreated,
             url: source.Url
         );

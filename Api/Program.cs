@@ -134,7 +134,7 @@ builder.Services.AddTransient<ILatestProductHistoryExistsValidator<ProductId>, L
 builder.Services.AddTransient<IOrderItemExistsValidatorFactory<OrderItemId>, OrderItemExistsByIdValidatorFactory>();
 
 builder.Services.AddTransient<IProductHistoryExistsValidator<ProductHistoryId>, ProductHistoryExistsByIdValidator>();
-builder.Services.AddTransient<IDraftImageExistsValidator<DraftImageFileName>, DraftImageExistsByFileNameValidator>();
+builder.Services.AddTransient<IDraftImageExistsValidator<FileName>, DraftImageExistsByFileNameValidator>();
 
 ///
 ///
