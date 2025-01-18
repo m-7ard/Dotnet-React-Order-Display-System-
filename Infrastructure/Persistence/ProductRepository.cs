@@ -112,7 +112,7 @@ public class ProductRepository : IProductRepository
             else if (domainEvent is ProductImagePendingDeletionEvent productImagePendingDeletionEvent)
             {
                 var payload = productImagePendingDeletionEvent.Payload;
-                var imageEntity = await _dbContext.ProductImage.SingleAsync(image => image.Id == payload.Id);
+                var imageEntity = await _dbContext.ProductImage.SingleAsync(image => image.Id == payload.Id.Value);
                 _dbContext.Remove(imageEntity);
             }
         }

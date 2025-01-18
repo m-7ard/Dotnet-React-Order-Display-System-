@@ -5,7 +5,7 @@ namespace Domain.DomainFactories;
 
 public class DraftImageFactory
 {
-    public static DraftImage BuildExistingDraftImage(int id, DraftImageFileName fileName, DraftImageFileName originalFileName, string url, DateTime dateCreated)
+    public static DraftImage BuildExistingDraftImage(int id, FileName fileName, FileName originalFileName, string url, DateTime dateCreated)
     {
         return new DraftImage(
             id: id,
@@ -16,7 +16,7 @@ public class DraftImageFactory
         );
     }
 
-    public static DraftImage BuildNewDraftImage(DraftImageFileName fileName, DraftImageFileName originalFileName, string url)
+    public static DraftImage BuildNewDraftImage(FileName fileName, FileName originalFileName, string url)
     {
         return new DraftImage(
             id: 0,

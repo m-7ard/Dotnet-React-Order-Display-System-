@@ -50,7 +50,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
     [Fact]
     public async Task CreateProduct_WithImages_Success()
     {
-        var images = new List<string>(){ _validImage.FileName };
+        var images = new List<string>(){ _validImage.FileName.Value };
         var request = new CreateProductRequestDTO(
             name: "Product #1",
             price: (decimal)123.12,
@@ -73,7 +73,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
         var images = new List<string>();
         for (var i = 0; i < 9; i++)
         {
-            images.Add(_validImage.FileName);
+            images.Add(_validImage.FileName.Value);
         }
 
         var request = new CreateProductRequestDTO(

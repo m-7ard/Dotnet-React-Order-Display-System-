@@ -6,7 +6,7 @@ using OneOf;
 
 namespace Application.Validators.DraftImageExistsValidator;
 
-public class DraftImageExistsByFileNameValidator : IDraftImageExistsValidator<DraftImageFileName>
+public class DraftImageExistsByFileNameValidator : IDraftImageExistsValidator<FileName>
 {
     private readonly IDraftImageRepository _draftImageRepository;
 
@@ -15,7 +15,7 @@ public class DraftImageExistsByFileNameValidator : IDraftImageExistsValidator<Dr
         _draftImageRepository = draftImageRepository;
     }
 
-    public async Task<OneOf<DraftImage, List<ApplicationError>>> Validate(DraftImageFileName input)
+    public async Task<OneOf<DraftImage, List<ApplicationError>>> Validate(FileName input)
     {
         var draftImage = await _draftImageRepository.GetByFileNameAsync(input);
 

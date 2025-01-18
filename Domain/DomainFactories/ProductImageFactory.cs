@@ -1,4 +1,5 @@
 using Domain.Models;
+using Domain.ValueObjects.DraftImage;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductImage;
 
@@ -6,7 +7,7 @@ namespace Domain.DomainFactories;
 
 public class ProductImageFactory
 {
-    public static ProductImage BuildExistingProductImage(ProductImageId id, ProductImageFileName fileName, ProductImageFileName originalFileName, string url, DateTime dateCreated, ProductId? productId)
+    public static ProductImage BuildExistingProductImage(ProductImageId id, FileName fileName, FileName originalFileName, string url, DateTime dateCreated, ProductId? productId)
     {
         return new ProductImage(
             id: id,
@@ -18,7 +19,7 @@ public class ProductImageFactory
         );
     }
 
-    public static ProductImage BuildNewProductImage(ProductImageId id, ProductImageFileName fileName, ProductImageFileName originalFileName, string url, ProductId productId)
+    public static ProductImage BuildNewProductImage(ProductImageId id, FileName fileName, FileName originalFileName, string url, ProductId productId)
     {
         return new ProductImage(
             id: id,
@@ -35,8 +36,8 @@ public class ProductImageFactory
         return BuildNewProductImage(
             id: id,
             productId: productId,
-            fileName: ProductImageFileName.ExecuteCreate(source.FileName.Value),
-            originalFileName: ProductImageFileName.ExecuteCreate(source.OriginalFileName.Value),
+            fileName: FileName.ExecuteCreate(source.FileName.Value),
+            originalFileName: FileName.ExecuteCreate(source.OriginalFileName.Value),
             url: source.Url
         );
     }

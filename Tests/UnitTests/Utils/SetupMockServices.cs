@@ -1,4 +1,5 @@
 using Application.Errors;
+using Application.Validators.DraftImageExistsValidator;
 using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.OrderExistsValidator;
 using Application.Validators.ProductExistsValidator;
@@ -50,5 +51,19 @@ public static class SetupMockServices
         mockValidator
             .Setup(validator => validator.Validate(It.IsAny<T>()))
             .ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT1([EmptyApplicationError.Instance]));
+    }
+
+    public static void SetupDraftImageExistsValidatorSuccess<T>(Mock<IDraftImageExistsValidator<T>> mockValidator, T input, DraftImage output)
+    {
+        mockValidator
+            .Setup(validator => validator.Validate(It.Is<T>(id => Equals(id, input))))
+            .ReturnsAsync(OneOf<DraftImage, List<ApplicationError>>.FromT0(output));
+    }
+
+    public static void SetupDraftImageExistsValidatorFailure<T>(Mock<IDraftImageExistsValidator<T>> mockValidator)
+    {
+        mockValidator
+            .Setup(validator => validator.Validate(It.IsAny<T>()))
+            .ReturnsAsync(OneOf<DraftImage, List<ApplicationError>>.FromT1([EmptyApplicationError.Instance]));
     }
 }

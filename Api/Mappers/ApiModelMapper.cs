@@ -9,8 +9,8 @@ public class ApiModelMapper
     public static ImageApiModel ProductImageToImageData(ProductImage source)
     {
         return new ImageApiModel(
-            fileName: source.FileName,
-            originalFileName: source.OriginalFileName,
+            fileName: source.FileName.Value,
+            originalFileName: source.OriginalFileName.Value,
             url: source.Url
         );
     }
@@ -18,8 +18,8 @@ public class ApiModelMapper
     public static ImageApiModel DraftImageToImageData(DraftImage source)
     {
         return new ImageApiModel(
-            fileName: source.FileName,
-            originalFileName: source.OriginalFileName,
+            fileName: source.FileName.Value,
+            originalFileName: source.OriginalFileName.Value,
             url: source.Url
         );
     }    

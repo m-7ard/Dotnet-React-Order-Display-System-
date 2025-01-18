@@ -21,9 +21,9 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
     private readonly IDraftImageRepository _draftImageRepository;
     private readonly IProductExistsValidator<ProductId> _productExistsValidator;
     private readonly ILatestProductHistoryExistsValidator<ProductId> _latestProductHistoryExistsValidator;
-    private readonly IDraftImageExistsValidator<DraftImageFileName> _draftImageExistsValidator;
+    private readonly IDraftImageExistsValidator<FileName> _draftImageExistsValidator;
 
-    public UpdateProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IDraftImageRepository draftImageRepository, IProductExistsValidator<ProductId> productExistsValidator, ILatestProductHistoryExistsValidator<ProductId> latestProductHistoryExistsValidator, IDraftImageExistsValidator<DraftImageFileName> draftImageExistsValidator)
+    public UpdateProductHandler(IProductRepository productRepository, IProductHistoryRepository productHistoryRepository, IDraftImageRepository draftImageRepository, IProductExistsValidator<ProductId> productExistsValidator, ILatestProductHistoryExistsValidator<ProductId> latestProductHistoryExistsValidator, IDraftImageExistsValidator<FileName> draftImageExistsValidator)
     {
         _productRepository = productRepository;
         _productHistoryRepository = productHistoryRepository;
@@ -55,15 +55,15 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
         foreach (var fileName in request.Images)
         {
             // Is Valid FileName
-            var canCreateProductImageFileName = ProductImageFileName.CanCreate(fileName);
-            if (canCreateProductImageFileName.TryPickT1(out var error, out _))
+            var canCreateFileName = FileName.CanCreate(fileName);
+            if (canCreateFileName.TryPickT1(out var error, out _))
             {
                 imageErrors.Add(new ApplicationError(message: error, code: ApplicationErrorCodes.NotAllowed, path: [fileName]));
                 continue;
             }
 
             // Product Image already exists
-            var productImage = product.FindProductImageByFileName(ProductImageFileName.ExecuteCreate(fileName));
+            var productImage = product.FindProductImageByFileName(FileName.ExecuteCreate(fileName));
             if (productImage is not null)
             {
                 imagesToDelete.Remove(productImage);
@@ -71,7 +71,7 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
             }
 
             // Draft image exists
-            var draftImageExistsResult = await _draftImageExistsValidator.Validate(DraftImageFileName.ExecuteCreate(fileName));
+            var draftImageExistsResult = await _draftImageExistsValidator.Validate(FileName.ExecuteCreate(fileName));
             if (draftImageExistsResult.TryPickT1(out errors, out var draftImage))
             {
                 imageErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [fileName, ..error.Path])));

@@ -28,7 +28,7 @@ public class UploadDraftImagesHandler : IRequestHandler<UploadDraftImagesCommand
 
         foreach (var file in request.Files)
         {
-            var canCreateFileName = DraftImageFileName.CanCreate(file.FileName);
+            var canCreateFileName = FileName.CanCreate(file.FileName);
             if (canCreateFileName.TryPickT1(out var error, out _))
             {
                 errors.Add(new ApplicationError(message: error, code: ApplicationErrorCodes.NotAllowed, path: [file.FileName]));
@@ -52,8 +52,8 @@ public class UploadDraftImagesHandler : IRequestHandler<UploadDraftImagesCommand
                 await _fileStorage.SaveFile(file, filePath, cancellationToken);
 
                 var draftImage = DraftImageFactory.BuildNewDraftImage(
-                    fileName: DraftImageFileName.ExecuteCreate(generatedFileName),
-                    originalFileName: DraftImageFileName.ExecuteCreate(file.FileName),
+                    fileName: FileName.ExecuteCreate(generatedFileName),
+                    originalFileName: FileName.ExecuteCreate(file.FileName),
                     url: $"Media/{generatedFileName}"
                 );
                 var newImage = await _draftImageRepository.CreateAsync(draftImage);

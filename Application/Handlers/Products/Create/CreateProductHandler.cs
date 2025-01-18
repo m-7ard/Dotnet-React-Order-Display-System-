@@ -16,9 +16,9 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
     private readonly IProductRepository _productRepository;
     private readonly IDraftImageRepository _draftImageRepository;
     private readonly IProductHistoryRepository _productHistoryRepository;
-    private readonly IDraftImageExistsValidator<DraftImageFileName> _draftImageExistsValidator;
+    private readonly IDraftImageExistsValidator<FileName> _draftImageExistsValidator;
 
-    public CreateProductHandler(IProductRepository productRepository, IDraftImageRepository draftImageRepository, IProductHistoryRepository productHistoryRepository, IDraftImageExistsValidator<DraftImageFileName> draftImageExistsValidator)
+    public CreateProductHandler(IProductRepository productRepository, IDraftImageRepository draftImageRepository, IProductHistoryRepository productHistoryRepository, IDraftImageExistsValidator<FileName> draftImageExistsValidator)
     {
         _productRepository = productRepository;
         _draftImageRepository = draftImageRepository;
@@ -41,13 +41,13 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
         foreach (var fileName in request.Images)
         {
             // Is valid filename
-            var canCreateFileName = DraftImageFileName.CanCreate(fileName);
+            var canCreateFileName = FileName.CanCreate(fileName);
             if (canCreateFileName.TryPickT1(out var error, out var _))
             {
                 return ApplicationErrorFactory.CreateSingleListError(message: error, path: [], code: ApplicationErrorCodes.OperationFailed);
             }
 
-            var draftImageFileName = DraftImageFileName.ExecuteCreate(fileName);
+            var draftImageFileName = FileName.ExecuteCreate(fileName);
             
             // Draft image exists
             var draftImageExistsResult = await _draftImageExistsValidator.Validate(draftImageFileName);

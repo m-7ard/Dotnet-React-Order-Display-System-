@@ -31,7 +31,7 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
             name: "Product #1 Updated",
             price: (decimal)123.99,
             description: "description Updated",
-            images: new List<string>() { _validImage.FileName }
+            images: new List<string>() { _validImage.FileName.Value }
         );
     }
 
@@ -66,7 +66,7 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
         );
         
         var request = DefaultRequest;
-        request.Images = new List<string>(){ _validImage.FileName, newValidImage.FileName };
+        request.Images = new List<string>(){ _validImage.FileName.Value, newValidImage.FileName.Value };
 
         var response = await _client.PutAsync($"{_route}/{_product001.Id}/update", JsonContent.Create(request));
 
@@ -89,7 +89,7 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
         );
         
         var request = DefaultRequest;
-        request.Images = new List<string>(){ newValidImage.FileName };
+        request.Images = new List<string>(){ newValidImage.FileName.Value };
 
         var response = await _client.PutAsync($"{_route}/{_product001.Id}/update", JsonContent.Create(request));
 
@@ -100,7 +100,7 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
         var repo = new ProductRepository(db);
         var product = (await repo.GetByIdAsync(_product001.Id))!;
         Assert.StrictEqual(1, product.Images.Count);
-        Assert.Equal(product.Images[0].FileName, newValidImage.FileName);
+        Assert.Equal(product.Images[0].FileName.Value, newValidImage.FileName.Value);
     }
 
     [Fact]

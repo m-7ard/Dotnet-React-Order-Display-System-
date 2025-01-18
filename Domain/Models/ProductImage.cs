@@ -1,3 +1,4 @@
+using Domain.ValueObjects.DraftImage;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductImage;
 
@@ -5,7 +6,7 @@ namespace Domain.Models;
 
 public class ProductImage
 {
-    public ProductImage(ProductImageId id, ProductImageFileName fileName, ProductImageFileName originalFileName, string url, DateTime dateCreated, ProductId? productId)
+    public ProductImage(ProductImageId id, FileName fileName, FileName originalFileName, string url, DateTime dateCreated, ProductId? productId)
     {
         Id = id;
         FileName = fileName;
@@ -16,8 +17,8 @@ public class ProductImage
     }
 
     public ProductImageId Id { get; private set; }
-    public ProductImageFileName FileName { get; private set; }
-    public ProductImageFileName OriginalFileName { get; private set; }
+    public FileName FileName { get; private set; }
+    public FileName OriginalFileName { get; private set; }
     public string Url { get; private set; }
     public DateTime DateCreated { get; private set; }
     public ProductId? ProductId { get; private set; }

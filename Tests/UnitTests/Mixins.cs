@@ -1,9 +1,11 @@
 
 using Domain.Models;
+using Domain.ValueObjects.DraftImage;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
+using Domain.ValueObjects.ProductImage;
 
 namespace Tests.UnitTests;
 
@@ -55,12 +57,12 @@ public class Mixins
     public static ProductImage CreateProductImage(int seed)
     {
         return new ProductImage(
-            id: Guid.NewGuid(),
-            fileName: $"filename_{seed}.png",
-            originalFileName: $"original filename_{seed}.png",
+            id: ProductImageId.ExecuteCreate(Guid.NewGuid()),
+            fileName: FileName.ExecuteCreate($"filename_{seed}.png"),
+            originalFileName: FileName.ExecuteCreate($"original filename_{seed}.png"),
             url: $"url_{seed}.png",
             dateCreated: new DateTime(),
-            productId: Guid.NewGuid()
+            productId: ProductId.ExecuteCreate(Guid.NewGuid())
         );
     }
 }
