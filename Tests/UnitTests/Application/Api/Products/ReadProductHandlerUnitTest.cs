@@ -1,10 +1,7 @@
-using Application.Errors;
 using Application.Handlers.Products.Read;
 using Application.Validators.ProductExistsValidator;
-using Domain.Models;
 using Domain.ValueObjects.Product;
 using Moq;
-using OneOf;
 using Tests.UnitTests.Utils;
 
 namespace Tests.UnitTests.Application.Api.Products;

@@ -1,6 +1,5 @@
 using Application.Handlers.Products.Create;
 using Application.Interfaces.Persistence;
-using Application.Validators;
 using Application.Validators.DraftImageExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
