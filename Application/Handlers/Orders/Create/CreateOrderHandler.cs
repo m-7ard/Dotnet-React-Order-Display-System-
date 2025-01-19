@@ -54,11 +54,11 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
                 continue;
             }
 
-            var canAddOrderItem = new CanAddOrderItemValidator(order);
-            var canAddOrderItemResult = canAddOrderItem.Validate(new CanAddOrderItemValidator.Input(product: product, productHistory: productHistory, quantity: orderItem.Quantity));
-            if (canAddOrderItemResult.TryPickT1(out errors, out var _))
+            var canAddOrderItem = order.CanAddOrderItem(product, productHistory, quantity: orderItem.Quantity);
+            if (canAddOrderItem.TryPickT1(out var error, out var _))
             {
-                validationErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [uid, ..error.Path])));
+                var applicationError = new ApplicationError(message: error, code: ApplicationValidatorErrorCodes.CAN_ADD_ORDER_ITEM_ERROR, path: [uid]);
+                validationErrors.Add(applicationError);
                 continue;
             }
 
