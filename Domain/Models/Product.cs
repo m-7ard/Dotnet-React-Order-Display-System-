@@ -1,9 +1,9 @@
 using Domain.DomainEvents;
 using Domain.DomainEvents.Product;
 using Domain.DomainFactories;
-using Domain.ValueObjects.DraftImage;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductImage;
+using Domain.ValueObjects.Shared;
 using OneOf;
 
 namespace Domain.Models;

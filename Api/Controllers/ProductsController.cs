@@ -74,8 +74,8 @@ public class ProductsController : ControllerBase
                 errors: errors, 
                 codeDictionary: new Dictionary<string, List<string>>()
                 {
-                    { ApplicationValidatorErrorCodes.DRAFT_IMAGE_EXISTS_ERROR, ["images"] },
-                    { ApplicationValidatorErrorCodes.CAN_ADD_PRODUCT_IMAGE, ["images"] },
+                    { SpecificApplicationErrorCodes.DRAFT_IMAGE_EXISTS_ERROR, ["images"] },
+                    { SpecificApplicationErrorCodes.CAN_ADD_PRODUCT_IMAGE, ["images"] },
                 }
             ));
         }
@@ -162,7 +162,7 @@ public class ProductsController : ControllerBase
         if (result.TryPickT1(out var errors, out var value))
         {
             var expectedError = errors.First();
-            if (expectedError.Code is ApplicationValidatorErrorCodes.PRODUCT_EXISTS_ERROR)
+            if (expectedError.Code is SpecificApplicationErrorCodes.PRODUCT_EXISTS_ERROR)
             {
                 return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }
@@ -212,12 +212,12 @@ public class ProductsController : ControllerBase
         if (result.TryPickT1(out var errors, out var value))
         {
             var expectedError = errors.First();
-            if (expectedError.Code is ApplicationValidatorErrorCodes.PRODUCT_EXISTS_ERROR)
+            if (expectedError.Code is SpecificApplicationErrorCodes.PRODUCT_EXISTS_ERROR)
             {
                 return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }
 
-            if (expectedError.Code is ApplicationValidatorErrorCodes.LATEST_PRODUCT_HISTORY_EXISTS_ERROR)
+            if (expectedError.Code is SpecificApplicationErrorCodes.LATEST_PRODUCT_HISTORY_EXISTS_ERROR)
             {
                 return Conflict(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }
@@ -226,8 +226,8 @@ public class ProductsController : ControllerBase
                 errors: errors, 
                 codeDictionary: new Dictionary<string, List<string>>()
                 {
-                    { ApplicationValidatorErrorCodes.DRAFT_IMAGE_EXISTS_ERROR, ["images"] },
-                    { ApplicationValidatorErrorCodes.CAN_ADD_PRODUCT_IMAGE, ["images"] },
+                    { SpecificApplicationErrorCodes.DRAFT_IMAGE_EXISTS_ERROR, ["images"] },
+                    { SpecificApplicationErrorCodes.CAN_ADD_PRODUCT_IMAGE, ["images"] },
                 }
             ));
         }
@@ -244,12 +244,12 @@ public class ProductsController : ControllerBase
         if (result.TryPickT1(out var errors, out var value))
         {
             var expectedError = errors.First();
-            if (expectedError.Code is ApplicationValidatorErrorCodes.PRODUCT_EXISTS_ERROR)
+            if (expectedError.Code is SpecificApplicationErrorCodes.PRODUCT_EXISTS_ERROR)
             {
                 return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }
 
-            if (expectedError.Code is ApplicationValidatorErrorCodes.LATEST_PRODUCT_HISTORY_EXISTS_ERROR)
+            if (expectedError.Code is SpecificApplicationErrorCodes.LATEST_PRODUCT_HISTORY_EXISTS_ERROR)
             {
                 return Conflict(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             

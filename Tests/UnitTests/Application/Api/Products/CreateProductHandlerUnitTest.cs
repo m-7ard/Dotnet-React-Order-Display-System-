@@ -3,7 +3,7 @@ using Application.Interfaces.Persistence;
 using Application.Validators.DraftImageExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
-using Domain.ValueObjects.DraftImage;
+using Domain.ValueObjects.Shared;
 using Moq;
 using Tests.UnitTests.Utils;
 

@@ -24,7 +24,7 @@ public class ProductHistoryExistsByIdValidator : IProductHistoryExistsValidator<
         {
             return ApplicationErrorFactory.CreateSingleListError(
                 message: $"Product of Id \"{id}\" does not exist.",
-                code: ApplicationValidatorErrorCodes.PRODUCT_EXISTS_ERROR,
+                code: SpecificApplicationErrorCodes.PRODUCT_EXISTS_ERROR,
                 path: []
             );
         }

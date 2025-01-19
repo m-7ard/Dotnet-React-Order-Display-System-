@@ -1,6 +1,6 @@
 using OneOf;
 
-namespace Domain.ValueObjects.DraftImage;
+namespace Domain.ValueObjects.Shared;
 
 public class FileName : ValueObject
 {

@@ -23,7 +23,7 @@ public class LatestProductHistoryExistsByProductIdValidator : ILatestProductHist
         {
             return ApplicationErrorFactory.CreateSingleListError(
                 message: $"Latest Product History for Product of Id \"{input}\" does not exist.",
-                code: ApplicationValidatorErrorCodes.LATEST_PRODUCT_HISTORY_EXISTS_ERROR,
+                code: SpecificApplicationErrorCodes.LATEST_PRODUCT_HISTORY_EXISTS_ERROR,
                 path: []
             );
         }

@@ -4,8 +4,8 @@ using Application.Validators;
 using Application.Validators.DraftImageExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
-using Domain.ValueObjects.DraftImage;
 using Domain.ValueObjects.Product;
+using Domain.ValueObjects.Shared;
 using MediatR;
 using OneOf;
 
@@ -44,7 +44,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
             var canCreateFileName = FileName.CanCreate(fileName);
             if (canCreateFileName.TryPickT1(out var error, out var _))
             {
-                return ApplicationErrorFactory.CreateSingleListError(message: error, path: [], code: ApplicationErrorCodes.OperationFailed);
+                return ApplicationErrorFactory.CreateSingleListError(message: error, path: [], code: GeneralApplicationErrorCodes.OPERATION_FAILED);
             }
 
             var draftImageFileName = FileName.ExecuteCreate(fileName);
@@ -64,7 +64,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
                 imageErrors.AddRange(ApplicationErrorFactory.CreateSingleListError(
                     message: error,
                     path: [fileName],
-                    code: ApplicationValidatorErrorCodes.CAN_ADD_PRODUCT_IMAGE
+                    code: SpecificApplicationErrorCodes.CAN_ADD_PRODUCT_IMAGE
                 ));
                 continue;
             }

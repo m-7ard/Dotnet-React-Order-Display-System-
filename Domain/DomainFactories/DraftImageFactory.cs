@@ -1,5 +1,5 @@
 using Domain.Models;
-using Domain.ValueObjects.DraftImage;
+using Domain.ValueObjects.Shared;
 
 namespace Domain.DomainFactories;
 

@@ -36,7 +36,7 @@ public class MarkOrderFinishedHandler : IRequestHandler<MarkOrderFinishedCommand
             return ApplicationErrorFactory.CreateSingleListError(
                 message: error,
                 path: [],
-                code: ApplicationErrorCodes.NotAllowed
+                code: GeneralApplicationErrorCodes.NOT_ALLOWED
             );
         }
 

@@ -1,6 +1,6 @@
 using Application.Interfaces.Persistence;
 using Domain.Models;
-using Domain.ValueObjects.DraftImage;
+using Domain.ValueObjects.Shared;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
 

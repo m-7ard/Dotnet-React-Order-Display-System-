@@ -22,7 +22,7 @@ public class OrderItemExistsByIdValidator : IOrderItemExistsValidator<OrderItemI
         {
             return ApplicationErrorFactory.CreateSingleListError(
                 message: $"OrderItem of Id \"{id}\" does not exist on Order of Id \"{Order.Id}\".",
-                code: ApplicationValidatorErrorCodes.ORDER_ITEM_EXISTS_ERROR,
+                code: SpecificApplicationErrorCodes.ORDER_ITEM_EXISTS_ERROR,
                 path: []
             );
         }
