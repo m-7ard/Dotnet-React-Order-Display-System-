@@ -57,7 +57,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             var canAddOrderItem = order.CanAddOrderItem(product, productHistory, quantity: orderItem.Quantity);
             if (canAddOrderItem.TryPickT1(out var error, out var _))
             {
-                var applicationError = new ApplicationError(message: error, code: ApplicationValidatorErrorCodes.CAN_ADD_ORDER_ITEM_ERROR, path: [uid]);
+                var applicationError = new ApplicationError(message: error, code: GeneralApplicationErrorCodes.NOT_ALLOWED, path: [uid]);
                 validationErrors.Add(applicationError);
                 continue;
             }

@@ -1,11 +1,11 @@
 
 using Domain.Models;
-using Domain.ValueObjects.DraftImage;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
 using Domain.ValueObjects.ProductImage;
+using Domain.ValueObjects.Shared;
 
 namespace Tests.UnitTests;
 

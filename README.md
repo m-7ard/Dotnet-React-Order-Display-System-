@@ -5,15 +5,15 @@
 2. [Features](#features)
 3. [Demo Videos](#demo-videos)
 4. [Sample Code](#code-samples)
-  - [Domain Models](#domain-models)
-  - [Value Objects](#value-objects)
-  - [Resusable Application Layer Validators](#resusable-application-layer-validators)
-  - [CQRS Application Layer Architecture](#CQRS-application-layer-architecture)
-  - [Controller Error Delegation](#controller-error-delegation)
-  - [API Model Service](#api-model-service)
-  - [Controller Presenter Pattern React Components](#controller-presenter-pattern-react-components)
-  - [Composable React Components](#composable-react-components)
-  - [Frontend Request Error Handling](#frontend-request-error-handling)
+    - [Domain Models](#domain-models)
+    - [Value Objects](#value-objects)
+    - [Resusable Application Layer Validators](#resusable-application-layer-validators)
+    - [CQRS Application Layer Architecture](#CQRS-application-layer-architecture)
+    - [Controller Error Delegation](#controller-error-delegation)
+    - [API Model Service](#api-model-service)
+    - [Controller Presenter Pattern React Components](#controller-presenter-pattern-react-components)
+    - [Composable React Components](#composable-react-components)
+    - [Frontend Request Error Handling](#frontend-request-error-handling)
 5. [Lessons Learned](#lessons-learned)
 6. [API Reference](#api-reference)
     - [Products API](#products-api-endpoints)
@@ -32,9 +32,15 @@
 git clone https://github.com/m-7ard/Dotnet-React-Order-Display-System-.git
 ```
 
-2. Configure Environment Files
-   - In the "Api" folder, create a `.env` file based on `.env_pattern` with your MSSQL database access data
-   - In the "frontend" folder, create a `.env` file based on `.env_pattern` with the host URL if necessary
+2.A Use Docker
+```bash
+    docker compose up
+```
+
+2. Configure Environment Files (optional)
+   - You can ignore this if you're using Sqlite for local testing purposes
+   - In the "Api" folder, fill in your MSSQL database access data in the appsettings.json's SqlServer_Database field
+   - In the "frontend" folder, create a `.env` with the host URL if necessary
 
 3. Backend Setup
 ```bash
@@ -68,6 +74,8 @@ npm run dev
 - Automatic Product Histories / Archives
 - Order Management
 - Product Image Upload and Management
+- Value Objects to Enforce Business Rules
+- Injectable Validators to Reuse Application Logic
 - Backend Integration Tests
 - Backend Application Layer Unit Tests
 - Frontend Validation
@@ -75,10 +83,10 @@ npm run dev
 
 ## Technical Stack
 ### Backend
-- Framework: .NET Core 8.0, ASP.NET MVC
-- ORM: Entity Framework Core with MSSQL
-- Architecture: CQRS with MediatR
-- Validation: FluentValidation
+- Framework: .NET Core 8.0, ASP.NET Web APIs
+- ORM: Entity Framework Core with MSSQL or Sqlite
+- Architecture: CQRS with MediatR, Domain Driven Design
+- Validation: FluentValidation, Value Objects, Domain Methods
 - Testing: xUnit, Moq
 ### Frontend
 - UI: React, Typescript
@@ -88,7 +96,7 @@ npm run dev
 
 ## Architecture
 The application follows Clean Architecture principles with distinct layers:
-- MVC (Presentation Layer)
+- API (Presentation Layer)
 - Application (Business Logic, Business Logic-Linked Validation)
 - Domain (Business Rules)
 - Infrastructure (Data Access)
@@ -108,7 +116,7 @@ Example of rich domain model with encapsulated business rules:
 ```csharp
 public class Order
 {
-    public Order(Guid id, decimal total, List<OrderItem> orderItems, OrderStatus status, int serialNumber, OrderDates orderDates)
+    public Order(OrderId id, decimal total, List<OrderItem> orderItems, OrderStatus status, int serialNumber, OrderDates orderDates)
     {
         Id = id;
         Total = total;
@@ -118,7 +126,7 @@ public class Order
         OrderDates = orderDates;
     }
 
-    public Guid Id { get; private set; }
+    public OrderId Id { get; private set; }
     public int SerialNumber { get; private set; }
     public decimal Total { get; set; }
     public OrderStatus Status { get; set; }
@@ -195,7 +203,7 @@ public class Order
         return true;
     }
 
-    public OrderItem ExecuteAddOrderItem(Product product, ProductHistory productHistory, int quantity) 
+    public OrderItem ExecuteAddOrderItem(Product product, ProductHistory productHistory, int quantity, int serialNumber) 
     {
         var canAddOrderItemResult = CanAddOrderItem(product: product, productHistory: productHistory, quantity: quantity);
         if (canAddOrderItemResult.TryPickT1(out var error, out var _))
@@ -204,12 +212,13 @@ public class Order
         }
 
         var orderItem = OrderItemFactory.BuildNewOrderItem(
-            id: Guid.NewGuid(),
+            id: OrderItemId.ExecuteCreate(Guid.NewGuid()),
             orderId: Id,
             quantity: quantity,
             status: OrderItemStatus.Pending,
             productHistoryId: productHistory.Id,
-            productId: productHistory.ProductId
+            productId: productHistory.ProductId,
+            serialNumber: serialNumber
         );
 
         Total += productHistory.Price * quantity;
@@ -218,7 +227,7 @@ public class Order
         return orderItem;
     }
 
-    public OrderItem? GetOrderItemById(Guid id)
+    public OrderItem? GetOrderItemById(OrderItemId id)
     {
         return OrderItems.Find(orderItem => orderItem.Id == id);
     }
@@ -241,14 +250,15 @@ public class OrderDates
 
     public static OneOf<bool, string> CanCreate(DateTime dateCreated, DateTime? dateFinished)
     {
-        if (dateCreated > DateTime.Now)
+        var currentDate = DateTime.UtcNow;
+        if (dateCreated > DateTime.UtcNow)
         {
-            return "Date created cannot be larger than current date.";
+            return $"Date created ({ dateCreated }) cannot be larger than current date ({ currentDate }).";
         }
 
         if (dateFinished is not null && dateFinished < dateCreated)
         {
-            return "Date finished cannot be smaller than date created";
+            return $"Date finished ({ dateFinished }) cannot be smaller than date created ({ dateCreated })";
         }
 
         return true;
@@ -269,24 +279,29 @@ public class OrderDates
 
 ### Resusable Application Layer Validators
 ```csharp
-public class OrderExistsValidatorAsync : IValidatorAsync<Guid, Order>
+public interface IOrderExistsValidator<InputType> 
+{
+    public Task<OneOf<Order, List<ApplicationError>>> Validate(InputType input);
+}
+
+public class OrderExistsByIdValidator : IOrderExistsValidator<OrderId>
 {
     private readonly IOrderRepository _orderRepository;
 
-    public OrderExistsValidatorAsync(IOrderRepository orderRepository)
+    public OrderExistsByIdValidator(IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
     }
 
-    public async Task<OneOf<Order, List<ApplicationError>>> Validate(Guid input)
+    public async Task<OneOf<Order, List<ApplicationError>>> Validate(OrderId id)
     {
-     var order = await _orderRepository.GetByIdAsync(input);
+        var order = await _orderRepository.GetByIdAsync(id);
 
         if (order is null)
         {
             return ApplicationErrorFactory.CreateSingleListError(
-                message: $"Order of Id \"{input}\" does not exist.",
-                code: ApplicationValidatorErrorCodes.ORDER_EXISTS_ERROR,
+                message: $"Order of Id \"{id}\" does not exist.",
+                code: SpecificApplicationErrorCodes.ORDER_EXISTS_ERROR,
                 path: []
             );
         }
@@ -298,38 +313,41 @@ public class OrderExistsValidatorAsync : IValidatorAsync<Guid, Order>
 
 ### CQRS Application Layer Architecture
 ```csharp
-public class MarkOrderFinishedHandler : IRequestHandler<MarkOrderFinishedCommand, OneOf<MarkOrderFinishedResult, List<ApplicationError>>>
+public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishedCommand, OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
-  private readonly OrderExistsValidatorAsync _orderExistsValidator;
+    private readonly IOrderExistsValidator<OrderId> _orderExistsValidator;
 
-    public MarkOrderFinishedHandler(IOrderRepository orderRepository, OrderExistsValidatorAsync orderExistsValidator)
+
+    public MarkOrderItemFinishedHandler(IOrderRepository orderRepository, IOrderExistsValidator<OrderId> orderExistsValidator)
     {
         _orderRepository = orderRepository;
         _orderExistsValidator = orderExistsValidator;
     }
 
-    public async Task<OneOf<MarkOrderFinishedResult, List<ApplicationError>>> Handle(MarkOrderFinishedCommand request, CancellationToken cancellationToken)
+    public async Task<OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>> Handle(MarkOrderItemFinishedCommand request, CancellationToken cancellationToken)
     {
-        var orderExistsResult = await _orderExistsValidator.Validate(request.OrderId);
+        var orderId = OrderId.ExecuteCreate(request.OrderId);
+        var orderExistsResult = await _orderExistsValidator.Validate(orderId);
         if (orderExistsResult.TryPickT1(out var errors, out var order))
         {
             return errors;
         }
 
-        var canMarkOrderFinishedResult = OrderDomainService.CanMarkFinished(order);
-        if (canMarkOrderFinishedResult.TryPickT1(out var error, out var _))
+        var orderItemId = OrderItemId.ExecuteCreate(request.OrderItemId);
+        var canMarkOrderItemFinishedResult = OrderDomainService.CanMarkOrderItemFinished(order, orderItemId);
+        if (canMarkOrderItemFinishedResult.TryPickT1(out var error, out var _))
         {
             return ApplicationErrorFactory.CreateSingleListError(
                 message: error,
                 path: [],
-                code: ApplicationErrorCodes.NotAllowed
+                code: GeneralApplicationErrorCodes.NOT_ALLOWED
             );
         }
 
-        OrderDomainService.ExecuteMarkFinished(order);
+        var dateFinished = OrderDomainService.ExecuteMarkOrderItemFinished(order, orderItemId);
         await _orderRepository.UpdateAsync(order);
-        return new MarkOrderFinishedResult(orderId: request.OrderId);
+        return new MarkOrderItemFinishedResult(orderId: request.OrderId, orderItemId: request.OrderItemId, dateFinished: dateFinished);
     }
 }
 ```
@@ -361,7 +379,7 @@ public class OrdersController : ControllerBase
         if (result.TryPickT1(out var errors, out var value))
         {
             var expectedError = errors.First();
-            if (expectedError.Code is ApplicationValidatorErrorCodes.ORDER_EXISTS_ERROR)
+            if (expectedError.Code is SpecificApplicationErrorCodes.ORDER_EXISTS_ERROR)
             {
                 return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }
@@ -370,7 +388,7 @@ public class OrdersController : ControllerBase
             return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));
         };
 
-        var response = new MarkOrderItemFinishedResponseDTO(orderId: value.OrderId.ToString(), orderItemId: value.OrderItemId.ToString());
+        var response = new MarkOrderItemFinishedResponseDTO(orderId: value.OrderId.ToString(), orderItemId: value.OrderItemId.ToString(), dateFinished: value.DateFinished);
         return Ok(response);
     }
 }
@@ -383,7 +401,7 @@ Example of API model service implementation with caching:
 ```csharp
 public class ApiModelService : IApiModelService
 {
-    private readonly Dictionary<Guid, ProductHistory?> ProductHistoryCache = new Dictionary<Guid, ProductHistory?>();
+    private readonly Dictionary<ProductHistoryId, ProductHistory?> ProductHistoryCache = new Dictionary<ProductHistoryId, ProductHistory?>();
     private readonly IProductHistoryRepository _productHistoryRepository;
 
     public ApiModelService(IProductHistoryRepository productHistoryRepository)
@@ -392,7 +410,7 @@ public class ApiModelService : IApiModelService
     }
 
 
-    private async Task<ProductHistory?> GetProductHistoryFromCacheOrDb(Guid id) 
+    private async Task<ProductHistory?> GetProductHistoryFromCacheOrDb(ProductHistoryId id) 
     {
         if (ProductHistoryCache.TryGetValue(id, out var cachedProductHistory))
         {
@@ -439,10 +457,7 @@ public class ApiModelService : IApiModelService
 ### Controller Presenter Pattern React Components
 Example of a Controller - Presenter architecture in React:
 ```tsx
-/////////////////////////////////
 // CreateOrder.Controller.tsx
-/////////////////////////////////
-
 const validatorSchema = Type.Object({
     orderItemData: Type.Record(
         Type.String({ minLength: 1 }),
@@ -506,9 +521,7 @@ export default function CreateOrderController(props: { orderDataAccess: IOrderDa
     );
 }
 
-/////////////////////////////////
 // CreateOrder.Page.tsx
-/////////////////////////////////
 export default function CreateOrderPage(props: {
     onSubmit: () => void;
     onReset: () => void;
@@ -814,11 +827,6 @@ The API returns structured error responses including:
 - Error codes
 - Detailed error messages
 - Paths to specific validation errors
-
-### Common Error Codes
-
-- `ModelDoesNotExist`: Requested resource not found
-- `IntegrityError`: Database integrity constraint violation
 
 ## Authentication
 

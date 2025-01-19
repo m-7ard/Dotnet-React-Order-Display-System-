@@ -6,9 +6,9 @@ using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.ProductExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
-using Domain.ValueObjects.DraftImage;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductImage;
+using Domain.ValueObjects.Shared;
 using MediatR;
 using OneOf;
 
@@ -35,6 +35,12 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
 
     public async Task<OneOf<UpdateProductResult, List<ApplicationError>>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
+        var canCreateProductId = ProductId.CanCreate(request.Id);
+        if (canCreateProductId.TryPickT1(out var error, out var _))
+        {
+            return ApplicationErrorFactory.CreateSingleListError(message: error, path: [], code: GeneralApplicationErrorCodes.OPERATION_FAILED);
+        }
+
         var productId = ProductId.ExecuteCreate(request.Id);
         var productExistsResult = await _productExistsValidator.Validate(productId);
         if (productExistsResult.TryPickT1(out var errors, out var product))
@@ -56,9 +62,9 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
         {
             // Is Valid FileName
             var canCreateFileName = FileName.CanCreate(fileName);
-            if (canCreateFileName.TryPickT1(out var error, out _))
+            if (canCreateFileName.TryPickT1(out error, out _))
             {
-                imageErrors.Add(new ApplicationError(message: error, code: ApplicationErrorCodes.NotAllowed, path: [fileName]));
+                imageErrors.Add(new ApplicationError(message: error, code: GeneralApplicationErrorCodes.NOT_ALLOWED, path: [fileName]));
                 continue;
             }
 

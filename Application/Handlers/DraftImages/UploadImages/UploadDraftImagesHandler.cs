@@ -4,7 +4,7 @@ using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
 using Domain.DomainFactories;
 using Domain.Models;
-using Domain.ValueObjects.DraftImage;
+using Domain.ValueObjects.Shared;
 using MediatR;
 using OneOf;
 
@@ -31,7 +31,7 @@ public class UploadDraftImagesHandler : IRequestHandler<UploadDraftImagesCommand
             var canCreateFileName = FileName.CanCreate(file.FileName);
             if (canCreateFileName.TryPickT1(out var error, out _))
             {
-                errors.Add(new ApplicationError(message: error, code: ApplicationErrorCodes.NotAllowed, path: [file.FileName]));
+                errors.Add(new ApplicationError(message: error, code: GeneralApplicationErrorCodes.NOT_ALLOWED, path: [file.FileName]));
             }
         }
 

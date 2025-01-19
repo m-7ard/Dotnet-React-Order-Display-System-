@@ -1,4 +1,3 @@
-API/.env
 **/Debug/**
 
 # Allow everything inside the Tests folder

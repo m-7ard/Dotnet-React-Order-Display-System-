@@ -1,7 +1,7 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
 using Domain.Models;
-using Domain.ValueObjects.DraftImage;
+using Domain.ValueObjects.Shared;
 using OneOf;
 
 namespace Application.Validators.DraftImageExistsValidator;
@@ -23,7 +23,7 @@ public class DraftImageExistsByFileNameValidator : IDraftImageExistsValidator<Fi
         {
             return ApplicationErrorFactory.CreateSingleListError(
                 message: $"DraftImage of fileName \"{input}\" does not exist.",
-                code: ApplicationValidatorErrorCodes.DRAFT_IMAGE_EXISTS_ERROR,
+                code: SpecificApplicationErrorCodes.DRAFT_IMAGE_EXISTS_ERROR,
                 path: []
             );
         }

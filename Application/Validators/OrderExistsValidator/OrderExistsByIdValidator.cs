@@ -23,7 +23,7 @@ public class OrderExistsByIdValidator : IOrderExistsValidator<OrderId>
         {
             return ApplicationErrorFactory.CreateSingleListError(
                 message: $"Order of Id \"{id}\" does not exist.",
-                code: ApplicationValidatorErrorCodes.ORDER_EXISTS_ERROR,
+                code: SpecificApplicationErrorCodes.ORDER_EXISTS_ERROR,
                 path: []
             );
         }

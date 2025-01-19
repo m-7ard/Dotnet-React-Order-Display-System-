@@ -15,14 +15,15 @@ public class OrderDates
 
     public static OneOf<bool, string> CanCreate(DateTime dateCreated, DateTime? dateFinished)
     {
+        var currentDate = DateTime.UtcNow;
         if (dateCreated > DateTime.UtcNow)
         {
-            return "Date created cannot be larger than current date.";
+            return $"Date created ({ dateCreated }) cannot be larger than current date ({ currentDate }).";
         }
 
         if (dateFinished is not null && dateFinished < dateCreated)
         {
-            return "Date finished cannot be smaller than date created";
+            return $"Date finished ({ dateFinished }) cannot be smaller than date created ({ dateCreated })";
         }
 
         return true;
