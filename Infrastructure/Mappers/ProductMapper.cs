@@ -1,5 +1,6 @@
 using Domain.Models;
 using Domain.ValueObjects.Product;
+using Domain.ValueObjects.Shared;
 using Infrastructure.DbEntities;
 
 namespace Infrastructure.Mappers;
@@ -13,7 +14,7 @@ public static class ProductMapper
             dateCreated: domain.DateCreated, 
             name: domain.Name,
             description: domain.Description,
-            price: domain.Price
+            price: domain.Price.Value
         ) {
             Images = domain.Images.Select(ProductImageMapper.ToDbModel).ToList()
         };
@@ -24,7 +25,7 @@ public static class ProductMapper
         return new Product(
             id: ProductId.ExecuteCreate(dbEntity.Id), 
             name: dbEntity.Name,
-            price: dbEntity.Price,
+            price: Money.ExecuteCreate(dbEntity.Price),
             description: dbEntity.Description,
             dateCreated: dbEntity.DateCreated,
             images: dbEntity.Images.Select(ProductImageMapper.ToDomain).ToList()

@@ -1,4 +1,5 @@
 using Application.Errors;
+using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
 using Application.Validators;
 using Application.Validators.DraftImageExistsValidator;
@@ -28,10 +29,16 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
 
     public async Task<OneOf<CreateProductResult, List<ApplicationError>>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
+        var canCreatePrice = Money.CanCreate(request.Price);
+        if (canCreatePrice.TryPickT1(out var error, out _))
+        {
+            return new NotAllowedError(error, []).AsList();
+        }
+
         var product = ProductFactory.BuildNewProduct(
             id: ProductId.ExecuteCreate(Guid.NewGuid()),
             name: request.Name,
-            price: request.Price,
+            price: Money.ExecuteCreate(request.Price),
             description: request.Description,
             images: []
         );
@@ -42,9 +49,9 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
         {
             // Is valid filename
             var canCreateFileName = FileName.CanCreate(fileName);
-            if (canCreateFileName.TryPickT1(out var error, out var _))
+            if (canCreateFileName.TryPickT1(out error, out var _))
             {
-                return ApplicationErrorFactory.CreateSingleListError(message: error, path: [], code: GeneralApplicationErrorCodes.OPERATION_FAILED);
+                return new OperationFailedError(error, []).AsList();
             }
 
             var draftImageFileName = FileName.ExecuteCreate(fileName);

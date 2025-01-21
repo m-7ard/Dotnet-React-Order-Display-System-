@@ -6,7 +6,7 @@ using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
-using Domain.ValueObjects.Product;
+using Domain.ValueObjects.Shared;
 using Moq;
 using OneOf;
 using Tests.UnitTests.Utils;
@@ -32,7 +32,7 @@ public class MarkOrderItemFinishedHandlerUnitTest
 
         _mockOrder = OrderFactory.BuildExistingOrder(
             id: OrderId.ExecuteCreate(new Guid()),
-            total: 100,
+            total: Money.ExecuteCreate(100),
             orderDates: OrderDates.ExecuteCreate(
                 dateCreated: DateTime.UtcNow,
                 dateFinished: null

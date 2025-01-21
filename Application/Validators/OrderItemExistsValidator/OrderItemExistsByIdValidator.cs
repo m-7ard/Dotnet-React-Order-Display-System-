@@ -16,12 +16,12 @@ public class OrderItemExistsByIdValidator : IOrderItemExistsValidator<OrderItemI
 
     public OneOf<OrderItem, List<ApplicationError>> Validate(OrderItemId id)
     {
-        var orderItem = Order.GetOrderItemById(id);
+        var cangetOrderItemResult = Order.TryGetOrderItemById(id);
 
-        if (orderItem is null)
+        if (cangetOrderItemResult.TryPickT1(out var error, out var orderItem))
         {
             return ApplicationErrorFactory.CreateSingleListError(
-                message: $"OrderItem of Id \"{id}\" does not exist on Order of Id \"{Order.Id}\".",
+                message: error,
                 code: SpecificApplicationErrorCodes.ORDER_ITEM_EXISTS_ERROR,
                 path: []
             );

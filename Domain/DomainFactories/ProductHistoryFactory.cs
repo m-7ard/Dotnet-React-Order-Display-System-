@@ -1,6 +1,7 @@
 using Domain.Models;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
+using Domain.ValueObjects.Shared;
 
 namespace Domain.DomainFactories;
 
@@ -10,10 +11,9 @@ public class ProductHistoryFactory
         ProductHistoryId id,
         string name,
         List<string> images,
-        decimal price,
+        Money price,
         ProductId productId,
-        DateTime validFrom,
-        DateTime? validTo,
+        ProductHistoryValidityRange validityRange,
         string description)
     {
         return new ProductHistory(
@@ -22,8 +22,7 @@ public class ProductHistoryFactory
             images: images,
             price: price,
             productId: productId,
-            validFrom: validFrom,
-            validTo: validTo, 
+            validityRange: validityRange,
             description: description
         );
     }
@@ -32,7 +31,7 @@ public class ProductHistoryFactory
         ProductHistoryId id,
         string name,
         List<string> images,
-        decimal price,
+        Money price,
         ProductId productId,
         string description)
     {
@@ -42,8 +41,7 @@ public class ProductHistoryFactory
             images: images,
             price: price,
             productId: productId,
-            validFrom: DateTime.UtcNow,
-            validTo: null, 
+            validityRange: ProductHistoryValidityRange.New(),
             description: description
         );
     }

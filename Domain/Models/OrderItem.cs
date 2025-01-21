@@ -2,12 +2,13 @@ using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
+using Domain.ValueObjects.Shared;
 using OneOf;
 
 namespace Domain.Models;
 public class OrderItem
 {
-    public OrderItem(OrderItemId id, int quantity, OrderItemStatus status, OrderId orderId, ProductHistoryId productHistoryId, ProductId productId, int serialNumber, OrderItemDates orderItemDates)
+    public OrderItem(OrderItemId id, Quantity quantity, OrderItemStatus status, OrderId orderId, ProductHistoryId productHistoryId, ProductId productId, int serialNumber, OrderItemDates orderItemDates)
     {
         Id = id;
         Quantity = quantity;
@@ -21,7 +22,7 @@ public class OrderItem
 
     public OrderItemId Id { get; private set; }
     public int SerialNumber { get; private set; }
-    public int Quantity { get; set; }
+    public Quantity Quantity { get; set; }
     public OrderItemStatus Status { get; set; }
     public OrderItemDates OrderItemDates { get; set; }
     public OrderId OrderId { get; set; }

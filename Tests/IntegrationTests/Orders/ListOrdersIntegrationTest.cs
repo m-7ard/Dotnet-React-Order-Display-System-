@@ -75,7 +75,7 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task ListAllOrders_MaxTotal_Success()
     {
-        _baseRequest.MaxTotal = _order001.Total;
+        _baseRequest.MaxTotal = _order001.Total.Value;
 
         var queryString = ObjToQueryString.Convert(_baseRequest);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");

@@ -1,5 +1,6 @@
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
+using Domain.ValueObjects.Shared;
 
 namespace Domain.Models;
 
@@ -9,38 +10,35 @@ public class ProductHistory
         ProductHistoryId id,
         string name,
         List<string> images,
-        decimal price,
+        Money price,
         ProductId productId,
-        DateTime validFrom,
-        DateTime? validTo,
-        string description)
+        string description,
+        ProductHistoryValidityRange validityRange)
     {
         Id = id;
         Name = name;
         Images = images;
         Price = price;
         ProductId = productId;
-        ValidFrom = validFrom;
-        ValidTo = validTo;
         Description = description;
+        ValidityRange = validityRange;
     }
 
     public ProductHistoryId Id { get; private set; }
     public string Name { get; set; }
     public List<string> Images { get; set; }
     public string Description { get; set; }
-    public decimal Price { get; set; }
+    public Money Price { get; set; }
     public ProductId ProductId { get; set; }
-    public DateTime ValidFrom { get; set; }
-    public DateTime? ValidTo { get; set; }
+    public ProductHistoryValidityRange ValidityRange { get; set; }
 
     public void Invalidate()
     {
-        ValidTo = DateTime.UtcNow;
+        ValidityRange = ProductHistoryValidityRange.ExecuteCreate(validFrom: ValidityRange.ValidFrom, validTo: DateTime.UtcNow);
     }
 
     public bool IsValid()
     {
-        return ValidTo is null;
+        return ValidityRange.ValidTo is null;
     }
 }

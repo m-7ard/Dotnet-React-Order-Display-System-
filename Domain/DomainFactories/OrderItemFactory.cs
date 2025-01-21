@@ -3,12 +3,13 @@ using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
+using Domain.ValueObjects.Shared;
 
 namespace Domain.DomainFactories;
 
 public class OrderItemFactory
 {
-    public static OrderItem BuildExistingOrderItem(OrderItemId id, int quantity, OrderItemStatus status, OrderItemDates orderItemDates, OrderId orderId, ProductHistoryId productHistoryId, ProductId productId, int serialNumber)
+    public static OrderItem BuildExistingOrderItem(OrderItemId id, Quantity quantity, OrderItemStatus status, OrderItemDates orderItemDates, OrderId orderId, ProductHistoryId productHistoryId, ProductId productId, int serialNumber)
     {
         return new OrderItem(
             id: id,
@@ -22,7 +23,7 @@ public class OrderItemFactory
         );
     }
 
-    public static OrderItem BuildNewOrderItem(OrderItemId id, OrderId orderId, int quantity, OrderItemStatus status, ProductHistoryId productHistoryId, ProductId productId, int serialNumber)
+    public static OrderItem BuildNewOrderItem(OrderItemId id, OrderId orderId, Quantity quantity, OrderItemStatus status, ProductHistoryId productHistoryId, ProductId productId, int serialNumber)
     {
         var orderDates = OrderItemDates.ExecuteCreate(dateCreated: DateTime.UtcNow, dateFinished: null);
 

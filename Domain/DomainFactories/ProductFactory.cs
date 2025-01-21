@@ -1,11 +1,12 @@
 using Domain.Models;
 using Domain.ValueObjects.Product;
+using Domain.ValueObjects.Shared;
 
 namespace Domain.DomainFactories;
 
 public class ProductFactory
 {
-    public static Product BuildExistingProduct(ProductId id, string name, decimal price, string description, DateTime dateCreated, List<ProductImage> images)
+    public static Product BuildExistingProduct(ProductId id, string name, Money price, string description, DateTime dateCreated, List<ProductImage> images)
     {
         return new Product(
             id: id,
@@ -17,7 +18,7 @@ public class ProductFactory
         );
     }
 
-    public static Product BuildNewProduct(ProductId id, string name, decimal price, string description, List<ProductImage> images)
+    public static Product BuildNewProduct(ProductId id, string name, Money price, string description, List<ProductImage> images)
     {
         return new Product(
             id: id,

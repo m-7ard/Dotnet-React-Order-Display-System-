@@ -39,7 +39,7 @@ public class Mixins
         var product = ProductFactory.BuildNewProduct(
             id: ProductId.ExecuteCreate(productId),
             name: $"Product #{number}",
-            price: number,
+            price: Money.ExecuteCreate(number),
             description: $"Product #{number} Description",
             images: images.Select((image) => ProductImageFactory.BuildNewProductImageFromDraftImage(
                 source: image,
@@ -95,8 +95,6 @@ public class Mixins
     public async Task<Order> CreateOrder(List<Product> products, int seed, OrderStatus orderStatus) {
         var newOrder = OrderFactory.BuildNewOrder(
             id: OrderId.ExecuteCreate(Guid.NewGuid()),
-            total: 0,
-            orderItems: [],
             status: orderStatus,
             serialNumber: await _sequenceService.GetNextOrderValueAsync()
         );
@@ -109,7 +107,7 @@ public class Mixins
                 throw new Exception("A Product's ProductHistory cannot be null when creating an Order because an Order's OrderItems need a non-null ProductHistoryId.");
             }
             
-            newOrder.ExecuteAddOrderItem(product: product, productHistory: productHistory, quantity: seed, serialNumber: await _sequenceService.GetNextOrderItemValueAsync());
+            newOrder.ExecuteAddOrderItem(id: Guid.NewGuid(), product: product, productHistory: productHistory, quantity: seed, serialNumber: await _sequenceService.GetNextOrderItemValueAsync());
         }
 
         await _orderRespository.CreateAsync(newOrder);

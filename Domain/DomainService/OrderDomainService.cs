@@ -50,14 +50,14 @@ public class OrderDomainService
 
     public static OneOf<OrderItem, string> CanMarkOrderItemFinished(Order order, OrderItemId orderItemId)
     {
-        var orderItem = order.GetOrderItemById(orderItemId);
-        if (orderItem is null)
+        var canGetOrderItemResult = order.TryGetOrderItemById(orderItemId);
+        if (canGetOrderItemResult.TryPickT1(out var error, out var orderItem))
         {
-            return $"Order Item of Id \"{orderItemId}\" does not exist on Order of Id \"{order.Id}\"";
+            return error;
         }
 
         var canTransitionStatusResult = orderItem.CanTransitionStatus(OrderStatus.Finished.Name);
-        if (canTransitionStatusResult.TryPickT1(out var error, out var _))
+        if (canTransitionStatusResult.TryPickT1(out error, out var _))
         {
             return error;
         }

@@ -43,7 +43,7 @@ public class CreateProductHandlerUnitTest
 
         var command = new CreateProductCommand(
             name: mockProduct.Name,
-            price: mockProduct.Price,
+            price: mockProduct.Price.Value,
             description: mockProduct.Description,
             images: []
         );
@@ -75,7 +75,7 @@ public class CreateProductHandlerUnitTest
 
         var command = new CreateProductCommand(
             name: mockProduct.Name,
-            price: mockProduct.Price,
+            price: mockProduct.Price.Value,
             description: mockProduct.Description,
             images: mockProduct.Images.Select(image => image.FileName.Value).ToList()
         );
@@ -117,7 +117,7 @@ public class CreateProductHandlerUnitTest
 
         var command = new CreateProductCommand(
             name: mockProduct.Name,
-            price: mockProduct.Price,
+            price: mockProduct.Price.Value,
             description: mockProduct.Description,
             images: ["invalid-file-extension.txt"]
         );

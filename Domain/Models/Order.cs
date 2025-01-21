@@ -2,12 +2,14 @@ using Domain.DomainEvents;
 using Domain.DomainFactories;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
+using Domain.ValueObjects.Shared;
 using OneOf;
 
 namespace Domain.Models;
+
 public class Order
 {
-    public Order(OrderId id, decimal total, List<OrderItem> orderItems, OrderStatus status, int serialNumber, OrderDates orderDates)
+    public Order(OrderId id, Money total, List<OrderItem> orderItems, OrderStatus status, int serialNumber, OrderDates orderDates)
     {
         Id = id;
         Total = total;
@@ -19,10 +21,11 @@ public class Order
 
     public OrderId Id { get; private set; }
     public int SerialNumber { get; private set; }
-    public decimal Total { get; set; }
+    public Money Total { get; set; }
     public OrderStatus Status { get; set; }
     public OrderDates OrderDates { get; set; }
     public List<OrderItem> OrderItems { get; set; }
+
     public List<DomainEvent> DomainEvents { get; set; } = [];
     public void ClearEvents()
     {
@@ -68,8 +71,27 @@ public class Order
         Status = newStatus;
     }
 
-    public OneOf<bool, string> CanAddOrderItem(Product product, ProductHistory productHistory, int quantity)
+    public OneOf<bool, string> CanAddOrderItem(Guid id, Product product, ProductHistory productHistory, int quantity)
     {
+        var canCreateOrderItemId = OrderItemId.CanCreate(id);
+        if (canCreateOrderItemId.TryPickT1(out var error, out _))
+        {
+            return error;
+        }
+
+        var canCreateQuantity = Quantity.CanCreate(quantity);
+        if (canCreateQuantity.TryPickT1(out error, out _))
+        {
+            return error;
+        }
+
+        var canCreateTotal = Money.CanCreate(productHistory.Price.Value * quantity);
+        if (canCreateOrderItemId.TryPickT1(out error, out _))
+        {
+            return error;
+        }
+
+
         if (product.Id != productHistory.ProductId)
         {
             return "Product History's Product Id does not match Product Id.";
@@ -78,11 +100,6 @@ public class Order
         if (!productHistory.IsValid())
         {
             return $"Product History for Product of Id \"{product.Id}\" is not valid.";
-        }
-
-        if (quantity <= 0)
-        {
-            return "Order Item quantity must be greater than 0";
         }
 
         var existingOrderItem = OrderItems.Find(orderItem => orderItem.ProductId == product.Id);
@@ -94,32 +111,51 @@ public class Order
         return true;
     }
 
-    public OrderItem ExecuteAddOrderItem(Product product, ProductHistory productHistory, int quantity, int serialNumber) 
+    public OrderItemId ExecuteAddOrderItem(Guid id, Product product, ProductHistory productHistory, int quantity, int serialNumber) 
     {
-        var canAddOrderItemResult = CanAddOrderItem(product: product, productHistory: productHistory, quantity: quantity);
+        var canAddOrderItemResult = CanAddOrderItem(id: id, product: product, productHistory: productHistory, quantity: quantity);
         if (canAddOrderItemResult.TryPickT1(out var error, out var _))
         {
             throw new Exception(error);
         }
 
         var orderItem = OrderItemFactory.BuildNewOrderItem(
-            id: OrderItemId.ExecuteCreate(Guid.NewGuid()),
+            id: OrderItemId.ExecuteCreate(id),
             orderId: Id,
-            quantity: quantity,
+            quantity: Quantity.ExecuteCreate(quantity),
             status: OrderItemStatus.Pending,
             productHistoryId: productHistory.Id,
             productId: productHistory.ProductId,
             serialNumber: serialNumber
         );
 
-        Total += productHistory.Price * quantity;
+        var addAmount = Money.ExecuteCreate(productHistory.Price.Value * quantity);
+
+        Total += addAmount;
         OrderItems.Add(orderItem);
+
+        return orderItem.Id;
+    }
+
+    public OneOf<OrderItem, string> TryGetOrderItemById(OrderItemId orderItemId)
+    {
+        var orderItem =  OrderItems.Find(orderItem => orderItem.Id == orderItemId);
+        if (orderItem == null)
+        {
+            return $"Order Item of Id \"{orderItemId}\" does not exist on Order of Id \"{Id}\"";
+        }
 
         return orderItem;
     }
 
-    public OrderItem? GetOrderItemById(OrderItemId id)
+    public OrderItem ExecuteGetOrderItemById(OrderItemId orderItemId)
     {
-        return OrderItems.Find(orderItem => orderItem.Id == id);
+        var canGetOrderItemResult = TryGetOrderItemById(orderItemId);
+        if (canGetOrderItemResult.TryPickT1(out var error, out var orderItem))
+        {
+            throw new Exception(error);
+        }
+
+        return orderItem;
     }
 }

@@ -3,6 +3,7 @@ using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
+using Domain.ValueObjects.Shared;
 using Infrastructure.DbEntities;
 
 namespace Infrastructure.Mappers;
@@ -13,7 +14,7 @@ public static class OrderItemMapper
     {
         return new OrderItem(
             id: OrderItemId.ExecuteCreate(source.Id),
-            quantity: source.Quantity,
+            quantity: Quantity.ExecuteCreate(source.Quantity),
             status: new OrderItemStatus(source.Status.ToString()),
             orderItemDates: OrderItemDates.ExecuteCreate(
                 dateCreated: source.DateCreated,
@@ -30,7 +31,7 @@ public static class OrderItemMapper
     {
         return new OrderItemDbEntity(
             id: source.Id.Value,
-            quantity: source.Quantity,
+            quantity: source.Quantity.Value,
             status: ToDbEntityStatus(source.Status),
             dateCreated: source.OrderItemDates.DateCreated,
             dateFinished: source.OrderItemDates.DateFinished,

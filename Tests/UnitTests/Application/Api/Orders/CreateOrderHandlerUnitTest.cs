@@ -6,6 +6,7 @@ using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.Product;
+using Domain.ValueObjects.Shared;
 using Moq;
 using Tests.UnitTests.Utils;
 
@@ -40,7 +41,7 @@ public class CreateOrderHandlerUnitTest
         _mockProduct001 = ProductFactory.BuildExistingProduct(
             id: ProductId.ExecuteCreate(Guid.NewGuid()),
             name: "Product 1",
-            price: 1,
+            price: Money.ExecuteCreate(1),
             description: "description",
             dateCreated: new DateTime(),
             images: []
@@ -48,7 +49,7 @@ public class CreateOrderHandlerUnitTest
         _mockProduct002 = ProductFactory.BuildExistingProduct(
             id: ProductId.ExecuteCreate(Guid.NewGuid()),
             name: "Product 2",
-            price: 2,
+            price: Money.ExecuteCreate(2),
             description: "description",
             dateCreated: new DateTime(),
             images: []
