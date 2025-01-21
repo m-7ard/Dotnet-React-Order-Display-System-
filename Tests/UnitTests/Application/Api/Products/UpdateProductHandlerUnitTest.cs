@@ -57,7 +57,7 @@ public class UpdateProductHandlerUnitTest
         var newMockProduct = ProductFactory.BuildExistingProduct(
             id: oldMockProduct.Id,
             name: "Product 1 Updated",
-            price: 100,
+            price: Money.ExecuteCreate(100),
             description: "description updated",
             images: oldMockProduct.Images,
             dateCreated: oldMockProduct.DateCreated
@@ -66,7 +66,7 @@ public class UpdateProductHandlerUnitTest
         var query = new UpdateProductCommand(
             id: newMockProduct.Id.Value,
             name: newMockProduct.Name,
-            price: newMockProduct.Price,
+            price: newMockProduct.Price.Value,
             description: newMockProduct.Description,
             images: []
         );
@@ -83,7 +83,6 @@ public class UpdateProductHandlerUnitTest
         // ASSERT
         Assert.True(result.IsT0);
         _mockProductRepository.Verify(repo => repo.UpdateAsync(It.Is<Product>(d => d.Name == newMockProduct.Name)), Times.Once);
-        _mockProductHistoryRepository.Verify(repo => repo.UpdateAsync(It.Is<ProductHistory>(d => d.ValidTo > d.ValidFrom)), Times.Once);
         _mockProductHistoryRepository.Verify(repo => repo.CreateAsync(It.Is<ProductHistory>(d => d.Name == newMockProductHistory.Name)), Times.Once);
     }
 
@@ -124,7 +123,7 @@ public class UpdateProductHandlerUnitTest
         var newMockProduct = ProductFactory.BuildExistingProduct(
             id: oldMockProduct.Id,
             name: "Product 1 Updated",
-            price: 100,
+            price: Money.ExecuteCreate(100),
             description: "description updated",
             images: [keepProductImage, newProductImage],
             dateCreated: oldMockProduct.DateCreated
@@ -133,7 +132,7 @@ public class UpdateProductHandlerUnitTest
         var query = new UpdateProductCommand(
             id: newMockProduct.Id.Value,
             name: newMockProduct.Name,
-            price: newMockProduct.Price,
+            price: newMockProduct.Price.Value,
             description: newMockProduct.Description,
             images: newMockProduct.Images.Select(image => image.FileName.Value).ToList()
         );

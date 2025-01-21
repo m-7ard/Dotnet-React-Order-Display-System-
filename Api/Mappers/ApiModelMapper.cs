@@ -29,7 +29,7 @@ public class ApiModelMapper
         return new ProductApiModel(
             id: product.Id.ToString(),
             name: product.Name,
-            price: product.Price,
+            price: product.Price.Value,
             description: product.Description,
             dateCreated: TimeZoneService.ConvertUtcToLocalTime(product.DateCreated),
             images: product.Images.Select(ProductImageToImageData).ToList()
@@ -43,10 +43,10 @@ public class ApiModelMapper
             name: productHistory.Name,
             images: productHistory.Images,
             description: productHistory.Description,
-            price: productHistory.Price,
+            price: productHistory.Price.Value,
             productId: productHistory.ProductId.ToString(),
-            validFrom: TimeZoneService.ConvertUtcToLocalTime(productHistory.ValidFrom),
-            validTo: productHistory.ValidTo is null ? null : TimeZoneService.ConvertUtcToLocalTime(productHistory.ValidTo.Value)
+            validFrom: TimeZoneService.ConvertUtcToLocalTime(productHistory.ValidityRange.ValidFrom),
+            validTo: productHistory.ValidityRange.ValidTo is null ? null : TimeZoneService.ConvertUtcToLocalTime(productHistory.ValidityRange.ValidTo.Value)
         );
     }
 
@@ -54,7 +54,7 @@ public class ApiModelMapper
     {
         return new OrderItemApiModel(
             id: orderItem.Id.ToString(),
-            quantity: orderItem.Quantity,
+            quantity: orderItem.Quantity.Value,
             status: orderItem.Status.Name,
             dateCreated: TimeZoneService.ConvertUtcToLocalTime(orderItem.OrderItemDates.DateCreated),
             dateFinished: orderItem.OrderItemDates.DateFinished is null ? null : TimeZoneService.ConvertUtcToLocalTime(orderItem.OrderItemDates.DateFinished.Value),
@@ -68,7 +68,7 @@ public class ApiModelMapper
     {
         return new OrderApiModel(
             id: order.Id.Value.ToString(),
-            total: order.Total,
+            total: order.Total.Value,
             dateCreated: order.OrderDates.DateCreated,
             dateFinished: order.OrderDates.DateFinished,
             orderItems: orderItems,

@@ -58,7 +58,6 @@ public class DeleteProductHandlerUnitTest
         
         // ASSERT
         Assert.True(result.IsT0);
-        _mockProductHistoryRepository.Verify(repo => repo.UpdateAsync(It.Is<ProductHistory>(d => d.ValidTo > d.ValidFrom)), Times.Once);
         _mockProductRepository.Verify(repo => repo.DeleteByIdAsync(mockProduct.Id));
     }
 

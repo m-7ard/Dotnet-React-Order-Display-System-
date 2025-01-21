@@ -1,5 +1,6 @@
 using Domain.Models;
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.Shared;
 using Infrastructure.DbEntities;
 
 namespace Infrastructure.Mappers;
@@ -10,7 +11,7 @@ public static class OrderMapper
     {
         return new Order(
             id: OrderId.ExecuteCreate(source.Id),
-            total: source.Total,
+            total: Money.ExecuteCreate(source.Total),
             orderDates: OrderDates.ExecuteCreate(dateCreated: source.DateCreated, dateFinished: source.DateFinished),
             orderItems: source.OrderItems.Select(OrderItemMapper.ToDomain).ToList(),
             status: OrderStatus.ExecuteCreate(source.Status.ToString()),
@@ -22,7 +23,7 @@ public static class OrderMapper
     {
         return new OrderDbEntity(
             id: source.Id.Value,
-            total: source.Total,
+            total: source.Total.Value,
             dateCreated: source.OrderDates.DateCreated,
             dateFinished: source.OrderDates.DateFinished,
             status: ToDbEntityStatus(source.Status),

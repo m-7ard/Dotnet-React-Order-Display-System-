@@ -15,7 +15,7 @@ public class Mixins
     {
         return new OrderItem(
             id: OrderItemId.ExecuteCreate(Guid.NewGuid()), 
-            quantity: 1, 
+            quantity: Quantity.ExecuteCreate(1), 
             status: status, 
             orderItemDates: OrderItemDates.ExecuteCreate(
                 dateCreated: dateCreated, 
@@ -34,10 +34,12 @@ public class Mixins
             id: ProductHistoryId.ExecuteCreate(Guid.NewGuid()),
             name: $"Product History {seed}",
             images: [],
-            price: seed,
+            price: Money.ExecuteCreate(seed),
             productId: ProductId.ExecuteCreate(Guid.NewGuid()),
-            validFrom: new DateTime(),
-            validTo: new DateTime(),
+            validityRange: ProductHistoryValidityRange.ExecuteCreate(
+                validFrom: new DateTime(),
+                validTo: new DateTime().AddSeconds(1)
+            ),
             description: $"Product History {seed} description"
         );
     }
@@ -48,7 +50,7 @@ public class Mixins
             id: ProductId.ExecuteCreate(Guid.NewGuid()),
             dateCreated: new DateTime(),
             name: $"Product #{seed}",
-            price: seed,
+            price: Money.ExecuteCreate(seed),
             description: $"Product #{seed} description",
             images: images
         );

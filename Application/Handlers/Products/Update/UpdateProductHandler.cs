@@ -1,4 +1,5 @@
 using Application.Errors;
+using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
 using Application.Validators;
 using Application.Validators.DraftImageExistsValidator;
@@ -108,11 +109,17 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
             return imageErrors;
         }
 
+        var canCreatePrice = Money.CanCreate(request.Price);
+        if (canCreatePrice.TryPickT1(out error, out _))
+        {
+            return new NotAllowedError(error, []).AsList();
+        }
+
         // Delete old image & update properties
         imagesToDelete.ForEach(image => product.ExecuteDeleteProductImage(image.Id));
         product.Description = request.Description;
         product.Name = request.Name;
-        product.Price = request.Price;
+        product.Price = Money.ExecuteCreate(request.Price);
         await _productRepository.UpdateAsync(product);
 
         // Delete used drafts

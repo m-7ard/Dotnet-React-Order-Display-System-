@@ -12,7 +12,7 @@ public class Product
     public Product(
         ProductId id, 
         string name, 
-        decimal price, 
+        Money price, 
         string description, 
         DateTime dateCreated, 
         List<ProductImage> images)
@@ -27,15 +27,17 @@ public class Product
 
     public ProductId Id { get; private set; }
     public string Name { get; set; }
-    public decimal Price { get; set; }
+    public Money Price { get; set; }
     public string Description { get; set; }
     public DateTime DateCreated { get; private set; }
     public List<ProductImage> Images { get; set; }
+
     public List<DomainEvent> DomainEvents { get; set; } = [];
     public void ClearEvents()
     {
         DomainEvents = [];
     }
+    
     public const int MAX_IMAGE_LENGTH = 8;
 
     public OneOf<bool, string> CanAddProductImage(Guid id, string fileName, string originalFileName, string url)

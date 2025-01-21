@@ -7,21 +7,14 @@ public class ApplicationError
         Message = message;
         Code = code;
         Path = path;
-        Metadata = new Dictionary<string, object>();
-    }
-
-
-    public ApplicationError(string message, string code, List<string> path, object metadata)
-    {
-        Message = message;
-        Code = code;
-        Path = path;
-        Metadata = metadata;
     }
 
     public string Message { get; set; }
     public List<string> Path { get; set; }
     public string Code { get; set; }
 
-    public object Metadata { get; set; }
+    public List<ApplicationError> AsList()
+    {
+        return [this];
+    }
 }

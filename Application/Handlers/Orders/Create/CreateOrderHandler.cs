@@ -31,8 +31,6 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
         var validationErrors = new List<ApplicationError>();
         var order = OrderFactory.BuildNewOrder(
             id: OrderId.ExecuteCreate(Guid.NewGuid()),
-            total: 0,
-            orderItems: [],
             status: OrderStatus.Pending,
             serialNumber: await _sequenceService.GetNextOrderValueAsync()
         );
@@ -53,8 +51,9 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
                 validationErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [uid, ..error.Path])));
                 continue;
             }
-
-            var canAddOrderItem = order.CanAddOrderItem(product, productHistory, quantity: orderItem.Quantity);
+            
+            var orderItemId = Guid.NewGuid();
+            var canAddOrderItem = order.CanAddOrderItem(id: orderItemId, product: product, productHistory: productHistory, quantity: orderItem.Quantity);
             if (canAddOrderItem.TryPickT1(out var error, out var _))
             {
                 var applicationError = new ApplicationError(message: error, code: GeneralApplicationErrorCodes.NOT_ALLOWED, path: [uid]);
@@ -62,7 +61,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
                 continue;
             }
 
-            order.ExecuteAddOrderItem(product: product, productHistory: productHistory, quantity: orderItem.Quantity, serialNumber: await _sequenceService.GetNextOrderItemValueAsync());
+            order.ExecuteAddOrderItem(id: orderItemId, product: product, productHistory: productHistory, quantity: orderItem.Quantity, serialNumber: await _sequenceService.GetNextOrderItemValueAsync());
         }
 
         if (validationErrors.Count > 0)
