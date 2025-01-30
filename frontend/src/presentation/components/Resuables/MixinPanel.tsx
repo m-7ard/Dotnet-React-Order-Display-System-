@@ -1,6 +1,5 @@
 import { ElementType, PropsWithChildren } from "react";
 import PolymorphicProps from "../../types/PolymorphicProps";
-import panelSection from "../../attribute-mixins/panelSection";
 
 type MixinPanelProps<E extends ElementType> = PolymorphicProps<E> & {
     options: {
@@ -32,7 +31,7 @@ export function MixinPanelSection<T extends ElementType = "section">(props: Prop
     const Component = as ?? "section";
 
     return (
-        <Component className={[className].join(" ")} {...HTMLattrs} {...panelSection}>
+        <Component className={[className].join(" ")} {...HTMLattrs} data-role="panel-section">
             {children}
         </Component>
     );
