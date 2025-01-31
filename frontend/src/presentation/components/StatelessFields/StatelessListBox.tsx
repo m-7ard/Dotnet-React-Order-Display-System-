@@ -1,5 +1,5 @@
 import { useAbstractTooltipContext } from "../AbtractTooltip/AbstractTooltip.Context";
-import AbstractTooltip, { AbstractTooltipDefaultPanel, AbstractTooltipTrigger } from "../AbtractTooltip/AbstractTooltip";
+import AbstractTooltip, { AbstractTooltipTrigger, PolymorphicAbstractTooltipDefaultPanel } from "../renderAbstractTooltip/AbstractTooltip";
 import MixinButton from "../Resuables/MixinButton";
 
 type Choice = { value: string | number | null; label: string };
@@ -34,31 +34,17 @@ export default function StatelessListBox(props: StatelessListBoxProps) {
                     </MixinButton>
                 </AbstractTooltipTrigger>
             )}
-            Panel={
-                <StatelessListboxOptions
-                    choices={choices}
-                    selected={selected}
-                    onChange={onChange}
-                    nullable={nullable ?? false}
-                    placeholder={placeholder ?? "---"}
-                />
-            }
+            Panel={() => <StatelessListboxOptions choices={choices} selected={selected} onChange={onChange} nullable={nullable ?? false} placeholder={placeholder ?? "---"} />}
         />
     );
 }
 
-function StatelessListboxOptions(props: {
-    placeholder: string;
-    choices: Array<Choice>;
-    selected: Choice;
-    onChange: (value: Choice["value"]) => void;
-    nullable: boolean;
-}) {
+function StatelessListboxOptions(props: { placeholder: string; choices: Array<Choice>; selected: Choice; onChange: (value: Choice["value"]) => void; nullable: boolean }) {
     const { choices, selected, onChange, nullable, placeholder } = props;
     const { onClose } = useAbstractTooltipContext();
 
     return (
-        <AbstractTooltipDefaultPanel className={"z-50 fixed bg-gray-50 border-gray-900 "}>
+        <PolymorphicAbstractTooltipDefaultPanel className={"z-50 fixed bg-gray-50 border-gray-900 "}>
             {nullable && (
                 <MixinButton
                     options={{
@@ -94,6 +80,6 @@ function StatelessListboxOptions(props: {
                     {choice.label}
                 </MixinButton>
             ))}
-        </AbstractTooltipDefaultPanel>
+        </PolymorphicAbstractTooltipDefaultPanel>
     );
 }

@@ -1,11 +1,11 @@
 import { useNavigate } from "@tanstack/react-router";
 import { getApiUrl } from "../../../viteUtils";
-import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/AbtractTooltip/AbstractTooltip";
 import CoverImage from "../../components/Resuables/CoverImage";
 import MixinButton from "../../components/Resuables/MixinButton";
 import OptionMenu from "./ProductHistories.Page.ProductHistoryElement.OptionMenu";
 import ProductHistory from "../../../domain/models/IProductHistory";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
+import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
 
 export default function ProductHistoryElement(props: { productHistory: ProductHistory }) {
     const { productHistory } = props;
@@ -70,7 +70,7 @@ export default function ProductHistoryElement(props: { productHistory: ProductHi
                             </MixinButton>
                         </AbstractTooltipTrigger>
                     )}
-                    Panel={<OptionMenu productHistory={productHistory} />}
+                    Panel={() => <OptionMenu productHistory={productHistory} />}
                     positioning={{ top: "100%", right: "0px", left: "0px" }}
                 />
             </MixinPrototypeCardSection>

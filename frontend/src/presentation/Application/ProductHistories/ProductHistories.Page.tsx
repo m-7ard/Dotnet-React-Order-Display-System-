@@ -1,5 +1,4 @@
 import MixinButton from "../../components/Resuables/MixinButton";
-import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/AbtractTooltip/AbstractTooltip";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
 import ProductHistory from "../../../domain/models/IProductHistory";
@@ -10,6 +9,7 @@ import ProductHistoryElement from "./ProductHistories.Page.ProductHistoryElement
 import Divider from "../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
 import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
+import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
 
 export default function ProductHistoriesPage(props: { productHistories: ProductHistory[] }) {
     const { productHistories } = props;
@@ -42,7 +42,7 @@ export default function ProductHistoriesPage(props: { productHistories: ProductH
                                 </MixinButton>
                             </AbstractTooltipTrigger>
                         )}
-                        Panel={<OrderByMenu />}
+                        Panel={OrderByMenu}
                         positioning={{ top: "100%", right: "0px" }}
                     />
                 </div>

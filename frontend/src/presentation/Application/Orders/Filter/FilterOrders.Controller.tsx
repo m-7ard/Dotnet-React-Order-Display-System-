@@ -37,7 +37,7 @@ export default function FilterOrdersController() {
     const itemManager = useItemManager<ValueSchema>(initialValue);
     const navigate = useNavigate();
 
-    const fromRequiredToPartial = (value: Required<ValueSchema>) => {
+    const fromRequiredToPartial = (value: Required<ValueSchema>): Partial<ValueSchema> => {
         const entries = Object.entries(value).map(([key, val]) => [key, val === "" ? undefined : val]);
         return Object.fromEntries(entries);
     };
