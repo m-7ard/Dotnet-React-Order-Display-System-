@@ -1,5 +1,5 @@
 import MixinButton from "../../components/Resuables/MixinButton";
-import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuables/AbstractTooltip";
+import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/AbtractTooltip/AbstractTooltip";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
 import ProductHistory from "../../../domain/models/IProductHistory";

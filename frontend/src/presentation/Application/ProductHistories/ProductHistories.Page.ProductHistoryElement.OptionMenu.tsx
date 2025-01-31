@@ -1,9 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
 import ProductHistory from "../../../domain/models/IProductHistory";
-import { AbstractTooltipDefaultPanel } from "../../components/Resuables/AbstractTooltip";
+import { AbstractTooltipDefaultPanel } from "../../components/AbtractTooltip/AbstractTooltip";
 import MixinButton from "../../components/Resuables/MixinButton";
 import MixinPanel, { MixinPanelSection } from "../../components/Resuables/MixinPanel";
-import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
+import { useAbstractTooltipContext } from "../../components/AbtractTooltip/AbstractTooltip.Context";
 import Divider from "../../components/Resuables/Divider";
 
 export default function OptionMenu(props: { productHistory: ProductHistory }) {

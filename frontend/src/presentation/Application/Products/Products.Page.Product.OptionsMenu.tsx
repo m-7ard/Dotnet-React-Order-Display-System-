@@ -1,10 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 import IProduct from "../../../domain/models/IProduct";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
-import { AbstractTooltipDefaultPanel } from "../../components/Resuables/AbstractTooltip";
+import { AbstractTooltipDefaultPanel } from "../../components/AbtractTooltip/AbstractTooltip";
 import MixinButton from "../../components/Resuables/MixinButton";
 import MixinPanel, { MixinPanelSection } from "../../components/Resuables/MixinPanel";
-import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
+import { useAbstractTooltipContext } from "../../components/AbtractTooltip/AbstractTooltip.Context";
 import DeleteProductFactory from "./Delete/DeleteProduct.Factory";
 import Divider from "../../components/Resuables/Divider";
 
