@@ -1,9 +1,9 @@
 import React, { ElementType, FunctionComponent, useCallback, useEffect, useState } from "react";
-import TooltipProvider, { ITooltipPositioning } from "./TooltipProvider";
-import { useTooltipContext } from "./TooltipProvider.TooltipContext";
+import TooltipProvider, { ITooltipPositioning } from "../TooltipProvider/TooltipProvider";
+import { useTooltipContext } from "../TooltipProvider/TooltipProvider.TooltipContext";
 import useFixedPositioning from "../../hooks/useFixedPositioning";
 import { createPortal } from "react-dom";
-import { AbstractTooltipContext, useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
+import { AbstractTooltipContext, useAbstractTooltipContext } from "./AbstractTooltip.Context";
 import PolymorphicProps from "../../types/PolymorphicProps";
 
 const defaultElement = "div";

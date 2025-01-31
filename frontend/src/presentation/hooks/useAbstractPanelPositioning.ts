@@ -1,4 +1,4 @@
-import { useTooltipContext } from "../components/Resuables/TooltipProvider.TooltipContext";
+import { useTooltipContext } from "../components/TooltipProvider/TooltipProvider.TooltipContext";
 import useFixedPositioning from "./useFixedPositioning";
 
 export default function useAbstractPanelPositioning() {

@@ -1,4 +1,4 @@
-import createSafeContext from "../utils/createSafeContext";
+import createSafeContext from "../../utils/createSafeContext";
 
 export const [AbstractTooltipContext, useAbstractTooltipContext] = createSafeContext<{
     onClose: () => void;

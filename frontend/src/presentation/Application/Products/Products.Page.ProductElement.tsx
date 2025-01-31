@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import IProduct from "../../../domain/models/IProduct";
 import { getApiUrl } from "../../../viteUtils";
-import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuables/AbstractTooltip";
+import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/AbtractTooltip/AbstractTooltip";
 import CoverImage from "../../components/Resuables/CoverImage";
 import MixinButton from "../../components/Resuables/MixinButton";
 import ProductOptionMenu from "./Products.Page.Product.OptionsMenu";

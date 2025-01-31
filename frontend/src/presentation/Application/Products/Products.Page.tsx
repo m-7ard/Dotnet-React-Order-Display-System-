@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import MixinButton from "../../components/Resuables/MixinButton";
-import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/Resuables/AbstractTooltip";
+import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/AbtractTooltip/AbstractTooltip";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
 import routeData from "../../routes/_routeData";

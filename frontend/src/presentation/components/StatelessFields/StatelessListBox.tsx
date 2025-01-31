@@ -1,5 +1,5 @@
-import { useAbstractTooltipContext } from "../../contexts/AbstractTooltipContext";
-import AbstractTooltip, { AbstractTooltipDefaultPanel, AbstractTooltipTrigger } from "../Resuables/AbstractTooltip";
+import { useAbstractTooltipContext } from "../AbtractTooltip/AbstractTooltip.Context";
+import AbstractTooltip, { AbstractTooltipDefaultPanel, AbstractTooltipTrigger } from "../AbtractTooltip/AbstractTooltip";
 import MixinButton from "../Resuables/MixinButton";
 
 type Choice = { value: string | number | null; label: string };
