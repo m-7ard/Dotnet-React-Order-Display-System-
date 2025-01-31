@@ -1,11 +1,11 @@
 import { useNavigate } from "@tanstack/react-router";
 import IProduct from "../../../domain/models/IProduct";
 import { getApiUrl } from "../../../viteUtils";
-import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/AbtractTooltip/AbstractTooltip";
 import CoverImage from "../../components/Resuables/CoverImage";
 import MixinButton from "../../components/Resuables/MixinButton";
 import ProductOptionMenu from "./Products.Page.Product.OptionsMenu";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
+import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
 
 export default function ProductElement(props: { product: IProduct }) {
     const { product } = props;
@@ -51,12 +51,18 @@ export default function ProductElement(props: { product: IProduct }) {
                 <AbstractTooltip
                     Trigger={({ open, onToggle }) => (
                         <AbstractTooltipTrigger>
-                            <MixinButton className="justify-center truncate items-center w-full" type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} onClick={onToggle} active={open}>
+                            <MixinButton
+                                className="justify-center truncate items-center w-full"
+                                type="button"
+                                options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}
+                                onClick={onToggle}
+                                active={open}
+                            >
                                 Other
                             </MixinButton>
                         </AbstractTooltipTrigger>
                     )}
-                    Panel={<ProductOptionMenu product={product} />}
+                    Panel={() => <ProductOptionMenu product={product} />}
                     positioning={{ top: "100%", left: "0px", right: "0px" }}
                 />
             </MixinPrototypeCardSection>

@@ -3,13 +3,13 @@ import MixinButton from "../../components/Resuables/MixinButton";
 import Order from "../../../domain/models/Order";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
-import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/AbtractTooltip/AbstractTooltip";
 import OrderElement from "./Orders.Page.OrderElement";
 import OrderByMenu from "./Orders.Page.OrderByMenu";
 import FilterOrdersController from "./Filter/FilterOrders.Controller";
 import Divider from "../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
 import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
+import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
 
 export default function OrdersPage(props: { orders: Order[] }) {
     const { orders } = props;
@@ -48,7 +48,7 @@ export default function OrdersPage(props: { orders: Order[] }) {
                                 </MixinButton>
                             </AbstractTooltipTrigger>
                         )}
-                        Panel={<OrderByMenu />}
+                        Panel={OrderByMenu}
                         positioning={{ top: "100%", right: "0px" }}
                     />
                 </div>

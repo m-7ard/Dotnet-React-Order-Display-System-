@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import MixinButton from "../../components/Resuables/MixinButton";
-import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/AbtractTooltip/AbstractTooltip";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
 import routeData from "../../routes/_routeData";
@@ -11,6 +10,7 @@ import FilterProductsController from "./Filter/FilterProducts.Controller";
 import Divider from "../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
 import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
+import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
 
 export default function ProductsPage(props: { products: IProduct[] }) {
     const { products } = props;
@@ -48,7 +48,7 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                                 </MixinButton>
                             </AbstractTooltipTrigger>
                         )}
-                        Panel={<OrderByMenu />}
+                        Panel={OrderByMenu}
                         positioning={{ top: "100%", right: "0px" }}
                     />
                 </div>

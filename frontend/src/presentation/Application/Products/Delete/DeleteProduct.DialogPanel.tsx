@@ -1,16 +1,16 @@
 import IProduct from "../../../../domain/models/IProduct";
 import MixinButton from "../../../components/Resuables/MixinButton";
-import MixinPanel, { MixinPanelSection } from "../../../components/Resuables/MixinPanel";
 import LinkBox from "../../../components/Resuables/LinkBox";
 import routeData from "../../../routes/_routeData";
 import { DeleteProductErrorSchema } from "./DeleteProduct.Controller";
 import Divider from "../../../components/Resuables/Divider";
+import { PolymorphicMixinPanel, PolymorphicMixinPanelSection } from "../../../components/Resuables/MixinPanel";
 
 export default function DeleteProductDialogPanel(props: { product: IProduct; onSubmit: () => void; errors: DeleteProductErrorSchema; onClose: () => void }) {
     const { product, onSubmit, onClose } = props;
 
     return (
-        <MixinPanel
+        <PolymorphicMixinPanel
             as="form"
             options={{
                 size: "mixin-panel-base",
@@ -21,7 +21,7 @@ export default function DeleteProductDialogPanel(props: { product: IProduct; onS
                 onSubmit();
             }}
         >
-            <MixinPanelSection className="flex flex-row justify-between items-center">
+            <PolymorphicMixinPanelSection className="flex flex-row justify-between items-center">
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
@@ -38,18 +38,18 @@ export default function DeleteProductDialogPanel(props: { product: IProduct; onS
                 >
                     Close
                 </MixinButton>
-            </MixinPanelSection>
+            </PolymorphicMixinPanelSection>
             <Divider />
-            <MixinPanelSection className="flex flex-col gap-3 text-sm">Do you wish to delete "{product.name}"? This Process cannot be undone</MixinPanelSection>
+            <PolymorphicMixinPanelSection className="flex flex-col gap-3 text-sm">Do you wish to delete "{product.name}"? This Process cannot be undone</PolymorphicMixinPanelSection>
             <Divider />
-            <MixinPanelSection className="flex flex-row gap-3">
+            <PolymorphicMixinPanelSection className="flex flex-row gap-3">
                 <MixinButton onClick={onClose} className="basis-1/2 justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="button">
                     Cancel
                 </MixinButton>
                 <MixinButton className="basis-1/2 justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-red" }} type="submit">
                     Delete
                 </MixinButton>
-            </MixinPanelSection>
-        </MixinPanel>
+            </PolymorphicMixinPanelSection>
+        </PolymorphicMixinPanel>
     );
 }

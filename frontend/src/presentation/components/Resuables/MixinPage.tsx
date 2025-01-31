@@ -1,19 +1,25 @@
 import { ElementType, PropsWithChildren } from "react";
 import PolymorphicProps from "../../types/PolymorphicProps";
 import pageSection from "../../attribute-mixins/pageSection";
+import Directive from "../../types/Directive";
+import useDirectives from "../../hooks/useDirectives";
+import useDirectivesAsAttrs from "../../hooks/useDirectivesAsAttrs";
+import pageDirective, { PageDirectiveExpression } from "../../directives/pageDirective";
+import DirectiveFn from "../../types/DirectiveFn";
 
 type MixinPageProps<E extends ElementType> = PolymorphicProps<E> & {
-    options: {
-        size: "mixin-page-base";
-    };
+    options: PageDirectiveExpression;
+    directives: Array<DirectiveFn>;
 };
 
 export default function MixinPage<T extends ElementType = "div">(props: PropsWithChildren<MixinPageProps<T>>) {
-    const { options, as, className, children, ...HTMLattrs } = props;
+    const { options, as, className = "", children, directives=[], ...HTMLattrs } = props;
     const Component = as ?? "div";
 
+    const hostAttributes = useDirectivesAsAttrs({ attrs: HTMLattrs, classNames: [className] }, [pageDirective(options), ...directives]);
+
     return (
-        <Component className={["mixin-page-like", options.size, className].join(" ")} {...HTMLattrs}>
+        <Component {...hostAttributes}>
             {children}
         </Component>
     );
