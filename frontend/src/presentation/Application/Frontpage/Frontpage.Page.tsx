@@ -11,7 +11,7 @@ export default function FrontpagePage() {
     return (
         <MixinPage
             className={`${CONTENT_GRID.CLASS}`}
-            options={{
+            exp={{
                 size: "mixin-page-base",
             }}
         >

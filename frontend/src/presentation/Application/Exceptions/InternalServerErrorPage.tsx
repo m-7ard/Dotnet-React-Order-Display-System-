@@ -22,7 +22,7 @@ export default function InternalServerErrorPage() {
 
     return (
         <MixinPage
-            options={{
+            exp={{
                 size: "mixin-page-base",
             }}
             className={`${CONTENT_GRID.CLASS} flex flex-col items-center justify-center`}

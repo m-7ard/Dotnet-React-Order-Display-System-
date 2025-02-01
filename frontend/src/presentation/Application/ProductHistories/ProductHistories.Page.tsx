@@ -17,7 +17,7 @@ export default function ProductHistoriesPage(props: { productHistories: ProductH
     return (
         <MixinPage
             className={`${CONTENT_GRID.CLASS}`}
-            options={{
+            exp={{
                 size: "mixin-page-base",
             }}
         >

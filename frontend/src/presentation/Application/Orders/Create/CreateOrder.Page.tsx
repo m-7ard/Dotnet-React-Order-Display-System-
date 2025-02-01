@@ -40,7 +40,7 @@ export default function CreateOrderPage(props: {
                 e.preventDefault();
                 onReset();
             }}
-            options={{
+            exp={{
                 size: "mixin-page-base",
             }}
             className={`${CONTENT_GRID.CLASS}`}
