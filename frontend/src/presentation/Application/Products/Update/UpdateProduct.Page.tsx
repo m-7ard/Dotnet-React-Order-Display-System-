@@ -28,7 +28,7 @@ export default function UpdateProductPage(props: { value: ValueSchema; onChange:
         <MixinPage
             as="form"
             className={`${CONTENT_GRID.CLASS}`}
-            options={{
+            exp={{
                 size: "mixin-page-base",
             }}
             onSubmit={async (e) => {

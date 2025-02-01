@@ -16,7 +16,7 @@ export default function OrdersPage(props: { orders: Order[] }) {
 
     return (
         <MixinPage
-            options={{
+            exp={{
                 size: "mixin-page-base",
             }}
             className={`overflow-hidden ${CONTENT_GRID.CLASS}`}

@@ -24,7 +24,7 @@ export default function ManageOrderPage(props: {
 
     return (
         <MixinPage
-            options={{
+            exp={{
                 size: "mixin-page-base",
             }}
             className={`${CONTENT_GRID.CLASS}`}

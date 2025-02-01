@@ -36,7 +36,7 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
                 e.preventDefault();
                 onReset();
             }}
-            options={{
+            exp={{
                 size: "mixin-page-base",
             }}
             className={`${CONTENT_GRID.CLASS}`}

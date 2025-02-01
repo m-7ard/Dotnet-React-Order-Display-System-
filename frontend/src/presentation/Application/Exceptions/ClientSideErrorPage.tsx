@@ -12,9 +12,7 @@ export default function ClientSideErrorPage() {
 
     return (
         <MixinPage
-            options={{
-                size: "mixin-page-base",
-            }}
+            exp={(options) => ({ size: options.SIZE.BASE })}
             className={`${CONTENT_GRID.CLASS} flex flex-col items-center justify-center`}
         >
             <MixinPageSection className="text-4xl font-bold text-gray-800 text-center">A Client Side Error has Occured.</MixinPageSection>
