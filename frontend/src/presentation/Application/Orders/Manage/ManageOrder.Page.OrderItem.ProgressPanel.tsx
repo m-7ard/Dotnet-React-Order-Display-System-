@@ -9,7 +9,7 @@ export default function OrderItemProgressPanel(props: { orderItem: OrderItem }) 
     const { onClose } = useGlobalDialogPanelContext();
 
     return (
-        <PolymorphicMixinPanel exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE })}>
+        <PolymorphicMixinPanel exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}>
             <PolymorphicMixinPanelSection className="flex flex-row justify-between items-center">
                 <div className="token-base-title">Order Item #{orderItem.serialNumber} Progress</div>
                 <MixinButton

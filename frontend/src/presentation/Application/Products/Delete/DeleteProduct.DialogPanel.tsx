@@ -12,10 +12,7 @@ export default function DeleteProductDialogPanel(props: { product: IProduct; onS
     return (
         <PolymorphicMixinPanel
             as="form"
-            options={{
-                size: "mixin-panel-base",
-                theme: "theme-panel-generic-white",
-            }}
+            exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}
             onSubmit={(e) => {
                 e.preventDefault();
                 onSubmit();
@@ -40,7 +37,9 @@ export default function DeleteProductDialogPanel(props: { product: IProduct; onS
                 </MixinButton>
             </PolymorphicMixinPanelSection>
             <Divider />
-            <PolymorphicMixinPanelSection className="flex flex-col gap-3 text-sm">Do you wish to delete "{product.name}"? This Process cannot be undone</PolymorphicMixinPanelSection>
+            <PolymorphicMixinPanelSection className="flex flex-col gap-3 text-sm">
+                Do you wish to delete "{product.name}"? This Process cannot be undone
+            </PolymorphicMixinPanelSection>
             <Divider />
             <PolymorphicMixinPanelSection className="flex flex-row gap-3">
                 <MixinButton onClick={onClose} className="basis-1/2 justify-center" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="button">

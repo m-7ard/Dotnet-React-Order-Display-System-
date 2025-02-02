@@ -11,8 +11,8 @@ export default function ApplicationHeader() {
 
     return (
         <>
-            <MixinContentGrid className="bg-gray-50 overflow-auto shrink-0 z-10 relative">
-                <MixinContentGridTrack className="py-2 px-4 flex flex-row gap-3 items-center mx-auto border-x token-default-border-color" track={"base"}>
+            <MixinContentGrid className="bg-gray-50 overflow-auto shrink-0 z-10 relative" exp={() => ({})}>
+                <MixinContentGridTrack className="py-2 px-4 flex flex-row gap-3 items-center mx-auto border-x token-default-border-color" exp={(options) => ({ track: options.TRACK.BASE })}>
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (

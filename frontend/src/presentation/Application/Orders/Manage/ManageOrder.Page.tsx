@@ -7,12 +7,12 @@ import LinkBox from "../../../components/Resuables/LinkBox";
 import Order from "../../../../domain/models/Order";
 import routeData from "../../../routes/_routeData";
 import OrderItemElement from "./ManageOrder.Page.OrderItem";
-import { CONTENT_GRID } from "../../../attribute-mixins/contentGridTracks";
 import Divider from "../../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
 import GlobalDialog from "../../../components/Dialog/GlobalDialog";
 import OrderProgressPanel from "./ManageOrder.Page.ProgressPanel";
 import { ORDER_STATUS_COLORS } from "../Orders.Constants";
+import contentGridDirective from "../../../directives/contentGridDirective";
 
 export default function ManageOrderPage(props: {
     order: Order;
@@ -23,12 +23,7 @@ export default function ManageOrderPage(props: {
     const { order, onMarkFinished, onMarkOrderItemFinished } = props;
 
     return (
-        <MixinPage
-            exp={{
-                size: "mixin-page-base",
-            }}
-            className={`${CONTENT_GRID.CLASS}`}
-        >
+        <MixinPage exp={(options) => ({ size: options.SIZE.BASE })} directives={[contentGridDirective(() => ({}))]}>
             <MixinPageSection className="flex flex-row gap-3 items-center">
                 <LinkBox
                     parts={[

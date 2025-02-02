@@ -8,19 +8,17 @@ import OrderByMenu from "./Orders.Page.OrderByMenu";
 import FilterOrdersController from "./Filter/FilterOrders.Controller";
 import Divider from "../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
-import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
+import contentGridDirective from "../../directives/contentGridDirective";
 
 export default function OrdersPage(props: { orders: Order[] }) {
     const { orders } = props;
 
     return (
         <MixinPage
-            exp={{
-                size: "mixin-page-base",
-            }}
-            className={`overflow-hidden ${CONTENT_GRID.CLASS}`}
-            {...CONTENT_GRID.DEFAULT_TRACKS.full}
+            exp={(options) => ({ size: options.SIZE.BASE })}
+            className={`overflow-hidden`}
+            directives={[contentGridDirective(() => ({}))]}
         >
             <MixinPageSection className="flex flex-row gap-3 items-center overflow-x-auto shrink-0">
                 <LinkBox parts={[{ isLink: true, to: "/orders", label: "Orders" }]} />

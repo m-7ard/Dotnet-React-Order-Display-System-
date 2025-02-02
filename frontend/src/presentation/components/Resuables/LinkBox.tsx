@@ -24,6 +24,7 @@ export default function LinkBox(props: {
                 size: "mixin-button-sm",
                 theme: "theme-button-generic-white",
             }}
+            className="shrink-0"
             isStatic
             hasShadow
             type="button"

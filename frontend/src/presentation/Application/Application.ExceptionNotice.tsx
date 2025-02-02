@@ -13,12 +13,7 @@ export default function ApplicationExceptionNotice() {
     return (
         <RenderedMixinPanel
             className="fixed mx-auto top-4 left-4 right-4"
-            options={{
-                size: "mixin-panel-base",
-                theme: "theme-panel-generic-white",
-            }}
-            hasBorder
-            hasShadow
+            exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}
         >
             {(mixinPanelProps) => (
                 <div {...mixinPanelProps} style={{ zIndex: 1_000_000 }}>

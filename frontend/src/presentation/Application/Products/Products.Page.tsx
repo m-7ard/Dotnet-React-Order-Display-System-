@@ -9,19 +9,14 @@ import ProductElement from "./Products.Page.ProductElement";
 import FilterProductsController from "./Filter/FilterProducts.Controller";
 import Divider from "../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
-import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
+import contentGridDirective from "../../directives/contentGridDirective";
 
 export default function ProductsPage(props: { products: IProduct[] }) {
     const { products } = props;
 
     return (
-        <MixinPage
-            className={`${CONTENT_GRID.CLASS}`}
-            exp={{
-                size: "mixin-page-base",
-            }}
-        >
+        <MixinPage directives={[contentGridDirective(() => ({}))]} exp={(options) => ({ size: options.SIZE.BASE })}>
             <MixinPageSection className="flex flex-row gap-3 items-center shrink-0 overflow-x-auto">
                 <LinkBox parts={[{ isLink: true, to: routeData.createProduct.build({}), label: "Products" }]} />
                 <div className="flex flex-row gap-3 ml-auto">
@@ -33,7 +28,12 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
-                            <MixinButton className="justify-center w-full basis-1/2" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} hasShadow>
+                            <MixinButton
+                                className="justify-center w-full basis-1/2"
+                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                onClick={onToggle}
+                                hasShadow
+                            >
                                 Filter
                             </MixinButton>
                         )}
@@ -43,7 +43,13 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                     <AbstractTooltip
                         Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
-                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open} hasShadow>
+                                <MixinButton
+                                    className="w-full truncate"
+                                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                    onClick={onToggle}
+                                    active={open}
+                                    hasShadow
+                                >
                                     Order By
                                 </MixinButton>
                             </AbstractTooltipTrigger>

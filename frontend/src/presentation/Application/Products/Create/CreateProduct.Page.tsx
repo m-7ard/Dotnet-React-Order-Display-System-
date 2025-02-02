@@ -9,9 +9,8 @@ import { useCallback } from "react";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
 import Divider from "../../../components/Resuables/Divider";
-import { MixinContentGridTrack } from "../../../components/Resuables/MixinContentGrid";
-import { CONTENT_GRID } from "../../../attribute-mixins/contentGridTracks";
 import FormError from "../../../components/Forms/FormError,";
+import contentGridDirective from "../../../directives/contentGridDirective";
 
 export default function CreateProductPage(props: { value: ValueState; errors: ErrorState; onSubmit: () => void; onReset: () => void; onChange: (value: ValueState) => void; uploadImages: (images: File[]) => Promise<void> }) {
     const { value, errors, onSubmit, onReset, onChange, uploadImages } = props;
@@ -36,10 +35,8 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
                 e.preventDefault();
                 onReset();
             }}
-            exp={{
-                size: "mixin-page-base",
-            }}
-            className={`${CONTENT_GRID.CLASS}`}
+            exp={(options) => ({ size: options.SIZE.BASE })}
+            directives={[contentGridDirective(() => ({}))]}
         >
             <MixinPageSection className="flex flex-row gap-3 items-center">
                 <LinkBox
@@ -49,7 +46,7 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
                     ]}
                 />
             </MixinPageSection>
-            <MixinContentGridTrack track="base" as={Divider} />
+            <Divider />
             <MixinPageSection className="flex flex-col gap-3">
                 <div className="token-default-title">Create Product</div>
                 <FormError title="Failed to Create Product" errors={errors._} />
@@ -91,7 +88,7 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
                     </FormField>
                 </div>
             </MixinPageSection>
-            <MixinContentGridTrack track="base" as={Divider} />
+            <Divider />
             <MixinPageSection className="flex flex-row gap-3 justify-end">
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="reset">
                     Reset

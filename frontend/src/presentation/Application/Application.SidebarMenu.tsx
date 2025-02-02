@@ -10,7 +10,7 @@ export default function SidebarMenuDialog() {
     const location = useLocation();
 
     return (
-        <RenderedMixinPanel options={{ size: "mixin-panel-base", theme: "theme-panel-generic-white" }} className="top-0 bottom-0 left-0 fixed w-72 rounded-none">
+        <RenderedMixinPanel exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })} className="top-0 bottom-0 left-0 fixed w-72 rounded-none">
             {(mixinPanelProps) => (
                 <div {...mixinPanelProps}>
                     <PolymorphicMixinPanelSection className="flex flex-row justify-between items-center">

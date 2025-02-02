@@ -23,14 +23,7 @@ export default function OrderByMenu() {
 
     return (
         <PolymorphicAbstractTooltipDefaultPanel className="z-10 fixed mt-1">
-            <PolymorphicMixinPanel
-                options={{
-                    size: "mixin-panel-base",
-                    theme: "theme-panel-generic-white",
-                }}
-                hasBorder
-                hasShadow
-            >
+            <PolymorphicMixinPanel exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}>
                 <PolymorphicMixinPanelSection className="flex flex-row gap-5 items-center justify-between">
                     <div className="text-sm">Newest</div>
                     <StatelessRadioCheckboxField name={"orderBy"} onChange={onChange} value={"newest"} checked={orderBy === "newest"} />

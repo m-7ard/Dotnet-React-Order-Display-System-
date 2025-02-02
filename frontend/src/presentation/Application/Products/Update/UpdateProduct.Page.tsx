@@ -10,9 +10,17 @@ import { ErrorSchema, ValueSchema } from "./UpdateProduct.Controller";
 import IProduct from "../../../../domain/models/IProduct";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
 import Divider from "../../../components/Resuables/Divider";
-import { CONTENT_GRID } from "../../../attribute-mixins/contentGridTracks";
+import contentGridDirective from "../../../directives/contentGridDirective";
 
-export default function UpdateProductPage(props: { value: ValueSchema; onChange: (value: ValueSchema) => void; onReset: () => void; onSubmit: () => void; errors: ErrorSchema; product: IProduct; uploadImages: (images: File[]) => Promise<void> }) {
+export default function UpdateProductPage(props: {
+    value: ValueSchema;
+    onChange: (value: ValueSchema) => void;
+    onReset: () => void;
+    onSubmit: () => void;
+    errors: ErrorSchema;
+    product: IProduct;
+    uploadImages: (images: File[]) => Promise<void>;
+}) {
     const { value, onChange, onReset, onSubmit, errors, product, uploadImages } = props;
 
     const updateField = useCallback(
@@ -27,10 +35,8 @@ export default function UpdateProductPage(props: { value: ValueSchema; onChange:
     return (
         <MixinPage
             as="form"
-            className={`${CONTENT_GRID.CLASS}`}
-            exp={{
-                size: "mixin-page-base",
-            }}
+            directives={[contentGridDirective(() => ({}))]}
+            exp={(options) => ({ size: options.SIZE.BASE })}
             onSubmit={async (e) => {
                 e.preventDefault();
                 onSubmit();
