@@ -12,15 +12,8 @@ export default function FilterProductResults(props: IFilterProductResultsProps) 
     const { onClose } = useGlobalDialogPanelContext();
 
     return (
-        <PolymorphicMixinPanel
-            options={{
-                size: "mixin-panel-base",
-                theme: "theme-panel-generic-white",
-            }}
-            hasShadow
-            className="flex flex-col"
-        >
-            <PolymorphicMixinPanelSection className="flex flex-row gap-3 items-center justify-between">
+        <PolymorphicMixinPanel exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })} className="flex flex-col">
+            <PolymorphicMixinPanelSection className="flex flex-row gap-3 items-center justify-between flex-wrap">
                 <LinkBox
                     parts={[
                         { isLink: false, label: "Products" },

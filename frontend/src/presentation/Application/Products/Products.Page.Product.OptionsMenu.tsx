@@ -15,14 +15,7 @@ export default function ProductOptionMenu(props: { product: IProduct }) {
 
     return (
         <PolymorphicAbstractTooltipDefaultPanel className={`z-10 fixed mt-1`}>
-            <PolymorphicMixinPanel
-                options={{
-                    size: "mixin-panel-base",
-                    theme: "theme-panel-generic-white",
-                }}
-                hasShadow
-                hasBorder
-            >
+            <PolymorphicMixinPanel exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}>
                 <PolymorphicMixinPanelSection className="flex flex-row items-center justify-between gap-3">
                     <div className="text-sm">Other Options</div>
                     <MixinButton

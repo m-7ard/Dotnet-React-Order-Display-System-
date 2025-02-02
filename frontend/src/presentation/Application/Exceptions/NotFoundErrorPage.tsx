@@ -1,9 +1,9 @@
 import { useRouterState, Navigate } from "@tanstack/react-router";
-import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
 import routeData from "../../routes/_routeData";
 import TanstackRouterState from "../../types/TanstackRouterState";
 import { useRef } from "react";
+import contentGridDirective from "../../directives/contentGridDirective";
 
 export default function NotFoundErrorPage() {
     const state: TanstackRouterState = useRouterState();
@@ -21,12 +21,7 @@ export default function NotFoundErrorPage() {
     console.error(errorRef.current);
 
     return (
-        <MixinPage
-            exp={{
-                size: "mixin-page-base",
-            }}
-            className={`${CONTENT_GRID.CLASS} flex flex-col items-center justify-center`}
-        >
+        <MixinPage exp={(options) => ({ size: options.SIZE.BASE })} directives={[contentGridDirective(() => ({}))]} className={`flex flex-col items-center justify-center`}>
             <MixinPageSection className="text-4xl font-bold text-gray-800 text-center">An 404 Not Found Error Occured.</MixinPageSection>
             <MixinPageSection className="text-xl font-bold text-gray-700 text-center whitespace-pre">{errorRef.current.message}</MixinPageSection>
         </MixinPage>

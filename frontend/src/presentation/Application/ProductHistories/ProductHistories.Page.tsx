@@ -8,26 +8,26 @@ import FilterProductHistoriesController from "./Filter/FilterProductHistories.Co
 import ProductHistoryElement from "./ProductHistories.Page.ProductHistoryElement";
 import Divider from "../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
-import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
+import contentGridDirective from "../../directives/contentGridDirective";
 
 export default function ProductHistoriesPage(props: { productHistories: ProductHistory[] }) {
     const { productHistories } = props;
 
     return (
-        <MixinPage
-            className={`${CONTENT_GRID.CLASS}`}
-            exp={{
-                size: "mixin-page-base",
-            }}
-        >
+        <MixinPage directives={[contentGridDirective(() => ({}))]} exp={(options) => ({ size: options.SIZE.BASE })}>
             <MixinPageSection className="flex flex-row gap-3 items-center overflow-x-auto shrink-0">
                 <LinkBox parts={[{ isLink: true, to: routeData.listProductHistories.build({}), label: "Product Histories" }]} />
                 <div className="flex flex-row gap-3 ml-auto">
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
-                            <MixinButton className="justify-center w-full basis-1/2" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} hasShadow>
+                            <MixinButton
+                                className="justify-center w-full basis-1/2"
+                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                onClick={onToggle}
+                                hasShadow
+                            >
                                 Filter
                             </MixinButton>
                         )}
@@ -37,7 +37,13 @@ export default function ProductHistoriesPage(props: { productHistories: ProductH
                     <AbstractTooltip
                         Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
-                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open} hasShadow>
+                                <MixinButton
+                                    className="w-full truncate"
+                                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                    onClick={onToggle}
+                                    active={open}
+                                    hasShadow
+                                >
                                     Order By
                                 </MixinButton>
                             </AbstractTooltipTrigger>

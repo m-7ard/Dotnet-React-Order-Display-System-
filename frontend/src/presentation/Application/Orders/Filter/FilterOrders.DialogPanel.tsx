@@ -17,7 +17,7 @@ export default function FilterOrdersDialogPanel(props: {
     const { value, onSubmit, onReset, onClose, onChange, onClear } = props;
 
     return (
-        <RenderedMixinPanel options={{ size: "mixin-panel-base", theme: "theme-panel-generic-white" }} className="flex flex-col">
+        <RenderedMixinPanel exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })} className="flex flex-col">
             {(mixinPanelProps) => (
                 <form
                     onSubmit={(e) => {

@@ -18,12 +18,8 @@ export default function FilterProductsDialogPanel(props: {
 
     return (
         <PolymorphicMixinPanel
-            options={{
-                size: "mixin-panel-base",
-                theme: "theme-panel-generic-white",
-            }}
+            exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}
             className="flex flex-col"
-            hasShadow
             as="form"
             onSubmit={(e) => {
                 e.preventDefault();
@@ -34,7 +30,7 @@ export default function FilterProductsDialogPanel(props: {
                 onReset();
             }}
         >
-            <PolymorphicMixinPanelSection className="flex flex-row justify-between items-center">
+            <PolymorphicMixinPanelSection className="flex flex-row justify-between items-center flex-wrap">
                 <LinkBox
                     parts={[
                         { isLink: true, to: routeData.listProducts.build({}), label: "Products" },

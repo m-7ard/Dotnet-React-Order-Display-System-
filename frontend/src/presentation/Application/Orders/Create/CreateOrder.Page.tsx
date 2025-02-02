@@ -6,9 +6,9 @@ import routeData from "../../../routes/_routeData";
 import { useCallback } from "react";
 import Divider from "../../../components/Resuables/Divider";
 import FormError from "../../../components/Forms/FormError,";
-import { CONTENT_GRID } from "../../../attribute-mixins/contentGridTracks";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
 import { ErrorState, ValueSchema } from "./CreateOrder.Controller";
+import contentGridDirective from "../../../directives/contentGridDirective";
 
 export default function CreateOrderPage(props: {
     onSubmit: () => void;
@@ -40,10 +40,8 @@ export default function CreateOrderPage(props: {
                 e.preventDefault();
                 onReset();
             }}
-            exp={{
-                size: "mixin-page-base",
-            }}
-            className={`${CONTENT_GRID.CLASS}`}
+            exp={(options) => ({ size: options.SIZE.BASE })}
+            directives={[contentGridDirective(() => ({}))]}
         >
             <MixinPageSection className="flex flex-row gap-3 items-center">
                 <LinkBox

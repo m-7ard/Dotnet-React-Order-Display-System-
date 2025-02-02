@@ -6,15 +6,17 @@ export default function positionFixedContainer(
     const referenceDimensions = reference.getBoundingClientRect();
 
     const parsedPositioning = { ...positioning };
-    const elementWidth = element.offsetWidth;
-    element.style.minWidth = `${elementWidth}px`
+    // const elementWidth = element.offsetWidth;
+    // element.style.minWidth = `${elementWidth}px`
 
     //
     Object.entries(positioning).forEach(([key, value]) => {
         if (value.includes("%") && ["left", "right"].includes(key)) {
-            parsedPositioning[key] = reference.offsetWidth * (parseInt(value.slice(0, -1)) / 100) + "px";
+            const typedKey = key as "left" | "right";
+            parsedPositioning[typedKey] = reference.offsetWidth * (parseInt(value.slice(0, -1)) / 100) + "px";
         } else if (value.includes("%") && ["top", "bottom"].includes(key)) {
-            parsedPositioning[key] = reference.offsetHeight * (parseInt(value.slice(0, -1)) / 100) + "px";
+            const typedKey = key as "top" | "bottom";
+            parsedPositioning[typedKey] = reference.offsetHeight * (parseInt(value.slice(0, -1)) / 100) + "px";
         }
     });
 

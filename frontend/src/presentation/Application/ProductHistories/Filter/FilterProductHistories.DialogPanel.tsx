@@ -18,12 +18,8 @@ export default function FilterProductHistoriesDialogPanel(props: {
 
     return (
         <PolymorphicMixinPanel
-            options={{
-                size: "mixin-panel-base",
-                theme: "theme-panel-generic-white",
-            }}
+            exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}
             as="form"
-            hasShadow
             onSubmit={(e) => {
                 e.preventDefault();
                 onSubmit();
