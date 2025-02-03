@@ -18,7 +18,7 @@ export default function OrdersPage(props: { orders: Order[] }) {
         <MixinPage
             exp={(options) => ({ size: options.SIZE.BASE })}
             className={`overflow-hidden`}
-            directives={[contentGridDirective(() => ({}))]}
+            directives={[contentGridDirective((options) => ({ defaultTracks: options.DEFAULT_TRACKS.FULL }))]}
         >
             <MixinPageSection className="flex flex-row gap-3 items-center overflow-x-auto shrink-0">
                 <LinkBox parts={[{ isLink: true, to: "/orders", label: "Orders" }]} />
@@ -41,7 +41,13 @@ export default function OrdersPage(props: { orders: Order[] }) {
                     <AbstractTooltip
                         Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
-                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open} hasShadow>
+                                <MixinButton
+                                    className="w-full truncate"
+                                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                    onClick={onToggle}
+                                    active={open}
+                                    hasShadow
+                                >
                                     Order By
                                 </MixinButton>
                             </AbstractTooltipTrigger>

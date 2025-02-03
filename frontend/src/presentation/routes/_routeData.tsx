@@ -9,6 +9,22 @@ function createRoute<P extends string, T extends Record<string, unknown>>(patter
     return { pattern, build };
 }
 
+class RouteGroup<TRouteGroupPattern extends string, RouteGroupBuilderArgs extends Record<string, unknown>> {
+    constructor(public pattern: TRouteGroupPattern, public build: (args?: RouteGroupBuilderArgs) => string, public label?: string) {}
+
+    registerRoute<TRoutePattern extends string, TRouteBuilderArgs extends Record<string, unknown>>(pattern: TRoutePattern, build: RouteBuilder<TRouteBuilderArgs>, label?: string) {
+        const route = createRoute(`${this.pattern}/${pattern}`, (props: RouteGroupBuilderArgs & TRouteBuilderArgs) => `${this.build(props)}/${build(props)}`)
+        return route;
+    }
+
+    registerGroup //
+}
+
+const baseRouterGroup = new RouteGroup("", () => "");
+const frontpageRoute = baseRouterGroup.registerRoute("frontpage", () => "frontpage");
+
+frontpageRoute.build({})
+
 const routeData = {
     frontpage: createRoute("/", () => "/"),
 
