@@ -6,7 +6,7 @@ import IProduct from "../../../domain/models/IProduct";
 import { useCallback } from "react";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 import CountTrackerProduct from "../FilterProductResults/FilterProductResults.Pages.Results.CountTracker";
-import FilterProductResultsControllerV2 from "../FilterProductResults/FilterProductResults.Controller copy";
+import FilterProductResultsControllerV2 from "../FilterProductResults/FilterProductResults.Controller.V2";
 
 type ErrorSchema = IPresentationError<{
     [productId: number | string]: OrderItemDataFieldErrorSchema;

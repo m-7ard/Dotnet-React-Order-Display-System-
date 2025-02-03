@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type RouteBuilder<T extends Record<string, unknown>> = (params: T) => string;
 
 type Route<P extends string, T extends Record<string, unknown>> = {
@@ -9,45 +10,79 @@ function createRoute<P extends string, T extends Record<string, unknown>>(patter
     return { pattern, build };
 }
 
-class RouteGroup<TRouteGroupPattern extends string, RouteGroupBuilderArgs extends Record<string, unknown>> {
-    constructor(public pattern: TRouteGroupPattern, public build: (args?: RouteGroupBuilderArgs) => string, public label?: string) {}
+class RouteData<TRouteGroupPattern extends string, RouteGroupBuilderArgs extends Record<string, unknown>, TLabel extends string> {
+    public children: RouteData<any, any, any>[] = [];
 
-    registerRoute<TRoutePattern extends string, TRouteBuilderArgs extends Record<string, unknown>>(pattern: TRoutePattern, build: RouteBuilder<TRouteBuilderArgs>, label?: string) {
-        const route = createRoute(`${this.pattern}/${pattern}`, (props: RouteGroupBuilderArgs & TRouteBuilderArgs) => `${this.build(props)}/${build(props)}`)
+    constructor(
+        public pattern: TRouteGroupPattern,
+        public build: RouteBuilder<RouteGroupBuilderArgs>,
+        public label?: TLabel,
+        public parent?: RouteData<any, any, any>
+    ) {}
+
+    registerRoute<P extends string, Args extends Record<string, unknown>, L extends string>(pattern: P, build: RouteBuilder<Args>, label?: L) {
+        const route = new RouteData(`${this.pattern}/${pattern}`, (props: RouteGroupBuilderArgs & Args) => `${this.build(props)}/${build(props)}`, label, this);
+        this.children.push(route)
         return route;
     }
-
-    registerGroup //
 }
 
-const baseRouterGroup = new RouteGroup("", () => "");
-const frontpageRoute = baseRouterGroup.registerRoute("frontpage", () => "frontpage");
+const baseRouterGroup = new RouteData("", () => "", "All");
 
-frontpageRoute.build({})
+// frontpage
+const frontpageRoute = baseRouterGroup.registerRoute("", () => "", "Frontpage");
+
+// orders
+const __ordersRoute = baseRouterGroup.registerRoute("orders", () => "orders", "Orders");
+const listOrdersRoute = __ordersRoute.registerRoute("", () => "")
+const createOrderRoute = __ordersRoute.registerRoute("create", () => "create", "Create")
+
+const __ordersIdRoute = __ordersRoute.registerRoute("$id", ({ id }: { id: string }) => id, "$id")
+const manageOrderRoute = __ordersIdRoute.registerRoute("manage", () => "manage", "Manage");
+
+// products
+const __productsRoute = baseRouterGroup.registerRoute("products", () => "products", "Products");
+const listProductsRoute = __productsRoute.registerRoute("", () => "")
+const createProductRoute = __productsRoute.registerRoute("create", () => "create", "Create")
+
+const __productIdRoute = __productsRoute.registerRoute("$id", ({ id }: { id: string }) => id, "$id")
+const updateProductRoute = __productIdRoute.registerRoute("update", () => "update", "Update");
+
+// product histories
+const __productHistoriesRoute = baseRouterGroup.registerRoute("product_histories", () => "product_histories", "Product Histories");
+const listProductHistoriesRoute = __productHistoriesRoute.registerRoute("", () => "")
+
+// error pages
+const loaderErrorRoute = baseRouterGroup.registerRoute("loader_error", () => "loader_error")
+const unkownErrorRoute = baseRouterGroup.registerRoute("unknown_error", () => "unknown_error")
+const notFoundErrorRoute = baseRouterGroup.registerRoute("not_found_error", () => "not_found_error")
+const internalServerErrorRoute = baseRouterGroup.registerRoute("internal_server_error", () => "internal_server_error")
+const clientSideErrorRoute = baseRouterGroup.registerRoute("client_side_error", () => "client_side_error")
+
 
 const routeData = {
-    frontpage: createRoute("/", () => "/"),
+    frontpage: frontpageRoute,
 
     ...{
-        listOrders: createRoute("/orders", () => "/orders"),
-        createOrder: createRoute("/orders/create", () => `/orders/create`),
-        manageOrder: createRoute("/orders/$id/manage", (params: { id: string }) => `/orders/${params.id}/manage`),
+        listOrders: listOrdersRoute,
+        createOrder: createOrderRoute,
+        manageOrder: manageOrderRoute
     },
 
     ...{
-        listProducts: createRoute("/products", () => "/products"),
-        createProduct: createRoute("/products/create", () => `/products/create`),
-        updateProduct: createRoute("/products/$id/update", (params: { id: string }) => `/products/${params.id}/update`),
+        listProducts: listProductsRoute,
+        createProduct: createProductRoute,
+        updateProduct: updateProductRoute,
     },
 
-    ...{ listProductHistories: createRoute("/product_histories", () => "/product_histories") },
+    ...{ listProductHistories: listProductHistoriesRoute },
 
     ...{
-        loaderError: createRoute("/loader_error", () => "/loader_error"),
-        unkownError: createRoute("/unknown_error", () => "/unknown_error"),
-        notFoundError: createRoute("/not_found_error", () => "/not_found_error"),
-        internalServerError: createRoute("/internal_server_error", () => "/internal_server_error"),
-        clientSideError: createRoute("/client_side_error", () => "/client_side_error"),
+        loaderError: loaderErrorRoute,
+        unkownError: unkownErrorRoute,
+        notFoundError: notFoundErrorRoute,
+        internalServerError: internalServerErrorRoute,
+        clientSideError: clientSideErrorRoute,
     },
 } as const;
 
