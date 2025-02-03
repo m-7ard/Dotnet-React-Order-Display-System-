@@ -1,39 +1,39 @@
 import { createRoute } from "@tanstack/react-router";
-import rootRoute from "./_rootRoute";
-import routeData from "./_routeData";
-import LoaderErrorPage from "../Application/Exceptions/LoaderErrorPage";
-import UnknownErrorPage from "../Application/Exceptions/UnknownErrorPage";
-import NotFoundErrorPage from "../Application/Exceptions/NotFoundErrorPage";
-import InternalServerErrorPage from "../Application/Exceptions/InternalServerErrorPage";
-import ClientSideErrorPage from "../Application/Exceptions/ClientSideErrorPage";
+import rootRoute from "../rootRoute";
+import LoaderErrorPage from "../../../Application/Exceptions/LoaderErrorPage";
+import UnknownErrorPage from "../../../Application/Exceptions/UnknownErrorPage";
+import NotFoundErrorPage from "../../../Application/Exceptions/NotFoundErrorPage";
+import InternalServerErrorPage from "../../../Application/Exceptions/InternalServerErrorPage";
+import ClientSideErrorPage from "../../../Application/Exceptions/ClientSideErrorPage";
+import routeConfig from "../routeConfig";
 
 const loaderErrorPage = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeData.loaderError.pattern,
+    path: routeConfig.LOADER_ERROR.path,
     component: LoaderErrorPage,
 });
 
 const unkownErrorPage = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeData.unkownError.pattern,
+    path: routeConfig.UNKNOWN_ERROR.path,
     component: UnknownErrorPage,
 });
 
 const notFoundErrorPage = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeData.notFoundError.pattern,
+    path: routeConfig.NOT_FOUND_ERROR.path,
     component: NotFoundErrorPage,
 });
 
 const internalServerErrorPage = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeData.internalServerError.pattern,
+    path: routeConfig.INTERNAL_SERVER_ERROR.path,
     component: InternalServerErrorPage,
 });
 
 const clientSideErrorPage = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeData.clientSideError.pattern,
+    path: routeConfig.CLIENT_SIDE_ERROR.path,
     component: ClientSideErrorPage,
 });
 

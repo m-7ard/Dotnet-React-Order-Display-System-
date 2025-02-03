@@ -5,7 +5,7 @@ import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../../components/Resuables/MixinPrototypeCard";
 import LinkBox from "../../../components/Resuables/LinkBox";
 import Order from "../../../../domain/models/Order";
-import routeData from "../../../routes/_routeData";
+import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import OrderItemElement from "./ManageOrder.Page.OrderItem";
 import Divider from "../../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
@@ -27,9 +27,9 @@ export default function ManageOrderPage(props: {
             <MixinPageSection className="flex flex-row gap-3 items-center">
                 <LinkBox
                     parts={[
-                        { isLink: true, to: routeData.listOrders.build({}), label: "Orders" },
+                        { isLink: true, to: ROUTE_DATA.listOrders.build({}), label: "Orders" },
                         { isLink: false, label: order.serialNumber },
-                        { isLink: true, to: routeData.manageOrder.build({ id: order.id }), label: "Manage" },
+                        { isLink: true, to: ROUTE_DATA.manageOrder.build({ id: order.id }), label: "Manage" },
                     ]}
                 />
             </MixinPageSection>

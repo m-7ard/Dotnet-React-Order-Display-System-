@@ -1,7 +1,7 @@
 import IProduct from "../../../../domain/models/IProduct";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import LinkBox from "../../../components/Resuables/LinkBox";
-import routeData from "../../../routes/_routeData";
+import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import { DeleteProductErrorSchema } from "./DeleteProduct.Controller";
 import Divider from "../../../components/Resuables/Divider";
 import { PolymorphicMixinPanel, PolymorphicMixinPanelSection } from "../../../components/Resuables/MixinPanel";
@@ -21,7 +21,7 @@ export default function DeleteProductDialogPanel(props: { product: IProduct; onS
             <PolymorphicMixinPanelSection className="flex flex-row justify-between items-center">
                 <LinkBox
                     parts={[
-                        { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
+                        { isLink: true, to: ROUTE_DATA.listProducts.build({}), label: "Products" },
                         { isLink: false, label: "Delete" },
                     ]}
                 />

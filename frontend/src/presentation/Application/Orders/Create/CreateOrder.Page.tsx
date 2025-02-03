@@ -2,7 +2,7 @@ import FormField from "../../../components/Forms/FormField";
 import OrderItemDataField from "../../../components/OrderItemDataForm/OrderItemData.Field";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import LinkBox from "../../../components/Resuables/LinkBox";
-import routeData from "../../../routes/_routeData";
+import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import { useCallback } from "react";
 import Divider from "../../../components/Resuables/Divider";
 import FormError from "../../../components/Forms/FormError,";
@@ -45,8 +45,8 @@ export default function CreateOrderPage(props: {
             <MixinPageSection className="flex flex-row gap-3 items-center">
                 <LinkBox
                     parts={[
-                        { isLink: true, to: routeData.listOrders.build({}), label: "Orders" },
-                        { isLink: true, to: routeData.createOrder.build({}), label: "Create" },
+                        { isLink: true, to: ROUTE_DATA.listOrders.build({}), label: "Orders" },
+                        { isLink: true, to: ROUTE_DATA.createOrder.build({}), label: "Create" },
                     ]}
                 />
             </MixinPageSection>

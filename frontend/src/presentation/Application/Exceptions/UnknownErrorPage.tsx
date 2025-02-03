@@ -1,6 +1,6 @@
 import { useRouterState, Navigate } from "@tanstack/react-router";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
-import routeData from "../../routes/_routeData";
+import ROUTE_DATA from "../../routes/ROUTE_DATA";
 import TanstackRouterState from "../../types/TanstackRouterState";
 import { useRef } from "react";
 import contentGridDirective from "../../directives/contentGridDirective";
@@ -12,7 +12,7 @@ export default function UnknownErrorPage() {
     if (errorRef.current == null) {
         return (
             <Navigate
-                to={routeData.clientSideError.pattern}
+                to={ROUTE_DATA.clientSideError.pattern}
                 state={(prev) => ({ ...prev, error: new Error("An Unknown Error occured but no error was provided to the UnknownErrorPage.") })}
             />
         );

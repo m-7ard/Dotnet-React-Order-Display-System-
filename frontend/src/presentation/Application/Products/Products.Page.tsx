@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import MixinButton from "../../components/Resuables/MixinButton";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import LinkBox from "../../components/Resuables/LinkBox";
-import routeData from "../../routes/_routeData";
+import ROUTE_DATA from "../../routes/ROUTE_DATA";
 import OrderByMenu from "./Products.Page.OrderByMenu";
 import IProduct from "../../../domain/models/IProduct";
 import ProductElement from "./Products.Page.ProductElement";
@@ -18,7 +18,7 @@ export default function ProductsPage(props: { products: IProduct[] }) {
     return (
         <MixinPage directives={[contentGridDirective(() => ({}))]} exp={(options) => ({ size: options.SIZE.BASE })}>
             <MixinPageSection className="flex flex-row gap-3 items-center shrink-0 overflow-x-auto">
-                <LinkBox parts={[{ isLink: true, to: routeData.createProduct.build({}), label: "Products" }]} />
+                <LinkBox parts={[{ isLink: true, to: ROUTE_DATA.createProduct.build({}), label: "Products" }]} />
                 <div className="flex flex-row gap-3 ml-auto">
                     <Link to="/products/create">
                         <MixinButton className="justify-center w-full" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} hasShadow>

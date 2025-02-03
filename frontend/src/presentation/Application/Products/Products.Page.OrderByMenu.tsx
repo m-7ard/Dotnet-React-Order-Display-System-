@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import IListProductsRequestDTO from "../../../infrastructure/contracts/products/list/IListProductsRequestDTO";
 import StatelessRadioCheckboxField from "../../components/StatelessFields/StatelessRadioCheckboxField";
 import { useAbstractTooltipContext } from "../../components/AbtractTooltip/AbstractTooltip.Context";
-import routeData from "../../routes/_routeData";
+import ROUTE_DATA from "../../routes/ROUTE_DATA";
 import Divider from "../../components/Resuables/Divider";
 import { PolymorphicAbstractTooltipDefaultPanel } from "../../components/renderAbstractTooltip/AbstractTooltip";
 import { PolymorphicMixinPanel, PolymorphicMixinPanelSection } from "../../components/Resuables/MixinPanel";
@@ -16,7 +16,7 @@ export default function OrderByMenu() {
     const orderBy = searchParams.orderBy;
     const onChange = useCallback(
         (value: string) => {
-            navigate({ to: routeData.listProducts.pattern, search: { ...searchParams, orderBy: value } });
+            navigate({ to: ROUTE_DATA.listProducts.pattern, search: { ...searchParams, orderBy: value } });
             onClose();
         },
         [navigate, searchParams, onClose],

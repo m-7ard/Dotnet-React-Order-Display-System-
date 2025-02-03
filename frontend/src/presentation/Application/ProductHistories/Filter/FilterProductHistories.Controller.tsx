@@ -3,7 +3,7 @@ import useItemManager from "../../../hooks/useItemManager";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialog.Panel.Context";
 import { FilterProductHistoriesFieldsetValueState } from "../../../components/Fieldsets/FilterProductHistoriesFieldset";
 import FilterProductHistoriesDialogPanel from "./FilterProductHistories.DialogPanel";
-import routeData from "../../../routes/_routeData";
+import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 
 export type ValueSchema = { [K in keyof FilterProductHistoriesFieldsetValueState]?: FilterProductHistoriesFieldsetValueState[K] };
 
@@ -47,7 +47,7 @@ export default function FilterProductHistoriesController() {
             value={fromPartialToRequired(itemManager.items)}
             onClose={onClose}
             onSubmit={() => {
-                navigate({ to: routeData.listProductHistories.pattern, search: itemManager.items });
+                navigate({ to: ROUTE_DATA.listProductHistories.pattern, search: itemManager.items });
                 onClose();
             }}
             onReset={() => itemManager.setAll(initialValue)}

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import React from "react";
-import routeData from "../../routes/_routeData";
+import ROUTE_DATA from "../../routes/ROUTE_DATA";
 import MixinButton from "./MixinButton";
 
 export default function LinkBox(props: {
@@ -16,7 +16,7 @@ export default function LinkBox(props: {
           }
     >;
 }) {
-    const parts = [{ isLink: true, to: routeData.frontpage.build({}), label: "All" }, ...props.parts];
+    const parts = [{ isLink: true, to: ROUTE_DATA.frontpage.build({}), label: "All" }, ...props.parts];
 
     return (
         <MixinButton

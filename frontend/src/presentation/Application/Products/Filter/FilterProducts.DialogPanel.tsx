@@ -1,7 +1,7 @@
 import MixinButton from "../../../components/Resuables/MixinButton";
 import LinkBox from "../../../components/Resuables/LinkBox";
 import FilterProductsFieldset from "../../../components/Fieldsets/FilterProductFieldset";
-import routeData from "../../../routes/_routeData";
+import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import { ValueSchema } from "./FilterProducts.Controller";
 import Divider from "../../../components/Resuables/Divider";
 import { PolymorphicMixinPanel, PolymorphicMixinPanelSection } from "../../../components/Resuables/MixinPanel";
@@ -33,7 +33,7 @@ export default function FilterProductsDialogPanel(props: {
             <PolymorphicMixinPanelSection className="flex flex-row justify-between items-center flex-wrap">
                 <LinkBox
                     parts={[
-                        { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
+                        { isLink: true, to: ROUTE_DATA.listProducts.build({}), label: "Products" },
                         { isLink: false, label: "Filter" },
                     ]}
                 />

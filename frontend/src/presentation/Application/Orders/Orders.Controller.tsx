@@ -1,7 +1,8 @@
-import { useLoaderData } from "@tanstack/react-router";
 import OrdersPage from "./Orders.Page";
+import useRouterLoaderData from "../../hooks/useRouterLoaderData";
+import { IListOrdersLoaderData } from "../../routes/tanstack/children/orders/orderRoutes";
 
 export default function OrdersController() {
-    const orders = useLoaderData({ from: "/orders" });
-    return <OrdersPage orders={orders} />
+    const { orders } = useRouterLoaderData<IListOrdersLoaderData>((keys) => keys.LIST_ORDERS);
+    return <OrdersPage orders={orders} />;
 }
