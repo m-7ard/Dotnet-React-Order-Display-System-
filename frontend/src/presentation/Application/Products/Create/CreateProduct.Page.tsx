@@ -3,7 +3,7 @@ import FormField from "../../../components/Forms/FormField";
 import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import LinkBox from "../../../components/Resuables/LinkBox";
-import routeData from "../../../routes/_routeData";
+import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import { ErrorState, ValueState } from "./CreateProduct.Controller";
 import { useCallback } from "react";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
@@ -41,8 +41,8 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
             <MixinPageSection className="flex flex-row gap-3 items-center">
                 <LinkBox
                     parts={[
-                        { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
-                        { isLink: true, to: routeData.createProduct.build({}), label: "Create" },
+                        { isLink: true, to: ROUTE_DATA.listProducts.build({}), label: "Products" },
+                        { isLink: true, to: ROUTE_DATA.createProduct.build({}), label: "Create" },
                     ]}
                 />
             </MixinPageSection>

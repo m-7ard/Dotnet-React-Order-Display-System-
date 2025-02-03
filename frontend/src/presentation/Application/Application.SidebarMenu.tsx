@@ -1,7 +1,7 @@
 import { useLocation, Link } from "@tanstack/react-router";
 import { useGlobalDialogPanelContext } from "../components/Dialog/GlobalDialog.Panel.Context";
 import MixinButton from "../components/Resuables/MixinButton";
-import routeData from "../routes/_routeData";
+import ROUTE_DATA from "../routes/ROUTE_DATA";
 import Divider from "../components/Resuables/Divider";
 import { RenderedMixinPanel, PolymorphicMixinPanelSection } from "../components/Resuables/MixinPanel";
 
@@ -29,7 +29,7 @@ export default function SidebarMenuDialog() {
                     </PolymorphicMixinPanelSection>
                     <Divider />
                     <PolymorphicMixinPanelSection className="flex flex-col gap-1">
-                        <Link className="w-full" to={routeData.frontpage.build({})}>
+                        <Link className="w-full" to={ROUTE_DATA.frontpage.build({})}>
                             <MixinButton
                                 className="w-full justify-center"
                                 options={{
@@ -41,7 +41,7 @@ export default function SidebarMenuDialog() {
                                 Frontpage
                             </MixinButton>
                         </Link>
-                        <Link className="w-full" to={routeData.listProducts.build({})}>
+                        <Link className="w-full" to={ROUTE_DATA.listProducts.build({})}>
                             <MixinButton
                                 className="w-full justify-center"
                                 options={{
@@ -53,7 +53,7 @@ export default function SidebarMenuDialog() {
                                 Products
                             </MixinButton>
                         </Link>
-                        <Link className="w-full" to={routeData.listOrders.build({})}>
+                        <Link className="w-full" to={ROUTE_DATA.listOrders.build({})}>
                             <MixinButton
                                 className="w-full justify-center"
                                 options={{
@@ -65,7 +65,7 @@ export default function SidebarMenuDialog() {
                                 Orders
                             </MixinButton>
                         </Link>
-                        <Link className="w-full" to={routeData.listProductHistories.build({})}>
+                        <Link className="w-full" to={ROUTE_DATA.listProductHistories.build({})}>
                             <MixinButton
                                 className="w-full justify-center"
                                 options={{

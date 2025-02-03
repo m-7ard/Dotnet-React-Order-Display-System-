@@ -5,7 +5,7 @@ import useItemManager from "../../../hooks/useItemManager";
 import { Type } from "@sinclair/typebox";
 import typeboxToDomainCompatibleFormError from "../../../mappers/typeboxToDomainCompatibleFormError";
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
-import routeData from "../../../routes/_routeData";
+import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import IOrderDataAccess from "../../../interfaces/dataAccess/IOrderDataAccess";
 import CreateOrderPage from "./CreateOrder.Page";
 import IProduct from "../../../../domain/models/IProduct";
@@ -84,7 +84,7 @@ export default function CreateOrderController(props: { orderDataAccess: IOrderDa
                 requestFn: () => orderDataAccess.createOrder(request),
                 onResponseFn: async (response) => {
                     if (response.ok) {
-                        navigate({ to: routeData.listOrders.build({}) });
+                        navigate({ to: ROUTE_DATA.listOrders.build({}) });
                         return ok(undefined);
                     }
                     

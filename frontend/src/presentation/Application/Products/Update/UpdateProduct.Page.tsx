@@ -4,7 +4,7 @@ import FormField from "../../../components/Forms/FormField";
 import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import LinkBox from "../../../components/Resuables/LinkBox";
-import routeData from "../../../routes/_routeData";
+import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import { useCallback } from "react";
 import { ErrorSchema, ValueSchema } from "./UpdateProduct.Controller";
 import IProduct from "../../../../domain/models/IProduct";
@@ -49,9 +49,9 @@ export default function UpdateProductPage(props: {
             <MixinPageSection className="flex flex-row gap-3 items-center">
                 <LinkBox
                     parts={[
-                        { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
+                        { isLink: true, to: ROUTE_DATA.listProducts.build({}), label: "Products" },
                         { isLink: false, label: product.id },
-                        { isLink: true, to: routeData.updateProduct.build({ id: product.id }), label: "Update" },
+                        { isLink: true, to: ROUTE_DATA.updateProduct.build({ id: product.id }), label: "Update" },
                     ]}
                 />
             </MixinPageSection>

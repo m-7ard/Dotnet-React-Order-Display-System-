@@ -1,6 +1,6 @@
-import routeData from "../routes/_routeData";
+import ROUTE_DATA from "../routes/ROUTE_DATA";
 
-type routePattern = (typeof routeData)[keyof typeof routeData]["pattern"];
+type routePattern = (typeof ROUTE_DATA)[keyof typeof ROUTE_DATA]["pattern"];
 
 class RoutableException extends Error {
     constructor(message: string, route: routePattern) {
