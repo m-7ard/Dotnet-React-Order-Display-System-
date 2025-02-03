@@ -14,7 +14,6 @@ export default function CreateOrderPage(props: {
     onSubmit: () => void;
     onReset: () => void;
     onChange: (value: ValueSchema) => void;
-
     errors: ErrorState;
     value: ValueSchema;
 }) {
