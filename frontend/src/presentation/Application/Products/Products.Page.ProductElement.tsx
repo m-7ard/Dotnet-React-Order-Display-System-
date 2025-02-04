@@ -1,4 +1,3 @@
-import { useNavigate } from "@tanstack/react-router";
 import IProduct from "../../../domain/models/IProduct";
 import { getApiUrl } from "../../../viteUtils";
 import CoverImage from "../../components/Resuables/CoverImage";
@@ -6,11 +5,12 @@ import MixinButton from "../../components/Resuables/MixinButton";
 import ProductOptionMenu from "./Products.Page.Product.OptionsMenu";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
+import useRouterNavigate from "../../hooks/useRouterNavigate";
 
 export default function ProductElement(props: { product: IProduct }) {
     const { product } = props;
     const productImages = product.images.map((image) => `${getApiUrl()}/Media/${image.fileName}`);
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
 
     return (
         <MixinPrototypeCard
@@ -41,7 +41,7 @@ export default function ProductElement(props: { product: IProduct }) {
                     className="w-full"
                     onClick={(e) => {
                         e.preventDefault();
-                        navigate({ to: `/orders`, search: { productId: product.id } });
+                        navigate({ exp: (routes) => routes.LIST_ORDERS, params: {}, search: { productId: product.id } });
                     }}
                 >
                     <MixinButton className="w-full justify-center truncate" type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}>

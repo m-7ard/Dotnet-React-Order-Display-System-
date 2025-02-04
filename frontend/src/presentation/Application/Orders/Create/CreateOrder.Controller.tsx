@@ -1,11 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import IPresentationError from "../../../interfaces/IPresentationError";
 import useItemManager from "../../../hooks/useItemManager";
 import { Type } from "@sinclair/typebox";
 import typeboxToDomainCompatibleFormError from "../../../mappers/typeboxToDomainCompatibleFormError";
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
-import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import IOrderDataAccess from "../../../interfaces/dataAccess/IOrderDataAccess";
 import CreateOrderPage from "./CreateOrder.Page";
 import IProduct from "../../../../domain/models/IProduct";
@@ -14,6 +12,7 @@ import useResponseHandler from "../../../hooks/useResponseHandler";
 import { err, ok } from "neverthrow";
 import IPlainApiError from "../../../../infrastructure/interfaces/IPlainApiError";
 import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
+import useRouterNavigate from "../../../hooks/useRouterNavigate";
 
 const validatorSchema = Type.Object({
     orderItemData: Type.Record(
@@ -57,7 +56,7 @@ export default function CreateOrderController(props: { orderDataAccess: IOrderDa
     const itemManager = useItemManager<ValueSchema>(initialValues);
     const errorManager = useItemManager<ErrorState>(initialErrors);
 
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
     const createOrderMutation = useMutation({
         mutationFn: async () => {
             const request: ICreateOrderRequestDTO = {
@@ -84,7 +83,7 @@ export default function CreateOrderController(props: { orderDataAccess: IOrderDa
                 requestFn: () => orderDataAccess.createOrder(request),
                 onResponseFn: async (response) => {
                     if (response.ok) {
-                        navigate({ to: ROUTE_DATA.listOrders.build({}) });
+                        navigate({ exp: (routes) => routes.LIST_ORDERS, params: {} });
                         return ok(undefined);
                     }
                     

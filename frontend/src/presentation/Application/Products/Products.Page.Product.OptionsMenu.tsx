@@ -1,4 +1,3 @@
-import { useNavigate } from "@tanstack/react-router";
 import IProduct from "../../../domain/models/IProduct";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
 import MixinButton from "../../components/Resuables/MixinButton";
@@ -7,11 +6,12 @@ import DeleteProductFactory from "./Delete/DeleteProduct.Factory";
 import Divider from "../../components/Resuables/Divider";
 import { PolymorphicAbstractTooltipDefaultPanel } from "../../components/renderAbstractTooltip/AbstractTooltip";
 import { PolymorphicMixinPanel, PolymorphicMixinPanelSection } from "../../components/Resuables/MixinPanel";
+import useRouterNavigate from "../../hooks/useRouterNavigate";
 
 export default function ProductOptionMenu(props: { product: IProduct }) {
     const { product } = props;
     const { onClose } = useAbstractTooltipContext();
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
 
     return (
         <PolymorphicAbstractTooltipDefaultPanel className={`z-10 fixed mt-1`}>
@@ -36,7 +36,7 @@ export default function ProductOptionMenu(props: { product: IProduct }) {
                         className="w-full"
                         onClick={(e) => {
                             e.preventDefault();
-                            navigate({ to: `/products/${product.id}/update` });
+                            navigate({ exp: (routes) => routes.UPDATE_PRODUCT, params: { id: product.id } });
                         }}
                     >
                         <MixinButton className="justify-center truncate w-full" type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}>

@@ -1,22 +1,11 @@
-import { Navigate, useRouterState } from "@tanstack/react-router";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
-import ROUTE_DATA from "../../routes/ROUTE_DATA";
-import TanstackRouterState from "../../types/TanstackRouterState";
 import { useRef } from "react";
 import contentGridDirective from "../../directives/contentGridDirective";
+import useRouterLoaderData from "../../hooks/useRouterLoaderData";
 
 export default function InternalServerErrorPage() {
-    const state: TanstackRouterState = useRouterState();
-    const errorRef = useRef(state.location.state.error);
-
-    if (errorRef.current == null) {
-        return (
-            <Navigate
-                to={ROUTE_DATA.clientSideError.pattern}
-                state={(prev) => ({ ...prev, error: new Error("A 500 Internal Server Error occured but no error was provided to the InternalServerErrorPage.") })}
-            />
-        );
-    }
+    const { error } = useRouterLoaderData((routes) => routes.INTERNAL_SERVER_ERROR);
+    const errorRef = useRef(error);
 
     console.error(errorRef.current);
 

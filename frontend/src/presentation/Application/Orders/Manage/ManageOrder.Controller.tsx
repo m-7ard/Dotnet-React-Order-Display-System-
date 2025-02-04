@@ -12,11 +12,10 @@ import OrderItemStatus from "../../../../domain/valueObjects/OrderItem/OrderItem
 import IMarkOrderFinishedResponseDTO from "../../../../infrastructure/contracts/orders/markFinished/IMarkOrderFinishedResponseDTO";
 import IMarkOrderItemFinishedResponseDTO from "../../../../infrastructure/contracts/orderItems/markFinished/IMarkOrderItemFinishedResponseDTO";
 import useRouterLoaderData from "../../../hooks/useRouterLoaderData";
-import { IManageOrderLoaderData } from "../../../routes/tanstack/children/orders/orderRoutes";
 
 export default function ManageOrderRoute(props: { orderDataAccess: IOrderDataAccess }) {
     const { orderDataAccess } = props;
-    const { order } = useRouterLoaderData<IManageOrderLoaderData>((keys) => keys.MANAGE_ORDER);
+    const { order } = useRouterLoaderData((keys) => keys.MANAGE_ORDER);
     const responseHandler = useResponseHandler();
     const errorsManager = useItemManager<IPresentationError<Record<string | number, unknown>>>({ _: undefined });
 

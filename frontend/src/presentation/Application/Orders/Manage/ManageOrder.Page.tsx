@@ -3,9 +3,7 @@ import OrderItem from "../../../../domain/models/OrderItem";
 import IPresentationError from "../../../interfaces/IPresentationError";
 import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../../components/Resuables/MixinPrototypeCard";
-import LinkBox from "../../../components/Resuables/LinkBox";
 import Order from "../../../../domain/models/Order";
-import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import OrderItemElement from "./ManageOrder.Page.OrderItem";
 import Divider from "../../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
@@ -13,6 +11,7 @@ import GlobalDialog from "../../../components/Dialog/GlobalDialog";
 import OrderProgressPanel from "./ManageOrder.Page.ProgressPanel";
 import { ORDER_STATUS_COLORS } from "../Orders.Constants";
 import contentGridDirective from "../../../directives/contentGridDirective";
+import LinkBoxV2 from "../../../components/Resuables/LinkBoxV2";
 
 export default function ManageOrderPage(props: {
     order: Order;
@@ -25,13 +24,7 @@ export default function ManageOrderPage(props: {
     return (
         <MixinPage exp={(options) => ({ size: options.SIZE.BASE })} directives={[contentGridDirective(() => ({}))]}>
             <MixinPageSection className="flex flex-row gap-3 items-center">
-                <LinkBox
-                    parts={[
-                        { isLink: true, to: ROUTE_DATA.listOrders.build({}), label: "Orders" },
-                        { isLink: false, label: order.serialNumber },
-                        { isLink: true, to: ROUTE_DATA.manageOrder.build({ id: order.id }), label: "Manage" },
-                    ]}
-                />
+                <LinkBoxV2 exp={(routes) => routes.MANAGE_ORDER} params={{ id: order.id }} />
             </MixinPageSection>
             <Divider />
             <MixinPageSection className="flex flex-col gap-3">

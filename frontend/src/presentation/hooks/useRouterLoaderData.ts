@@ -1,13 +1,9 @@
 import { useLoaderData } from "@tanstack/react-router";
-import ROUTE_KEYS from "../routes/ROUTE_KEYS";
-import routeConfig from "../routes/tanstack/routeConfig";
+import { IGenericRoutes, TAnyGenericRoute, TExtractGenericRouteLoaderData, genericRoutes } from "../routes/Route";
 
-type TRouteKeys = typeof ROUTE_KEYS;
-
-function useRouterLoaderData<T>(exp: (keys: TRouteKeys) => TRouteKeys[keyof TRouteKeys]) {
-    // TODO: make this into a function such as useTanstackLoaderData
-    const data = useLoaderData({ from: routeConfig[exp(ROUTE_KEYS)].path });
-    return data as T;
+function useRouterLoaderData<T extends TAnyGenericRoute>(exp: (keys: IGenericRoutes) => T) {
+    const data = useLoaderData({ from: exp(genericRoutes) as never });
+    return data as TExtractGenericRouteLoaderData<T>;
 }
 
 export default useRouterLoaderData;

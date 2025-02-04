@@ -1,8 +1,6 @@
 import MixinButton from "../../components/Resuables/MixinButton";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
-import LinkBox from "../../components/Resuables/LinkBox";
 import ProductHistory from "../../../domain/models/IProductHistory";
-import ROUTE_DATA from "../../routes/ROUTE_DATA";
 import OrderByMenu from "./ProductHistories.Page.OrderByMenu";
 import FilterProductHistoriesController from "./Filter/FilterProductHistories.Controller";
 import ProductHistoryElement from "./ProductHistories.Page.ProductHistoryElement";
@@ -10,6 +8,7 @@ import Divider from "../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
 import contentGridDirective from "../../directives/contentGridDirective";
+import LinkBoxV2 from "../../components/Resuables/LinkBoxV2";
 
 export default function ProductHistoriesPage(props: { productHistories: ProductHistory[] }) {
     const { productHistories } = props;
@@ -17,7 +16,7 @@ export default function ProductHistoriesPage(props: { productHistories: ProductH
     return (
         <MixinPage directives={[contentGridDirective(() => ({}))]} exp={(options) => ({ size: options.SIZE.BASE })}>
             <MixinPageSection className="flex flex-row gap-3 items-center overflow-x-auto shrink-0">
-                <LinkBox parts={[{ isLink: true, to: ROUTE_DATA.listProductHistories.build({}), label: "Product Histories" }]} />
+                <LinkBoxV2 exp={(routes) => routes.LIST_PRODUCT_HISTORIES} params={{}} />
                 <div className="flex flex-row gap-3 ml-auto">
                     <GlobalDialog
                         zIndex={10}

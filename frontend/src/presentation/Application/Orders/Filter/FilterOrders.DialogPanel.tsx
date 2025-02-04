@@ -1,9 +1,7 @@
 import FilterOrdersFieldset from "../../../components/Fieldsets/FilterOrdersFieldset";
 import Divider from "../../../components/Resuables/Divider";
-import LinkBox from "../../../components/Resuables/LinkBox";
 import MixinButton from "../../../components/Resuables/MixinButton";
 import { RenderedMixinPanel, PolymorphicMixinPanelSection } from "../../../components/Resuables/MixinPanel";
-import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import { ValueSchema } from "./FilterOrders.Controller";
 
 export default function FilterOrdersDialogPanel(props: {
@@ -31,12 +29,6 @@ export default function FilterOrdersDialogPanel(props: {
                     {...mixinPanelProps}
                 >
                     <PolymorphicMixinPanelSection className="flex flex-row justify-between items-center shrink-0">
-                        <LinkBox
-                            parts={[
-                                { isLink: true, to: ROUTE_DATA.listOrders.build({}), label: "Orders" },
-                                { isLink: false, label: "Filter" },
-                            ]}
-                        />
                         <MixinButton
                             options={{
                                 size: "mixin-button-sm",

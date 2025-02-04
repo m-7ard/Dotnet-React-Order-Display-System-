@@ -3,14 +3,13 @@ import StatelessCharField from "../../../components/StatelessFields/StatelessCha
 import FormField from "../../../components/Forms/FormField";
 import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
 import MixinButton from "../../../components/Resuables/MixinButton";
-import LinkBox from "../../../components/Resuables/LinkBox";
-import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import { useCallback } from "react";
 import { ErrorSchema, ValueSchema } from "./UpdateProduct.Controller";
 import IProduct from "../../../../domain/models/IProduct";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
 import Divider from "../../../components/Resuables/Divider";
 import contentGridDirective from "../../../directives/contentGridDirective";
+import LinkBoxV2 from "../../../components/Resuables/LinkBoxV2";
 
 export default function UpdateProductPage(props: {
     value: ValueSchema;
@@ -47,13 +46,7 @@ export default function UpdateProductPage(props: {
             }}
         >
             <MixinPageSection className="flex flex-row gap-3 items-center">
-                <LinkBox
-                    parts={[
-                        { isLink: true, to: ROUTE_DATA.listProducts.build({}), label: "Products" },
-                        { isLink: false, label: product.id },
-                        { isLink: true, to: ROUTE_DATA.updateProduct.build({ id: product.id }), label: "Update" },
-                    ]}
-                />
+                <LinkBoxV2 exp={(routes) => routes.UPDATE_PRODUCT} params={{ id: product.id }} />
             </MixinPageSection>
             <Divider />
             <MixinPageSection className="flex flex-col gap-3">

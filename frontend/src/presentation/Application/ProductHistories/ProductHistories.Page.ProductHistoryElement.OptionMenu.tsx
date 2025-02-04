@@ -1,14 +1,14 @@
-import { useNavigate } from "@tanstack/react-router";
 import ProductHistory from "../../../domain/models/IProductHistory";
 import MixinButton from "../../components/Resuables/MixinButton";
 import { useAbstractTooltipContext } from "../../components/AbtractTooltip/AbstractTooltip.Context";
 import Divider from "../../components/Resuables/Divider";
 import { PolymorphicAbstractTooltipDefaultPanel } from "../../components/renderAbstractTooltip/AbstractTooltip";
 import { PolymorphicMixinPanel, PolymorphicMixinPanelSection } from "../../components/Resuables/MixinPanel";
+import useRouterNavigate from "../../hooks/useRouterNavigate";
 
 export default function OptionMenu(props: { productHistory: ProductHistory }) {
     const { productHistory } = props;
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
     const { onClose } = useAbstractTooltipContext();
 
     return (
@@ -34,7 +34,7 @@ export default function OptionMenu(props: { productHistory: ProductHistory }) {
                         className="w-full"
                         onClick={(e) => {
                             e.preventDefault();
-                            navigate({ to: "/products", search: { id: productHistory.productId } });
+                            navigate({ exp: (routes) => routes.LIST_PRODUCTS, params: {}, search: { id: productHistory.productId } });
                         }}
                     >
                         <MixinButton className="justify-center w-full" type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}>

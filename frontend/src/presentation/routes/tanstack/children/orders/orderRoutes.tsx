@@ -10,17 +10,13 @@ import OrdersController from "../../../../Application/Orders/Orders.Controller";
 import IReadOrderResponseDTO from "../../../../../infrastructure/contracts/orders/read/IReadOrderResponseDTO";
 import parseListOrdersCommandParameters from "../../../../../infrastructure/parsers/parseListOrdersCommandParameters";
 import TanstackRouterUtils from "../../../../utils/TanstackRouterUtils";
-import routeConfig from "../../routeConfig";
-
-export interface IListOrdersLoaderData {
-    orders: Order[];
-}
+import { IManageOrderParams, ListOrdersLoaderData, ManageOrderLoaderData, tanstackConfigs } from "../../../Route";
 
 const listOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeConfig.LIST_ORDERS.path,
+    path: tanstackConfigs.LIST_ORDERS.pattern,
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
-    loader: async ({ deps }): Promise<IListOrdersLoaderData> => {
+    loader: async ({ deps }): Promise<ListOrdersLoaderData> => {
         const parsedParams = parseListOrdersCommandParameters(deps);
 
         const response = await TanstackRouterUtils.handleRequest(orderDataAccess.listOrders(parsedParams));
@@ -39,18 +35,14 @@ const listOrdersRoute = createRoute({
 
 const createOrderRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeConfig.CREATE_ORDER.path,
+    path: tanstackConfigs.CREATE_ORDER.pattern,
     component: () => <CreateOrderController orderDataAccess={orderDataAccess} />,
 });
 
-export interface IManageOrderLoaderData {
-    order: Order;
-}
-
 const manageOrderRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeConfig.MANAGE_ORDER.path,
-    loader: async ({ params }): Promise<IManageOrderLoaderData> => {
+    path: tanstackConfigs.MANAGE_ORDERS.pattern,
+    loader: async ({ params }: { params: IManageOrderParams }): Promise<ManageOrderLoaderData> => {
         const id = params.id;
 
         const response = await TanstackRouterUtils.handleRequest(orderDataAccess.readOrder({ id: id }));
@@ -60,7 +52,7 @@ const manageOrderRoute = createRoute({
 
         const dto: IReadOrderResponseDTO = await response.json();
         return {
-            order: orderMapper.apiToDomain(dto.order)
+            order: orderMapper.apiToDomain(dto.order),
         };
     },
     component: () => <ManageOrderRoute orderDataAccess={orderDataAccess} />,

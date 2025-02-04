@@ -1,8 +1,9 @@
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useSearch } from "@tanstack/react-router";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialog.Panel.Context";
 import { FilterOrdersFieldsetValueState } from "../../../components/Fieldsets/FilterOrdersFieldset";
 import useItemManager from "../../../hooks/useItemManager";
 import FilterOrdersDialogPanel from "./FilterOrders.DialogPanel";
+import useRouterNavigate from "../../../hooks/useRouterNavigate";
 
 export type ValueSchema = { [K in keyof FilterOrdersFieldsetValueState]?: FilterOrdersFieldsetValueState[K] };
 
@@ -35,7 +36,7 @@ export default function FilterOrdersController() {
         orderItemSerialNumber: searchParams.orderItemSerialNumber,
     };
     const itemManager = useItemManager<ValueSchema>(initialValue);
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
 
     const fromRequiredToPartial = (value: Required<ValueSchema>): Partial<ValueSchema> => {
         const entries = Object.entries(value).map(([key, val]) => [key, val === "" ? undefined : val]);
@@ -52,7 +53,7 @@ export default function FilterOrdersController() {
             value={fromPartialToRequired(itemManager.items)}
             onClose={onClose}
             onSubmit={() => {
-                navigate({ to: "/orders", search: itemManager.items });
+                navigate({ exp: (routes) => routes.LIST_ORDERS, params: {}, search: itemManager.items });
                 onClose();
             }}
             onReset={() => itemManager.setAll(initialValue)}

@@ -1,9 +1,9 @@
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useSearch } from "@tanstack/react-router";
 import useItemManager from "../../../hooks/useItemManager";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialog.Panel.Context";
 import { FilterProductHistoriesFieldsetValueState } from "../../../components/Fieldsets/FilterProductHistoriesFieldset";
 import FilterProductHistoriesDialogPanel from "./FilterProductHistories.DialogPanel";
-import ROUTE_DATA from "../../../routes/ROUTE_DATA";
+import useRouterNavigate from "../../../hooks/useRouterNavigate";
 
 export type ValueSchema = { [K in keyof FilterProductHistoriesFieldsetValueState]?: FilterProductHistoriesFieldsetValueState[K] };
 
@@ -30,7 +30,7 @@ export default function FilterProductHistoriesController() {
     };
     const { onClose } = useGlobalDialogPanelContext();
     const itemManager = useItemManager<ValueSchema>(initialValue);
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
 
     const fromRequiredToPartial = (value: Required<ValueSchema>) => {
         const entries = Object.entries(value).map(([key, val]) => [key, val === "" ? undefined : val]);
@@ -47,7 +47,7 @@ export default function FilterProductHistoriesController() {
             value={fromPartialToRequired(itemManager.items)}
             onClose={onClose}
             onSubmit={() => {
-                navigate({ to: ROUTE_DATA.listProductHistories.pattern, search: itemManager.items });
+                navigate({ exp: (routes) => routes.LIST_PRODUCT_HISTORIES, params: {}, search: itemManager.items });
                 onClose();
             }}
             onReset={() => itemManager.setAll(initialValue)}

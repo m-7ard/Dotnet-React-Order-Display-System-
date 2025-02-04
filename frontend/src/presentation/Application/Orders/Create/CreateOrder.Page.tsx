@@ -1,14 +1,13 @@
 import FormField from "../../../components/Forms/FormField";
 import OrderItemDataField from "../../../components/OrderItemDataForm/OrderItemData.Field";
 import MixinButton from "../../../components/Resuables/MixinButton";
-import LinkBox from "../../../components/Resuables/LinkBox";
-import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import { useCallback } from "react";
 import Divider from "../../../components/Resuables/Divider";
 import FormError from "../../../components/Forms/FormError,";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
 import { ErrorState, ValueSchema } from "./CreateOrder.Controller";
 import contentGridDirective from "../../../directives/contentGridDirective";
+import LinkBoxV2 from "../../../components/Resuables/LinkBoxV2";
 
 export default function CreateOrderPage(props: {
     onSubmit: () => void;
@@ -43,12 +42,7 @@ export default function CreateOrderPage(props: {
             directives={[contentGridDirective(() => ({}))]}
         >
             <MixinPageSection className="flex flex-row gap-3 items-center">
-                <LinkBox
-                    parts={[
-                        { isLink: true, to: ROUTE_DATA.listOrders.build({}), label: "Orders" },
-                        { isLink: true, to: ROUTE_DATA.createOrder.build({}), label: "Create" },
-                    ]}
-                />
+                <LinkBoxV2 exp={(routes) => routes.CREATE_ORDER} params={{}} />
             </MixinPageSection>
             <Divider />
             <MixinPageSection className="flex flex-col gap-3">

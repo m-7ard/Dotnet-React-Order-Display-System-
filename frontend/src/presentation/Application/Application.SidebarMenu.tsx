@@ -1,16 +1,18 @@
-import { useLocation, Link } from "@tanstack/react-router";
 import { useGlobalDialogPanelContext } from "../components/Dialog/GlobalDialog.Panel.Context";
 import MixinButton from "../components/Resuables/MixinButton";
-import ROUTE_DATA from "../routes/ROUTE_DATA";
 import Divider from "../components/Resuables/Divider";
 import { RenderedMixinPanel, PolymorphicMixinPanelSection } from "../components/Resuables/MixinPanel";
+import RouterLink from "../components/Resuables/RouterLink";
 
 export default function SidebarMenuDialog() {
     const { onClose } = useGlobalDialogPanelContext();
     const location = useLocation();
 
     return (
-        <RenderedMixinPanel exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })} className="top-0 bottom-0 left-0 fixed w-72 rounded-none">
+        <RenderedMixinPanel
+            exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}
+            className="top-0 bottom-0 left-0 fixed w-72 rounded-none"
+        >
             {(mixinPanelProps) => (
                 <div {...mixinPanelProps}>
                     <PolymorphicMixinPanelSection className="flex flex-row justify-between items-center">
@@ -29,7 +31,7 @@ export default function SidebarMenuDialog() {
                     </PolymorphicMixinPanelSection>
                     <Divider />
                     <PolymorphicMixinPanelSection className="flex flex-col gap-1">
-                        <Link className="w-full" to={ROUTE_DATA.frontpage.build({})}>
+                        <RouterLink className="w-full" exp={(routes) => routes.FRONTPAGE} params={{}}>
                             <MixinButton
                                 className="w-full justify-center"
                                 options={{
@@ -40,8 +42,8 @@ export default function SidebarMenuDialog() {
                             >
                                 Frontpage
                             </MixinButton>
-                        </Link>
-                        <Link className="w-full" to={ROUTE_DATA.listProducts.build({})}>
+                        </RouterLink>
+                        <RouterLink className="w-full" exp={(routes) => routes.LIST_PRODUCTS} params={{}}>
                             <MixinButton
                                 className="w-full justify-center"
                                 options={{
@@ -52,8 +54,8 @@ export default function SidebarMenuDialog() {
                             >
                                 Products
                             </MixinButton>
-                        </Link>
-                        <Link className="w-full" to={ROUTE_DATA.listOrders.build({})}>
+                        </RouterLink>
+                        <RouterLink className="w-full" exp={(routes) => routes.LIST_ORDERS} params={{}}>
                             <MixinButton
                                 className="w-full justify-center"
                                 options={{
@@ -64,8 +66,8 @@ export default function SidebarMenuDialog() {
                             >
                                 Orders
                             </MixinButton>
-                        </Link>
-                        <Link className="w-full" to={ROUTE_DATA.listProductHistories.build({})}>
+                        </RouterLink>
+                        <RouterLink className="w-full" exp={(routes) => routes.LIST_PRODUCT_HISTORIES} params={{}}>
                             <MixinButton
                                 className="w-full justify-center"
                                 options={{
@@ -76,7 +78,7 @@ export default function SidebarMenuDialog() {
                             >
                                 Product Histories
                             </MixinButton>
-                        </Link>
+                        </RouterLink>
                     </PolymorphicMixinPanelSection>
                 </div>
             )}

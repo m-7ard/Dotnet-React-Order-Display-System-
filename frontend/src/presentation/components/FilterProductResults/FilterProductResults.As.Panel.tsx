@@ -14,12 +14,6 @@ export default function FilterProductResults(props: IFilterProductResultsProps) 
     return (
         <PolymorphicMixinPanel exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })} className="flex flex-col">
             <PolymorphicMixinPanelSection className="flex flex-row gap-3 items-center justify-between flex-wrap">
-                <LinkBox
-                    parts={[
-                        { isLink: false, label: "Products" },
-                        { isLink: false, label: "Filter" },
-                    ]}
-                />
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",
