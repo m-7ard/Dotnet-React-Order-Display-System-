@@ -1,8 +1,6 @@
-import { Link } from "@tanstack/react-router";
 import MixinButton from "../../components/Resuables/MixinButton";
 import Order from "../../../domain/models/Order";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
-import LinkBox from "../../components/Resuables/LinkBox";
 import OrderElement from "./Orders.Page.OrderElement";
 import OrderByMenu from "./Orders.Page.OrderByMenu";
 import FilterOrdersController from "./Filter/FilterOrders.Controller";
@@ -10,6 +8,8 @@ import Divider from "../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
 import contentGridDirective from "../../directives/contentGridDirective";
+import RouterLink from "../../components/Resuables/RouterLink";
+import LinkBoxV2 from "../../components/Resuables/LinkBoxV2";
 
 export default function OrdersPage(props: { orders: Order[] }) {
     const { orders } = props;
@@ -21,13 +21,13 @@ export default function OrdersPage(props: { orders: Order[] }) {
             directives={[contentGridDirective((options) => ({ defaultTracks: options.DEFAULT_TRACKS.FULL }))]}
         >
             <MixinPageSection className="flex flex-row gap-3 items-center overflow-x-auto shrink-0">
-                <LinkBox parts={[{ isLink: true, to: "/orders", label: "Orders" }]} />
+                <LinkBoxV2 exp={(routes) => routes.LIST_ORDERS} params={{}} />
                 <div className="flex flex-row gap-3 ml-auto">
-                    <Link to="/orders/create">
+                    <RouterLink exp={(routes) => routes.CREATE_ORDER} params={{}}>
                         <MixinButton className="" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} hasShadow>
                             Create
                         </MixinButton>
-                    </Link>
+                    </RouterLink>
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (

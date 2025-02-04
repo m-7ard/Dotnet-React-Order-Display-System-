@@ -1,10 +1,9 @@
-import { Link, useLocation } from "@tanstack/react-router";
 import GlobalDialog from "../components/Dialog/GlobalDialog";
 import MixinButton from "../components/Resuables/MixinButton";
-import ROUTE_DATA from "../routes/ROUTE_DATA";
 import SidebarMenuDialog from "./Application.SidebarMenu";
 import Divider from "../components/Resuables/Divider";
 import MixinContentGrid, { MixinContentGridTrack } from "../components/Resuables/MixinContentGrid";
+import RouterLink from "../components/Resuables/RouterLink";
 
 export default function ApplicationHeader() {
     const location = useLocation();
@@ -31,7 +30,7 @@ export default function ApplicationHeader() {
                         Panel={SidebarMenuDialog}
                         panelProps={{}}
                     ></GlobalDialog>
-                    <Link to={ROUTE_DATA.frontpage.build({})}>
+                    <RouterLink exp={(routes) => routes.FRONTPAGE} params={{}}>
                         <MixinButton
                             options={{
                                 size: "mixin-button-sm",
@@ -41,8 +40,8 @@ export default function ApplicationHeader() {
                         >
                             Frontpage
                         </MixinButton>
-                    </Link>
-                    <Link to={ROUTE_DATA.listProducts.pattern}>
+                    </RouterLink>
+                    <RouterLink exp={(routes) => routes.LIST_PRODUCTS} params={{}}>
                         <MixinButton
                             options={{
                                 size: "mixin-button-sm",
@@ -53,8 +52,8 @@ export default function ApplicationHeader() {
                         >
                             Products
                         </MixinButton>
-                    </Link>
-                    <Link to={ROUTE_DATA.listProductHistories.pattern}>
+                    </RouterLink>
+                    <RouterLink exp={(routes) => routes.LIST_PRODUCT_HISTORIES} params={{}}>
                         <MixinButton
                             options={{
                                 size: "mixin-button-sm",
@@ -66,8 +65,8 @@ export default function ApplicationHeader() {
                         >
                             Product Histories
                         </MixinButton>
-                    </Link>
-                    <Link to={ROUTE_DATA.listOrders.pattern}>
+                    </RouterLink>
+                    <RouterLink exp={(routes) => routes.LIST_ORDERS} params={{}}>
                         <MixinButton
                             options={{
                                 size: "mixin-button-sm",
@@ -78,7 +77,7 @@ export default function ApplicationHeader() {
                         >
                             Orders
                         </MixinButton>
-                    </Link>
+                    </RouterLink>
                 </MixinContentGridTrack>
             </MixinContentGrid>
             <div className="shadow relative">

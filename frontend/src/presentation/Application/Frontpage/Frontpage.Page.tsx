@@ -6,13 +6,12 @@ import productsImageUrl from "../../images/_045d1801-1987-4ce3-abd9-1b8f56fcde24
 import productHistoriesImageUrl from "../../images/_4766e2d9-54f8-48b5-9366-11485ac2198b-removebg-preview.png";
 import contentGridDirective from "../../directives/contentGridDirective";
 import LinkBoxV2 from "../../components/Resuables/LinkBoxV2";
-import ROUTE_DATA from "../../routes/ROUTE_DATA";
 
 export default function FrontpagePage() {
     return (
         <MixinPage directives={[contentGridDirective(() => ({}))]} exp={(options) => ({ size: options.SIZE.BASE })}>
             <MixinPageSection className="flex flex-row gap-3 items-center justify-between">
-                <LinkBoxV2 route={ROUTE_DATA.frontpage} routeParams={{}} />
+                <LinkBoxV2 exp={(routes) => routes.FRONTPAGE} params={{}} />
             </MixinPageSection>
             <Divider />
             <MixinPageSection className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">

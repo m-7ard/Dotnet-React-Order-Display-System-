@@ -6,16 +6,11 @@ import productHistoryMapper from "../../../../../infrastructure/mappers/productH
 import ProductHistoriesController from "../../../../Application/ProductHistories/ProductHistories.Controller";
 import parseListProductHistoriesRequestDTO from "../../../../../infrastructure/parsers/parseListProductHistoriesRequestDTO";
 import TanstackRouterUtils from "../../../../utils/TanstackRouterUtils";
-import ProductHistory from "../../../../../domain/models/IProductHistory";
-import routeConfig from "../../routeConfig";
-
-export interface ListProductHistoriesLoaderData {
-    productHistories: ProductHistory[];
-}
+import { ListProductHistoriesLoaderData, tanstackConfigs } from "../../../Route";
 
 const listProductHistoriesRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeConfig.LIST_PRODUCT_HISTORIES.path,
+    path: tanstackConfigs.LIST_PRODUCT_HISTORIES.pattern,
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
     loader: async ({ deps }): Promise<ListProductHistoriesLoaderData> => {
         const params = parseListProductHistoriesRequestDTO(deps);

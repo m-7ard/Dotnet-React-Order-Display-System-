@@ -2,8 +2,6 @@ import UploadImagesForm from "../../../components/Forms/ImageUploadForm";
 import FormField from "../../../components/Forms/FormField";
 import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
 import MixinButton from "../../../components/Resuables/MixinButton";
-import LinkBox from "../../../components/Resuables/LinkBox";
-import ROUTE_DATA from "../../../routes/ROUTE_DATA";
 import { ErrorState, ValueState } from "./CreateProduct.Controller";
 import { useCallback } from "react";
 import StatelessCharField from "../../../components/StatelessFields/StatelessCharField";
@@ -11,8 +9,16 @@ import MixinPage, { MixinPageSection } from "../../../components/Resuables/Mixin
 import Divider from "../../../components/Resuables/Divider";
 import FormError from "../../../components/Forms/FormError,";
 import contentGridDirective from "../../../directives/contentGridDirective";
+import LinkBoxV2 from "../../../components/Resuables/LinkBoxV2";
 
-export default function CreateProductPage(props: { value: ValueState; errors: ErrorState; onSubmit: () => void; onReset: () => void; onChange: (value: ValueState) => void; uploadImages: (images: File[]) => Promise<void> }) {
+export default function CreateProductPage(props: {
+    value: ValueState;
+    errors: ErrorState;
+    onSubmit: () => void;
+    onReset: () => void;
+    onChange: (value: ValueState) => void;
+    uploadImages: (images: File[]) => Promise<void>;
+}) {
     const { value, errors, onSubmit, onReset, onChange, uploadImages } = props;
 
     const updateField = useCallback(
@@ -39,12 +45,7 @@ export default function CreateProductPage(props: { value: ValueState; errors: Er
             directives={[contentGridDirective(() => ({}))]}
         >
             <MixinPageSection className="flex flex-row gap-3 items-center">
-                <LinkBox
-                    parts={[
-                        { isLink: true, to: ROUTE_DATA.listProducts.build({}), label: "Products" },
-                        { isLink: true, to: ROUTE_DATA.createProduct.build({}), label: "Create" },
-                    ]}
-                />
+                <LinkBoxV2 exp={(routes) => routes.CREATE_PRODUCT} params={{}} />
             </MixinPageSection>
             <Divider />
             <MixinPageSection className="flex flex-col gap-3">

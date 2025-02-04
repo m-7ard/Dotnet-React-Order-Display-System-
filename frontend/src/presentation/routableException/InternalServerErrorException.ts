@@ -1,9 +1,9 @@
-import ROUTE_DATA from '../routes/ROUTE_DATA';
+import { genericRoutes } from '../routes/Route';
 import RoutableException from './RoutableException';
 
 class InternalServerErrorException extends RoutableException {
     constructor(message: string) {
-        super(message, ROUTE_DATA.internalServerError.pattern);
+        super(message, genericRoutes.INTERNAL_SERVER_ERROR);
     }
 }
 

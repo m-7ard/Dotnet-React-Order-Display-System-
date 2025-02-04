@@ -9,18 +9,13 @@ import productMapper from "../../../../../infrastructure/mappers/productMapper";
 import IListProductsResponseDTO from "../../../../../infrastructure/contracts/products/list/IListProductsResponseDTO";
 import parseListProductsRequestDTO from "../../../../../infrastructure/parsers/parseListProductsRequestDTO";
 import TanstackRouterUtils from "../../../../utils/TanstackRouterUtils";
-import IProduct from "../../../../../domain/models/IProduct";
-import routeConfig from "../../routeConfig";
-
-export interface IListProductsLoaderData {
-    products: IProduct[];
-}
+import { IUpdateProductParams, ListProductsLoaderData, tanstackConfigs, UpdateProductLoaderData } from "../../../Route";
 
 const listProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeConfig.LIST_PRODUCTS.path,
+    path: tanstackConfigs.LIST_PRODUCTS.pattern,
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
-    loader: async ({ deps }): Promise<IListProductsLoaderData> => {
+    loader: async ({ deps }): Promise<ListProductsLoaderData> => {
         const params = parseListProductsRequestDTO(deps);
 
         const response = await TanstackRouterUtils.handleRequest(productDataAccess.listProducts(params));
@@ -38,19 +33,15 @@ const listProductsRoute = createRoute({
 
 const createProductRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeConfig.CREATE_PRODUCT.path,
+    path: tanstackConfigs.CREATE_PRODUCT.pattern,
     component: CreateProductController,
 });
 
-export interface IUpdateProductLoaderData {
-    product: IProduct;
-}
-
 const updateProductRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: routeConfig.UPDATE_PRODUCT.path,
+    path: tanstackConfigs.UPDATE_PRODUCT.pattern,
     component: UpdateProductController,
-    loader: async ({ params }): Promise<IUpdateProductLoaderData> => {
+    loader: async ({ params }: { params: IUpdateProductParams }): Promise<UpdateProductLoaderData> => {
         const id = params.id;
         const response = await TanstackRouterUtils.handleRequest(productDataAccess.readProduct({ id: id }));
         if (!response.ok) {

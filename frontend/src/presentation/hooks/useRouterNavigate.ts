@@ -1,22 +1,20 @@
-import { AbstractBaseOrdersRoute, AbstractFrontpageRoute, AbstractRoute } from "../routes/Route";
+import { useNavigate } from "@tanstack/react-router";
+import { IGenericRoutes, genericRoutes, TExtractGenericRouteParams, TAnyGenericRoute } from "../routes/Route";
 
-class FrontpageRoute extends AbstractFrontpageRoute {
-    public build(): string {
-        return "/";
-    }
+function useRouterNavigate() {
+    const navigate = useNavigate();
+
+    const navigateFn = <T extends TAnyGenericRoute>({ exp, params, search }: { exp: (keys: IGenericRoutes) => T; params: TExtractGenericRouteParams<T>; search?: Record<string, string> }) => {
+        const route = exp(genericRoutes);
+
+        if (route.config == null) {
+            throw new Error("Navigate's route's config cannot be undefined or be a layout.");
+        }
+
+        navigate({ to: route.config!.pattern, params: params, search: search });
+    };
+
+    return navigateFn;
 }
 
-function usesTanstackRouterNavigate() {
-    const tanstackRoutes = {
-
-    }
-}
-
-function useRouterNavigate<Params extends Record<string, unknown> | undefined, Route extends AbstractRoute<Params>>({ route, params }: { route: Route, params: Params }) {
-    const key = route.key;
-    if ( key == null) {
-        throw Error("Route must have a key");
-    }
-
-
-}
+export default useRouterNavigate;

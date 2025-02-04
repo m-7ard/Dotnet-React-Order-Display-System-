@@ -1,22 +1,11 @@
-import { Navigate, useRouterState } from "@tanstack/react-router";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
-import ROUTE_DATA from "../../routes/ROUTE_DATA";
-import TanstackRouterState from "../../types/TanstackRouterState";
 import { useRef } from "react";
 import contentGridDirective from "../../directives/contentGridDirective";
+import useRouterLoaderData from "../../hooks/useRouterLoaderData";
 
 export default function LoaderErrorPage() {
-    const state: TanstackRouterState = useRouterState();
-    const errorRef = useRef(state.location.state.error);
-
-    if (errorRef.current == null) {
-        return (
-            <Navigate
-                to={ROUTE_DATA.clientSideError.pattern}
-                state={(prev) => ({ ...prev, error: new Error("A loader error occured but no error was provided to the LoaderErrorPage.") })}
-            />
-        );
-    }
+    const {error} = useRouterLoaderData((routes) => routes.LOADER_ERROR);
+    const errorRef = useRef(error);
 
     console.error(errorRef.current);
 

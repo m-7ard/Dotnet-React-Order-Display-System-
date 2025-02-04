@@ -1,21 +1,21 @@
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useSearch } from "@tanstack/react-router";
 import { useCallback } from "react";
 import StatelessRadioCheckboxField from "../../components/StatelessFields/StatelessRadioCheckboxField";
 import { useAbstractTooltipContext } from "../../components/AbtractTooltip/AbstractTooltip.Context";
-import ROUTE_DATA from "../../routes/ROUTE_DATA";
 import Divider from "../../components/Resuables/Divider";
 import { PolymorphicAbstractTooltipDefaultPanel } from "../../components/renderAbstractTooltip/AbstractTooltip";
 import { PolymorphicMixinPanelSection, PolymorphicMixinPanel } from "../../components/Resuables/MixinPanel";
+import useRouterNavigate from "../../hooks/useRouterNavigate";
 
 export default function OrderByMenu() {
     const { onClose } = useAbstractTooltipContext();
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
     const searchParams: Record<string, string> = useSearch({ strict: false });
 
     const orderBy = searchParams.orderBy;
     const onChange = useCallback(
         (value: string) => {
-            navigate({ to: ROUTE_DATA.listOrders.pattern, search: { ...searchParams, orderBy: value } });
+            navigate({ exp: (routes) => routes.LIST_ORDERS, params: {}, search: { ...searchParams, orderBy: value } });
             onClose();
         },
         [navigate, searchParams, onClose],
