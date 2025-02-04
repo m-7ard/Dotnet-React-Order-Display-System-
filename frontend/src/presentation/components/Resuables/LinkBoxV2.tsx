@@ -1,18 +1,20 @@
 import React from "react";
 import MixinButton from "./MixinButton";
-import ROUTE_DATA, { RouteData } from "../../routes/ROUTE_DATA";
+import ROUTE_DATA, { RouteHierarchy } from "../../routes/ROUTE_DATA";
+import { Link } from "@tanstack/react-router";
+import ROUTE_KEYS, {  TRouteKeys } from "../../routes/ROUTE_KEYS";
 
-export default function LinkBoxV2<T extends Record<string, string>>({ exp, routeParams }: { exp: (routeData: typeof ROUTE_DATA) => RouteData<string, T, string>; routeParams: T }) {
+export default function LinkBoxV2<K extends keyof TRouteKeys>({ exp, routeParams }: { exp: (keys: TRouteKeys) => TRouteKeys[K]; routeParams: Parameters<>}) {
     const parts: Array<{
         label: string;
         url: string | null;
     }> = [];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let currentRoute: RouteData<any, any, any> | undefined = exp(ROUTE_DATA);
+    let currentRoute: RouteHierarchy<any, any, any> | undefined = exp(ROUTE_DATA);
 
     while (currentRoute != null) {
-        const { pattern, label } = currentRoute;
+        const { label } = currentRoute;
 
         if (label != null) {
             let partLabel: string;
