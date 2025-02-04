@@ -1,8 +1,16 @@
 import ROUTE_KEYS from "../ROUTE_KEYS";
+import routeKeys, { ExtractBuilderArgs } from "../routeKeys";
 
-type TTanstackRouteConfig<T extends string> = {
+type TTanstackRouteConfig<T extends string, BuilderProps> = {
     path: T;
+    builder: (props: BuilderProps) => string
 };
+
+const routeConfigs: { [K in keyof typeof routeKeys]: TTanstackRouteConfig<string, ExtractBuilderArgs<typeof routeKeys[K]>> } = {
+    [routeKeys.FRONTPAGE]: { path: "", builder: (props: { deez: number }) => "" },
+
+
+}
 
 // Define individual route configurations with `as const`
 const FRONT_PAGE = { path: "/" } as const;
