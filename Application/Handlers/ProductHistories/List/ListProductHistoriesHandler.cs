@@ -17,7 +17,7 @@ public class ListProductHistoriesHandler : IRequestHandler<ListProductHistoriesQ
 
     public async Task<OneOf<ListProductHistoriesResult, List<ApplicationError>>> Handle(ListProductHistoriesQuery request, CancellationToken cancellationToken)
     {
-        Tuple<string, bool>? orderBy = new Tuple<string, bool>("DateCreated", false);
+        Tuple<string, bool>? orderBy = new Tuple<string, bool>("ValidFrom", false);
         if (request.OrderBy == "newest")
         {
             orderBy = new Tuple<string, bool>("ValidFrom", false);

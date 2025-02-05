@@ -1,10 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
 using Api.DTOs.Products.Update;
+using Application.Interfaces.Persistence;
 using Domain.Models;
 using Infrastructure.DbEntities;
+using Infrastructure.Mappers;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.IntegrationTests.Products;
 
@@ -20,7 +23,7 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
     {
         await base.InitializeAsync();
         var db = _factory.CreateDbContext();
-        var mixins = new Mixins(db);
+        var mixins = CreateMixins();
         _validImage = await mixins.CreateDraftImage(
             fileRoute: TestFileRoute.ValidImage,
             destinationFileName: "saved-valid-image.png"
@@ -59,7 +62,7 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
     [Fact]
     public async Task UpdateProduct_ValidDataAndNewImage_Success()
     {
-        var mixins = GetMixins();
+        var mixins = CreateMixins();
         var newValidImage = await mixins.CreateDraftImage(
             fileRoute: TestFileRoute.ValidImage,
             destinationFileName: "new-valid-image.png"
@@ -73,16 +76,18 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var db = _factory.CreateDbContext();
-        var repo = new ProductRepository(db);
-        var product = (await repo.GetByIdAsync(_product001.Id))!;
-        Assert.Equal(2, product.Images.Count);
+        using var scope = _factory.Services.CreateScope();
+        var repo = scope.ServiceProvider.GetRequiredService<IProductRepository>();
+        var updatedProduct = await repo.GetByIdAsync(_product001.Id);
+        Assert.NotNull(updatedProduct);
+
+        Assert.Equal(2, updatedProduct.Images.Count);
     }
 
     [Fact]
     public async Task UpdateProduct_ValidDataAndNewImageAndRemoveOldImage_Success()
     {
-        var mixins = GetMixins();
+        var mixins = CreateMixins();
         var newValidImage = await mixins.CreateDraftImage(
             fileRoute: TestFileRoute.ValidImage,
             destinationFileName: "new-valid-image.png"
@@ -96,11 +101,13 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
-        var db = _factory.CreateDbContext();
-        var repo = new ProductRepository(db);
-        var product = (await repo.GetByIdAsync(_product001.Id))!;
-        Assert.StrictEqual(1, product.Images.Count);
-        Assert.Equal(product.Images[0].FileName.Value, newValidImage.FileName.Value);
+        using var scope = _factory.Services.CreateScope();
+        var repo = scope.ServiceProvider.GetRequiredService<IProductRepository>();
+        var updatedProduct = await repo.GetByIdAsync(_product001.Id);
+        Assert.NotNull(updatedProduct);    
+
+        Assert.StrictEqual(1, updatedProduct.Images.Count);
+        Assert.Equal(updatedProduct.Images[0].FileName.Value, newValidImage.FileName.Value);
     }
 
     [Fact]

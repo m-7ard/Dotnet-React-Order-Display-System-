@@ -1,7 +1,6 @@
 import IProduct from "../../domain/models/IProduct";
 import ProductHistory from "../../domain/models/IProductHistory";
 import Order from "../../domain/models/Order";
-import ProductDataAccess from "../../infrastructure/dataAccess/ProductDataAccess";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type IRouteParams = Record<string, string>;
@@ -17,9 +16,7 @@ export interface IManageOrderParams extends IRouteParams {
 export interface IUpdateProductParams extends IRouteParams {
     id: string;
 }
-export interface IEmptyParams extends IRouteParams {
-    _?: undefined;
-}
+export type IEmptyParams = IRouteParams;
 
 type EmptyLoaderData = never;
 export type ErrorPageLoaderData = { error: Error };
@@ -50,7 +47,21 @@ interface ConfigInterface {
     NOT_FOUND_ERROR: IRouteConfig<IEmptyParams>;
     INTERNAL_SERVER_ERROR: IRouteConfig<IEmptyParams>;
     CLIENT_SIDE_ERROR: IRouteConfig<IEmptyParams>;
+    CRASH_ERROR: IRouteConfig<IEmptyParams>;
 }
+
+/*
+type RoutePatterns = "/" | "/orders" | "/orders/create" | "/orders/$id/manage" | 
+                     "/products" | "/products/create" | "/products/$id/update" | "";
+
+type WithLiteralPattern<T extends IRouteConfig<any>> = Omit<T, 'pattern'> & {
+    pattern: RoutePatterns;
+};
+
+type TanstackConfigInterface = {
+    [K in keyof ConfigInterface]: WithLiteralPattern<ConfigInterface[K]>
+};
+*/
 
 export const tanstackConfigs: ConfigInterface = {
     FRONTPAGE: {
@@ -85,30 +96,34 @@ export const tanstackConfigs: ConfigInterface = {
     },
 
     LIST_PRODUCT_HISTORIES: {
-        pattern: "",
-        build: () => "",
+        pattern: "/product_histories",
+        build: () => "/product_histories",
     },
 
     LOADER_ERROR: {
-        pattern: "",
-        build: () => "",
+        pattern: "/errors/loader",
+        build: () => "/errors/loader",
     },
     UNKNOWN_ERROR: {
-        pattern: "",
-        build: () => "",
+        pattern: "/errors/unknown",
+        build: () => "/errors/unknown",
     },
     NOT_FOUND_ERROR: {
-        pattern: "",
-        build: () => "",
+        pattern: "/errors/not_found",
+        build: () => "/errors/not_found",
     },
     INTERNAL_SERVER_ERROR: {
-        pattern: "",
-        build: () => "",
+        pattern: "/errors/internal_server_error",
+        build: () => "/errors/internal_server_error",
     },
     CLIENT_SIDE_ERROR: {
-        pattern: "",
-        build: () => "",
+        pattern: "/errors/client_side",
+        build: () => "/errors/client_side",
     },
+    CRASH_ERROR: {
+        pattern: "/errors/crash",
+        build: () => "/errors/crash",
+    }
 };
 
 export type IGenericRoute<Config extends IRouteConfig<any>, LoaderData> = {

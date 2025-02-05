@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation } from "@tanstack/react-query";
 import IProduct from "../../../domain/models/IProduct";
 import useItemManager from "../../hooks/useItemManager";
@@ -25,8 +26,7 @@ const FORM_PAGE_INITIAL_DATA = {
     createdBefore: "",
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function FilterProductResultsControllerV2<T extends React.FC<any>>(props: { ResultElement: T; propsFactory: (product: IProduct) => ComponentProps<T>; renderAs: "embed" | "panel" }) {
+export default function FilterProductResultsControllerV2<T extends React.FunctionComponent<any>>(props: { ResultElement: T; propsFactory: (product: IProduct) => ComponentProps<T>; renderAs: "embed" | "panel" }) {
     const { ResultElement, propsFactory, renderAs } = props;
     const responseHandler = useDefaultErrorHandling();
     const [route, setRoute] = useState<Routes>("form");
@@ -67,7 +67,9 @@ export default function FilterProductResultsControllerV2<T extends React.FC<any>
 
     return (
         <Component
-            resultComponents={searchResults.map((product) => <ResultElement {...propsFactory(product) as ComponentProps<T>} />)}
+            resultComponents={searchResults.map((product) => {
+                return <ResultElement {...propsFactory(product) as any} key={product.id} />;
+            })}
             route={route}
             changeRoute={changeRoute}
             form={{

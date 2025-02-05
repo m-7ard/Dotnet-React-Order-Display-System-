@@ -1,6 +1,5 @@
 import { createRoute } from "@tanstack/react-router";
 import rootRoute from "../../rootRoute";
-import Order from "../../../../../domain/models/Order";
 import ManageOrderRoute from "../../../../Application/Orders/Manage/ManageOrder.Controller";
 import CreateOrderController from "../../../../Application/Orders/Create/CreateOrder.Controller";
 import { orderDataAccess } from "../../../../deps/dataAccess";

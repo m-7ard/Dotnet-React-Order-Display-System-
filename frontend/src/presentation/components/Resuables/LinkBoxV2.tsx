@@ -24,7 +24,7 @@ export default function LinkBoxV2<T extends TAnyGenericRoute>({ exp, params }: {
 
                 if (urlParameterKey == null) {
                     throw new Error(
-                        `No matching url parameter was found for the url parameter "${urlParameterKey}" for the route label of route "${currentRoute.pattern}". To fix this make sure that the label matches the url parameter at the time of RouteData creation.`,
+                        `No matching url parameter was found for the url parameter.`,
                     );
                 }
 

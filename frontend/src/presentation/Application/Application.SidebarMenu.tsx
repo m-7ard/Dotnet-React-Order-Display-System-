@@ -3,10 +3,11 @@ import MixinButton from "../components/Resuables/MixinButton";
 import Divider from "../components/Resuables/Divider";
 import { RenderedMixinPanel, PolymorphicMixinPanelSection } from "../components/Resuables/MixinPanel";
 import RouterLink from "../components/Resuables/RouterLink";
+import useRouterLocationEq from "../hooks/useRouterLocationEq";
 
 export default function SidebarMenuDialog() {
     const { onClose } = useGlobalDialogPanelContext();
-    const location = useLocation();
+    const locationEq = useRouterLocationEq();
 
     return (
         <RenderedMixinPanel
@@ -38,7 +39,7 @@ export default function SidebarMenuDialog() {
                                     size: "mixin-button-base",
                                     theme: "theme-button-generic-white",
                                 }}
-                                active={location.pathname === "/"}
+                                active={locationEq((routes) => routes.FRONTPAGE)}
                             >
                                 Frontpage
                             </MixinButton>
@@ -50,7 +51,7 @@ export default function SidebarMenuDialog() {
                                     size: "mixin-button-base",
                                     theme: "theme-button-generic-white",
                                 }}
-                                active={location.pathname === "/products"}
+                                active={locationEq((routes) => routes.LIST_PRODUCTS)}
                             >
                                 Products
                             </MixinButton>
@@ -62,7 +63,7 @@ export default function SidebarMenuDialog() {
                                     size: "mixin-button-base",
                                     theme: "theme-button-generic-white",
                                 }}
-                                active={location.pathname === "/orders"}
+                                active={locationEq((routes) => routes.LIST_ORDERS)}
                             >
                                 Orders
                             </MixinButton>
@@ -74,7 +75,7 @@ export default function SidebarMenuDialog() {
                                     size: "mixin-button-base",
                                     theme: "theme-button-generic-white",
                                 }}
-                                active={location.pathname === "/product_histories"}
+                                active={locationEq((routes) => routes.LIST_PRODUCT_HISTORIES)}
                             >
                                 Product Histories
                             </MixinButton>
