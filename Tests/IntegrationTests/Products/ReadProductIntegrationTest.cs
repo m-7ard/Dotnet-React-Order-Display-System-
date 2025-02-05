@@ -12,8 +12,7 @@ public class ReadProductIntegrationTest : ProductsIntegrationTest
     public async override Task InitializeAsync()
     {
         await base.InitializeAsync();
-        var db = _factory.CreateDbContext();
-        var mixins = new Mixins(db);
+        var mixins = CreateMixins();
         _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
     }
 

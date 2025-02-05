@@ -6,7 +6,6 @@ using Application.Common;
 using Application.Handlers.Products.Create;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
-using Application.Validators;
 using Application.Validators.DraftImageExistsValidator;
 using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.OrderExistsValidator;
@@ -21,7 +20,9 @@ using Domain.ValueObjects.Shared;
 using FluentValidation;
 using Infrastructure;
 using Infrastructure.Files;
+using Infrastructure.Interfaces;
 using Infrastructure.Persistence;
+using Infrastructure.Querying;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -29,8 +30,8 @@ using Microsoft.Extensions.FileProviders;
 var builder = WebApplication.CreateBuilder(args);
 // dotnet ef migrations add <Name> --project Infrastructure --startup-project Api
 
-var dbProvider = builder.Configuration["Database:Provider"];
-var connectionString = builder.Configuration[$"{dbProvider}_Database"];
+var appSettings = BuilderUtils.ReadAppSettings(builder.Configuration);
+var databaseProviderSingleton = new DatabaseProviderSingleton(appSettings.DatabaseProviderValue);
 
 /// Env ** Unused **
 // DotNetEnv.Env.Load();
@@ -43,13 +44,13 @@ var connectionString = builder.Configuration[$"{dbProvider}_Database"];
 
 builder.Services.AddDbContext<SimpleProductOrderServiceDbContext>(options =>
     {
-        if (dbProvider == "Sqlite")
+        if (databaseProviderSingleton.IsSQLite)
         {
-            options.UseSqlite(connectionString);
+            options.UseSqlite(appSettings.ConnectionString);
         }
-        else if (dbProvider == "SqlServer")
+        else if (databaseProviderSingleton.IsMSSQL)
         {
-            options.UseSqlServer(connectionString);
+            options.UseSqlServer(appSettings.ConnectionString);
         }
         else
         {
@@ -117,6 +118,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Creat
 /// Dependency Injection / DI / Services
 /// 
 
+builder.Services.AddSingleton<IDatabaseProviderSingleton>(databaseProviderSingleton);
 builder.Services.AddScoped<ISequenceService, SequenceService>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -124,6 +126,10 @@ builder.Services.AddScoped<IProductHistoryRepository, ProductHistoryRespository>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IDraftImageRepository, DraftImageRepository>();
+
+builder.Services.AddScoped<IProductDbEntityQueryServiceFactory, ProductDbEntityQueryServiceFactory>();
+builder.Services.AddScoped<IOrderDbEntityQueryServiceFactory, OrderDbEntityQueryServiceFactory>();
+builder.Services.AddScoped<IProductHistoryDbEntityQueryServiceFactory, ProductHistoryDbEntityQueryServiceFactory>();
 
 builder.Services.AddScoped<IApiModelService, ApiModelService>();
 builder.Services.AddSingleton<IFileStorage, FileStorage>();

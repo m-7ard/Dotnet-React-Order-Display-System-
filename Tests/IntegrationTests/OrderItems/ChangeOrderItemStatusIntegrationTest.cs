@@ -1,12 +1,15 @@
 using System.Net;
 using System.Net.Http.Json;
 using Api.DTOs.OrderItems.MarkFinished;
+using Application.Interfaces.Persistence;
 using Domain.DomainService;
 using Domain.Models;
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.OrderItem;
 using Infrastructure.DbEntities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.IntegrationTests.OrderItems;
 
@@ -20,8 +23,7 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
     public async override Task InitializeAsync()
     {
         await base.InitializeAsync();
-        var db = _factory.CreateDbContext();
-        var mixins = new Mixins(db);
+        var mixins = CreateMixins();
         _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
         _product002 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
         _order001 = await mixins.CreateOrder(
@@ -46,9 +48,13 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
         Assert.NotNull(content.OrderId);
         Assert.NotNull(content.OrderItemId);
         
-        var db = _factory.CreateDbContext();
-        var persistedOrderItem = await db.OrderItem.SingleAsync(d => d.Id.ToString() == content.OrderItemId);
-        Assert.Equal(OrderItemDbEntity.Statuses.Finished, persistedOrderItem.Status);
+        using var scope = _factory.Services.CreateScope();
+        var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
+        var order = await repo.GetByIdAsync(OrderId.ExecuteCreate(Guid.Parse(content.OrderId)));
+        Assert.NotNull(order);        
+        var orderItem = order.ExecuteGetOrderItemById(OrderItemId.ExecuteCreate(Guid.Parse(content.OrderItemId)));
+        Assert.NotNull(orderItem);        
+        Assert.Equal(OrderItemStatus.Finished, orderItem.Status);
     }
 
     [Fact]
@@ -64,8 +70,8 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
     [Fact]
     public async Task MarkOrderItemFinished_ChangeNotAllowed_Failure()
     {
-        var db = _factory.CreateDbContext();
-        var repo = new OrderRepository(db);
+        using var scope = _factory.Services.CreateScope();
+        var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
         OrderDomainService.ExecuteMarkOrderItemFinished(_order001, _orderItem001.Id);
         await repo.UpdateAsync(_order001);
 

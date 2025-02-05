@@ -7,14 +7,19 @@ import InternalServerErrorPage from "../../../Application/Exceptions/InternalSer
 import ClientSideErrorPage from "../../../Application/Exceptions/ClientSideErrorPage";
 import { ErrorPageLoaderData, tanstackConfigs } from "../../Route";
 import TanstackRouterState from "../../../types/TanstackRouterState";
+import CrashErrorPage from "../../../Application/Exceptions/CrashErrorPage";
+import router from "../../../deps/router";
 
 const loaderErrorPage = createRoute({
-    loader: (ctx): ErrorPageLoaderData => {
-        const state: TanstackRouterState | undefined = ctx.route.router?.state;
+    loader: (): ErrorPageLoaderData => {
+        const state: TanstackRouterState | undefined = router.state;
         const error = state?.location.state.error;
 
         if (error == null) {
-            throw redirect({ to: tanstackConfigs.CLIENT_SIDE_ERROR.build({}), state: (prev) => ({ ...prev, error: new Error("A loader error occured but no error was provided to the LoaderErrorPage.") }) });
+            throw redirect({
+                to: tanstackConfigs.CLIENT_SIDE_ERROR.build({}),
+                state: (prev) => ({ ...prev, error: new Error("A loader error occured but no error was provided to the LoaderErrorPage.") }),
+            });
         }
 
         return { error: error };
@@ -25,12 +30,15 @@ const loaderErrorPage = createRoute({
 });
 
 const unkownErrorPage = createRoute({
-    loader: (ctx): ErrorPageLoaderData => {
-        const state: TanstackRouterState | undefined = ctx.route.router?.state;
+    loader: (): ErrorPageLoaderData => {
+        const state: TanstackRouterState | undefined = router.state;
         const error = state?.location.state.error;
 
         if (error == null) {
-            throw redirect({ to: tanstackConfigs.CLIENT_SIDE_ERROR.build({}), state: (prev) => ({ ...prev, error: new Error("An Unknown Error occured but no error was provided to the UnknownErrorPage.") }) });
+            throw redirect({
+                to: tanstackConfigs.CLIENT_SIDE_ERROR.build({}),
+                state: (prev) => ({ ...prev, error: new Error("An Unknown Error occured but no error was provided to the UnknownErrorPage.") }),
+            });
         }
 
         return { error: error };
@@ -41,12 +49,15 @@ const unkownErrorPage = createRoute({
 });
 
 const notFoundErrorPage = createRoute({
-    loader: (ctx): ErrorPageLoaderData => {
-        const state: TanstackRouterState | undefined = ctx.route.router?.state;
+    loader: (): ErrorPageLoaderData => {
+        const state: TanstackRouterState | undefined = router.state;
         const error = state?.location.state.error;
 
         if (error == null) {
-            throw redirect({ to: tanstackConfigs.CLIENT_SIDE_ERROR.build({}), state: (prev) => ({ ...prev, error: new Error("An 404 Not Found error occured but no error was provided to the NotFoundErrorPage.") }) });
+            throw redirect({
+                to: tanstackConfigs.CLIENT_SIDE_ERROR.build({}),
+                state: (prev) => ({ ...prev, error: new Error("An 404 Not Found error occured but no error was provided to the NotFoundErrorPage.") }),
+            });
         }
 
         return { error: error };
@@ -57,12 +68,15 @@ const notFoundErrorPage = createRoute({
 });
 
 const internalServerErrorPage = createRoute({
-    loader: (ctx): ErrorPageLoaderData => {
-        const state: TanstackRouterState | undefined = ctx.route.router?.state;
+    loader: (): ErrorPageLoaderData => {
+        const state: TanstackRouterState | undefined = router.state;
         const error = state?.location.state.error;
 
         if (error == null) {
-            throw redirect({ to: tanstackConfigs.CLIENT_SIDE_ERROR.build({}), state: (prev) => ({ ...prev, error: new Error("An 404 Not Found error occured but no error was provided to the NotFoundErrorPage.") }) });
+            throw redirect({
+                to: tanstackConfigs.CLIENT_SIDE_ERROR.build({}),
+                state: (prev) => ({ ...prev, error: new Error("An 404 Not Found error occured but no error was provided to the NotFoundErrorPage.") }),
+            });
         }
 
         return { error: error };
@@ -73,12 +87,12 @@ const internalServerErrorPage = createRoute({
 });
 
 const clientSideErrorPage = createRoute({
-    loader: (ctx): ErrorPageLoaderData => {
-        const state: TanstackRouterState | undefined = ctx.route.router?.state;
+    loader: (): ErrorPageLoaderData => {
+        const state: TanstackRouterState | undefined = router.state;
         const error = state?.location.state.error;
 
         if (error == null) {
-            throw redirect({ to: tanstackConfigs.CLIENT_SIDE_ERROR.build({}), state: (prev) => ({ ...prev, error: new Error("An Client Side error occured but no error was provided to the ClientSideErrorPage.") }) });
+            throw redirect({ to: tanstackConfigs.CRASH_ERROR.build({}) });
         }
 
         return { error: error };
@@ -88,4 +102,10 @@ const clientSideErrorPage = createRoute({
     component: ClientSideErrorPage,
 });
 
-export default [loaderErrorPage, unkownErrorPage, notFoundErrorPage, internalServerErrorPage, clientSideErrorPage];
+const crashErrorPage = createRoute({
+    getParentRoute: () => rootRoute,
+    path: tanstackConfigs.CRASH_ERROR.pattern,
+    component: () => <CrashErrorPage />,
+});
+
+export default [loaderErrorPage, unkownErrorPage, notFoundErrorPage, internalServerErrorPage, clientSideErrorPage, crashErrorPage];

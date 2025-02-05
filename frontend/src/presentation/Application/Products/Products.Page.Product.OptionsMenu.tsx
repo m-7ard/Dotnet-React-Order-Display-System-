@@ -65,7 +65,7 @@ export default function ProductOptionMenu(props: { product: IProduct }) {
                         className="w-full truncate"
                         onClick={(e) => {
                             e.preventDefault();
-                            navigate({ to: "/product_histories", search: { productId: product.id } });
+                            navigate({ exp: (routes) => routes.LIST_PRODUCT_HISTORIES, params: {}, search: { productId: product.id } });
                         }}
                     >
                         <MixinButton className="justify-center w-full" type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}>

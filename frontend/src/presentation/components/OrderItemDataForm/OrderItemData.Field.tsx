@@ -86,7 +86,7 @@ export default function OrderItemDataField(props: { onChange: (value: ValueSchem
                         return {
                             product: product,
                             onAdd: () => addOrderItem(product),
-                            quantity: orderItemData?.quantity ?? null,
+                            quantity: orderItemData?.quantity ?? null
                         };
                     },
                 }}

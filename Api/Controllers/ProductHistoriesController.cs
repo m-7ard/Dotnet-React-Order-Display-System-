@@ -31,6 +31,7 @@ public class ProductHistoryController : ControllerBase
         [FromQuery] string? productId,
         [FromQuery] string? orderBy)
     {
+        Console.WriteLine(orderBy);
         var parameters = new ListProductHistoriesRequestDTO(
             name: name,
             minPrice: minPrice,

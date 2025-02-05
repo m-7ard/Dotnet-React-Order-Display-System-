@@ -15,8 +15,7 @@ public class ListProductsIntegrationTest : ProductsIntegrationTest
     public async override Task InitializeAsync()
     {
         await base.InitializeAsync();
-        var db = _factory.CreateDbContext();
-        var mixins = new Mixins(db);
+        var mixins = CreateMixins();
 
         // Delay to prevent date bugs
         _price1_NameDescProduct1 = await mixins.CreateProductAndProductHistory(number: 1, images: []);

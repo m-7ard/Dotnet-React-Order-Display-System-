@@ -7,7 +7,7 @@ class TanstackRouterUtils {
         const result = await tryHandleRequest(promise);
 
         if (result.isErr()) {
-            throw redirect({ to: result.error.route, state: (prev) => ({ ...prev, error: result.error }) });
+            throw redirect({ to: result.error.route.config?.pattern, state: (prev) => ({ ...prev, error: result.error }) });
         }
 
         return result.value;
@@ -15,7 +15,7 @@ class TanstackRouterUtils {
 
     static async handleInvalidResponse(response: Response): Promise<void> {
         const error = await handleInvalidResponse(response);
-        throw redirect({ to: error.route, state: (prev) => ({ ...prev, error: error }) });
+        throw redirect({ to: error.route.config?.pattern, state: (prev) => ({ ...prev, error: error }) });
     }
 }
 

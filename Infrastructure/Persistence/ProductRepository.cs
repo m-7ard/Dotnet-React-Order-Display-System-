@@ -5,6 +5,7 @@ using Domain.DomainEvents.Product;
 using Domain.Models;
 using Domain.ValueObjects.Product;
 using Infrastructure.DbEntities;
+using Infrastructure.Interfaces;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,10 +14,12 @@ namespace Infrastructure.Persistence;
 public class ProductRepository : IProductRepository
 {
     private readonly SimpleProductOrderServiceDbContext _dbContext;
+    private readonly IProductDbEntityQueryServiceFactory _queryServiceFactory;
 
-    public ProductRepository(SimpleProductOrderServiceDbContext productApiDbContext)
+    public ProductRepository(SimpleProductOrderServiceDbContext productApiDbContext, IProductDbEntityQueryServiceFactory queryServiceFactory)
     {
         _dbContext = productApiDbContext;
+        _queryServiceFactory = queryServiceFactory;
     }
 
     public async Task<Product> CreateAsync(Product product)
@@ -73,23 +76,13 @@ public class ProductRepository : IProductRepository
             query = query.Where(item => item.DateCreated <= criteria.CreatedBefore);
         }
 
+        var queryService = _queryServiceFactory.Create(query);
         if (criteria.OrderBy is not null)
         {
-            Dictionary<string, Expression<Func<ProductDbEntity, object>>> fieldMappings = new()
-            {
-                { "Price", p => p.Price },
-                { "DateCreated", p => p.DateCreated },
-            };
-
-            if (fieldMappings.TryGetValue(criteria.OrderBy.Item1, out var orderByExpression))
-            {
-                query = criteria.OrderBy.Item2 
-                    ? query.OrderBy(orderByExpression) 
-                    : query.OrderByDescending(orderByExpression);
-            }
+            queryService.ApplyOrderBy(criteria.OrderBy);
         }
 
-        var dbProducts = await query.ToListAsync();
+        var dbProducts = await queryService.ReturnResult();
         return dbProducts.Select(ProductMapper.FromDbEntityToDomain).ToList();
     }
 
