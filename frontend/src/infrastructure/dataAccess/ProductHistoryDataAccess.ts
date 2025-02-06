@@ -8,7 +8,6 @@ export default class ProductHistoryDataAccess implements IProductHistoryDataAcce
     
     async listProductHistories(request: IListProductHistoriesRequestDTO): Promise<Response> {
         const urlParams = getUrlParams(request);
-        console.log(urlParams.toString());
         const response = await fetch(`${this._apiRoute}/list?${urlParams}`, {
             method: "GET"
         });
