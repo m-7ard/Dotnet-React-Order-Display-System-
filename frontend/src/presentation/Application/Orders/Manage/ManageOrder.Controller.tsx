@@ -1,4 +1,3 @@
-import { useLoaderData } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import ManageOrderPage from "./ManageOrder.Page";
 import useResponseHandler from "../../../hooks/useResponseHandler";
@@ -12,10 +11,11 @@ import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import OrderItemStatus from "../../../../domain/valueObjects/OrderItem/OrderItemStatus";
 import IMarkOrderFinishedResponseDTO from "../../../../infrastructure/contracts/orders/markFinished/IMarkOrderFinishedResponseDTO";
 import IMarkOrderItemFinishedResponseDTO from "../../../../infrastructure/contracts/orderItems/markFinished/IMarkOrderItemFinishedResponseDTO";
+import useRouterLoaderData from "../../../hooks/useRouterLoaderData";
 
 export default function ManageOrderRoute(props: { orderDataAccess: IOrderDataAccess }) {
     const { orderDataAccess } = props;
-    const order = useLoaderData({ from: "/orders/$id/manage" });
+    const { order } = useRouterLoaderData((keys) => keys.MANAGE_ORDER);
     const responseHandler = useResponseHandler();
     const errorsManager = useItemManager<IPresentationError<Record<string | number, unknown>>>({ _: undefined });
 
@@ -91,5 +91,12 @@ export default function ManageOrderRoute(props: { orderDataAccess: IOrderDataAcc
         },
     });
 
-    return <ManageOrderPage order={order} errors={errorsManager.items} onMarkFinished={markOrderFinishedMutation.mutate} onMarkOrderItemFinished={(orderItem) => markOrderItemFinishedMutation.mutate({ orderItem: orderItem })} />;
+    return (
+        <ManageOrderPage
+            order={order}
+            errors={errorsManager.items}
+            onMarkFinished={markOrderFinishedMutation.mutate}
+            onMarkOrderItemFinished={(orderItem) => markOrderItemFinishedMutation.mutate({ orderItem: orderItem })}
+        />
+    );
 }

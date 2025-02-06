@@ -1,18 +1,21 @@
-import { Link, useLocation } from "@tanstack/react-router";
 import GlobalDialog from "../components/Dialog/GlobalDialog";
 import MixinButton from "../components/Resuables/MixinButton";
-import routeData from "../routes/_routeData";
 import SidebarMenuDialog from "./Application.SidebarMenu";
 import Divider from "../components/Resuables/Divider";
 import MixinContentGrid, { MixinContentGridTrack } from "../components/Resuables/MixinContentGrid";
+import RouterLink from "../components/Resuables/RouterLink";
+import useRouterLocationEq from "../hooks/useRouterLocationEq";
 
 export default function ApplicationHeader() {
-    const location = useLocation();
+    const locationEq = useRouterLocationEq();
 
     return (
         <>
-            <MixinContentGrid className="bg-gray-50 overflow-auto shrink-0 z-10 relative">
-                <MixinContentGridTrack className="py-2 px-4 flex flex-row gap-3 items-center mx-auto border-x token-default-border-color" track={"base"}>
+            <MixinContentGrid className="bg-gray-50 overflow-auto shrink-0 z-10 relative" exp={() => ({})}>
+                <MixinContentGridTrack
+                    className="py-2 px-4 flex flex-row gap-3 items-center mx-auto border-x token-default-border-color"
+                    exp={(options) => ({ track: options.TRACK.BASE })}
+                >
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
@@ -31,30 +34,30 @@ export default function ApplicationHeader() {
                         Panel={SidebarMenuDialog}
                         panelProps={{}}
                     ></GlobalDialog>
-                    <Link to={routeData.frontpage.build({})}>
+                    <RouterLink exp={(routes) => routes.FRONTPAGE} params={{}}>
                         <MixinButton
                             options={{
                                 size: "mixin-button-sm",
                                 theme: "theme-button-generic-white",
                             }}
-                            active={location.pathname === "/"}
+                            active={locationEq((routes) => routes.FRONTPAGE)}
                         >
                             Frontpage
                         </MixinButton>
-                    </Link>
-                    <Link to={routeData.listProducts.pattern}>
+                    </RouterLink>
+                    <RouterLink exp={(routes) => routes.LIST_PRODUCTS} params={{}}>
                         <MixinButton
                             options={{
                                 size: "mixin-button-sm",
                                 theme: "theme-button-generic-white",
                             }}
                             type="button"
-                            active={location.pathname === "/products"}
+                            active={locationEq((routes) => routes.LIST_PRODUCTS)}
                         >
                             Products
                         </MixinButton>
-                    </Link>
-                    <Link to={routeData.listProductHistories.pattern}>
+                    </RouterLink>
+                    <RouterLink exp={(routes) => routes.LIST_PRODUCT_HISTORIES} params={{}}>
                         <MixinButton
                             options={{
                                 size: "mixin-button-sm",
@@ -62,23 +65,23 @@ export default function ApplicationHeader() {
                             }}
                             type="button"
                             className="truncate shrink-0"
-                            active={location.pathname === "/product_histories"}
+                            active={locationEq((routes) => routes.LIST_PRODUCT_HISTORIES)}
                         >
                             Product Histories
                         </MixinButton>
-                    </Link>
-                    <Link to={routeData.listOrders.pattern}>
+                    </RouterLink>
+                    <RouterLink exp={(routes) => routes.LIST_ORDERS} params={{}}>
                         <MixinButton
                             options={{
                                 size: "mixin-button-sm",
                                 theme: "theme-button-generic-white",
                             }}
                             type="button"
-                            active={location.pathname === "/orders"}
+                            active={locationEq((routes) => routes.LIST_ORDERS)}
                         >
                             Orders
                         </MixinButton>
-                    </Link>
+                    </RouterLink>
                 </MixinContentGridTrack>
             </MixinContentGrid>
             <div className="shadow relative">

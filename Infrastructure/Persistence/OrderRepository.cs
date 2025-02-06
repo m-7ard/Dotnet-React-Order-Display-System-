@@ -1,10 +1,10 @@
-using System.Linq.Expressions;
 using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
 using Domain.DomainEvents.Order;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Infrastructure.DbEntities;
+using Infrastructure.Interfaces;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +13,13 @@ namespace Infrastructure.Persistence;
 public class OrderRepository : IOrderRepository
 {
     private readonly SimpleProductOrderServiceDbContext _dbContext;
+    private readonly IOrderDbEntityQueryServiceFactory _orderDbEntityQueryServiceFactory;
 
 
-    public OrderRepository(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext)
+    public OrderRepository(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext, IOrderDbEntityQueryServiceFactory orderDbEntityQueryServiceFactory)
     {
         _dbContext = simpleProductOrderServiceDbContext;
+        _orderDbEntityQueryServiceFactory = orderDbEntityQueryServiceFactory;
     }
 
     public async Task CreateAsync(Order order)
@@ -98,21 +100,14 @@ public class OrderRepository : IOrderRepository
             query = query.Where(order => order.OrderItems.Any(item => item.SerialNumber == criteria.OrderItemSerialNumber));
         }
 
+        var queryService = _orderDbEntityQueryServiceFactory.Create(query);
+
         if (criteria.OrderBy is not null)
         {
-            Dictionary<string, Expression<Func<OrderDbEntity, object>>> fieldMappings = new()
-            {
-                { "Total", p => p.Total },
-                { "DateCreated", p => p.DateCreated },
-            };
-
-            if (fieldMappings.TryGetValue(criteria.OrderBy.Item1, out var orderByExpression))
-            {
-                query = criteria.OrderBy.Item2 ? query.OrderBy(orderByExpression) : query.OrderByDescending(orderByExpression);
-            }
+            queryService.ApplyOrderBy(criteria.OrderBy);
         }
 
-        var dbOrders = await query.ToListAsync();
+        var dbOrders = await queryService.ReturnResult();
         return dbOrders.Select(OrderMapper.ToDomain).ToList();
     }
 

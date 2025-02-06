@@ -13,8 +13,7 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
     public async override Task InitializeAsync()
     {
         await base.InitializeAsync();
-        var db = _factory.CreateDbContext();
-        var mixins = new Mixins(db);
+        var mixins = CreateMixins();
         _validImage = await mixins.CreateDraftImage(
             fileRoute: TestFileRoute.ValidImage,
             destinationFileName: "saved-valid-image.png"

@@ -6,6 +6,7 @@ public class BaseIntegrationTest : IAsyncLifetime
 {
     protected readonly IntegrationWebApplicationFactory<Program> _factory;
     protected readonly HttpClient _client;
+
     private void DeleteTestFiles()
     {
         Environment.SetEnvironmentVariable("IS_TEST", "true");
@@ -51,10 +52,11 @@ public class BaseIntegrationTest : IAsyncLifetime
         DeleteTestFiles();
     }
 
-    public Mixins GetMixins()
+    public Mixins CreateMixins()
     {
         var db = _factory.CreateDbContext();
-        var mixins = new Mixins(db);
+        var dbProvider = _factory.GetDatabaseProviderSingleton();
+        var mixins = new Mixins(db, dbProvider);
         return mixins;
     }
 }

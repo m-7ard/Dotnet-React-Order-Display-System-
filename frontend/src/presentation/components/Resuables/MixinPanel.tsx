@@ -1,39 +1,70 @@
-import { ElementType, PropsWithChildren } from "react";
+import React, { ElementType, HTMLAttributes, PropsWithChildren } from "react";
 import PolymorphicProps from "../../types/PolymorphicProps";
+import useDirectives from "../../hooks/useDirectives";
+import panelSectionDirective from "../../directives/panelSectionDirective";
+import panelDirective, { PanelDirectiveExpression } from "../../directives/panelDirective";
+import useDirectivesAsAttrs from "../../hooks/useDirectivesAsAttrs";
+import DirectiveFn from "../../types/DirectiveFn";
 
-type MixinPanelProps<E extends ElementType> = PolymorphicProps<E> & {
-    options: {
-        size: "mixin-panel-base";
-        theme: "theme-panel-generic-white";
-    };
-    hasShadow?: boolean;
-    hasBorder?: boolean;
-};
+type PanelProps = { exp: PanelDirectiveExpression; directives?: Array<DirectiveFn> } & Omit<HTMLAttributes<HTMLElement>, "children">;
 
-export default function MixinPanel<T extends ElementType = "div">(props: PropsWithChildren<MixinPanelProps<T>>) {
-    const { options, as, className, hasShadow = false, hasBorder = false, children, ...HTMLattrs } = props;
+/* 
+    -----------------------------------------------------
+    Polymorphic Panel 
+    -----------------------------------------------------
+*/
+type PolymorphicMixinPanelProps<E extends ElementType> = PolymorphicProps<E> & PanelProps;
+export function PolymorphicMixinPanel<T extends ElementType = "div">(props: PropsWithChildren<PolymorphicMixinPanelProps<T>>) {
+    const { as, className = "", directives = [], children, exp, ...HTMLattrs } = props;
     const Component = as ?? "div";
 
-    const shadowClass = hasShadow ? "token-default-shadow" : "";
-    const borderClass = hasBorder ? "border token-default-border-color" : "";
+    const attrs = useDirectivesAsAttrs({ attrs: HTMLattrs, classNames: [className] }, [...directives, panelDirective(exp)]);
 
-    return (
-        <Component className={["mixin-panel-like", options.size, options.theme, className, shadowClass, borderClass].join(" ")} {...HTMLattrs}>
-            {children}
-        </Component>
-    );
+    return <Component {...attrs}>{children}</Component>;
 }
 
-type MixinPanelSectionProps<E extends ElementType> = PolymorphicProps<E> & {};
+/* 
+    -----------------------------------------------------
+    Render Panel 
+    -----------------------------------------------------
+*/
+type RenderedMixinPanelProps = PanelProps & { children: (props: HTMLAttributes<HTMLElement>) => React.ReactElement };
+export function RenderedMixinPanel(props: RenderedMixinPanelProps) {
+    const { className = "", exp, children, directives = [] } = props;
+    const attrs = useDirectivesAsAttrs({ attrs: {}, classNames: [className] }, [...directives, panelDirective(exp)]);
+    return children(attrs);
+}
 
-export function MixinPanelSection<T extends ElementType = "section">(props: PropsWithChildren<MixinPanelSectionProps<T>>) {
-    const { as, className, children, ...HTMLattrs } = props;
+/* 
+    -----------------------------------------------------
+    Render Section 
+    -----------------------------------------------------
+*/
+type SectionProps = {
+    directives?: Array<DirectiveFn>;
+} & HTMLAttributes<HTMLElement>;
+
+type RenderedMixinPanelSectionProps = { children: (props: HTMLAttributes<HTMLElement>) => React.ReactElement } & SectionProps;
+export function RenderedMixinPanelSection(props: RenderedMixinPanelSectionProps) {
+    const { children, className = "", directives = [], ...htmlAttrs } = props;
+    const directiveData = useDirectives({ attrs: htmlAttrs, classNames: [className] }, [...directives, panelSectionDirective()]);
+    return children({ className: directiveData.classNames.join(" "), ...directiveData.attrs });
+}
+
+/* 
+    -----------------------------------------------------
+    Polymorphic Section 
+    -----------------------------------------------------
+*/
+type PolymorphicMixinPanelSectionProps<E extends ElementType> = PolymorphicProps<E> & SectionProps;
+export function PolymorphicMixinPanelSection<T extends ElementType = "section">(props: PropsWithChildren<PolymorphicMixinPanelSectionProps<T>>) {
+    const { as, className = "", children, ...HTMLattrs } = props;
     const Component = as ?? "section";
+    const directiveData = useDirectives({ attrs: HTMLattrs, classNames: [className] }, [panelSectionDirective()]);
 
     return (
-        <Component className={[className].join(" ")} {...HTMLattrs} data-role="panel-section">
+        <Component className={directiveData.classNames.join(" ")} {...directiveData.attrs}>
             {children}
         </Component>
     );
 }
-

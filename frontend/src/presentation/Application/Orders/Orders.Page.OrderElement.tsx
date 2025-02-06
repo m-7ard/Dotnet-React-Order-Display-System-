@@ -1,12 +1,12 @@
-import { useNavigate } from "@tanstack/react-router";
 import Order from "../../../domain/models/Order";
 import MixinButton from "../../components/Resuables/MixinButton";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
+import useRouterNavigate from "../../hooks/useRouterNavigate";
 import { ORDER_STATUS_COLORS, ORDER_ITEM_STATUS_COLORS } from "./Orders.Constants";
 
 export default function OrderElement(props: { order: Order }) {
     const { order } = props;
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
 
     return (
         <MixinPrototypeCard
@@ -59,7 +59,7 @@ export default function OrderElement(props: { order: Order }) {
                 as="a"
                 onClick={(e) => {
                     e.preventDefault();
-                    navigate({ to: `/orders/${order.id}/manage` });
+                    navigate({ exp: (routes) => routes.MANAGE_ORDER, params: { id: order.id } });
                 }}
                 className="flex flex-row shrink-0 sticky bottom-0"
                 fillBg

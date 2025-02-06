@@ -1,87 +1,88 @@
-import { useLocation, Link } from "@tanstack/react-router";
 import { useGlobalDialogPanelContext } from "../components/Dialog/GlobalDialog.Panel.Context";
 import MixinButton from "../components/Resuables/MixinButton";
-import MixinPanel, { MixinPanelSection } from "../components/Resuables/MixinPanel";
-import routeData from "../routes/_routeData";
 import Divider from "../components/Resuables/Divider";
+import { RenderedMixinPanel, PolymorphicMixinPanelSection } from "../components/Resuables/MixinPanel";
+import RouterLink from "../components/Resuables/RouterLink";
+import useRouterLocationEq from "../hooks/useRouterLocationEq";
 
 export default function SidebarMenuDialog() {
     const { onClose } = useGlobalDialogPanelContext();
-    const location = useLocation();
+    const locationEq = useRouterLocationEq();
 
     return (
-        <MixinPanel
-            options={{
-                size: "mixin-panel-base",
-                theme: "theme-panel-generic-white",
-            }}
+        <RenderedMixinPanel
+            exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}
             className="top-0 bottom-0 left-0 fixed w-72 rounded-none"
         >
-            <MixinPanelSection className="flex flex-row justify-between items-center">
-                <div className="text-sm font-semibold">Menu</div>
-                <MixinButton
-                    options={{
-                        size: "mixin-button-sm",
-                        theme: "theme-button-generic-white",
-                    }}
-                    onClick={onClose}
-                    type="button"
-                    hasShadow
-                >
-                    Close
-                </MixinButton>
-            </MixinPanelSection>
-            <Divider />
-            <MixinPanelSection className="flex flex-col gap-1">
-                <Link className="w-full" to={routeData.frontpage.build({})}>
-                    <MixinButton
-                        className="w-full justify-center"
-                        options={{
-                            size: "mixin-button-base",
-                            theme: "theme-button-generic-white",
-                        }}
-                        active={location.pathname === "/"}
-                    >
-                        Frontpage
-                    </MixinButton>
-                </Link>
-                <Link className="w-full" to={routeData.listProducts.build({})}>
-                    <MixinButton
-                        className="w-full justify-center"
-                        options={{
-                            size: "mixin-button-base",
-                            theme: "theme-button-generic-white",
-                        }}
-                        active={location.pathname === "/products"}
-                    >
-                        Products
-                    </MixinButton>
-                </Link>
-                <Link className="w-full" to={routeData.listOrders.build({})}>
-                    <MixinButton
-                        className="w-full justify-center"
-                        options={{
-                            size: "mixin-button-base",
-                            theme: "theme-button-generic-white",
-                        }}
-                        active={location.pathname === "/orders"}
-                    >
-                        Orders
-                    </MixinButton>
-                </Link>
-                <Link className="w-full" to={routeData.listProductHistories.build({})}>
-                    <MixinButton
-                        className="w-full justify-center"
-                        options={{
-                            size: "mixin-button-base",
-                            theme: "theme-button-generic-white",
-                        }}
-                        active={location.pathname === "/product_histories"}
-                    >
-                        Product Histories
-                    </MixinButton>
-                </Link>
-            </MixinPanelSection>
-        </MixinPanel>
+            {(mixinPanelProps) => (
+                <div {...mixinPanelProps}>
+                    <PolymorphicMixinPanelSection className="flex flex-row justify-between items-center">
+                        <div className="text-sm font-semibold">Menu</div>
+                        <MixinButton
+                            options={{
+                                size: "mixin-button-sm",
+                                theme: "theme-button-generic-white",
+                            }}
+                            onClick={onClose}
+                            type="button"
+                            hasShadow
+                        >
+                            Close
+                        </MixinButton>
+                    </PolymorphicMixinPanelSection>
+                    <Divider />
+                    <PolymorphicMixinPanelSection className="flex flex-col gap-1">
+                        <RouterLink className="w-full" exp={(routes) => routes.FRONTPAGE} params={{}}>
+                            <MixinButton
+                                className="w-full justify-center"
+                                options={{
+                                    size: "mixin-button-base",
+                                    theme: "theme-button-generic-white",
+                                }}
+                                active={locationEq((routes) => routes.FRONTPAGE)}
+                            >
+                                Frontpage
+                            </MixinButton>
+                        </RouterLink>
+                        <RouterLink className="w-full" exp={(routes) => routes.LIST_PRODUCTS} params={{}}>
+                            <MixinButton
+                                className="w-full justify-center"
+                                options={{
+                                    size: "mixin-button-base",
+                                    theme: "theme-button-generic-white",
+                                }}
+                                active={locationEq((routes) => routes.LIST_PRODUCTS)}
+                            >
+                                Products
+                            </MixinButton>
+                        </RouterLink>
+                        <RouterLink className="w-full" exp={(routes) => routes.LIST_ORDERS} params={{}}>
+                            <MixinButton
+                                className="w-full justify-center"
+                                options={{
+                                    size: "mixin-button-base",
+                                    theme: "theme-button-generic-white",
+                                }}
+                                active={locationEq((routes) => routes.LIST_ORDERS)}
+                            >
+                                Orders
+                            </MixinButton>
+                        </RouterLink>
+                        <RouterLink className="w-full" exp={(routes) => routes.LIST_PRODUCT_HISTORIES} params={{}}>
+                            <MixinButton
+                                className="w-full justify-center"
+                                options={{
+                                    size: "mixin-button-base",
+                                    theme: "theme-button-generic-white",
+                                }}
+                                active={locationEq((routes) => routes.LIST_PRODUCT_HISTORIES)}
+                            >
+                                Product Histories
+                            </MixinButton>
+                        </RouterLink>
+                    </PolymorphicMixinPanelSection>
+                </div>
+            )}
+        </RenderedMixinPanel>
     );
 }

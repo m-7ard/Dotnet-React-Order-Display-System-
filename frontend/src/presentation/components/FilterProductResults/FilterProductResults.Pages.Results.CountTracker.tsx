@@ -4,17 +4,13 @@ import CoverImage from "../Resuables/CoverImage";
 import MixinButton from "../Resuables/MixinButton";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
 
-type CountTrackerProductProps = { product: IProduct; onAdd: () => void } & (
-    | {
-          isAdded: true;
-          quantity: number;
-      }
-    | { isAdded: false; quantity: null }
-);
+type CountTrackerProductProps = { product: IProduct; onAdd: () => void; quantity: number | null; };
 
 export default function CountTrackerProduct(props: CountTrackerProductProps) {
-    const { product, onAdd, isAdded, quantity } = props;
+    const { product, onAdd, quantity } = props;
     const productImages = product.images.map((image) => `${getApiUrl()}/Media/${image.fileName}`);
+
+    const isAdded = quantity != null;
 
     return (
         <MixinPrototypeCard options={{ size: "mixin-Pcard-base", theme: "theme-Pcard-generic-white" }} hasBorder hasShadow hasDivide>

@@ -1,16 +1,16 @@
-import { useNavigate } from "@tanstack/react-router";
 import { getApiUrl } from "../../../viteUtils";
-import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/AbtractTooltip/AbstractTooltip";
 import CoverImage from "../../components/Resuables/CoverImage";
 import MixinButton from "../../components/Resuables/MixinButton";
 import OptionMenu from "./ProductHistories.Page.ProductHistoryElement.OptionMenu";
 import ProductHistory from "../../../domain/models/IProductHistory";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
+import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
+import useRouterNavigate from "../../hooks/useRouterNavigate";
 
 export default function ProductHistoryElement(props: { productHistory: ProductHistory }) {
     const { productHistory } = props;
     const productImages = productHistory.images.map((image) => `${getApiUrl()}/Media/${image}`);
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
 
     return (
         <MixinPrototypeCard
@@ -49,7 +49,7 @@ export default function ProductHistoryElement(props: { productHistory: ProductHi
                     className="w-full"
                     onClick={(e) => {
                         e.preventDefault();
-                        navigate({ to: `/orders`, search: { productHistoryId: productHistory.id } });
+                        navigate({ exp: (routes) => routes.LIST_ORDERS, params: {}, search: { productHistoryId: productHistory.id } });
                     }}
                 >
                     <MixinButton className="w-full justify-center  " type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}>
@@ -70,7 +70,7 @@ export default function ProductHistoryElement(props: { productHistory: ProductHi
                             </MixinButton>
                         </AbstractTooltipTrigger>
                     )}
-                    Panel={<OptionMenu productHistory={productHistory} />}
+                    Panel={() => <OptionMenu productHistory={productHistory} />}
                     positioning={{ top: "100%", right: "0px", left: "0px" }}
                 />
             </MixinPrototypeCardSection>

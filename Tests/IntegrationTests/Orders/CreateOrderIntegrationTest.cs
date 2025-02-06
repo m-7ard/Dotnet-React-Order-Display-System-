@@ -1,10 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
 using Api.DTOs.Orders.Create;
+using Application.Interfaces.Persistence;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Infrastructure.Persistence;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.IntegrationTests.Orders;
 
@@ -16,8 +18,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     public async override Task InitializeAsync()
     {
         await base.InitializeAsync();
-        var db = _factory.CreateDbContext();
-        var mixins = new Mixins(db);
+        var mixins = CreateMixins();
         _PRODUCT_001 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
         _PRODUCT_002 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
     }
@@ -50,7 +51,10 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
         var isValidGuid = Guid.TryParse(content.OrderId, out var parsedId);
         Assert.True(isValidGuid);
 
-        var repo = new OrderRepository(_factory.CreateDbContext());
+
+        using var scope = _factory.Services.CreateScope();
+        var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
+
         var order = await repo.GetByIdAsync(OrderId.ExecuteCreate(parsedId));
         Assert.NotNull(order);
         Assert.NotEmpty(order.OrderItems);

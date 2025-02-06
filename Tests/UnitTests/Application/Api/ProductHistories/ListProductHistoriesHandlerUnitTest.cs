@@ -45,7 +45,7 @@ public class ListProductHistoriesHandlerUnitTest
             validFrom: null,
             validTo: null,
             productId: null,
-            orderBy: new Tuple<string, bool>("DateCreated", false)
+            orderBy: new Tuple<string, bool>("ValidFrom", false)
         );
         Assert.True(result.IsT0);
         _mockProductHistoryRepository.Verify(repo => repo.FindAllAsync(criteria));

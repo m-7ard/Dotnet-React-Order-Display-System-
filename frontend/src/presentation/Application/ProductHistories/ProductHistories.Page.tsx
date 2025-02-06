@@ -1,33 +1,32 @@
 import MixinButton from "../../components/Resuables/MixinButton";
-import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/AbtractTooltip/AbstractTooltip";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
-import LinkBox from "../../components/Resuables/LinkBox";
 import ProductHistory from "../../../domain/models/IProductHistory";
-import routeData from "../../routes/_routeData";
 import OrderByMenu from "./ProductHistories.Page.OrderByMenu";
 import FilterProductHistoriesController from "./Filter/FilterProductHistories.Controller";
 import ProductHistoryElement from "./ProductHistories.Page.ProductHistoryElement";
 import Divider from "../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
-import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
+import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
+import contentGridDirective from "../../directives/contentGridDirective";
+import LinkBoxV2 from "../../components/Resuables/LinkBoxV2";
 
 export default function ProductHistoriesPage(props: { productHistories: ProductHistory[] }) {
     const { productHistories } = props;
 
     return (
-        <MixinPage
-            className={`${CONTENT_GRID.CLASS}`}
-            options={{
-                size: "mixin-page-base",
-            }}
-        >
+        <MixinPage directives={[contentGridDirective(() => ({}))]} exp={(options) => ({ size: options.SIZE.BASE })}>
             <MixinPageSection className="flex flex-row gap-3 items-center overflow-x-auto shrink-0">
-                <LinkBox parts={[{ isLink: true, to: routeData.listProductHistories.build({}), label: "Product Histories" }]} />
+                <LinkBoxV2 exp={(routes) => routes.LIST_PRODUCT_HISTORIES} params={{}} />
                 <div className="flex flex-row gap-3 ml-auto">
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
-                            <MixinButton className="justify-center w-full basis-1/2" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} hasShadow>
+                            <MixinButton
+                                className="justify-center w-full basis-1/2"
+                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                onClick={onToggle}
+                                hasShadow
+                            >
                                 Filter
                             </MixinButton>
                         )}
@@ -37,12 +36,18 @@ export default function ProductHistoriesPage(props: { productHistories: ProductH
                     <AbstractTooltip
                         Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
-                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open} hasShadow>
+                                <MixinButton
+                                    className="w-full truncate"
+                                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                    onClick={onToggle}
+                                    active={open}
+                                    hasShadow
+                                >
                                     Order By
                                 </MixinButton>
                             </AbstractTooltipTrigger>
                         )}
-                        Panel={<OrderByMenu />}
+                        Panel={OrderByMenu}
                         positioning={{ top: "100%", right: "0px" }}
                     />
                 </div>

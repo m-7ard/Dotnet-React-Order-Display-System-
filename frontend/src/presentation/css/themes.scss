@@ -38,27 +38,27 @@
 
     .theme-button-generic-green {
         $root: &;
-        @apply text-gray-800;
+        @apply text-white;
 
         &:not(&[data-active="true"]) {
-            @apply bg-green-300;
+            @apply bg-emerald-500;
         }
 
         &[data-active="true"], &:not(&--static):hover {
-            @apply bg-green-400;
+            @apply bg-emerald-600;
         }
     }
 
     .theme-button-generic-red {
         $root: &;
-        @apply text-gray-800;
+        @apply text-white;
 
         &:not(&[data-active="true"]) {
-            @apply bg-red-300;
+            @apply bg-red-500;
         }
 
         &[data-active="true"], &:not(&--static):hover {
-            @apply bg-red-400;
+            @apply bg-red-600;
         }
     }
 

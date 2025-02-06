@@ -1,7 +1,7 @@
-import { useLoaderData } from "@tanstack/react-router";
 import ProductHistoriesPage from "./ProductHistories.Page";
+import useRouterLoaderData from "../../hooks/useRouterLoaderData";
 
 export default function ProductHistoriesController() {
-    const productHistory = useLoaderData({ from: "/product_histories" });
-    return <ProductHistoriesPage productHistories={productHistory} />;
+    const { productHistories } = useRouterLoaderData((keys) => keys.LIST_PRODUCT_HISTORIES);
+    return <ProductHistoriesPage productHistories={productHistories} />;
 }

@@ -4,7 +4,6 @@ import IPresentationError from "../../../interfaces/IPresentationError";
 import { UploadImageFormValue, GeneratedFileName } from "../../../components/Forms/ImageUploadForm";
 import useItemManager from "../../../hooks/useItemManager";
 import { useMutation } from "@tanstack/react-query";
-import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import typeboxToDomainCompatibleFormError from "../../../mappers/typeboxToDomainCompatibleFormError";
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
 import useResponseHandler from "../../../hooks/useResponseHandler";
@@ -12,6 +11,8 @@ import { productDataAccess } from "../../../deps/dataAccess";
 import { err, ok } from "neverthrow";
 import useUploadProductImages from "../../../hooks/useUploadProductImages";
 import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
+import useRouterLoaderData from "../../../hooks/useRouterLoaderData";
+import useRouterNavigate from "../../../hooks/useRouterNavigate";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -45,7 +46,7 @@ export type ErrorSchema = IPresentationError<{
 const initialErrorState: ErrorSchema = {};
 
 export default function UpdateProductController() {
-    const product = useLoaderData({ from: "/products/$id/update" });
+    const { product } = useRouterLoaderData((keys) => keys.UPDATE_PRODUCT);
 
     const responseHandler = useResponseHandler();
     const initialValueState: ValueSchema = {
@@ -68,7 +69,7 @@ export default function UpdateProductController() {
     const itemManager = useItemManager<ValueSchema>(initialValueState);
     const errorManager = useItemManager<ErrorSchema>(initialErrorState);
 
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
     const updateProductMutation = useMutation({
         mutationFn: async () => {
             const images = Object.keys(itemManager.items.images);
@@ -96,7 +97,7 @@ export default function UpdateProductController() {
                     }),
                 onResponseFn: async (response) => {
                     if (response.ok) {
-                        navigate({ to: "/products" });
+                        navigate({ exp: (routes) => routes.LIST_PRODUCTS, params: {}, search: { productId: product.id } });
                         return ok(undefined);
                     } else if (response.status === 400) {
                         const errors = PresentationErrorFactory.ApiErrorsToPresentationErrors(await response.json());
@@ -132,5 +133,15 @@ export default function UpdateProductController() {
         },
     });
 
-    return product == null ? null : <UpdateProductPage value={itemManager.items} errors={errorManager.items} onChange={itemManager.setAll} onReset={() => itemManager.setAll(initialValueState)} onSubmit={() => updateProductMutation.mutate()} product={product} uploadImages={uploadFiles} />;
+    return product == null ? null : (
+        <UpdateProductPage
+            value={itemManager.items}
+            errors={errorManager.items}
+            onChange={itemManager.setAll}
+            onReset={() => itemManager.setAll(initialValueState)}
+            onSubmit={() => updateProductMutation.mutate()}
+            product={product}
+            uploadImages={uploadFiles}
+        />
+    );
 }

@@ -1,10 +1,8 @@
 import MixinButton from "../../../components/Resuables/MixinButton";
-import LinkBox from "../../../components/Resuables/LinkBox";
-import MixinPanel, { MixinPanelSection } from "../../../components/Resuables/MixinPanel";
 import FilterProductHistoriesFieldset from "../../../components/Fieldsets/FilterProductHistoriesFieldset";
-import routeData from "../../../routes/_routeData";
 import { ValueSchema } from "./FilterProductHistories.Controller";
 import Divider from "../../../components/Resuables/Divider";
+import { PolymorphicMixinPanel, PolymorphicMixinPanelSection } from "../../../components/Resuables/MixinPanel";
 
 export default function FilterProductHistoriesDialogPanel(props: {
     value: Required<ValueSchema>;
@@ -17,13 +15,9 @@ export default function FilterProductHistoriesDialogPanel(props: {
     const { value, onSubmit, onReset, onClose, onChange, onClear } = props;
 
     return (
-        <MixinPanel
-            options={{
-                size: "mixin-panel-base",
-                theme: "theme-panel-generic-white",
-            }}
+        <PolymorphicMixinPanel
+            exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}
             as="form"
-            hasShadow
             onSubmit={(e) => {
                 e.preventDefault();
                 onSubmit();
@@ -34,13 +28,7 @@ export default function FilterProductHistoriesDialogPanel(props: {
             }}
             className="flex flex-col"
         >
-            <MixinPanelSection className="flex flex-row justify-between items-center flex-wrap gap-3">
-                <LinkBox
-                    parts={[
-                        { isLink: true, to: routeData.listProductHistories.build({}), label: "Product Histories" },
-                        { isLink: false, label: "Filter" },
-                    ]}
-                />
+            <PolymorphicMixinPanelSection className="flex flex-row justify-between items-center flex-wrap gap-3">
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",
@@ -52,14 +40,14 @@ export default function FilterProductHistoriesDialogPanel(props: {
                 >
                     Close
                 </MixinButton>
-            </MixinPanelSection>
+            </PolymorphicMixinPanelSection>
             <Divider />
-            <MixinPanelSection className="flex flex-col gap-3 overflow-auto">
+            <PolymorphicMixinPanelSection className="flex flex-col gap-3 overflow-auto">
                 <div className="token-default-title">Filter Product Histories</div>
                 <FilterProductHistoriesFieldset value={value} onChange={onChange} />
-            </MixinPanelSection>
+            </PolymorphicMixinPanelSection>
             <Divider />
-            <MixinPanelSection className="flex flex-row gap-3">
+            <PolymorphicMixinPanelSection className="flex flex-row gap-3">
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }} type="button" onClick={onClear}>
                     Clear
                 </MixinButton>
@@ -69,7 +57,7 @@ export default function FilterProductHistoriesDialogPanel(props: {
                 <MixinButton options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }} type="submit">
                     Filter
                 </MixinButton>
-            </MixinPanelSection>
-        </MixinPanel>
+            </PolymorphicMixinPanelSection>
+        </PolymorphicMixinPanel>
     );
 }

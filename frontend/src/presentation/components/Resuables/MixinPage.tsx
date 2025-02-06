@@ -1,33 +1,33 @@
 import { ElementType, PropsWithChildren } from "react";
 import PolymorphicProps from "../../types/PolymorphicProps";
-import pageSection from "../../attribute-mixins/pageSection";
+import useDirectivesAsAttrs from "../../hooks/useDirectivesAsAttrs";
+import pageDirective, { PageDirectiveExpression } from "../../directives/pageDirective";
+import DirectiveFn from "../../types/DirectiveFn";
+import pageSectionDirective from "../../directives/pageSectionDirective";
 
 type MixinPageProps<E extends ElementType> = PolymorphicProps<E> & {
-    options: {
-        size: "mixin-page-base";
-    };
+    exp: PageDirectiveExpression;
+    directives?: Array<DirectiveFn>;
 };
 
 export default function MixinPage<T extends ElementType = "div">(props: PropsWithChildren<MixinPageProps<T>>) {
-    const { options, as, className, children, ...HTMLattrs } = props;
+    const { exp, as, className = "", children, directives = [], ...HTMLattrs } = props;
     const Component = as ?? "div";
 
-    return (
-        <Component className={["mixin-page-like", options.size, className].join(" ")} {...HTMLattrs}>
-            {children}
-        </Component>
-    );
+    const hostAttributes = useDirectivesAsAttrs({ attrs: HTMLattrs, classNames: [className] }, [pageDirective(exp), ...directives]);
+
+    return <Component {...hostAttributes}>{children}</Component>;
 }
 
-type MixinPageSectionProps<E extends ElementType> = PolymorphicProps<E> & {};
+type MixinPageSectionProps<E extends ElementType> = PolymorphicProps<E> & {
+    directives?: Array<DirectiveFn>;
+};
 
 export function MixinPageSection<T extends ElementType = "section">(props: PropsWithChildren<MixinPageSectionProps<T>>) {
-    const { as, className, children, ...HTMLattrs } = props;
+    const { as, className = "", directives = [], children, ...HTMLattrs } = props;
     const Component = as ?? "section";
 
-    return (
-        <Component className={[className].join(" ")} {...HTMLattrs} {...pageSection}>
-            {children}
-        </Component>
-    );
+    const hostAttributes = useDirectivesAsAttrs({ attrs: HTMLattrs, classNames: [className] }, [pageSectionDirective(), ...directives]);
+
+    return <Component {...hostAttributes}>{children}</Component>;
 }

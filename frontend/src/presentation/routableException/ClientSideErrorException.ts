@@ -1,9 +1,9 @@
-import routeData from '../routes/_routeData';
+import { genericRoutes } from '../routes/Route';
 import RoutableException from './RoutableException';
 
 class ClientSideErrorException extends RoutableException {
     constructor(message: string) {
-        super(message, routeData.clientSideError.pattern);
+        super(message, genericRoutes.CLIENT_SIDE_ERROR);
     }
 }
 

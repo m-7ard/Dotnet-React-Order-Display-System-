@@ -1,6 +1,5 @@
 using Application.Common;
 using Application.Interfaces.Persistence;
-using Castle.Core.Logging;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
@@ -9,7 +8,9 @@ using Domain.ValueObjects.ProductHistory;
 using Domain.ValueObjects.ProductImage;
 using Domain.ValueObjects.Shared;
 using Infrastructure;
+using Infrastructure.Interfaces;
 using Infrastructure.Persistence;
+using Infrastructure.Querying;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Tests.IntegrationTests;
@@ -23,13 +24,13 @@ public class Mixins
     private readonly IOrderRepository _orderRespository;
     private readonly ISequenceService _sequenceService;
 
-    public Mixins(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext)
+    public Mixins(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext, IDatabaseProviderSingleton databaseProviderSingleton)
     {
         _dbContexts = simpleProductOrderServiceDbContext;
-        _productRepository = new ProductRepository(_dbContexts);
+        _productRepository = new ProductRepository(_dbContexts, new ProductDbEntityQueryServiceFactory(databaseProviderSingleton));
         _draftImageRepository = new DraftImageRepository(_dbContexts);
-        _productHistoryRepository = new ProductHistoryRespository(_dbContexts);
-        _orderRespository = new OrderRepository(_dbContexts);
+        _productHistoryRepository = new ProductHistoryRespository(_dbContexts, new ProductHistoryDbEntityQueryServiceFactory(databaseProviderSingleton));
+        _orderRespository = new OrderRepository(_dbContexts, new OrderDbEntityQueryServiceFactory(databaseProviderSingleton));
         _sequenceService = new SequenceService(_dbContexts, NullLogger<SequenceService>.Instance);
     }
 

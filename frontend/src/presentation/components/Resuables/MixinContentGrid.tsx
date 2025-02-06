@@ -1,31 +1,34 @@
 import { ElementType, PropsWithChildren } from "react";
 import PolymorphicProps from "../../types/PolymorphicProps";
-import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
+import contentGridDirective, { ContentGridDirectiveExpression } from "../../directives/contentGridDirective";
+import DirectiveFn from "../../types/DirectiveFn";
+import useDirectivesAsAttrs from "../../hooks/useDirectivesAsAttrs";
+import contentGridTrackDirective, { ContentGridTrackDirectiveExpression } from "../../directives/contentGridTrackDirective";
 
-type MixinPageProps<E extends ElementType> = PolymorphicProps<E> & {};
+type MixinPageProps<E extends ElementType> = PolymorphicProps<E> & {
+    exp: ContentGridDirectiveExpression;
+    directives?: Array<DirectiveFn>;
+};
 
 export default function MixinContentGrid<T extends ElementType = "div">(props: PropsWithChildren<MixinPageProps<T>>) {
-    const { as, className, children, ...HTMLattrs } = props;
+    const { as, exp, directives = [], className = "", children, ...HTMLattrs } = props;
     const Component = as ?? "div";
 
-    return (
-        <Component className={[CONTENT_GRID.CLASS, className].join(" ")} {...HTMLattrs}>
-            {children}
-        </Component>
-    );
+    const hostAttrs = useDirectivesAsAttrs({ attrs: HTMLattrs, classNames: [className] }, [contentGridDirective(exp), ...directives]);
+
+    return <Component {...hostAttrs}>{children}</Component>;
 }
 
 type MixinContentGridTrackProps<E extends ElementType> = PolymorphicProps<E> & {
-    track: keyof (typeof CONTENT_GRID)["TRACKS"];
+    exp: ContentGridTrackDirectiveExpression;
+    directives?: Array<DirectiveFn>;
 };
 
 export function MixinContentGridTrack<T extends ElementType = "div">(props: PropsWithChildren<MixinContentGridTrackProps<T>>) {
-    const { as, className, children, track, ...HTMLattrs } = props;
+    const { as, className = "", children, directives = [], exp, ...HTMLattrs } = props;
     const Component = as ?? "div";
 
-    return (
-        <Component className={[className].join(" ")} {...CONTENT_GRID.TRACKS[track]} {...HTMLattrs}>
-            {children}
-        </Component>
-    );
+    const hostAttrs = useDirectivesAsAttrs({ attrs: HTMLattrs, classNames: [className] }, [contentGridTrackDirective(exp), ...directives]);
+
+    return <Component {...hostAttrs}>{children}</Component>;
 }

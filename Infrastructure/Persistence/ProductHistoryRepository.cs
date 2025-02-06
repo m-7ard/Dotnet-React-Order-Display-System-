@@ -5,6 +5,7 @@ using Domain.Models;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
 using Infrastructure.DbEntities;
+using Infrastructure.Interfaces;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,10 +14,12 @@ namespace Infrastructure.Persistence;
 public class ProductHistoryRespository : IProductHistoryRepository
 {
     private readonly SimpleProductOrderServiceDbContext _dbContext;
+    private readonly IProductHistoryDbEntityQueryServiceFactory _queryServiceFactory;
 
-    public ProductHistoryRespository(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext)
+    public ProductHistoryRespository(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext, IProductHistoryDbEntityQueryServiceFactory queryService)
     {
         _dbContext = simpleProductOrderServiceDbContext;
+        _queryServiceFactory = queryService;
     }
 
     public async Task<ProductHistory> CreateAsync(ProductHistory productHistory)
@@ -87,23 +90,14 @@ public class ProductHistoryRespository : IProductHistoryRepository
             query = query.Where(item => item.OriginalProductId == criteria.ProductId);
         }
 
+        var queryService = _queryServiceFactory.Create(query);
         if (criteria.OrderBy is not null)
         {
-            Dictionary<string, Expression<Func<ProductHistoryDbEntity, object>>> fieldMappings = new()
-            {
-                { "Price", p => p.Price },
-                { "ValidFrom", p => p.ValidFrom },
-                { "OriginalProductId", p => p.OriginalProductId }
-            };
-
-            if (fieldMappings.TryGetValue(criteria.OrderBy.Item1, out var orderByExpression))
-            {
-                query = criteria.OrderBy.Item2 ? query.OrderBy(orderByExpression) : query.OrderByDescending(orderByExpression);
-            }
+            queryService.ApplyOrderBy(criteria.OrderBy);
         }
 
-        var dbProducts = await query.ToListAsync();
-        return dbProducts.Select(ProductHistoryMapper.ToDomain).ToList();
+        var dbProductHistories = await queryService.ReturnResult();
+        return dbProductHistories.Select(ProductHistoryMapper.ToDomain).ToList();
     }
 
     public async Task UpdateAsync(ProductHistory productHistory)
