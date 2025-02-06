@@ -47,7 +47,7 @@ export default function LinkBoxV2<T extends TAnyGenericRoute>({ exp, params }: {
                 size: "mixin-button-sm",
                 theme: "theme-button-generic-white",
             }}
-            className="shrink-0"
+            className="shrink-0 flex-wrap max-w-full"
             isStatic
             hasShadow
             type="button"
@@ -58,11 +58,11 @@ export default function LinkBoxV2<T extends TAnyGenericRoute>({ exp, params }: {
                 return (
                     <React.Fragment key={i}>
                         {!isLayout ? (
-                            <RouterLink className="hover:underline" exp={() => route} params={params}>
+                            <RouterLink className="hover:underline max-w-[160px] truncate" exp={() => route} params={params}>
                                 {label}
                             </RouterLink>
                         ) : (
-                            <div>{label}</div>
+                            <div className=" max-w-[160px] truncate">{label}</div>
                         )}
                         {i < linkParts.length - 1 && <div key={`divider-${i}`}>›</div>}
                     </React.Fragment>
