@@ -1,39 +1,38 @@
-import { Link } from "@tanstack/react-router";
 import MixinButton from "../../components/Resuables/MixinButton";
-import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/AbtractTooltip/AbstractTooltip";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
-import LinkBox from "../../components/Resuables/LinkBox";
-import routeData from "../../routes/_routeData";
 import OrderByMenu from "./Products.Page.OrderByMenu";
 import IProduct from "../../../domain/models/IProduct";
 import ProductElement from "./Products.Page.ProductElement";
 import FilterProductsController from "./Filter/FilterProducts.Controller";
 import Divider from "../../components/Resuables/Divider";
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
-import { CONTENT_GRID } from "../../attribute-mixins/contentGridTracks";
+import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
+import contentGridDirective from "../../directives/contentGridDirective";
+import LinkBoxV2 from "../../components/Resuables/LinkBoxV2";
+import RouterLink from "../../components/Resuables/RouterLink";
 
 export default function ProductsPage(props: { products: IProduct[] }) {
     const { products } = props;
 
     return (
-        <MixinPage
-            className={`${CONTENT_GRID.CLASS}`}
-            options={{
-                size: "mixin-page-base",
-            }}
-        >
+        <MixinPage directives={[contentGridDirective(() => ({}))]} exp={(options) => ({ size: options.SIZE.BASE })}>
             <MixinPageSection className="flex flex-row gap-3 items-center shrink-0 overflow-x-auto">
-                <LinkBox parts={[{ isLink: true, to: routeData.createProduct.build({}), label: "Products" }]} />
+                <LinkBoxV2 exp={(routes) => routes.LIST_PRODUCTS} params={{}} />
                 <div className="flex flex-row gap-3 ml-auto">
-                    <Link to="/products/create">
+                    <RouterLink exp={(routes) => routes.CREATE_PRODUCT} params={{}}>
                         <MixinButton className="justify-center w-full" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} hasShadow>
                             Create
                         </MixinButton>
-                    </Link>
+                    </RouterLink>
                     <GlobalDialog
                         zIndex={10}
                         Trigger={({ onToggle }) => (
-                            <MixinButton className="justify-center w-full basis-1/2" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} hasShadow>
+                            <MixinButton
+                                className="justify-center w-full basis-1/2"
+                                options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                onClick={onToggle}
+                                hasShadow
+                            >
                                 Filter
                             </MixinButton>
                         )}
@@ -43,12 +42,18 @@ export default function ProductsPage(props: { products: IProduct[] }) {
                     <AbstractTooltip
                         Trigger={({ onToggle, open }) => (
                             <AbstractTooltipTrigger>
-                                <MixinButton className="w-full truncate" options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }} onClick={onToggle} active={open} hasShadow>
+                                <MixinButton
+                                    className="w-full truncate"
+                                    options={{ size: "mixin-button-sm", theme: "theme-button-generic-white" }}
+                                    onClick={onToggle}
+                                    active={open}
+                                    hasShadow
+                                >
                                     Order By
                                 </MixinButton>
                             </AbstractTooltipTrigger>
                         )}
-                        Panel={<OrderByMenu />}
+                        Panel={OrderByMenu}
                         positioning={{ top: "100%", right: "0px" }}
                     />
                 </div>

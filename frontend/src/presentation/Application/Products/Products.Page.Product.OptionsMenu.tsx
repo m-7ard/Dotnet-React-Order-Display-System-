@@ -1,29 +1,22 @@
-import { useNavigate } from "@tanstack/react-router";
 import IProduct from "../../../domain/models/IProduct";
 import GlobalDialog from "../../components/Dialog/GlobalDialog";
-import { AbstractTooltipDefaultPanel } from "../../components/AbtractTooltip/AbstractTooltip";
 import MixinButton from "../../components/Resuables/MixinButton";
-import MixinPanel, { MixinPanelSection } from "../../components/Resuables/MixinPanel";
 import { useAbstractTooltipContext } from "../../components/AbtractTooltip/AbstractTooltip.Context";
 import DeleteProductFactory from "./Delete/DeleteProduct.Factory";
 import Divider from "../../components/Resuables/Divider";
+import { PolymorphicAbstractTooltipDefaultPanel } from "../../components/renderAbstractTooltip/AbstractTooltip";
+import { PolymorphicMixinPanel, PolymorphicMixinPanelSection } from "../../components/Resuables/MixinPanel";
+import useRouterNavigate from "../../hooks/useRouterNavigate";
 
 export default function ProductOptionMenu(props: { product: IProduct }) {
     const { product } = props;
     const { onClose } = useAbstractTooltipContext();
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
 
     return (
-        <AbstractTooltipDefaultPanel className={`z-10 fixed mt-1`}>
-            <MixinPanel
-                options={{
-                    size: "mixin-panel-base",
-                    theme: "theme-panel-generic-white",
-                }}
-                hasShadow
-                hasBorder
-            >
-                <MixinPanelSection className="flex flex-row items-center justify-between gap-3">
+        <PolymorphicAbstractTooltipDefaultPanel className={`z-10 fixed mt-1`}>
+            <PolymorphicMixinPanel exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}>
+                <PolymorphicMixinPanelSection className="flex flex-row items-center justify-between gap-3">
                     <div className="text-sm">Other Options</div>
                     <MixinButton
                         options={{
@@ -36,14 +29,14 @@ export default function ProductOptionMenu(props: { product: IProduct }) {
                     >
                         Close
                     </MixinButton>
-                </MixinPanelSection>
+                </PolymorphicMixinPanelSection>
                 <Divider />
-                <MixinPanelSection className="flex flex-col gap-1">
+                <PolymorphicMixinPanelSection className="flex flex-col gap-1">
                     <a
                         className="w-full"
                         onClick={(e) => {
                             e.preventDefault();
-                            navigate({ to: `/products/${product.id}/update` });
+                            navigate({ exp: (routes) => routes.UPDATE_PRODUCT, params: { id: product.id } });
                         }}
                     >
                         <MixinButton className="justify-center truncate w-full" type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-green" }}>
@@ -72,15 +65,15 @@ export default function ProductOptionMenu(props: { product: IProduct }) {
                         className="w-full truncate"
                         onClick={(e) => {
                             e.preventDefault();
-                            navigate({ to: "/product_histories", search: { productId: product.id } });
+                            navigate({ exp: (routes) => routes.LIST_PRODUCT_HISTORIES, params: {}, search: { productId: product.id } });
                         }}
                     >
                         <MixinButton className="justify-center w-full" type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-yellow" }}>
                             See Product History
                         </MixinButton>
                     </a>
-                </MixinPanelSection>
-            </MixinPanel>
-        </AbstractTooltipDefaultPanel>
+                </PolymorphicMixinPanelSection>
+            </PolymorphicMixinPanel>
+        </PolymorphicAbstractTooltipDefaultPanel>
     );
 }

@@ -5,13 +5,13 @@ import IReadProductRequestDTO from "../contracts/products/read/IReadProductReque
 import IUpdateProductRequestDTO from "../contracts/products/update/IUpdateProductRequestDTO";
 import IDeleteProductRequestDTO from "../contracts/products/delete/IDeleteProductRequestDTO";
 import { getApiUrl } from "../../viteUtils";
+import getUrlParams from "../../presentation/utils/getUrlParams";
 
 export default class ProductDataAccess implements IProductDataAccess {
     private readonly _apiRoute = `${getApiUrl()}/api/products`;
 
     async listProducts(request: IListProductsRequestDTO): Promise<Response> {
-        const urlParams = new URLSearchParams();
-        Object.entries(request).forEach(([name, value]) => value != null && urlParams.append(name, value));
+        const urlParams = getUrlParams(request);
         const response = await fetch(`${this._apiRoute}/list?${urlParams}`, {
             method: "GET",
         });

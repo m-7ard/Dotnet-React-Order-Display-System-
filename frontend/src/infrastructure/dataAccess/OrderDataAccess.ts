@@ -5,13 +5,13 @@ import IReadOrderRequestDTO from "../contracts/orders/read/IReadOrderRequestDTO"
 import IMarkOrderItemFinishedRequestDTO from "../contracts/orderItems/markFinished/IMarkOrderItemFinishedRequestDTO";
 import IMarkOrderFinishedRequestDTO from "../contracts/orders/markFinished/IMarkOrderFinishedRequestDTO";
 import { getApiUrl } from "../../viteUtils";
+import getUrlParams from "../../presentation/utils/getUrlParams";
 
 export default class OrderDataAccess implements IOrderDataAccess {
     private readonly _apiRoute = `${getApiUrl()}/api/orders`;
 
     async listOrders(request: IListOrdersRequestDTO): Promise<Response> {
-        const urlParams = new URLSearchParams();
-        Object.entries(request).forEach(([name, value]) => value != null && urlParams.append(name, value));
+        const urlParams = getUrlParams(request);
         const response = await fetch(`${this._apiRoute}/list?${urlParams}`, {
             method: "GET",
         });

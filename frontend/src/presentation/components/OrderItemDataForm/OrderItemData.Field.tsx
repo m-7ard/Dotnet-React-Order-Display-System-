@@ -5,8 +5,8 @@ import GlobalDialog from "../Dialog/GlobalDialog";
 import IProduct from "../../../domain/models/IProduct";
 import { useCallback } from "react";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../Resuables/MixinPrototypeCard";
-import FilterProductResultsController from "../FilterProductResults/FilterProductResults.Controller";
 import CountTrackerProduct from "../FilterProductResults/FilterProductResults.Pages.Results.CountTracker";
+import FilterProductResultsControllerV2 from "../FilterProductResults/FilterProductResults.Controller.V2";
 
 type ErrorSchema = IPresentationError<{
     [productId: number | string]: OrderItemDataFieldErrorSchema;
@@ -61,43 +61,36 @@ export default function OrderItemDataField(props: { onChange: (value: ValueSchem
             hasDivide
         >
             <MixinPrototypeCardSection>
-                <GlobalDialog
-                    zIndex={10}
-                    Trigger={({ onToggle }) => (
-                        <MixinButton
-                            options={{
-                                size: "mixin-button-base",
-                                theme: "theme-button-generic-white",
-                            }}
-                            className="w-full justify-center "
-                            onClick={onToggle}
-                            type="button"
-                        >
-                            Add
-                        </MixinButton>
-                    )}
-                    Panel={FilterProductResultsController}
-                    panelProps={{
-                        renderAs: "panel",
-                        getResults: (searchResults) =>
-                            searchResults.map((product) => {
-                                const orderItemData = value[product.id];
-                                if (orderItemData) {
-                                    return (
-                                        <CountTrackerProduct
-                                            product={product}
-                                            onAdd={() => addOrderItem(product)}
-                                            isAdded={true}
-                                            quantity={orderItemData.quantity}
-                                            key={product.id}
-                                        />
-                                    );
-                                } else {
-                                    return <CountTrackerProduct product={product} onAdd={() => addOrderItem(product)} isAdded={false} quantity={null} key={product.id} />;
-                                }
-                            }),
-                    }}
-                />
+            <GlobalDialog
+                zIndex={10}
+                Trigger={({ onToggle }) => (
+                    <MixinButton
+                        options={{
+                            size: "mixin-button-base",
+                            theme: "theme-button-generic-white",
+                        }}
+                        className="w-full justify-center "
+                        onClick={onToggle}
+                        type="button"
+                    >
+                        Add
+                    </MixinButton>
+                )}
+                Panel={FilterProductResultsControllerV2<typeof CountTrackerProduct>}
+                panelProps={{
+                    renderAs: "panel",
+                    ResultElement: CountTrackerProduct,
+                    propsFactory: (product) => {
+                        const orderItemData = value[product.id];
+
+                        return {
+                            product: product,
+                            onAdd: () => addOrderItem(product),
+                            quantity: orderItemData?.quantity ?? null
+                        };
+                    },
+                }}
+            />
             </MixinPrototypeCardSection>
             {hasItems && (
                 <MixinPrototypeCardSection className="grid grid-cols-2 max-[576px]:grid-cols-2 max-[445px]:grid-cols-1 gap-3">

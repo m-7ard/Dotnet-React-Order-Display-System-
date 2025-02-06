@@ -1,9 +1,9 @@
-import routeData from "../routes/_routeData";
+import { genericRoutes } from "../routes/Route";
 import RoutableException from "./RoutableException";
 
 class LoaderErrorException extends RoutableException {
     constructor(message: string) {
-        super(message, routeData.loaderError.pattern);
+        super(message, genericRoutes.LOADER_ERROR);
     }
 }
 

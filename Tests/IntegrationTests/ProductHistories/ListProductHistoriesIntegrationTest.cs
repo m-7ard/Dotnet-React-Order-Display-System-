@@ -21,7 +21,7 @@ public class ListProductHistoriesIntegrationTest : ProductHistoriesIntegrationTe
     {
         await base.InitializeAsync();
         var db = _factory.CreateDbContext();
-        var mixins = new Mixins(db);
+        var mixins = CreateMixins();
         _price1_NameDescProduct1 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
         _price2_NameDescProduct2 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
         _price3_NameDescProduct3 = await mixins.CreateProductAndProductHistory(number: 3, images: []);

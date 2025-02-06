@@ -1,15 +1,13 @@
-import routeData from "../routes/_routeData";
-
-type routePattern = (typeof routeData)[keyof typeof routeData]["pattern"];
+import { TAnyGenericRoute } from "../routes/Route";
 
 class RoutableException extends Error {
-    constructor(message: string, route: routePattern) {
+    constructor(message: string, route: TAnyGenericRoute) {
         super(message);
         this.route = route;
         this.name = this.constructor.name;
     }
 
-    public route: routePattern;
+    public route: TAnyGenericRoute;
 }
 
 export default RoutableException;

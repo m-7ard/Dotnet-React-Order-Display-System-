@@ -4,7 +4,6 @@ import { GeneratedFileName, RequiredImageFormData } from "../../../components/Fo
 import useItemManager from "../../../hooks/useItemManager";
 import validateTypeboxSchema from "../../../utils/validateTypeboxSchema";
 import CreateProductPage from "./CreateProduct.Page";
-import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import useResponseHandler from "../../../hooks/useResponseHandler";
 import { productDataAccess } from "../../../deps/dataAccess";
@@ -12,6 +11,7 @@ import { err, ok } from "neverthrow";
 import typeboxToDomainCompatibleFormError from "../../../mappers/typeboxToDomainCompatibleFormError";
 import useUploadProductImages from "../../../hooks/useUploadProductImages";
 import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
+import useRouterNavigate from "../../../hooks/useRouterNavigate";
 
 const validatorSchema = Type.Object({
     name: Type.String({
@@ -53,7 +53,7 @@ const initialErrorState: ErrorState = {};
 
 export default function CreateProductController() {
     const responseHandler = useResponseHandler();
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
 
     const itemManager = useItemManager<ValueState>(initialValueState);
     const errorManager = useItemManager<ErrorState>(initialErrorState);
@@ -107,7 +107,7 @@ export default function CreateProductController() {
                     }),
                 onResponseFn: async (response) => {
                     if (response.ok) {
-                        navigate({ to: "/products" });
+                        navigate({ exp: (routes) => routes.LIST_PRODUCTS, params: {} });
                         return ok(undefined);
                     } else if (response.status === 400) {
                         const apiErrors = await response.json();

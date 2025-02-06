@@ -17,7 +17,7 @@ public class ListProductHistoriesHandler : IRequestHandler<ListProductHistoriesQ
 
     public async Task<OneOf<ListProductHistoriesResult, List<ApplicationError>>> Handle(ListProductHistoriesQuery request, CancellationToken cancellationToken)
     {
-        Tuple<string, bool>? orderBy = new Tuple<string, bool>("DateCreated", false);
+        Tuple<string, bool>? orderBy = new Tuple<string, bool>("ValidFrom", false);
         if (request.OrderBy == "newest")
         {
             orderBy = new Tuple<string, bool>("ValidFrom", false);
@@ -34,14 +34,15 @@ public class ListProductHistoriesHandler : IRequestHandler<ListProductHistoriesQ
         {
             orderBy = new Tuple<string, bool>("Price", true);
         }
-        else if (request.OrderBy == "product id desc")
-        {
-            orderBy = new Tuple<string, bool>("OriginalProductId", false);
-        }
-        else if (request.OrderBy == "product id asc")
-        {
-            orderBy = new Tuple<string, bool>("OriginalProductId", true);
-        }
+        // Legacy from integer id
+        // else if (request.OrderBy == "product id desc")
+        // {
+        //     orderBy = new Tuple<string, bool>("OriginalProductId", false);
+        // }
+        // else if (request.OrderBy == "product id asc")
+        // {
+        //     orderBy = new Tuple<string, bool>("OriginalProductId", true);
+        // }
 
         var criteria = new FilterProductHistoriesCriteria(
             name: request.Name,

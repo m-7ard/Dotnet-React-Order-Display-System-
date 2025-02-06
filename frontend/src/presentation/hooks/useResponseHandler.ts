@@ -29,6 +29,7 @@ export default function useResponseHandler() {
                 }
 
                 const error = await handleInvalidResponse(response);
+                console.log(error)
                 dispatchException(error);
                 return result.error;
             } catch (err: unknown) {

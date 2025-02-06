@@ -1,9 +1,9 @@
-import routeData from "../routes/_routeData";
+import { genericRoutes } from "../routes/Route";
 import RoutableException from "./RoutableException";
 
 class NotFoundException extends RoutableException {
     constructor(message: string) {
-        super(message, routeData.notFoundError.pattern);
+        super(message, genericRoutes.NOT_FOUND_ERROR);
     }
 }
 

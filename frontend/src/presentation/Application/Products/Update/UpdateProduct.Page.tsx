@@ -3,16 +3,23 @@ import StatelessCharField from "../../../components/StatelessFields/StatelessCha
 import FormField from "../../../components/Forms/FormField";
 import StatelessTextArea from "../../../components/StatelessFields/StatelessTextArea";
 import MixinButton from "../../../components/Resuables/MixinButton";
-import LinkBox from "../../../components/Resuables/LinkBox";
-import routeData from "../../../routes/_routeData";
 import { useCallback } from "react";
 import { ErrorSchema, ValueSchema } from "./UpdateProduct.Controller";
 import IProduct from "../../../../domain/models/IProduct";
 import MixinPage, { MixinPageSection } from "../../../components/Resuables/MixinPage";
 import Divider from "../../../components/Resuables/Divider";
-import { CONTENT_GRID } from "../../../attribute-mixins/contentGridTracks";
+import contentGridDirective from "../../../directives/contentGridDirective";
+import LinkBoxV2 from "../../../components/Resuables/LinkBoxV2";
 
-export default function UpdateProductPage(props: { value: ValueSchema; onChange: (value: ValueSchema) => void; onReset: () => void; onSubmit: () => void; errors: ErrorSchema; product: IProduct; uploadImages: (images: File[]) => Promise<void> }) {
+export default function UpdateProductPage(props: {
+    value: ValueSchema;
+    onChange: (value: ValueSchema) => void;
+    onReset: () => void;
+    onSubmit: () => void;
+    errors: ErrorSchema;
+    product: IProduct;
+    uploadImages: (images: File[]) => Promise<void>;
+}) {
     const { value, onChange, onReset, onSubmit, errors, product, uploadImages } = props;
 
     const updateField = useCallback(
@@ -27,10 +34,8 @@ export default function UpdateProductPage(props: { value: ValueSchema; onChange:
     return (
         <MixinPage
             as="form"
-            className={`${CONTENT_GRID.CLASS}`}
-            options={{
-                size: "mixin-page-base",
-            }}
+            directives={[contentGridDirective(() => ({}))]}
+            exp={(options) => ({ size: options.SIZE.BASE })}
             onSubmit={async (e) => {
                 e.preventDefault();
                 onSubmit();
@@ -41,13 +46,7 @@ export default function UpdateProductPage(props: { value: ValueSchema; onChange:
             }}
         >
             <MixinPageSection className="flex flex-row gap-3 items-center">
-                <LinkBox
-                    parts={[
-                        { isLink: true, to: routeData.listProducts.build({}), label: "Products" },
-                        { isLink: false, label: product.id },
-                        { isLink: true, to: routeData.updateProduct.build({ id: product.id }), label: "Update" },
-                    ]}
-                />
+                <LinkBoxV2 exp={(routes) => routes.UPDATE_PRODUCT} params={{ id: product.id }} />
             </MixinPageSection>
             <Divider />
             <MixinPageSection className="flex flex-col gap-3">

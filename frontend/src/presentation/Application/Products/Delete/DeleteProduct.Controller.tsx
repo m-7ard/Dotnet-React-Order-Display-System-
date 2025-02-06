@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import IProduct from "../../../../domain/models/IProduct";
 import useResponseHandler from "../../../hooks/useResponseHandler";
 import IPlainApiError from "../../../../infrastructure/interfaces/IPlainApiError";
@@ -9,13 +8,14 @@ import IPresentationError from "../../../interfaces/IPresentationError";
 import DeleteProductDialogPanel from "./DeleteProduct.DialogPanel";
 import IProductDataAccess from "../../../interfaces/dataAccess/IProductDataAccess";
 import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
+import useRouterNavigate from "../../../hooks/useRouterNavigate";
 
 export type DeleteProductErrorSchema = IPresentationError<unknown>;
 
 export default function DeleteProductController(props: { product: IProduct; productDataAccess: IProductDataAccess; onClose: () => void }) {
     const { product, productDataAccess, onClose } = props;
     const responseHandler = useResponseHandler();
-    const navigate = useNavigate();
+    const navigate = useRouterNavigate();
 
     const errorManager = useItemManager<DeleteProductErrorSchema>({});
 
@@ -25,7 +25,7 @@ export default function DeleteProductController(props: { product: IProduct; prod
                 requestFn: () => productDataAccess.deleteProduct({ id: product.id }),
                 onResponseFn: async (response) => {
                     if (response.ok) {
-                        navigate({ to: "/products" });
+                        navigate({ exp: (routes) => routes.LIST_ORDERS, params: {} });
                         onClose();
                         return ok(undefined);
                     }

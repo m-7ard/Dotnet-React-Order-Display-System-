@@ -1,32 +1,18 @@
 import MixinButton from "../Resuables/MixinButton";
 import { useGlobalDialogPanelContext } from "../Dialog/GlobalDialog.Panel.Context";
-import LinkBox from "../Resuables/LinkBox";
-import MixinPanel, { MixinPanelSection } from "../Resuables/MixinPanel";
 import FormPage from "./FilterProductResults.Pages.Form";
 import ResultsPage from "./FilterProductResults.Pages.Results";
 import Divider from "../Resuables/Divider";
 import { IFilterProductResultsProps } from "./FilterProductResults.Types";
+import { PolymorphicMixinPanel, PolymorphicMixinPanelSection } from "../Resuables/MixinPanel";
 
 export default function FilterProductResults(props: IFilterProductResultsProps) {
     const { resultComponents, route, changeRoute, form } = props;
     const { onClose } = useGlobalDialogPanelContext();
 
     return (
-        <MixinPanel
-            options={{
-                size: "mixin-panel-base",
-                theme: "theme-panel-generic-white",
-            }}
-            hasShadow
-            className="flex flex-col"
-        >
-            <MixinPanelSection className="flex flex-row gap-3 items-center justify-between">
-                <LinkBox
-                    parts={[
-                        { isLink: false, label: "Products" },
-                        { isLink: false, label: "Filter" },
-                    ]}
-                />
+        <PolymorphicMixinPanel exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })} className="flex flex-col">
+            <PolymorphicMixinPanelSection className="flex flex-row gap-3 items-center justify-between flex-wrap">
                 <MixinButton
                     options={{
                         size: "mixin-button-sm",
@@ -37,9 +23,9 @@ export default function FilterProductResults(props: IFilterProductResultsProps) 
                 >
                     Close
                 </MixinButton>
-            </MixinPanelSection>
+            </PolymorphicMixinPanelSection>
             <Divider />
-            <MixinPanelSection className="flex flex-row gap-3">
+            <PolymorphicMixinPanelSection className="flex flex-row gap-3">
                 <MixinButton
                     options={{
                         size: "mixin-button-base",
@@ -64,16 +50,16 @@ export default function FilterProductResults(props: IFilterProductResultsProps) 
                 >
                     Results
                 </MixinButton>
-            </MixinPanelSection>
+            </PolymorphicMixinPanelSection>
             <Divider />
-            <MixinPanelSection className="overflow-auto">
+            <PolymorphicMixinPanelSection className="overflow-auto">
                 {
                     {
                         form: <FormPage onReset={form.onReset} onSubmit={form.onSubmit} value={form.value} onChange={form.onChange} />,
                         result: <ResultsPage>{resultComponents}</ResultsPage>,
                     }[route]
                 }
-            </MixinPanelSection>
-        </MixinPanel>
+            </PolymorphicMixinPanelSection>
+        </PolymorphicMixinPanel>
     );
 }

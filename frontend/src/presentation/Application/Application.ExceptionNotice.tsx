@@ -1,6 +1,6 @@
 import Divider from "../components/Resuables/Divider";
 import MixinButton from "../components/Resuables/MixinButton";
-import MixinPanel, { MixinPanelSection } from "../components/Resuables/MixinPanel";
+import { RenderedMixinPanel, PolymorphicMixinPanelSection } from "../components/Resuables/MixinPanel";
 import { useApplicationExceptionContext } from "./Application.ExceptionProvider.Context";
 
 export default function ApplicationExceptionNotice() {
@@ -11,33 +11,31 @@ export default function ApplicationExceptionNotice() {
     }
 
     return (
-        <MixinPanel
+        <RenderedMixinPanel
             className="fixed mx-auto top-4 left-4 right-4"
-            options={{
-                size: "mixin-panel-base",
-                theme: "theme-panel-generic-white",
-            }}
-            style={{ zIndex: 1_000_000 }}
-            hasBorder
-            hasShadow
+            exp={(options) => ({ hasBorder: true, hasShadow: true, size: options.SIZE.BASE, theme: options.THEMES.GENERIC_WHITE })}
         >
-            <MixinPanelSection as="header" className="flex flex-row gap-3 items-center justify-between">
-                <div className="token-default-title">Exception</div>
-                <MixinButton
-                    options={{
-                        size: "mixin-button-sm",
-                        theme: "theme-button-generic-white",
-                    }}
-                    hasShadow
-                    onClick={dismissException}
-                >
-                    Close
-                </MixinButton>
-            </MixinPanelSection>
-            <Divider />
-            <MixinPanelSection>
-                <div>{exception.message}</div>
-            </MixinPanelSection>
-        </MixinPanel>
+            {(mixinPanelProps) => (
+                <div {...mixinPanelProps} style={{ zIndex: 1_000_000 }}>
+                    <PolymorphicMixinPanelSection as="header" className="flex flex-row gap-3 items-center justify-between">
+                        <div className="token-default-title">Exception</div>
+                        <MixinButton
+                            options={{
+                                size: "mixin-button-sm",
+                                theme: "theme-button-generic-white",
+                            }}
+                            hasShadow
+                            onClick={dismissException}
+                        >
+                            Close
+                        </MixinButton>
+                    </PolymorphicMixinPanelSection>
+                    <Divider />
+                    <PolymorphicMixinPanelSection>
+                        <div>{exception.message}</div>
+                    </PolymorphicMixinPanelSection>
+                </div>
+            )}
+        </RenderedMixinPanel>
     );
 }
