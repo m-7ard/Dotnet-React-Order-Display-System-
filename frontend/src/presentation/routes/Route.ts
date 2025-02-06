@@ -216,8 +216,8 @@ const createProduct: IGenericRoute<IRouteConfig<IEmptyParams>, never> = {
 
 const updateProduct: IGenericRoute<IRouteConfig<IUpdateProductParams>, never> = {
     parent: listProducts,
-    config: tanstackConfigs.CREATE_PRODUCT,
-    label: "Create",
+    config: tanstackConfigs.UPDATE_PRODUCT,
+    label: "Update",
     isLayout: false,
 };
 
