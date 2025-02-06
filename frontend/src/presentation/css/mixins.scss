@@ -12,11 +12,11 @@
     }
 
     .mixin-button-sm {
-        @apply gap-2 px-4 py-1.5 text-sm leading-none rounded-lg;
+        @apply gap-2 px-4 py-1 text-sm rounded-lg;
     }
 
     .mixin-button-base {
-        @apply gap-2 px-4 py-1 text-base rounded-lg;
+        @apply gap-2 px-4 py-1.5 text-base rounded-lg;
     }
 
     .mixin-textarea-any {

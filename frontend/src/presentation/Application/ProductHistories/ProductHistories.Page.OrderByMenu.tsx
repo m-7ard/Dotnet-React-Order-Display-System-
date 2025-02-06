@@ -36,22 +36,12 @@ export default function OrderByMenu() {
                 <Divider />
                 <PolymorphicMixinPanelSection className="flex flex-row gap-5 items-center justify-between">
                     <div className="text-sm">Price - Highest to Lowest</div>
-                    <StatelessRadioCheckboxField name={"orderBy"} onChange={onChange} value={"price desc"} checked={orderBy === "price asc"} />
+                    <StatelessRadioCheckboxField name={"orderBy"} onChange={onChange} value={"price desc"} checked={orderBy === "price desc"} />
                 </PolymorphicMixinPanelSection>
                 <Divider />
                 <PolymorphicMixinPanelSection className="flex flex-row gap-5 items-center justify-between">
                     <div className="text-sm">Price - Lowest to Highest</div>
                     <StatelessRadioCheckboxField name={"orderBy"} onChange={onChange} value={"price asc"} checked={orderBy === "price asc"} />
-                </PolymorphicMixinPanelSection>
-                <Divider />
-                <PolymorphicMixinPanelSection className="flex flex-row gap-5 items-center justify-between">
-                    <div className="text-sm">Product Id - Highest to Lowest</div>
-                    <StatelessRadioCheckboxField name={"orderBy"} onChange={onChange} value={"product id desc"} checked={orderBy === "product id desc"} />
-                </PolymorphicMixinPanelSection>
-                <Divider />
-                <PolymorphicMixinPanelSection className="flex flex-row gap-5 items-center justify-between">
-                    <div className="text-sm">Product Id - Highest to Lowest</div>
-                    <StatelessRadioCheckboxField name={"orderBy"} onChange={onChange} value={"product id asc"} checked={orderBy === "product id asc"} />
                 </PolymorphicMixinPanelSection>
             </PolymorphicMixinPanel>
         </PolymorphicAbstractTooltipDefaultPanel>
