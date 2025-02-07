@@ -4,7 +4,7 @@ import SidebarMenuDialog from "./Application.SidebarMenu";
 import Divider from "../components/Resuables/Divider";
 import MixinContentGrid, { MixinContentGridTrack } from "../components/Resuables/MixinContentGrid";
 import RouterLink from "../components/Resuables/RouterLink";
-import useRouterLocationEq from "../hooks/useRouterLocationEq";
+import { useRouterLocationEq } from "../routes/RouterModule/RouterModule.hooks";
 
 export default function ApplicationHeader() {
     const locationEq = useRouterLocationEq();

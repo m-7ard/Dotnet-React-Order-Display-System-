@@ -1,4 +1,4 @@
-import { createRouter, ParseRoute } from "@tanstack/react-router";
+import { createRouter } from "@tanstack/react-router";
 import rootRoute from "../routes/tanstack/rootRoute";
 import productRoutes from "../routes/tanstack/children/products/productRoutes";
 import applicationRoutes from "../routes/tanstack/children/applicationRoutes";
@@ -15,17 +15,15 @@ const routeTree = rootRoute.addChildren([
     ...errorRoutes
 ]);
 
-const router = createRouter({
+const tanstackRouter = createRouter({
     routeTree,
     defaultGcTime: 0,
 });
 
-export type ValidTanstackRoutes = ParseRoute<typeof routeTree>['fullPath'];
-
 declare module "@tanstack/react-router" {
     interface Register {
-        router: typeof router;
+        tanstackRouter: typeof tanstackRouter;
     }
 }
 
-export default router;
+export default tanstackRouter;

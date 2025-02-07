@@ -11,8 +11,7 @@ import { productDataAccess } from "../../../deps/dataAccess";
 import { err, ok } from "neverthrow";
 import useUploadProductImages from "../../../hooks/useUploadProductImages";
 import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
-import useRouterLoaderData from "../../../hooks/useRouterLoaderData";
-import useRouterNavigate from "../../../hooks/useRouterNavigate";
+import { useRouterLoaderData, useRouterNavigate } from "../../../routes/RouterModule/RouterModule.hooks";
 
 const validatorSchema = Type.Object({
     name: Type.String({

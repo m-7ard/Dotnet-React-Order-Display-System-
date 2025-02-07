@@ -11,7 +11,7 @@ import { err, ok } from "neverthrow";
 import typeboxToDomainCompatibleFormError from "../../../mappers/typeboxToDomainCompatibleFormError";
 import useUploadProductImages from "../../../hooks/useUploadProductImages";
 import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
-import useRouterNavigate from "../../../hooks/useRouterNavigate";
+import { useRouterNavigate } from "../../../routes/RouterModule/RouterModule.hooks";
 
 const validatorSchema = Type.Object({
     name: Type.String({

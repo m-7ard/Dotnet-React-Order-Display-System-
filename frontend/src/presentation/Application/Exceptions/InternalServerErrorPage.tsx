@@ -1,7 +1,7 @@
 import MixinPage, { MixinPageSection } from "../../components/Resuables/MixinPage";
 import { useRef } from "react";
 import contentGridDirective from "../../directives/contentGridDirective";
-import useRouterLoaderData from "../../hooks/useRouterLoaderData";
+import { useRouterLoaderData } from "../../routes/RouterModule/RouterModule.hooks";
 
 export default function InternalServerErrorPage() {
     const { error } = useRouterLoaderData((routes) => routes.INTERNAL_SERVER_ERROR);

@@ -1,7 +1,7 @@
 import Order from "../../../domain/models/Order";
 import MixinButton from "../../components/Resuables/MixinButton";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
-import useRouterNavigate from "../../hooks/useRouterNavigate";
+import { useRouterNavigate } from "../../routes/RouterModule/RouterModule.hooks";
 import { ORDER_STATUS_COLORS, ORDER_ITEM_STATUS_COLORS } from "./Orders.Constants";
 
 export default function OrderElement(props: { order: Order }) {

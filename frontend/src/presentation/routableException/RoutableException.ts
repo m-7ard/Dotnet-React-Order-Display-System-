@@ -1,13 +1,13 @@
-import { TAnyGenericRoute } from "../routes/Route";
+import { ICommonRouteMapping, TAnyGenericRoute } from "../routes/Route";
 
 class RoutableException extends Error {
-    constructor(message: string, route: TAnyGenericRoute) {
+    constructor(message: string, routeExp: (routes: ICommonRouteMapping) => TAnyGenericRoute) {
         super(message);
-        this.route = route;
         this.name = this.constructor.name;
+        this.routeExp = routeExp;
     }
 
-    public route: TAnyGenericRoute;
+    public routeExp: (routes: ICommonRouteMapping) => TAnyGenericRoute;
 }
 
 export default RoutableException;
