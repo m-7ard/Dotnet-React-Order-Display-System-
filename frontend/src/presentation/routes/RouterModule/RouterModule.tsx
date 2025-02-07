@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { TAnyGenericRoute, ICommonRouteMapping, TExtractGenericRouteLoaderData, TExtractGenericRouteParams } from "../Route";
+import { TAnyGenericRoute, ICommonRouteMapping, TExtractGenericRouteLoaderData, TExtractGenericRouteParams } from "../routeTypes";
 import { RouterModuleContext } from "./RouterModule.Context";
 
 export interface IRouterModule {
