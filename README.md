@@ -11,11 +11,13 @@
     - [Value Objects](#value-objects)
     - [Resusable Application Layer Validators](#resusable-application-layer-validators)
     - [CQRS Application Layer Architecture](#CQRS-application-layer-architecture)
-    - [Controller Error Delegation](#controller-error-delegation)
+    - [Controller Error Delegation](#controller-error-delegation)Database Cross Compatability
+    - [Database Cross Compatability](#database-cross-compatibility)
     - [API Model Service](#api-model-service)
     - [Controller Presenter Pattern React Components](#controller-presenter-pattern-react-components)
     - [Composable React Components](#composable-react-components)
     - [Frontend Request Error Handling](#frontend-request-error-handling)
+    - [Common Interface for Frontend Router](#common-interface-for-frontend-router)
 7. [Lessons Learned](#lessons-learned)
 8. [API Reference](#api-reference)
     - [Products API](#products-api-endpoints)
@@ -468,7 +470,7 @@ public class OrdersController : ControllerBase
 
 ```
 
-### Database cross-compatability
+### Database Cross Compatability
 
 The following demonstrated a query service for products, that will handle the technical issue of ordering a table by a decimal in SQLite not being possible, by using a deferred in-memory execution to order the table
 
@@ -826,7 +828,7 @@ export default function useResponseHandler() {
 }
 ```
 
-## Common Interface for Frontend Router
+### Common Interface for Frontend Router
 
 We use a common interface ICommonRouteMapping interface that enforces the routes that need to be defined for each router implementation, and how its path will be built. This will then later be used in an IRouterModule, that will be passed to an IRouter, which will then be used in an IRouterContext, that gets registered in a DI container to be used in things like loaders to get access to the route mapping, since this is not known to the implementations before runtime.
 
