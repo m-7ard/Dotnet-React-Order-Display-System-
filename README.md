@@ -11,7 +11,6 @@
     - [Value Objects](#value-objects)
     - [Resusable Application Layer Validators](#resusable-application-layer-validators)
     - [CQRS Application Layer Architecture](#CQRS-application-layer-architecture)
-    - [Controller Error Delegation](#controller-error-delegation)Database Cross Compatability
     - [Database Cross Compatability](#database-cross-compatibility)
     - [API Model Service](#api-model-service)
     - [Controller Presenter Pattern React Components](#controller-presenter-pattern-react-components)
