@@ -2,18 +2,18 @@ import { useLoaderData, useLocation, useNavigate } from "@tanstack/react-router"
 import {
     ICommonRoute,
     IRouteConfig,
-    IEmptyParams,
+    TEmptyParams,
     IManageOrderParams,
     IUpdateProductParams,
     ICommonRouteMapping,
     TAnyGenericRoute,
     TExtractGenericRouteLoaderData,
     TExtractGenericRouteParams,
-} from "../Route";
+} from "../routeTypes";
 import { IRouterModule } from "../RouterModule/RouterModule";
 import { tanstackConfigs } from "./tanstackConfig";
 
-const frontpage: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const frontpage: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: null,
     config: tanstackConfigs.FRONTPAGE,
     label: "All",
@@ -22,21 +22,21 @@ const frontpage: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
 
 // orders
 
-const listOrders: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const listOrders: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: frontpage,
     config: tanstackConfigs.LIST_ORDERS,
     label: "Orders",
     isLayout: false,
 };
 
-const createOrder: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const createOrder: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: listOrders,
     config: tanstackConfigs.CREATE_ORDER,
     label: "Create",
     isLayout: false,
 };
 
-const __orderIdLayout__: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const __orderIdLayout__: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: listOrders,
     label: ":id",
     isLayout: true,
@@ -51,14 +51,14 @@ const manageOrder: ICommonRoute<IRouteConfig<IManageOrderParams>, never> = {
 
 // products
 
-const listProducts: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const listProducts: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: frontpage,
     config: tanstackConfigs.LIST_PRODUCTS,
     label: "Products",
     isLayout: false,
 };
 
-const createProduct: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const createProduct: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: listProducts,
     config: tanstackConfigs.CREATE_PRODUCT,
     label: "Create",
@@ -73,7 +73,7 @@ const updateProduct: ICommonRoute<IRouteConfig<IUpdateProductParams>, never> = {
 };
 
 // Product histories
-const listProductHistories: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const listProductHistories: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: frontpage,
     config: tanstackConfigs.LIST_PRODUCT_HISTORIES,
     label: "Product Histories",
@@ -81,37 +81,37 @@ const listProductHistories: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
 };
 
 // errors
-const __errorsLayout__: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const __errorsLayout__: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: frontpage,
     label: "Errors",
     isLayout: true,
 };
 
-const loaderError: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const loaderError: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: __errorsLayout__,
     config: tanstackConfigs.LOADER_ERROR,
     label: "Loader",
     isLayout: false,
 };
-const unknownError: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const unknownError: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: __errorsLayout__,
     config: tanstackConfigs.UNKNOWN_ERROR,
     label: "Unknown",
     isLayout: false,
 };
-const notFoundError: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const notFoundError: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: __errorsLayout__,
     config: tanstackConfigs.NOT_FOUND_ERROR,
     label: "Not Found",
     isLayout: false,
 };
-const internalServerError: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const internalServerError: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: __errorsLayout__,
     config: tanstackConfigs.INTERNAL_SERVER_ERROR,
     label: "Internal Server Error",
     isLayout: false,
 };
-const clientSideError: ICommonRoute<IRouteConfig<IEmptyParams>, never> = {
+const clientSideError: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: __errorsLayout__,
     config: tanstackConfigs.CLIENT_SIDE_ERROR,
     label: "Client Side Error",
