@@ -1,10 +1,12 @@
 # Dotnet 8.0 React Order Display System
 
 ## Table of Contents
-1. [Local Setup](#run-locally)
-2. [Features](#features)
-3. [Demo Videos](#demo-videos)
-4. [Sample Code](#code-samples)
+1. [Defaults](#defaults)
+2. [Override Defaults](#override-defaults)
+3. [Local Setup](#run-locally)
+4. [Features](#features)
+5. [Demo Videos](#demo-videos)
+6. [Sample Code](#code-samples)
     - [Domain Models](#domain-models)
     - [Value Objects](#value-objects)
     - [Resusable Application Layer Validators](#resusable-application-layer-validators)
@@ -14,17 +16,41 @@
     - [Controller Presenter Pattern React Components](#controller-presenter-pattern-react-components)
     - [Composable React Components](#composable-react-components)
     - [Frontend Request Error Handling](#frontend-request-error-handling)
-5. [Lessons Learned](#lessons-learned)
-6. [API Reference](#api-reference)
+7. [Lessons Learned](#lessons-learned)
+8. [API Reference](#api-reference)
     - [Products API](#products-api-endpoints)
     - [Orders API](#orders-api-endpoints)
     - [Draft Images API](#draft-images-api-endpoints)
     - [Product Histories API](#product-histories-api-endpoints)
-7. [Error Handling](#error-handling)
-8. [Authentication](#authentication)
+9. [Error Handling](#error-handling)
+10. [Authentication](#authentication)
 
-## Run Locally
+## Defaults
+### Backend
+- When running docker, the port will be 5000
 
+- When running the dev server, the port will be 5102
+- The default database is SQLite, for both production and testing.
+
+- When running docker, Media is stored in a volume /app/media
+- When the dev server, Media is stored in a folder at /Files/Media in production, and /Files/Media/Tests when testing.
+
+- The databse and media are cleared / reset on each startup.
+
+### Frontend
+- When running docker, the api url will be http://localhost:5000
+- When running the dev server, the api url will be http://localhost:5102
+
+- The application uses a Tanstack Router by default
+
+## Override Defaults
+### Backend
+- To change the docker port, go to docker-compose.yml and fill in your desired port, then, go to frontend\.env.production to reflect the new port
+
+- To change the production and development database, go to Api\appsettings.json and change Database:Provider to either "SqlServer" or "Sqlite", then, change the matching ${provider}_Database string to your connection string
+- To change the testing database, do the same as above but withing the Testing section
+
+## Local Setup
 ### Project Setup
 
 1. Clone the project
@@ -34,13 +60,10 @@ git clone https://github.com/m-7ard/Dotnet-React-Order-Display-System-.git
 
 2.A Use Docker
 ```bash
-    docker compose up
+docker compose up
 ```
 
-2. Configure Environment Files (optional)
-   - You can ignore this if you're using Sqlite for local testing purposes
-   - In the "Api" folder, fill in your MSSQL database access data in the appsettings.json's SqlServer_Database field
-   - In the "frontend" folder, create a `.env` with the host URL if necessary
+2.B Use Dev Server
 
 3. Backend Setup
 ```bash
@@ -69,15 +92,16 @@ npm run dev
 ```
 
 ## Features
-
 - Product Management
 - Automatic Product Histories / Archives
 - Order Management
+- Database cross-compatibility
 - Product Image Upload and Management
 - Value Objects to Enforce Business Rules
 - Injectable Validators to Reuse Application Logic
 - Backend Integration Tests
 - Backend Application Layer Unit Tests
+- Common interface for frontend routers
 - Frontend Validation
 - Frontend Request Error Handling
 
@@ -113,10 +137,13 @@ The application follows Clean Architecture principles with distinct layers:
 
 ### Domain Models
 Example of rich domain model with encapsulated business rules:
+
+This Order domain features methods to manage its OrderItems. These methods will produce domain events as side effects, that will then later be used to repositories at the time of persistence
+
 ```csharp
 public class Order
 {
-    public Order(OrderId id, decimal total, List<OrderItem> orderItems, OrderStatus status, int serialNumber, OrderDates orderDates)
+    public Order(OrderId id, Money total, List<OrderItem> orderItems, OrderStatus status, int serialNumber, OrderDates orderDates)
     {
         Id = id;
         Total = total;
@@ -128,10 +155,11 @@ public class Order
 
     public OrderId Id { get; private set; }
     public int SerialNumber { get; private set; }
-    public decimal Total { get; set; }
+    public Money Total { get; set; }
     public OrderStatus Status { get; set; }
     public OrderDates OrderDates { get; set; }
     public List<OrderItem> OrderItems { get; set; }
+
     public List<DomainEvent> DomainEvents { get; set; } = [];
     public void ClearEvents()
     {
@@ -177,8 +205,27 @@ public class Order
         Status = newStatus;
     }
 
-    public OneOf<bool, string> CanAddOrderItem(Product product, ProductHistory productHistory, int quantity)
+    public OneOf<bool, string> CanAddOrderItem(Guid id, Product product, ProductHistory productHistory, int quantity)
     {
+        var canCreateOrderItemId = OrderItemId.CanCreate(id);
+        if (canCreateOrderItemId.TryPickT1(out var error, out _))
+        {
+            return error;
+        }
+
+        var canCreateQuantity = Quantity.CanCreate(quantity);
+        if (canCreateQuantity.TryPickT1(out error, out _))
+        {
+            return error;
+        }
+
+        var canCreateTotal = Money.CanCreate(productHistory.Price.Value * quantity);
+        if (canCreateOrderItemId.TryPickT1(out error, out _))
+        {
+            return error;
+        }
+
+
         if (product.Id != productHistory.ProductId)
         {
             return "Product History's Product Id does not match Product Id.";
@@ -187,11 +234,6 @@ public class Order
         if (!productHistory.IsValid())
         {
             return $"Product History for Product of Id \"{product.Id}\" is not valid.";
-        }
-
-        if (quantity <= 0)
-        {
-            return "Order Item quantity must be greater than 0";
         }
 
         var existingOrderItem = OrderItems.Find(orderItem => orderItem.ProductId == product.Id);
@@ -203,39 +245,61 @@ public class Order
         return true;
     }
 
-    public OrderItem ExecuteAddOrderItem(Product product, ProductHistory productHistory, int quantity, int serialNumber) 
+    public OrderItemId ExecuteAddOrderItem(Guid id, Product product, ProductHistory productHistory, int quantity, int serialNumber) 
     {
-        var canAddOrderItemResult = CanAddOrderItem(product: product, productHistory: productHistory, quantity: quantity);
+        var canAddOrderItemResult = CanAddOrderItem(id: id, product: product, productHistory: productHistory, quantity: quantity);
         if (canAddOrderItemResult.TryPickT1(out var error, out var _))
         {
             throw new Exception(error);
         }
 
         var orderItem = OrderItemFactory.BuildNewOrderItem(
-            id: OrderItemId.ExecuteCreate(Guid.NewGuid()),
+            id: OrderItemId.ExecuteCreate(id),
             orderId: Id,
-            quantity: quantity,
+            quantity: Quantity.ExecuteCreate(quantity),
             status: OrderItemStatus.Pending,
             productHistoryId: productHistory.Id,
             productId: productHistory.ProductId,
             serialNumber: serialNumber
         );
 
-        Total += productHistory.Price * quantity;
+        var addAmount = Money.ExecuteCreate(productHistory.Price.Value * quantity);
+
+        Total += addAmount;
         OrderItems.Add(orderItem);
+
+        return orderItem.Id;
+    }
+
+    public OneOf<OrderItem, string> TryGetOrderItemById(OrderItemId orderItemId)
+    {
+        var orderItem =  OrderItems.Find(orderItem => orderItem.Id == orderItemId);
+        if (orderItem == null)
+        {
+            return $"Order Item of Id \"{orderItemId}\" does not exist on Order of Id \"{Id}\"";
+        }
 
         return orderItem;
     }
 
-    public OrderItem? GetOrderItemById(OrderItemId id)
+    public OrderItem ExecuteGetOrderItemById(OrderItemId orderItemId)
     {
-        return OrderItems.Find(orderItem => orderItem.Id == id);
+        var canGetOrderItemResult = TryGetOrderItemById(orderItemId);
+        if (canGetOrderItemResult.TryPickT1(out var error, out var orderItem))
+        {
+            throw new Exception(error);
+        }
+
+        return orderItem;
     }
 }
 ```
 
 ### Value Objects
-Example of value objects to enforce constraints between related fields
+Example of value objects to enforce constraints between related fields:
+
+This value object enforces the logical values of the dates
+
 ```csharp
 public class OrderDates
 {
@@ -278,6 +342,9 @@ public class OrderDates
 ```
 
 ### Resusable Application Layer Validators
+
+The following demonstrates a Validator, that takes an OrderId value object as argument to differentiate it from other values and then uses the repository to retrieve the order, or otherwise return a specific error code associated with the validator.
+
 ```csharp
 public interface IOrderExistsValidator<InputType> 
 {
@@ -312,6 +379,9 @@ public class OrderExistsByIdValidator : IOrderExistsValidator<OrderId>
 ```
 
 ### CQRS Application Layer Architecture
+
+This handler demonstrated the implementation of a command handler that marks and order item as finished by utilising the common interface provided by the order
+
 ```csharp
 public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishedCommand, OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>>
 {
@@ -353,6 +423,9 @@ public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishe
 ```
 
 ### Controller Error Delegation
+
+Through the use of application error code, we can delegate appropriate error codes from our controller
+
 ```csharp
 [ApiController]
 [AllowAnonymous]
@@ -394,6 +467,91 @@ public class OrdersController : ControllerBase
 }
 
 ```
+
+### Database cross-compatability
+
+The following demonstrated a query service for products, that will handle the technical issue of ordering a table by a decimal in SQLite not being possible, by using a deferred in-memory execution to order the table
+
+```csharp
+public class ProductDbEntityQueryServiceFactory : IProductDbEntityQueryServiceFactory
+{
+    private readonly IDatabaseProviderSingleton _databaseProvider;
+
+    public ProductDbEntityQueryServiceFactory(IDatabaseProviderSingleton databaseProvider)
+    {
+        _databaseProvider = databaseProvider;
+    }
+
+    public ProductDbEntityQueryService Create(IQueryable<ProductDbEntity> query)
+    {
+        return new ProductDbEntityQueryService(databaseProvider: _databaseProvider, query: query);
+    }
+}
+
+public class ProductHistoryDbEntityQueryService
+{
+    private readonly List<Func<List<ProductHistoryDbEntity>, List<ProductHistoryDbEntity>>> _inMemoryCallbacks = [];
+    private readonly IDatabaseProviderSingleton _databaseProvider;
+    private readonly Dictionary<string, Expression<Func<ProductHistoryDbEntity, object>>> _fieldMapping = new()
+    {
+        { "Price", p => p.Price },
+        { "ValidFrom", p => p.ValidFrom },
+        { "OriginalProductId", p => p.OriginalProductId }
+    };
+
+    private IQueryable<ProductHistoryDbEntity> _query;
+
+
+    public ProductHistoryDbEntityQueryService(IDatabaseProviderSingleton databaseProvider, IQueryable<ProductHistoryDbEntity> query)
+    {
+        _databaseProvider = databaseProvider;
+        _query = query;
+    }
+
+    private void SortInMemory(string field, bool ascending)
+    {
+        var orderByExpression = _fieldMapping[field];
+
+        _inMemoryCallbacks.Add((products) => ascending
+            ? products.OrderBy(orderByExpression.Compile()).ToList()
+            : products.OrderByDescending(orderByExpression.Compile()).ToList());
+    }
+
+    private void SortInDatabase(string field, bool ascending)
+    {
+        var orderByExpression = _fieldMapping[field];
+        
+        _query = ascending
+            ? _query.OrderBy(orderByExpression) 
+            : _query.OrderByDescending(orderByExpression);
+    }
+
+    public void ApplyOrderBy(Tuple<string, bool> policy)
+    {
+        var (field, ascending) = policy;
+     
+        if (_databaseProvider.IsSQLite)
+        {
+            SortInMemory(field, ascending);
+        }
+        else if (_databaseProvider.IsMSSQL)
+        {
+            SortInDatabase(field, ascending);
+        }
+        else
+        {
+            throw new Exception($"No handler for FilterAllAsync for database provider \"{_databaseProvider.Value}\".");
+        }
+    }
+
+    public async Task<List<ProductHistoryDbEntity>> ReturnResult()
+    {
+        var result = await _query.ToListAsync();
+        return _inMemoryCallbacks.Aggregate(result, (current, func) => func(current));
+    }
+}
+```
+
 
 ### API Model Service
 Example of API model service implementation with caching:
@@ -458,34 +616,6 @@ public class ApiModelService : IApiModelService
 Example of a Controller - Presenter architecture in React:
 ```tsx
 // CreateOrder.Controller.tsx
-const validatorSchema = Type.Object({
-    orderItemData: Type.Record(
-        Type.String({ minLength: 1 }),
-        Type.Object({
-            productId: Type.String({ minLength: 1 }),
-            quantity: Type.Number({ minimum: 1 }),
-        }),
-        { minProperties: 1, suffixPath: "/_" },
-    ),
-});
-
-export interface ValueSchema {
-    orderItemData: {
-        [productId: number | string]: {
-            product: IProduct;
-            quantity: number;
-        };
-    };
-}
-
-export type ErrorState = IPresentationError<{
-    orderItemData: {
-        [productId: number | string]: {
-            productId: string[];
-            quantity: string[];
-        };
-    };
-}>;
 
 const initialValues: ValueSchema = {
     orderItemData: {},
@@ -521,12 +651,10 @@ export default function CreateOrderController(props: { orderDataAccess: IOrderDa
     );
 }
 
-// CreateOrder.Page.tsx TODO: update this
 export default function CreateOrderPage(props: {
     onSubmit: () => void;
     onReset: () => void;
     onChange: (value: ValueSchema) => void;
-
     errors: ErrorState;
     value: ValueSchema;
 }) {
@@ -552,18 +680,11 @@ export default function CreateOrderPage(props: {
                 e.preventDefault();
                 onReset();
             }}
-            options={{
-                size: "mixin-page-base",
-            }}
-            className={`${CONTENT_GRID.CLASS}`}
+            exp={(options) => ({ size: options.SIZE.BASE })}
+            directives={[contentGridDirective(() => ({}))]}
         >
             <MixinPageSection className="flex flex-row gap-3 items-center">
-                <LinkBox
-                    parts={[
-                        { isLink: true, to: routeData.listOrders.build({}), label: "Orders" },
-                        { isLink: true, to: routeData.createOrder.build({}), label: "Create" },
-                    ]}
-                />
+                <LinkBoxV2 exp={(routes) => routes.CREATE_ORDER} params={{}} />
             </MixinPageSection>
             <Divider />
             <MixinPageSection className="flex flex-col gap-3">
@@ -619,7 +740,6 @@ export default function MixinButton(props: PropsWithChildren<IMixinButtonProps>)
         </button>
     );
 }
-
 ```
 
 ```tsx
@@ -665,7 +785,9 @@ export function MixinPrototypeCardSection<T extends ElementType = "section">(pro
 ```
 
 ### Frontend Request Error Handling
+
 Example of automatically handling different request failures and / or exceptions
+
 ```tsx
 export default function useResponseHandler() {
     const { dispatchException } = useApplicationExceptionContext();
@@ -704,6 +826,59 @@ export default function useResponseHandler() {
 }
 ```
 
+## Common Interface for Frontend Router
+
+We use a common interface ICommonRouteMapping interface that enforces the routes that need to be defined for each router implementation, and how its path will be built. This will then later be used in an IRouterModule, that will be passed to an IRouter, which will then be used in an IRouterContext, that gets registered in a DI container to be used in things like loaders to get access to the route mapping, since this is not known to the implementations before runtime.
+
+```tsx
+export interface ICommonRouteMapping {
+    FRONTPAGE: ICommonRoute<IRouteConfig<TEmptyParams>, TEmptyLoaderData>;
+
+    LIST_ORDERS: ICommonRoute<IRouteConfig<TEmptyParams>, { orders: Order[] }>;
+    CREATE_ORDER: ICommonRoute<IRouteConfig<TEmptyParams>, TEmptyLoaderData>;
+    MANAGE_ORDER: ICommonRoute<IRouteConfig<IManageOrderParams>, { order: Order }>;
+
+    // ....
+}
+
+export interface IRouterModule {
+    genericRoutes: ICommonRouteMapping;
+    useRouterLoaderData: <T extends TAnyGenericRoute>(exp: (keys: ICommonRouteMapping) => T) => TExtractGenericRouteLoaderData<T>;
+    useRouterLocationEq: () => <T extends TAnyGenericRoute>(exp: (keys: ICommonRouteMapping) => T) => boolean;
+    useRouterNavigate: () => <T extends TAnyGenericRoute>(props: {
+        exp: (keys: ICommonRouteMapping) => T;
+        params: TExtractGenericRouteParams<T>;
+        search?: Record<string, string>;
+    }) => void;
+}
+
+export interface IRouter {
+    routerModule: IRouterModule;
+    render: () => React.ReactNode;
+}
+
+interface IRouterContext {
+    router: IRouter;
+    requestHandler: IRouterRequestHandler
+}
+
+function CreateRouter({ router }: { router: IRouter }) {
+    return <RouterModule {...router.routerModule}>{router.render()}</RouterModule>;
+}
+
+// main.tsx
+const router = new TanstackRouter(tanstackRouter);
+const requestHandler = new TanstackRequestHandler(router);
+diContainer.register(DI_TOKENS.ROUTER_CONTEXT, new TanstackRouterContext(router, requestHandler));
+
+createRoot(document.getElementById("root")!).render(
+    <QueryClientProvider client={queryClient}>
+        <CreateRouter router={router} />
+    </QueryClientProvider>,
+);
+
+```
+
 ## Lessons Learned
 
 ### The Value of Unit Tests and Integration Tests
@@ -714,6 +889,8 @@ The application underwent a significant refactoring process, which included:
 - Implementing domain methods
 - Implementing value objects
 - Refactoring application layer validation
+- Refactoring repositories to be database compatible through query services
+- Refactoring frontend router to have a common interface and be easily replacable
 
 Unit Tests and Integration Tests were crucial in ensuring the correctness of the refactoring, making the process much more manageable.
 
@@ -729,6 +906,13 @@ The project moved from a single component architecture to a Presenter-Controller
 The application uses validation error codes in the application layer, allowing for:
 - Delegating appropriate responses in controllers
 - More precise error handling
+
+### The Value of Common Interfaces
+
+The project moved from a single router implementation to a common interface architecture in React, which:
+- Allows easily switching between router
+- Avoiding hardcoding loader logic
+- Allows easier testing and mocking
 
 ## API Reference
 

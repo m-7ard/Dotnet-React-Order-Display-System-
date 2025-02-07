@@ -1,4 +1,4 @@
-import { IRouteConfigMapping } from "../Route";
+import { IRouteConfigMapping } from "../routeTypes";
 
 export const tanstackConfigs: IRouteConfigMapping = {
     FRONTPAGE: {

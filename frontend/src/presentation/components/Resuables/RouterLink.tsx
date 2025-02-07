@@ -1,5 +1,5 @@
 import { AnchorHTMLAttributes, PropsWithChildren } from "react";
-import { ICommonRouteMapping, TAnyGenericRoute, TExtractGenericRouteParams } from "../../routes/Route";
+import { ICommonRouteMapping, TAnyGenericRoute, TExtractGenericRouteParams } from "../../routes/routeTypes";
 import { useGenericRoutes, useRouterNavigate } from "../../routes/RouterModule/RouterModule.hooks";
 
 export default function RouterLink<T extends TAnyGenericRoute>({

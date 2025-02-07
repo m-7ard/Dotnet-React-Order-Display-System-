@@ -8,7 +8,7 @@ import IReadProductResponseDTO from "../../../../../infrastructure/contracts/pro
 import productMapper from "../../../../../infrastructure/mappers/productMapper";
 import IListProductsResponseDTO from "../../../../../infrastructure/contracts/products/list/IListProductsResponseDTO";
 import parseListProductsRequestDTO from "../../../../../infrastructure/parsers/parseListProductsRequestDTO";
-import { IUpdateProductParams, ListProductsLoaderData, UpdateProductLoaderData } from "../../../Route";
+import { IUpdateProductParams, TListProductsLoaderData, TUpdateProductLoaderData } from "../../../routeTypes";
 import { tanstackConfigs } from "../../tanstackConfig";
 import diContainer, { DI_TOKENS } from "../../../../deps/diContainer";
 
@@ -16,7 +16,7 @@ const listProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: tanstackConfigs.LIST_PRODUCTS.pattern,
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
-    loader: async ({ deps }): Promise<ListProductsLoaderData> => {
+    loader: async ({ deps }): Promise<TListProductsLoaderData> => {
         const params = parseListProductsRequestDTO(deps);
         const { requestHandler } = diContainer.resolve(DI_TOKENS.ROUTER_CONTEXT);
 
@@ -43,7 +43,7 @@ const updateProductRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: tanstackConfigs.UPDATE_PRODUCT.pattern,
     component: UpdateProductController,
-    loader: async ({ params }: { params: IUpdateProductParams }): Promise<UpdateProductLoaderData> => {
+    loader: async ({ params }: { params: IUpdateProductParams }): Promise<TUpdateProductLoaderData> => {
         const id = params.id;
         const { requestHandler } = diContainer.resolve(DI_TOKENS.ROUTER_CONTEXT);
 

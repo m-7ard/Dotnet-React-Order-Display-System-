@@ -8,7 +8,7 @@ import orderMapper from "../../../../../infrastructure/mappers/orderMapper";
 import OrdersController from "../../../../Application/Orders/Orders.Controller";
 import IReadOrderResponseDTO from "../../../../../infrastructure/contracts/orders/read/IReadOrderResponseDTO";
 import parseListOrdersCommandParameters from "../../../../../infrastructure/parsers/parseListOrdersCommandParameters";
-import { IManageOrderParams, ListOrdersLoaderData, ManageOrderLoaderData } from "../../../Route";
+import { IManageOrderParams, TListOrdersLoaderData, TManageOrderLoaderData } from "../../../routeTypes";
 import { tanstackConfigs } from "../../tanstackConfig";
 import diContainer, { DI_TOKENS } from "../../../../deps/diContainer";
 
@@ -16,7 +16,7 @@ const listOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: tanstackConfigs.LIST_ORDERS.pattern,
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
-    loader: async ({ deps }): Promise<ListOrdersLoaderData> => {
+    loader: async ({ deps }): Promise<TListOrdersLoaderData> => {
         const parsedParams = parseListOrdersCommandParameters(deps);
         const { requestHandler } = diContainer.resolve(DI_TOKENS.ROUTER_CONTEXT);
 
@@ -43,7 +43,7 @@ const createOrderRoute = createRoute({
 const manageOrderRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: tanstackConfigs.MANAGE_ORDERS.pattern,
-    loader: async ({ params }: { params: IManageOrderParams }): Promise<ManageOrderLoaderData> => {
+    loader: async ({ params }: { params: IManageOrderParams }): Promise<TManageOrderLoaderData> => {
         const id = params.id;
         const { requestHandler } = diContainer.resolve(DI_TOKENS.ROUTER_CONTEXT);
 

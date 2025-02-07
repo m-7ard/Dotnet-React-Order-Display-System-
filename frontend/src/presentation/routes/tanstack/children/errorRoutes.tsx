@@ -5,14 +5,14 @@ import UnknownErrorPage from "../../../Application/Exceptions/UnknownErrorPage";
 import NotFoundErrorPage from "../../../Application/Exceptions/NotFoundErrorPage";
 import InternalServerErrorPage from "../../../Application/Exceptions/InternalServerErrorPage";
 import ClientSideErrorPage from "../../../Application/Exceptions/ClientSideErrorPage";
-import { ErrorPageLoaderData } from "../../Route";
+import { TErrorPageLoaderData } from "../../routeTypes";
 import TanstackRouterState from "../../../types/TanstackRouterState";
 import CrashErrorPage from "../../../Application/Exceptions/CrashErrorPage";
 import tanstackRouter from "../../../deps/tanstackRouter";
 import { tanstackConfigs } from "../tanstackConfig";
 
 const loaderErrorPage = createRoute({
-    loader: (): ErrorPageLoaderData => {
+    loader: (): TErrorPageLoaderData => {
         const state: TanstackRouterState | undefined = tanstackRouter.state;
         const error = state?.location.state.error;
 
@@ -31,7 +31,7 @@ const loaderErrorPage = createRoute({
 });
 
 const unkownErrorPage = createRoute({
-    loader: (): ErrorPageLoaderData => {
+    loader: (): TErrorPageLoaderData => {
         const state: TanstackRouterState | undefined = tanstackRouter.state;
         const error = state?.location.state.error;
 
@@ -50,7 +50,7 @@ const unkownErrorPage = createRoute({
 });
 
 const notFoundErrorPage = createRoute({
-    loader: (): ErrorPageLoaderData => {
+    loader: (): TErrorPageLoaderData => {
         const state: TanstackRouterState | undefined = tanstackRouter.state;
         const error = state?.location.state.error;
 
@@ -69,7 +69,7 @@ const notFoundErrorPage = createRoute({
 });
 
 const internalServerErrorPage = createRoute({
-    loader: (): ErrorPageLoaderData => {
+    loader: (): TErrorPageLoaderData => {
         const state: TanstackRouterState | undefined = tanstackRouter.state;
         const error = state?.location.state.error;
 
@@ -88,7 +88,7 @@ const internalServerErrorPage = createRoute({
 });
 
 const clientSideErrorPage = createRoute({
-    loader: (): ErrorPageLoaderData => {
+    loader: (): TErrorPageLoaderData => {
         const state: TanstackRouterState | undefined = tanstackRouter.state;
         const error = state?.location.state.error;
 
