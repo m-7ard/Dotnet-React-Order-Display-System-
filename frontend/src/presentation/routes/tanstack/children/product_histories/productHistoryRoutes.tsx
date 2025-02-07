@@ -5,8 +5,9 @@ import IListProductHistoriesResponseDTO from "../../../../../infrastructure/cont
 import productHistoryMapper from "../../../../../infrastructure/mappers/productHistoryMapper";
 import ProductHistoriesController from "../../../../Application/ProductHistories/ProductHistories.Controller";
 import parseListProductHistoriesRequestDTO from "../../../../../infrastructure/parsers/parseListProductHistoriesRequestDTO";
-import TanstackRouterUtils from "../../../../utils/TanstackRouterUtils";
-import { ListProductHistoriesLoaderData, tanstackConfigs } from "../../../Route";
+import { ListProductHistoriesLoaderData } from "../../../Route";
+import { tanstackConfigs } from "../../tanstackConfig";
+import diContainer, { DI_TOKENS } from "../../../../deps/diContainer";
 
 const listProductHistoriesRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -14,10 +15,11 @@ const listProductHistoriesRoute = createRoute({
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
     loader: async ({ deps }): Promise<ListProductHistoriesLoaderData> => {
         const params = parseListProductHistoriesRequestDTO(deps);
+        const { requestHandler } = diContainer.resolve(DI_TOKENS.ROUTER_CONTEXT);
 
-        const response = await TanstackRouterUtils.handleRequest(productHistoryDataAccess.listProductHistories(params));
+        const response = await requestHandler.handleRequest(productHistoryDataAccess.listProductHistories(params));
         if (!response.ok) {
-            await TanstackRouterUtils.handleInvalidResponse(response);
+            await requestHandler.handleInvalidResponse(response);
         }
 
         const dto: IListProductHistoriesResponseDTO = await response.json();

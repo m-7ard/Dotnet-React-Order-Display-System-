@@ -8,7 +8,7 @@ import IPresentationError from "../../../interfaces/IPresentationError";
 import DeleteProductDialogPanel from "./DeleteProduct.DialogPanel";
 import IProductDataAccess from "../../../interfaces/dataAccess/IProductDataAccess";
 import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
-import useRouterNavigate from "../../../hooks/useRouterNavigate";
+import { useRouterNavigate } from "../../../routes/RouterModule/RouterModule.hooks";
 
 export type DeleteProductErrorSchema = IPresentationError<unknown>;
 

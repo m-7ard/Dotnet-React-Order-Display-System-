@@ -8,8 +8,9 @@ import IReadProductResponseDTO from "../../../../../infrastructure/contracts/pro
 import productMapper from "../../../../../infrastructure/mappers/productMapper";
 import IListProductsResponseDTO from "../../../../../infrastructure/contracts/products/list/IListProductsResponseDTO";
 import parseListProductsRequestDTO from "../../../../../infrastructure/parsers/parseListProductsRequestDTO";
-import TanstackRouterUtils from "../../../../utils/TanstackRouterUtils";
-import { IUpdateProductParams, ListProductsLoaderData, tanstackConfigs, UpdateProductLoaderData } from "../../../Route";
+import { IUpdateProductParams, ListProductsLoaderData, UpdateProductLoaderData } from "../../../Route";
+import { tanstackConfigs } from "../../tanstackConfig";
+import diContainer, { DI_TOKENS } from "../../../../deps/diContainer";
 
 const listProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -17,10 +18,11 @@ const listProductsRoute = createRoute({
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
     loader: async ({ deps }): Promise<ListProductsLoaderData> => {
         const params = parseListProductsRequestDTO(deps);
+        const { requestHandler } = diContainer.resolve(DI_TOKENS.ROUTER_CONTEXT);
 
-        const response = await TanstackRouterUtils.handleRequest(productDataAccess.listProducts(params));
+        const response = await requestHandler.handleRequest(productDataAccess.listProducts(params));
         if (!response.ok) {
-            await TanstackRouterUtils.handleInvalidResponse(response);
+            await requestHandler.handleInvalidResponse(response);
         }
 
         const data: IListProductsResponseDTO = await response.json();
@@ -43,9 +45,11 @@ const updateProductRoute = createRoute({
     component: UpdateProductController,
     loader: async ({ params }: { params: IUpdateProductParams }): Promise<UpdateProductLoaderData> => {
         const id = params.id;
-        const response = await TanstackRouterUtils.handleRequest(productDataAccess.readProduct({ id: id }));
+        const { requestHandler } = diContainer.resolve(DI_TOKENS.ROUTER_CONTEXT);
+
+        const response = await requestHandler.handleRequest(productDataAccess.readProduct({ id: id }));
         if (!response.ok) {
-            await TanstackRouterUtils.handleInvalidResponse(response);
+            await requestHandler.handleInvalidResponse(response);
         }
 
         const dto: IReadProductResponseDTO = await response.json();

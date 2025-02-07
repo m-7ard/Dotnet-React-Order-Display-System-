@@ -1,14 +1,17 @@
 import React from "react";
 import MixinButton from "./MixinButton";
-import { TAnyGenericRoute, IGenericRoutes, TExtractGenericRouteParams, genericRoutes, isLayoutRoute } from "../../routes/Route";
+import { TAnyGenericRoute, ICommonRouteMapping, TExtractGenericRouteParams, isLayoutRoute } from "../../routes/Route";
 import RouterLink from "./RouterLink";
+import { useRouterModule } from "../../routes/RouterModule/RouterModule.hooks";
 
-export default function LinkBoxV2<T extends TAnyGenericRoute>({ exp, params }: { exp: (keys: IGenericRoutes) => T; params: TExtractGenericRouteParams<T> }) {
+export default function LinkBoxV2<T extends TAnyGenericRoute>({ exp, params }: { exp: (keys: ICommonRouteMapping) => T; params: TExtractGenericRouteParams<T> }) {
     const linkParts: Array<{
         label: string;
         route: TAnyGenericRoute;
     }> = [];
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { genericRoutes } = useRouterModule();
     let currentRoute: TAnyGenericRoute | null = exp(genericRoutes);
 
     while (currentRoute != null) {

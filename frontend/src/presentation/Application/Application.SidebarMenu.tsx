@@ -3,11 +3,11 @@ import MixinButton from "../components/Resuables/MixinButton";
 import Divider from "../components/Resuables/Divider";
 import { RenderedMixinPanel, PolymorphicMixinPanelSection } from "../components/Resuables/MixinPanel";
 import RouterLink from "../components/Resuables/RouterLink";
-import useRouterLocationEq from "../hooks/useRouterLocationEq";
+import { useRouterLocationEq } from "../routes/RouterModule/RouterModule.hooks";
 
 export default function SidebarMenuDialog() {
     const { onClose } = useGlobalDialogPanelContext();
-    const locationEq = useRouterLocationEq();
+    const locationEq = useRouterLocationEq()
 
     return (
         <RenderedMixinPanel
