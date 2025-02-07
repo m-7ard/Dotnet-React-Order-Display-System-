@@ -5,14 +5,15 @@ import UnknownErrorPage from "../../../Application/Exceptions/UnknownErrorPage";
 import NotFoundErrorPage from "../../../Application/Exceptions/NotFoundErrorPage";
 import InternalServerErrorPage from "../../../Application/Exceptions/InternalServerErrorPage";
 import ClientSideErrorPage from "../../../Application/Exceptions/ClientSideErrorPage";
-import { ErrorPageLoaderData, tanstackConfigs } from "../../Route";
+import { ErrorPageLoaderData } from "../../Route";
 import TanstackRouterState from "../../../types/TanstackRouterState";
 import CrashErrorPage from "../../../Application/Exceptions/CrashErrorPage";
-import router from "../../../deps/router";
+import tanstackRouter from "../../../deps/tanstackRouter";
+import { tanstackConfigs } from "../tanstackConfig";
 
 const loaderErrorPage = createRoute({
     loader: (): ErrorPageLoaderData => {
-        const state: TanstackRouterState | undefined = router.state;
+        const state: TanstackRouterState | undefined = tanstackRouter.state;
         const error = state?.location.state.error;
 
         if (error == null) {
@@ -31,7 +32,7 @@ const loaderErrorPage = createRoute({
 
 const unkownErrorPage = createRoute({
     loader: (): ErrorPageLoaderData => {
-        const state: TanstackRouterState | undefined = router.state;
+        const state: TanstackRouterState | undefined = tanstackRouter.state;
         const error = state?.location.state.error;
 
         if (error == null) {
@@ -50,7 +51,7 @@ const unkownErrorPage = createRoute({
 
 const notFoundErrorPage = createRoute({
     loader: (): ErrorPageLoaderData => {
-        const state: TanstackRouterState | undefined = router.state;
+        const state: TanstackRouterState | undefined = tanstackRouter.state;
         const error = state?.location.state.error;
 
         if (error == null) {
@@ -69,7 +70,7 @@ const notFoundErrorPage = createRoute({
 
 const internalServerErrorPage = createRoute({
     loader: (): ErrorPageLoaderData => {
-        const state: TanstackRouterState | undefined = router.state;
+        const state: TanstackRouterState | undefined = tanstackRouter.state;
         const error = state?.location.state.error;
 
         if (error == null) {
@@ -88,7 +89,7 @@ const internalServerErrorPage = createRoute({
 
 const clientSideErrorPage = createRoute({
     loader: (): ErrorPageLoaderData => {
-        const state: TanstackRouterState | undefined = router.state;
+        const state: TanstackRouterState | undefined = tanstackRouter.state;
         const error = state?.location.state.error;
 
         if (error == null) {

@@ -4,7 +4,7 @@ import { useAbstractTooltipContext } from "../../components/AbtractTooltip/Abstr
 import Divider from "../../components/Resuables/Divider";
 import { PolymorphicAbstractTooltipDefaultPanel } from "../../components/renderAbstractTooltip/AbstractTooltip";
 import { PolymorphicMixinPanel, PolymorphicMixinPanelSection } from "../../components/Resuables/MixinPanel";
-import useRouterNavigate from "../../hooks/useRouterNavigate";
+import { useRouterNavigate } from "../../routes/RouterModule/RouterModule.hooks";
 
 export default function OptionMenu(props: { productHistory: ProductHistory }) {
     const { productHistory } = props;

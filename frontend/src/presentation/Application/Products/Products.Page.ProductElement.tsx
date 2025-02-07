@@ -5,7 +5,7 @@ import MixinButton from "../../components/Resuables/MixinButton";
 import ProductOptionMenu from "./Products.Page.Product.OptionsMenu";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
-import useRouterNavigate from "../../hooks/useRouterNavigate";
+import { useRouterNavigate } from "../../routes/RouterModule/RouterModule.hooks";
 
 export default function ProductElement(props: { product: IProduct }) {
     const { product } = props;

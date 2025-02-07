@@ -5,7 +5,7 @@ import { useAbstractTooltipContext } from "../../components/AbtractTooltip/Abstr
 import Divider from "../../components/Resuables/Divider";
 import { PolymorphicAbstractTooltipDefaultPanel } from "../../components/renderAbstractTooltip/AbstractTooltip";
 import { PolymorphicMixinPanelSection, PolymorphicMixinPanel } from "../../components/Resuables/MixinPanel";
-import useRouterNavigate from "../../hooks/useRouterNavigate";
+import { useRouterNavigate } from "../../routes/RouterModule/RouterModule.hooks";
 
 export default function OrderByMenu() {
     const { onClose } = useAbstractTooltipContext();

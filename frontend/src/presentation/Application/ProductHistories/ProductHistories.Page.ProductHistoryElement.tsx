@@ -5,7 +5,7 @@ import OptionMenu from "./ProductHistories.Page.ProductHistoryElement.OptionMenu
 import ProductHistory from "../../../domain/models/IProductHistory";
 import MixinPrototypeCard, { MixinPrototypeCardSection } from "../../components/Resuables/MixinPrototypeCard";
 import AbstractTooltip, { AbstractTooltipTrigger } from "../../components/renderAbstractTooltip/AbstractTooltip";
-import useRouterNavigate from "../../hooks/useRouterNavigate";
+import { useRouterNavigate } from "../../routes/RouterModule/RouterModule.hooks";
 
 export default function ProductHistoryElement(props: { productHistory: ProductHistory }) {
     const { productHistory } = props;

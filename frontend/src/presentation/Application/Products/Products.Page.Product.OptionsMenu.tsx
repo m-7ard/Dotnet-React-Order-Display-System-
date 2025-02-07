@@ -6,11 +6,12 @@ import DeleteProductFactory from "./Delete/DeleteProduct.Factory";
 import Divider from "../../components/Resuables/Divider";
 import { PolymorphicAbstractTooltipDefaultPanel } from "../../components/renderAbstractTooltip/AbstractTooltip";
 import { PolymorphicMixinPanel, PolymorphicMixinPanelSection } from "../../components/Resuables/MixinPanel";
-import useRouterNavigate from "../../hooks/useRouterNavigate";
+import { useRouterModule } from "../../routes/RouterModule/RouterModule.hooks";
 
 export default function ProductOptionMenu(props: { product: IProduct }) {
     const { product } = props;
     const { onClose } = useAbstractTooltipContext();
+    const { useRouterNavigate } = useRouterModule();
     const navigate = useRouterNavigate();
 
     return (

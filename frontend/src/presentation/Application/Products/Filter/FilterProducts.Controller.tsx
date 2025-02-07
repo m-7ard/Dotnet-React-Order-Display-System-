@@ -3,7 +3,7 @@ import useItemManager from "../../../hooks/useItemManager";
 import { useGlobalDialogPanelContext } from "../../../components/Dialog/GlobalDialog.Panel.Context";
 import { FilterProductsFieldsetValueState } from "../../../components/Fieldsets/FilterProductFieldset";
 import FilterProductsDialogPanel from "./FilterProducts.DialogPanel";
-import useRouterNavigate from "../../../hooks/useRouterNavigate";
+import { useRouterNavigate } from "../../../routes/RouterModule/RouterModule.hooks";
 
 export type ValueSchema = { [K in keyof FilterProductsFieldsetValueState]?: FilterProductsFieldsetValueState[K] };
 
