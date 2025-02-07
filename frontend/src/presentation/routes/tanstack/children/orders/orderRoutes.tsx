@@ -8,8 +8,9 @@ import orderMapper from "../../../../../infrastructure/mappers/orderMapper";
 import OrdersController from "../../../../Application/Orders/Orders.Controller";
 import IReadOrderResponseDTO from "../../../../../infrastructure/contracts/orders/read/IReadOrderResponseDTO";
 import parseListOrdersCommandParameters from "../../../../../infrastructure/parsers/parseListOrdersCommandParameters";
-import TanstackRouterUtils from "../../../../utils/TanstackRouterUtils";
-import { IManageOrderParams, ListOrdersLoaderData, ManageOrderLoaderData, tanstackConfigs } from "../../../Route";
+import { IManageOrderParams, ListOrdersLoaderData, ManageOrderLoaderData } from "../../../Route";
+import { tanstackConfigs } from "../../tanstackConfig";
+import diContainer, { DI_TOKENS } from "../../../../deps/diContainer";
 
 const listOrdersRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -17,10 +18,11 @@ const listOrdersRoute = createRoute({
     loaderDeps: ({ search }: { search: Record<string, string> }) => search,
     loader: async ({ deps }): Promise<ListOrdersLoaderData> => {
         const parsedParams = parseListOrdersCommandParameters(deps);
+        const { requestHandler } = diContainer.resolve(DI_TOKENS.ROUTER_CONTEXT);
 
-        const response = await TanstackRouterUtils.handleRequest(orderDataAccess.listOrders(parsedParams));
+        const response = await requestHandler.handleRequest(orderDataAccess.listOrders(parsedParams));
         if (!response.ok) {
-            await TanstackRouterUtils.handleInvalidResponse(response);
+            await requestHandler.handleInvalidResponse(response);
         }
 
         const data: IListOrdersResponseDTO = await response.json();
@@ -43,10 +45,11 @@ const manageOrderRoute = createRoute({
     path: tanstackConfigs.MANAGE_ORDERS.pattern,
     loader: async ({ params }: { params: IManageOrderParams }): Promise<ManageOrderLoaderData> => {
         const id = params.id;
+        const { requestHandler } = diContainer.resolve(DI_TOKENS.ROUTER_CONTEXT);
 
-        const response = await TanstackRouterUtils.handleRequest(orderDataAccess.readOrder({ id: id }));
+        const response = await requestHandler.handleRequest(orderDataAccess.readOrder({ id: id }));
         if (!response.ok) {
-            await TanstackRouterUtils.handleInvalidResponse(response);
+            await requestHandler.handleInvalidResponse(response);
         }
 
         const dto: IReadOrderResponseDTO = await response.json();

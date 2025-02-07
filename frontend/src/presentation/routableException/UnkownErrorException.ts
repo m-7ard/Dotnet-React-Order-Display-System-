@@ -1,9 +1,8 @@
-import { genericRoutes } from '../routes/Route';
 import RoutableException from './RoutableException';
 
 class UnkownErrorException extends RoutableException {
     constructor(message: string) {
-        super(message, genericRoutes.UNKNOWN_ERROR);
+        super(message, (routes) => routes.UNKNOWN_ERROR);
     }
 }
 

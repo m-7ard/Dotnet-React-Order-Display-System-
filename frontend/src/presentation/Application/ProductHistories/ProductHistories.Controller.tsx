@@ -1,5 +1,5 @@
+import { useRouterLoaderData } from "../../routes/RouterModule/RouterModule.hooks";
 import ProductHistoriesPage from "./ProductHistories.Page";
-import useRouterLoaderData from "../../hooks/useRouterLoaderData";
 
 export default function ProductHistoriesController() {
     const { productHistories } = useRouterLoaderData((keys) => keys.LIST_PRODUCT_HISTORIES);

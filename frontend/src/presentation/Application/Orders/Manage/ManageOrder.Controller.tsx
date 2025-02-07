@@ -11,7 +11,7 @@ import OrderStatus from "../../../../domain/valueObjects/Order/OrderStatus";
 import OrderItemStatus from "../../../../domain/valueObjects/OrderItem/OrderItemStatus";
 import IMarkOrderFinishedResponseDTO from "../../../../infrastructure/contracts/orders/markFinished/IMarkOrderFinishedResponseDTO";
 import IMarkOrderItemFinishedResponseDTO from "../../../../infrastructure/contracts/orderItems/markFinished/IMarkOrderItemFinishedResponseDTO";
-import useRouterLoaderData from "../../../hooks/useRouterLoaderData";
+import { useRouterLoaderData } from "../../../routes/RouterModule/RouterModule.hooks";
 
 export default function ManageOrderRoute(props: { orderDataAccess: IOrderDataAccess }) {
     const { orderDataAccess } = props;

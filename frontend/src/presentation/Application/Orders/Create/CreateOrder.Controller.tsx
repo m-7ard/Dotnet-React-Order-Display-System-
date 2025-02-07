@@ -12,7 +12,7 @@ import useResponseHandler from "../../../hooks/useResponseHandler";
 import { err, ok } from "neverthrow";
 import IPlainApiError from "../../../../infrastructure/interfaces/IPlainApiError";
 import PresentationErrorFactory from "../../../mappers/PresentationErrorFactory";
-import useRouterNavigate from "../../../hooks/useRouterNavigate";
+import { useRouterNavigate } from "../../../routes/RouterModule/RouterModule.hooks";
 
 const validatorSchema = Type.Object({
     orderItemData: Type.Record(

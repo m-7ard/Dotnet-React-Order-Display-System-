@@ -1,9 +1,8 @@
-import { genericRoutes } from '../routes/Route';
 import RoutableException from './RoutableException';
 
 class InternalServerErrorException extends RoutableException {
     constructor(message: string) {
-        super(message, genericRoutes.INTERNAL_SERVER_ERROR);
+        super(message, (routes) => routes.INTERNAL_SERVER_ERROR);
     }
 }
 

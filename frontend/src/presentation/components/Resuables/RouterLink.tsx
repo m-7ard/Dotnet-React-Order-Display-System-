@@ -1,14 +1,15 @@
 import { AnchorHTMLAttributes, PropsWithChildren } from "react";
-import { genericRoutes, IGenericRoutes, TAnyGenericRoute, TExtractGenericRouteParams } from "../../routes/Route";
-import useRouterNavigate from "../../hooks/useRouterNavigate";
+import { ICommonRouteMapping, TAnyGenericRoute, TExtractGenericRouteParams } from "../../routes/Route";
+import { useGenericRoutes, useRouterNavigate } from "../../routes/RouterModule/RouterModule.hooks";
 
 export default function RouterLink<T extends TAnyGenericRoute>({
     children,
     exp,
     params,
     ...htmlAttrs
-}: PropsWithChildren<{ exp: (keys: IGenericRoutes) => T; params: TExtractGenericRouteParams<T> } & AnchorHTMLAttributes<HTMLAnchorElement>>) {
+}: PropsWithChildren<{ exp: (keys: ICommonRouteMapping) => T; params: TExtractGenericRouteParams<T> } & AnchorHTMLAttributes<HTMLAnchorElement>>) {
     const navigate = useRouterNavigate();
+    const genericRoutes = useGenericRoutes();
     const route = exp(genericRoutes);
 
     if (route.config == null) {
