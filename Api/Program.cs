@@ -27,15 +27,11 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
-var builder = WebApplication.CreateBuilder(args);
 // dotnet ef migrations add <Name> --project Infrastructure --startup-project Api
+var builder = WebApplication.CreateBuilder(args);
 
 var appSettings = BuilderUtils.ReadAppSettings(builder.Configuration);
 var databaseProviderSingleton = new DatabaseProviderSingleton(appSettings.DatabaseProviderValue);
-
-/// Env ** Unused **
-// DotNetEnv.Env.Load();
-// var DefaultConnection = Environment.GetEnvironmentVariable("DefaultConnection");
 
 ///
 ///
