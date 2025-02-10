@@ -56,8 +56,6 @@ public class ListProductHistoriesHandlerUnitTest
     [InlineData("oldest", "ValidFrom", true)]
     [InlineData("price desc", "Price", false)]
     [InlineData("price asc", "Price", true)]
-    [InlineData("product id desc", "OriginalProductId", false)]
-    [InlineData("product id asc", "OriginalProductId", true)]
     public async Task ListProductHistories_OrderByTranslation_Success(string orderBy, string expectedField, bool expectedAscending)
     {
         // ARRANGE

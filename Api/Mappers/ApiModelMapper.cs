@@ -69,8 +69,8 @@ public class ApiModelMapper
         return new OrderApiModel(
             id: order.Id.Value.ToString(),
             total: order.Total.Value,
-            dateCreated: order.OrderDates.DateCreated,
-            dateFinished: order.OrderDates.DateFinished,
+            dateCreated: TimeZoneService.ConvertUtcToLocalTime(order.OrderDates.DateCreated),
+            dateFinished: order.OrderDates.DateFinished is null ? null : TimeZoneService.ConvertUtcToLocalTime(order.OrderDates.DateFinished.Value),
             orderItems: orderItems,
             status: order.Status.Name,
             serialNumber: order.SerialNumber

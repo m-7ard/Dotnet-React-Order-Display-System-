@@ -11,7 +11,6 @@
     - [Value Objects](#value-objects)
     - [Resusable Application Layer Validators](#resusable-application-layer-validators)
     - [CQRS Application Layer Architecture](#CQRS-application-layer-architecture)
-    - [Controller Error Delegation](#controller-error-delegation)Database Cross Compatability
     - [Database Cross Compatability](#database-cross-compatibility)
     - [API Model Service](#api-model-service)
     - [Controller Presenter Pattern React Components](#controller-presenter-pattern-react-components)
@@ -129,11 +128,23 @@ The application follows Clean Architecture principles with distinct layers:
 
 ## Demo Videos
 
-### Main Workflow
-![Watch the video](readmeVids/main-workflow.gif)
+### Create Product
+![Watch the video](readmeVids/createProduct.gif)
+
+### Create Order
+![Watch the video](readmeVids/createOrder.gif)
+
+### Manage Order
+![Watch the video](readmeVids/manageOrder.gif)
+
+### Update Product
+![Watch the video](readmeVids/updateProduct.gif)
+
+### Order Products By
+![Watch the video](readmeVids/productsOrderBy.gif)
 
 ### Filter Products
-![Watch the video](readmeVids/filter-products.gif)
+![Watch the video](readmeVids/filterProducts.gif)
 
 ## Sample Code
 

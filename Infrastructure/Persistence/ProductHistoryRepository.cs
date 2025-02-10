@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
 using Domain.Models;
@@ -47,12 +46,12 @@ public class ProductHistoryRespository : IProductHistoryRepository
         IQueryable<ProductHistoryDbEntity> query = _dbContext.ProductHistory;
         if (!string.IsNullOrEmpty(criteria.Name))
         {
-            query = query.Where(item => item.Name.Contains(criteria.Name));
+            query = query.Where(item => EF.Functions.Like(item.Name, $"%{criteria.Name}%"));
         }
 
         if (!string.IsNullOrEmpty(criteria.Description))
         {
-            query = query.Where(item => item.Description.Contains(criteria.Description));
+            query = query.Where(item => EF.Functions.Like(item.Description, $"%{criteria.Description}%"));
         }
 
         if (criteria.MinPrice is not null)
