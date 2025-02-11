@@ -141,7 +141,7 @@ The application follows Clean Architecture principles with distinct layers:
 ![Watch the video](readmeVids/updateProduct.gif)
 
 ### Order Products By
-![Watch the video](readmeVids/productsOrderBy.gif)
+![Watch the video](readmeVids/orderProducts.gif)
 
 ### Filter Products
 ![Watch the video](readmeVids/filterProducts.gif)
