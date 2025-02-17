@@ -14,7 +14,26 @@ public class OrderRepository : IOrderRepository
 {
     private readonly SimpleProductOrderServiceDbContext _dbContext;
     private readonly IOrderDbEntityQueryServiceFactory _orderDbEntityQueryServiceFactory;
+    
+    private async Task PersistDomainEvents(Order order)
+    {
+        foreach (var domainEvent in order.DomainEvents)
+        {
+            if (domainEvent is OrderItemCreatedEvent createEvent)
+            {
+                var writeEntity =  OrderItemMapper.ToDbModel(createEvent.Payload);
+                _dbContext.Add(writeEntity);
+            }
+            else if (domainEvent is OrderItemUpdated updateEvent)
+            {
+                var writeEntity = OrderItemMapper.ToDbModel(updateEvent.Payload);
+                var trackedEntity = await _dbContext.OrderItem.SingleAsync(orderItem => orderItem.Id == writeEntity.Id);
+                _dbContext.Entry(trackedEntity).CurrentValues.SetValues(writeEntity);
+            }
+        }
 
+        order.ClearEvents();
+    } 
 
     public OrderRepository(SimpleProductOrderServiceDbContext simpleProductOrderServiceDbContext, IOrderDbEntityQueryServiceFactory orderDbEntityQueryServiceFactory)
     {
@@ -26,13 +45,7 @@ public class OrderRepository : IOrderRepository
     {
         var orderDbEntity = OrderMapper.ToDbModel(order);
         _dbContext.Add(orderDbEntity);
-
-        var orderItemDbEntities = order.OrderItems.Select(OrderItemMapper.ToDbModel);
-        foreach (var orderItemDbEntity in orderItemDbEntities)
-        {
-            _dbContext.Add(orderItemDbEntity);
-        }
-
+        await PersistDomainEvents(order);
         await _dbContext.SaveChangesAsync();
     }
 
@@ -117,17 +130,7 @@ public class OrderRepository : IOrderRepository
         var currentOrderEntity = await _dbContext.Order.SingleAsync(d => d.Id == updatedOrder.Id.Value);
         _dbContext.Entry(currentOrderEntity).CurrentValues.SetValues(updatedOrderEntity);
 
-        foreach (var domainEvent in updatedOrder.DomainEvents)
-        {
-            if (domainEvent is OrderItemPendingUpdatingEvent updateEvent)
-            {
-                var payload = updateEvent.Payload;
-                var orderItemDbEntity = await _dbContext.OrderItem.SingleAsync(orderItem => orderItem.Id == payload.Id.Value);
-                _dbContext.Entry(orderItemDbEntity).CurrentValues.SetValues(OrderItemMapper.ToDbModel(payload));
-            }
-        }
-        
+        await PersistDomainEvents(updatedOrder);
         await _dbContext.SaveChangesAsync();
-        updatedOrder.ClearEvents();
     }
 }
