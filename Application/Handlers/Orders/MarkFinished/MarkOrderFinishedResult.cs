@@ -1,5 +1,3 @@
-using Domain.Models;
-
 namespace Application.Handlers.Orders.MarkFinished;
 
 public class MarkOrderFinishedResult
