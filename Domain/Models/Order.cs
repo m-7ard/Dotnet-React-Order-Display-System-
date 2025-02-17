@@ -1,4 +1,5 @@
 using Domain.DomainEvents;
+using Domain.DomainEvents.Order;
 using Domain.DomainFactories;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
@@ -133,6 +134,7 @@ public class Order
 
         Total += addAmount;
         OrderItems.Add(orderItem);
+        DomainEvents.Add(new OrderItemCreatedEvent(orderItem));
 
         return orderItem.Id;
     }
