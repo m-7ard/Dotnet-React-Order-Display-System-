@@ -2,9 +2,9 @@ using Domain.Models;
 
 namespace Domain.DomainEvents.Order;
 
-public class OrderItemPendingUpdatingEvent : DomainEvent
+public class OrderItemUpdated : DomainEvent
 {
-    public OrderItemPendingUpdatingEvent(OrderItem payload) : base()
+    public OrderItemUpdated(OrderItem payload) : base()
     {
         Payload = payload;
     }

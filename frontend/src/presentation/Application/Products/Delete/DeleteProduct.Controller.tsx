@@ -25,7 +25,7 @@ export default function DeleteProductController(props: { product: IProduct; prod
                 requestFn: () => productDataAccess.deleteProduct({ id: product.id }),
                 onResponseFn: async (response) => {
                     if (response.ok) {
-                        navigate({ exp: (routes) => routes.LIST_ORDERS, params: {} });
+                        navigate({ exp: (routes) => routes.LIST_PRODUCTS, params: {} });
                         onClose();
                         return ok(undefined);
                     }

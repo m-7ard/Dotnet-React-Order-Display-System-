@@ -6,6 +6,6 @@ export default defineConfig(({ mode }) => ({
     plugins: [react()],
     base: mode === "production" ? "/react/" : "/",
     build: {
-        outDir: 'react'
-    }
+        outDir: "react",
+    },
 }));

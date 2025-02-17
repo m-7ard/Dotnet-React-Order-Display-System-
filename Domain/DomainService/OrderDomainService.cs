@@ -85,7 +85,7 @@ public class OrderDomainService
         var orderItemDates = OrderItemDates.ExecuteCreate(dateCreated: orderItem.OrderItemDates.DateCreated, dateFinished: dateFinished);
         orderItem.OrderItemDates = orderItemDates;
 
-        order.DomainEvents.Add(new OrderItemPendingUpdatingEvent(orderItem));
+        order.DomainEvents.Add(new OrderItemUpdated(orderItem));
         return dateFinished;
     }
 }
