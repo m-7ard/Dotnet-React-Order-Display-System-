@@ -3,6 +3,7 @@ using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
 using Application.Validators;
 using Application.Validators.DraftImageExistsValidator;
+using Domain.Contracts.Products;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Product;
@@ -29,19 +30,24 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
 
     public async Task<OneOf<CreateProductResult, List<ApplicationError>>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
-        var canCreatePrice = Money.CanCreate(request.Price);
-        if (canCreatePrice.TryPickT1(out var error, out _))
+        var contract = new CreateProductContract(
+            id: Guid.NewGuid(),
+            name: request.Name,
+            price: request.Price,
+            description: request.Description,
+            dateCreated: DateTime.UtcNow,
+            amount: request.Amount,
+            images: []
+        );
+
+        var canCreateProduct = Product.CanCreate(contract);
+        if (canCreateProduct.TryPickT1(out var error, out _))
         {
             return new NotAllowedError(error, []).AsList();
         }
 
-        var product = ProductFactory.BuildNewProduct(
-            id: ProductId.ExecuteCreate(Guid.NewGuid()),
-            name: request.Name,
-            price: Money.ExecuteCreate(request.Price),
-            description: request.Description,
-            images: []
-        );
+        var product = Product.ExecuteCreate(contract);
+
         var draftImagesUsed = new List<DraftImage>();
         var imageErrors = new List<ApplicationError>();
 

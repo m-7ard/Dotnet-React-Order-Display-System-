@@ -1,3 +1,4 @@
+using Domain.Contracts.Products;
 using Domain.DomainEvents;
 using Domain.DomainEvents.Product;
 using Domain.DomainFactories;
@@ -10,12 +11,13 @@ namespace Domain.Models;
 public class Product
 {
     public Product(
-        ProductId id, 
-        string name, 
-        Money price, 
-        string description, 
-        DateTime dateCreated, 
-        List<ProductImage> images)
+        ProductId id,
+        string name,
+        Money price,
+        string description,
+        DateTime dateCreated,
+        List<ProductImage> images,
+        Quantity amount)
     {
         Id = id;
         Name = name;
@@ -23,6 +25,7 @@ public class Product
         Description = description;
         DateCreated = dateCreated;
         Images = images;
+        Amount = amount;
     }
 
     public ProductId Id { get; private set; }
@@ -31,6 +34,7 @@ public class Product
     public string Description { get; set; }
     public DateTime DateCreated { get; private set; }
     public List<ProductImage> Images { get; set; }
+    public Quantity Amount { get; set; }
 
     public List<DomainEvent> DomainEvents { get; set; } = [];
     public void ClearEvents()
@@ -178,5 +182,66 @@ public class Product
         var productImage = ExecuteFindProductImageById(productImageId);
         Images = Images.Where(image => image.Id != productImageId).ToList();
         DomainEvents.Add(new ProductImagePendingDeletionEvent(productImage));
+    }
+
+    public OneOf<bool, string> CanLowerAmount(int lowerBy)
+    {
+        var canCreateNewAmount = Quantity.CanCreate(Amount.Value - lowerBy);
+        if (canCreateNewAmount.TryPickT1(out var error, out _))
+        {
+            return error;
+        }
+
+        return true;
+    }
+
+    public void ExecuteLowerAmount(int lowerBy)
+    {
+        var canLowerResult = CanLowerAmount(lowerBy);
+        if (canLowerResult.TryPickT1(out var error, out _))
+        {
+            throw new Exception(error);
+        }
+
+        Amount = Quantity.ExecuteCreate(Amount.Value - lowerBy);
+    }
+
+    public static OneOf<bool, string> CanCreate(CreateProductContract contract)
+    {
+        var canCreateId = ProductId.CanCreate(contract.Id);
+        if (canCreateId.TryPickT1(out var error, out _)) return error;
+
+        var canCreateAmount = Quantity.CanCreate(contract.Amount);
+        if (canCreateAmount.TryPickT1(out error, out _)) return error;
+
+        var canCreatePrice = Money.CanCreate(contract.Price);
+        if (canCreatePrice.TryPickT1(out error, out _)) return error;
+
+        if (contract.DateCreated > DateTime.UtcNow)
+        {
+            return $"DateCreated ({contract.DateCreated}) cannot be larger than current date.";
+        }
+
+        return true;
+    }
+
+    public static Product ExecuteCreate(CreateProductContract contract)
+    {
+        var canCreate = CanCreate(contract);
+        if (canCreate.TryPickT1(out var error, out _)) throw new Exception(error);
+
+        var id = ProductId.ExecuteCreate(contract.Id);
+        var amount = Quantity.ExecuteCreate(contract.Amount);
+        var price = Money.ExecuteCreate(contract.Price);
+
+        return new Product(
+            id: id,
+            name: contract.Name,
+            price: price,
+            description: contract.Description,
+            dateCreated: contract.DateCreated,
+            images: contract.Images,
+            amount: amount
+        );
     }
 }

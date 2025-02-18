@@ -8,7 +8,8 @@ public class ProductApiModel
         decimal price,
         string description,
         DateTime dateCreated,
-        List<ImageApiModel> images)
+        List<ImageApiModel> images,
+        int amount)
     {
         Id = id;
         Name = name;
@@ -16,6 +17,7 @@ public class ProductApiModel
         Description = description;
         DateCreated = dateCreated;
         Images = images;
+        Amount = amount;
     }
 
     public string Id { get; private set; }
@@ -24,4 +26,5 @@ public class ProductApiModel
     public string Description { get; set; }
     public DateTime DateCreated { get; private set; }
     public List<ImageApiModel> Images { get; set; }
+    public int Amount { get; set; }
 }

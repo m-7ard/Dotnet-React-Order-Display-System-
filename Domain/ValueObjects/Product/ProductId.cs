@@ -21,6 +21,12 @@ public class ProductId : ValueObject
         return new ProductId(value);
     }
 
+    public static OneOf<ProductId, string> TryCreate(Guid value)
+    {
+        var canCreate = CanCreate(value);
+        return canCreate.TryPickT1(out var error, out _) ? error : ExecuteCreate(value);
+    }
+
     public override IEnumerable<object> GetEqualityComponents()
     {
         yield return Value;

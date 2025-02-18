@@ -2,11 +2,11 @@ using Application.Handlers.Orders.Create;
 using Application.Interfaces.Persistence;
 using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.ProductExistsValidator;
+using Domain.Contracts.Products;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.Product;
-using Domain.ValueObjects.Shared;
 using Moq;
 using Tests.UnitTests.Utils;
 
@@ -15,6 +15,7 @@ namespace Tests.UnitTests.Application.Api.Orders;
 public class CreateOrderHandlerUnitTest
 {
     private readonly Mock<ISequenceService> _mockSequenceService;
+    private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly Mock<IProductExistsValidator<ProductId>> _mockProductExistsValidator;
     private readonly Mock<ILatestProductHistoryExistsValidator<ProductId>> _latestProductHistoryExistsByIdValidator;
@@ -27,6 +28,8 @@ public class CreateOrderHandlerUnitTest
     public CreateOrderHandlerUnitTest()
     {
         _mockOrderRepository = new Mock<IOrderRepository>();
+        _mockProductRepository = new Mock<IProductRepository>();
+
         _mockSequenceService = new Mock<ISequenceService>();
         _mockProductExistsValidator = new Mock<IProductExistsValidator<ProductId>>(); 
         _latestProductHistoryExistsByIdValidator = new Mock<ILatestProductHistoryExistsValidator<ProductId>>();
@@ -35,25 +38,28 @@ public class CreateOrderHandlerUnitTest
             productExistsValidator: _mockProductExistsValidator.Object,
             latestProductHistoryExistsValidator: _latestProductHistoryExistsByIdValidator.Object,
             orderRepository: _mockOrderRepository.Object,
-            sequenceService: _mockSequenceService.Object
+            sequenceService: _mockSequenceService.Object,
+            productRepository: _mockProductRepository.Object
         );
     
-        _mockProduct001 = ProductFactory.BuildExistingProduct(
-            id: ProductId.ExecuteCreate(Guid.NewGuid()),
+        _mockProduct001 = Product.ExecuteCreate(new CreateProductContract(
+            id: Guid.NewGuid(),
             name: "Product 1",
-            price: Money.ExecuteCreate(1),
+            price: 1,
             description: "description",
-            dateCreated: new DateTime(),
+            dateCreated: DateTime.UtcNow,
+            amount: 1,
             images: []
-        );
-        _mockProduct002 = ProductFactory.BuildExistingProduct(
-            id: ProductId.ExecuteCreate(Guid.NewGuid()),
+        ));
+        _mockProduct002 = Product.ExecuteCreate(new CreateProductContract(
+            id: Guid.NewGuid(),
             name: "Product 2",
-            price: Money.ExecuteCreate(2),
+            price: 2,
             description: "description",
-            dateCreated: new DateTime(),
+            dateCreated: DateTime.UtcNow,
+            amount: 2,
             images: []
-        );
+        ));
 
         _mockProductHistory001 = ProductHistoryFactory.BuildNewProductHistoryFromProduct(_mockProduct001);
         _mockProductHistory002 = ProductHistoryFactory.BuildNewProductHistoryFromProduct(_mockProduct002);
