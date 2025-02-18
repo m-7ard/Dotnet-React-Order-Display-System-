@@ -5,6 +5,7 @@ using Application.Validators;
 using Application.Validators.DraftImageExistsValidator;
 using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.ProductExistsValidator;
+using Domain.Contracts.Products;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Product;
@@ -54,13 +55,16 @@ public class UpdateProductHandlerUnitTest
             images: []
         );
 
-        var newMockProduct = ProductFactory.BuildExistingProduct(
-            id: oldMockProduct.Id,
-            name: "Product 1 Updated",
-            price: Money.ExecuteCreate(100),
-            description: "description updated",
-            images: oldMockProduct.Images,
-            dateCreated: oldMockProduct.DateCreated
+        var newMockProduct = Product.ExecuteCreate(
+            new CreateProductContract(
+                id: oldMockProduct.Id.Value,
+                name: "Product 1 Updated",
+                price: 100,
+                description: "description updated",
+                dateCreated: oldMockProduct.DateCreated,
+                amount: 1,
+                images: oldMockProduct.Images
+            )
         );
 
         var query = new UpdateProductCommand(
@@ -120,13 +124,16 @@ public class UpdateProductHandlerUnitTest
             images: [deleteProductImage, keepProductImage]
         );
 
-        var newMockProduct = ProductFactory.BuildExistingProduct(
-            id: oldMockProduct.Id,
-            name: "Product 1 Updated",
-            price: Money.ExecuteCreate(100),
-            description: "description updated",
-            images: [keepProductImage, newProductImage],
-            dateCreated: oldMockProduct.DateCreated
+        var newMockProduct = Product.ExecuteCreate(
+            new CreateProductContract(
+                id: oldMockProduct.Id.Value,
+                name: "Product 1 Updated",
+                price: 100,
+                description: "description updated",
+                dateCreated: oldMockProduct.DateCreated,
+                amount: 1,
+                images: [keepProductImage, newProductImage]
+            )
         );
 
         var query = new UpdateProductCommand(

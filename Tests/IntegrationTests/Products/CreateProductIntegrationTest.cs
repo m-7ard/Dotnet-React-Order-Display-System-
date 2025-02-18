@@ -28,7 +28,8 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
             name: "Product #1",
             price: (decimal)1.1,
             description: "description",
-            images: new List<string>()
+            images: new List<string>(),
+            amount: 1
         );
         var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
 
@@ -54,7 +55,8 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
             name: "Product #1",
             price: (decimal)123.12,
             description: "description",
-            images: images
+            images: images,
+            amount: 1
         );
         var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
     
@@ -79,7 +81,8 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
             name: "Product #1",
             price: (decimal)123.12,
             description: "description",
-            images: images
+            images: images,
+            amount: 1
         );
 
         var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
@@ -96,7 +99,8 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
             name: "Product #1",
             price: (decimal)123.12,
             description: "description",
-            images: images
+            images: images,
+            amount: 1
         );
 
         var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));

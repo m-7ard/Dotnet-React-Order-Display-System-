@@ -45,7 +45,8 @@ public class CreateProductHandlerUnitTest
             name: mockProduct.Name,
             price: mockProduct.Price.Value,
             description: mockProduct.Description,
-            images: []
+            images: [],
+            amount: 1
         );
 
         _mockProductRepository
@@ -77,7 +78,8 @@ public class CreateProductHandlerUnitTest
             name: mockProduct.Name,
             price: mockProduct.Price.Value,
             description: mockProduct.Description,
-            images: mockProduct.Images.Select(image => image.FileName.Value).ToList()
+            images: mockProduct.Images.Select(image => image.FileName.Value).ToList(),
+            amount: 1
         );
 
         SetupMockServices.SetupDraftImageExistsValidatorSuccess(_mockDraftImageExistsValidator, productImage1.FileName, DraftImageFactory.BuildNewDraftImage(
@@ -119,7 +121,8 @@ public class CreateProductHandlerUnitTest
             name: mockProduct.Name,
             price: mockProduct.Price.Value,
             description: mockProduct.Description,
-            images: ["invalid-file-extension.txt"]
+            images: ["invalid-file-extension.txt"],
+            amount: 1
         );
 
         // ACT

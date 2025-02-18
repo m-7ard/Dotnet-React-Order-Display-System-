@@ -1,14 +1,19 @@
 using Application.Common;
 using Application.Interfaces.Persistence;
+using Domain.Contracts.OrderItems;
+using Domain.Contracts.Orders;
+using Domain.Contracts.Products;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
+using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
 using Domain.ValueObjects.ProductImage;
 using Domain.ValueObjects.Shared;
 using Infrastructure;
 using Infrastructure.Interfaces;
+using Infrastructure.Migrations;
 using Infrastructure.Persistence;
 using Infrastructure.Querying;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -37,17 +42,19 @@ public class Mixins
     public async Task<Product> CreateProduct(int number, List<DraftImage> images)
     {
         var productId = Guid.NewGuid();
-        var product = ProductFactory.BuildNewProduct(
-            id: ProductId.ExecuteCreate(productId),
+        var product = Product.ExecuteCreate(new CreateProductContract(
+            id: productId,
             name: $"Product #{number}",
-            price: Money.ExecuteCreate(number),
+            price: number,
             description: $"Product #{number} Description",
+            dateCreated: DateTime.UtcNow,
+            amount: number,
             images: images.Select((image) => ProductImageFactory.BuildNewProductImageFromDraftImage(
                 source: image,
                 id: ProductImageId.ExecuteCreate(Guid.NewGuid()),
                 productId: ProductId.ExecuteCreate(productId)
             )).ToList()
-        );
+        ));
 
         await _productRepository.CreateAsync(product);
         var upToDateProduct = await _productRepository.GetByIdAsync(product.Id);
@@ -108,7 +115,18 @@ public class Mixins
                 throw new Exception("A Product's ProductHistory cannot be null when creating an Order because an Order's OrderItems need a non-null ProductHistoryId.");
             }
             
-            newOrder.ExecuteAddOrderItem(id: Guid.NewGuid(), product: product, productHistory: productHistory, quantity: seed, serialNumber: await _sequenceService.GetNextOrderItemValueAsync());
+            var contract = new AddOrderItemContract(
+                id: Guid.NewGuid(), 
+                product: product,
+                productHistory: productHistory, 
+                quantity: seed, 
+                status: OrderItemStatus.Pending.Name,
+                serialNumber: await _sequenceService.GetNextOrderItemValueAsync(),
+                dateCreated: DateTime.UtcNow,
+                dateFinished: null
+            );
+
+            newOrder.ExecuteAddOrderItem(contract);
         }
 
         await _orderRespository.CreateAsync(newOrder);

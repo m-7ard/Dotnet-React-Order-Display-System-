@@ -1,6 +1,7 @@
+using Domain.Contracts.OrderItems;
+using Domain.Contracts.Orders;
 using Domain.DomainEvents;
 using Domain.DomainEvents.Order;
-using Domain.DomainFactories;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Shared;
@@ -72,31 +73,28 @@ public class Order
         Status = newStatus;
     }
 
-    public OneOf<bool, string> CanAddOrderItem(Guid id, Product product, ProductHistory productHistory, int quantity)
+    public OneOf<bool, string> CanAddOrderItem(AddOrderItemContract contract)
     {
-        var canCreateOrderItemId = OrderItemId.CanCreate(id);
-        if (canCreateOrderItemId.TryPickT1(out var error, out _))
+        // Order Item
+        var createOrderItemContract = new CreateOrderItemContract(
+            id: contract.Id,
+            productId: contract.Product.Id,
+            productHistoryId: contract.ProductHistory.Id,
+            quantity: contract.Quantity,
+            status: contract.Status,
+            serialNumber: contract.SerialNumber,
+            dateCreated: contract.DateCreated,
+            dateFinished: contract.DateFinished
+        );
+
+        var canCreateOrderItem = OrderItem.CanCreate(createOrderItemContract);
+        if (canCreateOrderItem.TryPickT1(out var error, out _))
         {
             return error;
         }
 
-        var canCreateQuantity = Quantity.CanCreate(quantity);
-        if (canCreateQuantity.TryPickT1(out error, out _))
-        {
-            return error;
-        }
-
-        var canCreateTotal = Money.CanCreate(productHistory.Price.Value * quantity);
-        if (canCreateOrderItemId.TryPickT1(out error, out _))
-        {
-            return error;
-        }
-
-
-        if (product.Id != productHistory.ProductId)
-        {
-            return "Product History's Product Id does not match Product Id.";
-        }
+        var productHistory = contract.ProductHistory;
+        var product = contract.Product;
 
         if (!productHistory.IsValid())
         {
@@ -109,32 +107,50 @@ public class Order
             return "Product has already been added as an Order Item.";
         }
 
+        // Order
+        var canCreateTotal = Money.CanCreate(contract.ProductHistory.Price.Value * contract.Quantity);
+        if (canCreateTotal.TryPickT1(out error, out _))
+        {
+            return error;
+        }
+
+        var canLowerAmount = contract.Product.CanLowerAmount(contract.Quantity);
+        if (canLowerAmount.TryPickT1(out error, out _))
+        {
+            return error;
+        }
+
         return true;
     }
 
-    public OrderItemId ExecuteAddOrderItem(Guid id, Product product, ProductHistory productHistory, int quantity, int serialNumber) 
+    public OrderItemId ExecuteAddOrderItem(AddOrderItemContract contract) 
     {
-        var canAddOrderItemResult = CanAddOrderItem(id: id, product: product, productHistory: productHistory, quantity: quantity);
+        var canAddOrderItemResult = CanAddOrderItem(contract);
         if (canAddOrderItemResult.TryPickT1(out var error, out var _))
         {
             throw new Exception(error);
         }
 
-        var orderItem = OrderItemFactory.BuildNewOrderItem(
-            id: OrderItemId.ExecuteCreate(id),
-            orderId: Id,
-            quantity: Quantity.ExecuteCreate(quantity),
-            status: OrderItemStatus.Pending,
-            productHistoryId: productHistory.Id,
-            productId: productHistory.ProductId,
-            serialNumber: serialNumber
+        var createOrderItemContract = new CreateOrderItemContract(
+            id: contract.Id,
+            productId: contract.Product.Id,
+            productHistoryId: contract.ProductHistory.Id,
+            quantity: contract.Quantity,
+            status: contract.Status,
+            serialNumber: contract.SerialNumber,
+            dateCreated: contract.DateCreated,
+            dateFinished: contract.DateFinished
         );
 
-        var addAmount = Money.ExecuteCreate(productHistory.Price.Value * quantity);
-
-        Total += addAmount;
+        var orderItem = OrderItem.ExecuteCreate(createOrderItemContract);
         OrderItems.Add(orderItem);
         DomainEvents.Add(new OrderItemCreatedEvent(orderItem));
+
+        var productHistory = contract.ProductHistory;
+        var addAmount = Money.ExecuteCreate(productHistory.Price.Value * contract.Quantity);
+        Total += addAmount;
+
+        contract.Product.ExecuteLowerAmount(contract.Quantity);
 
         return orderItem.Id;
     }

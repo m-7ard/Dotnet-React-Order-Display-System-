@@ -1,4 +1,6 @@
 
+using Domain.Contracts.OrderItems;
+using Domain.Contracts.Products;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
@@ -13,19 +15,18 @@ public class Mixins
 {
     public static OrderItem CreateOrderItem(OrderId orderId, OrderItemStatus status, DateTime dateCreated, DateTime? dateFinished)
     {
-        return new OrderItem(
-            id: OrderItemId.ExecuteCreate(Guid.NewGuid()), 
-            quantity: Quantity.ExecuteCreate(1), 
-            status: status, 
-            orderItemDates: OrderItemDates.ExecuteCreate(
-                dateCreated: dateCreated, 
-                dateFinished: dateFinished
-            ),
-            orderId: orderId,
+        var contract = new CreateOrderItemContract(
+            id: Guid.NewGuid(), 
+            quantity: 1, 
+            status: status.Name, 
+            dateCreated: dateCreated, 
+            dateFinished: dateFinished,
             productHistoryId: ProductHistoryId.ExecuteCreate(Guid.NewGuid()), 
             productId: ProductId.ExecuteCreate(Guid.NewGuid()),
             serialNumber: 1
         );
+
+        return OrderItem.ExecuteCreate(contract);
     }
 
     public static ProductHistory CreateProductHistory(int seed)
@@ -46,14 +47,17 @@ public class Mixins
 
     public static Product CreateProduct(int seed, List<ProductImage> images)
     {
-        return new Product(
-            id: ProductId.ExecuteCreate(Guid.NewGuid()),
+        var contract = new CreateProductContract(
+            id: Guid.NewGuid(),
             dateCreated: new DateTime(),
             name: $"Product #{seed}",
-            price: Money.ExecuteCreate(seed),
+            price: seed,
             description: $"Product #{seed} description",
-            images: images
+            images: images,
+            amount: 1
         );
+
+        return Product.ExecuteCreate(contract);
     }
 
     public static ProductImage CreateProductImage(int seed)

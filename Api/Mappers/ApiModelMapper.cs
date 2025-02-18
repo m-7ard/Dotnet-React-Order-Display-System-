@@ -32,7 +32,8 @@ public class ApiModelMapper
             price: product.Price.Value,
             description: product.Description,
             dateCreated: TimeZoneService.ConvertUtcToLocalTime(product.DateCreated),
-            images: product.Images.Select(ProductImageToImageData).ToList()
+            images: product.Images.Select(ProductImageToImageData).ToList(),
+            amount: product.Amount.Value
         );
     }
 
@@ -50,7 +51,7 @@ public class ApiModelMapper
         );
     }
 
-    public static OrderItemApiModel OrderItemToApiModel(OrderItem orderItem, ProductHistory productHistory)
+    public static OrderItemApiModel OrderItemToApiModel(Order order, OrderItem orderItem, ProductHistory productHistory)
     {
         return new OrderItemApiModel(
             id: orderItem.Id.ToString(),
@@ -58,7 +59,7 @@ public class ApiModelMapper
             status: orderItem.Status.Name,
             dateCreated: TimeZoneService.ConvertUtcToLocalTime(orderItem.OrderItemDates.DateCreated),
             dateFinished: orderItem.OrderItemDates.DateFinished is null ? null : TimeZoneService.ConvertUtcToLocalTime(orderItem.OrderItemDates.DateFinished.Value),
-            orderId: orderItem.OrderId.Value.ToString(),
+            orderId: order.Id.Value.ToString(),
             productHistory: ProductHistoryToApiModel(productHistory),
             serialNumber: orderItem.SerialNumber
         );
