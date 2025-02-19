@@ -105,10 +105,10 @@ public class Mixins
         var order = await CreateNewOrder(products: products, seed: seed);
         foreach (var orderItem in order.OrderItems)
         {
-            orderItem.ExecuteTransitionStatus(OrderItemStatus.Finished.Name);
+            OrderDomainService.ExecuteMarkOrderItemFinished(order, orderItem.Id);
         }
         
-        order.ExecuteTransitionStatus(new TransitionStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: DateTime.UtcNow));
+        order.ExecuteTransitionStatus(new TransitionOrderStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: DateTime.UtcNow));
         await _orderRespository.UpdateAsync(order);
         return order;
     }
@@ -124,18 +124,16 @@ public class Mixins
                 throw new Exception("A Product's ProductHistory cannot be null when creating an Order because an Order's OrderItems need a non-null ProductHistoryId.");
             }
             
-            var contract = new AddOrderItemContract(
+            var contract = new AddNewOrderItemContract(
+                order: order,
                 id: Guid.NewGuid(), 
                 product: product,
                 productHistory: productHistory, 
                 quantity: seed, 
-                status: OrderItemStatus.Pending.Name,
-                serialNumber: await _sequenceService.GetNextOrderItemValueAsync(),
-                dateCreated: DateTime.UtcNow,
-                dateFinished: null
+                serialNumber: await _sequenceService.GetNextOrderItemValueAsync()
             );
 
-            order.ExecuteAddOrderItem(contract);
+            OrderDomainService.ExecuteAddNewOrderItem(contract);
         }
 
         await _orderRespository.CreateAsync(order);

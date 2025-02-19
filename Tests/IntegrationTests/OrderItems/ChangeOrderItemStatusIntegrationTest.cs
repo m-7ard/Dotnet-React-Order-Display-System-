@@ -53,7 +53,7 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
         Assert.NotNull(order);        
         var orderItem = order.ExecuteGetOrderItemById(OrderItemId.ExecuteCreate(Guid.Parse(content.OrderItemId)));
         Assert.NotNull(orderItem);        
-        Assert.Equal(OrderItemStatus.Finished, orderItem.Status);
+        Assert.Equal(OrderItemStatus.Finished, orderItem.Schedule.Status);
     }
 
     [Fact]

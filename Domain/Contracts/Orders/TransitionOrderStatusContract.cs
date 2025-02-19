@@ -1,8 +1,8 @@
 namespace Domain.Contracts.Orders;
 
-public class TransitionStatusContract
+public class TransitionOrderStatusContract
 {
-    public TransitionStatusContract(string status, DateTime dateCreated, DateTime? dateFinished)
+    public TransitionOrderStatusContract(string status, DateTime dateCreated, DateTime? dateFinished)
     {
         Status = status;
         DateCreated = dateCreated;

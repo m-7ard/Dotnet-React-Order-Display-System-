@@ -34,16 +34,15 @@ public class MarkOrderItemFinishedHandlerUnitTest
 
         _mockOrder = OrderDomainService.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: 1);
         var product = Mixins.CreateProduct(1, []);
-        var orderItemId = _mockOrder.ExecuteAddOrderItem(new AddOrderItemContract(
+        var contract = new AddNewOrderItemContract(
+            order: _mockOrder,
             id: Guid.NewGuid(), 
             product: product,
             productHistory: ProductHistoryFactory.BuildNewProductHistoryFromProduct(product),
-            quantity: 100,
-            serialNumber: 1,
-            status: OrderItemStatus.Pending.Name,
-            dateCreated: DateTime.UtcNow,
-            dateFinished: null
-         ));
+            quantity: 1,
+            serialNumber: 1
+        );
+        var orderItemId = OrderDomainService.ExecuteAddNewOrderItem(contract);
         _mockOrderItem = _mockOrder.ExecuteGetOrderItemById(orderItemId);
     }
 
@@ -63,7 +62,7 @@ public class MarkOrderItemFinishedHandlerUnitTest
 
         // ASSERT
         Assert.True(result.IsT0);
-        _mockOrderRepository.Verify(repo => repo.UpdateAsync(It.Is<Order>(d => d.OrderItems[0].Status == OrderItemStatus.Finished)), Times.Once);
+        _mockOrderRepository.Verify(repo => repo.UpdateAsync(It.Is<Order>(d => d.OrderItems[0].Schedule.Status == OrderItemStatus.Finished)), Times.Once);
     }
 
     [Fact]
@@ -108,7 +107,7 @@ public class MarkOrderItemFinishedHandlerUnitTest
     public async Task MarkOrderItemFinished_OrderItemAreadyFinished_Failure()
     {
         // ARRANGE
-        _mockOrderItem.ExecuteTransitionStatus(OrderItemStatus.Finished.Name);
+        OrderDomainService.ExecuteMarkOrderItemFinished(_mockOrder, _mockOrderItem.Id);
         
         var command = new MarkOrderItemFinishedCommand(
             orderId: _mockOrder.Id.Value,

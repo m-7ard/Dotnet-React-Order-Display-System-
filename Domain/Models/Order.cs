@@ -38,7 +38,7 @@ public class Order
         { OrderStatus.Finished, [] },
     };
 
-    public OneOf<bool, string> CanTransitionStatus(TransitionStatusContract contract)
+    public OneOf<bool, string> CanTransitionStatus(TransitionOrderStatusContract contract)
     {
         // OrderStatus
         var canCreateStatus = OrderStatus.CanCreate(contract.Status);
@@ -68,7 +68,7 @@ public class Order
         return true;
     }
 
-    public void ExecuteTransitionStatus(TransitionStatusContract contract)
+    public void ExecuteTransitionStatus(TransitionOrderStatusContract contract)
     {
         var canTransitionStatus = CanTransitionStatus(contract);
         if (canTransitionStatus.IsT1)
@@ -80,6 +80,19 @@ public class Order
         var newOrderDates = OrderDates.ExecuteCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished); 
         var newSchedule = OrderSchedule.ExecuteCreate(newStatus, newOrderDates);
         OrderSchedule = newSchedule;
+    }
+
+    public OneOf<bool, string> CanTransitionOrderItem(OrderItemId id, TransitionOrderItemStatusContract contract)
+    {
+        var tryGetResult = TryGetOrderItemById(id);
+        if (tryGetResult.IsT1) return tryGetResult.AsT1;
+
+        var orderItem = tryGetResult.AsT0;
+
+        var canTransitionStatusResult = orderItem.CanTransitionStatus(contract);
+        if (canTransitionStatusResult.IsT1) return canTransitionStatusResult.AsT1;
+
+        return true;
     }
 
     public OneOf<bool, string> CanAddOrderItem(AddOrderItemContract contract)
