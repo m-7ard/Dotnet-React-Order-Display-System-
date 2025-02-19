@@ -1,14 +1,13 @@
 using Application.Errors;
 using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
-using Application.Validators;
 using Application.Validators.DraftImageExistsValidator;
 using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.ProductExistsValidator;
+using Domain.Contracts.Products;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Product;
-using Domain.ValueObjects.ProductImage;
 using Domain.ValueObjects.Shared;
 using MediatR;
 using OneOf;
@@ -39,7 +38,7 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
         var canCreateProductId = ProductId.CanCreate(request.Id);
         if (canCreateProductId.TryPickT1(out var error, out var _))
         {
-            return ApplicationErrorFactory.CreateSingleListError(message: error, path: [], code: GeneralApplicationErrorCodes.OPERATION_FAILED);
+            return new OperationFailedError(message: error, path: []).AsList();
         }
 
         var productId = ProductId.ExecuteCreate(request.Id);
@@ -100,7 +99,7 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
                 continue;
             }
 
-            var productImageId = product.ExecuteAddProductImage(id: productImageIdGuid, fileName: fileName, originalFileName: draftImage.OriginalFileName.Value, url: draftImage.Url);
+            product.ExecuteAddProductImage(id: productImageIdGuid, fileName: fileName, originalFileName: draftImage.OriginalFileName.Value, url: draftImage.Url);
             draftsUsed.Add(draftImage);
         }
 
@@ -109,17 +108,25 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
             return imageErrors;
         }
 
-        var canCreatePrice = Money.CanCreate(request.Price);
-        if (canCreatePrice.TryPickT1(out error, out _))
+        // Delete old images
+        imagesToDelete.ForEach(image => product.ExecuteDeleteProductImage(image.Id));
+        
+        // Update properties
+        var contract = new UpdateProductContract(
+            id: productId.Value,
+            name: request.Name,
+            price: request.Price,
+            description: request.Description,
+            amount: product.Amount.Value
+        );
+
+        var canUpdate = product.CanUpdate(contract);
+        if (canUpdate.TryPickT1(out error, out _))
         {
-            return new NotAllowedError(error, []).AsList();
+            return new NotAllowedError(message: error, path: []).AsList();
         }
 
-        // Delete old image & update properties
-        imagesToDelete.ForEach(image => product.ExecuteDeleteProductImage(image.Id));
-        product.Description = request.Description;
-        product.Name = request.Name;
-        product.Price = Money.ExecuteCreate(request.Price);
+        product.ExecuteUpdate(contract);
         await _productRepository.UpdateAsync(product);
 
         // Delete used drafts

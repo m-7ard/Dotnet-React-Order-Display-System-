@@ -1,7 +1,5 @@
-using Application.Errors;
 using Application.Handlers.Products.Update;
 using Application.Interfaces.Persistence;
-using Application.Validators;
 using Application.Validators.DraftImageExistsValidator;
 using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.ProductExistsValidator;
@@ -12,7 +10,6 @@ using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductImage;
 using Domain.ValueObjects.Shared;
 using Moq;
-using OneOf;
 using Tests.UnitTests.Utils;
 
 namespace Tests.UnitTests.Application.Api.Products;

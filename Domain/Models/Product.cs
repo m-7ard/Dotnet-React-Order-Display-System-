@@ -93,40 +93,6 @@ public class Product
         return productImageId;
     }
 
-    public void UpdateImages(List<ProductImage> newImages)
-    {
-        var currentImagesById = Images.ToDictionary(
-            image => image.Id,
-            image => image
-        );
-        var updatedImagesById = newImages.ToDictionary(
-            image => image.Id,
-            image => image
-        );
-
-        // Iterate over the currently existing image
-        foreach (var (id, image) in currentImagesById)
-        {
-            // image no longer exists
-            if (!updatedImagesById.ContainsKey(id))
-            {
-                DomainEvents.Add(new ProductImagePendingDeletionEvent(image));
-            }
-        }
-
-        // Iterate over the new images value
-        foreach (var (id, image) in updatedImagesById)
-        {
-            // image does not yet exist
-            if (!currentImagesById.ContainsKey(id))
-            {
-                DomainEvents.Add(new ProductImagePendingCreationEvent(image));
-            }
-        }
-
-        Images = newImages;
-    }
-
     public ProductImage? FindProductImageByFileName(FileName productImageFileName)
     {
         return Images.Find(image => Equals(image.FileName, productImageFileName));
@@ -243,5 +209,31 @@ public class Product
             images: contract.Images,
             amount: amount
         );
+    }
+
+    public OneOf<bool, string> CanUpdate(UpdateProductContract contract)
+    {
+        var canCreateId = ProductId.CanCreate(contract.Id);
+        if (canCreateId.TryPickT1(out var error, out _)) return error;
+
+        var canCreateAmount = Quantity.CanCreate(contract.Amount);
+        if (canCreateAmount.TryPickT1(out error, out _)) return error;
+
+        var canCreatePrice = Money.CanCreate(contract.Price);
+        if (canCreatePrice.TryPickT1(out error, out _)) return error;
+
+        return true;
+    }
+
+    public void ExecuteUpdate(UpdateProductContract contract)
+    {
+        var canUpdate = CanUpdate(contract);
+        if (canUpdate.TryPickT1(out var error, out _)) throw new Exception(error);
+        
+        Id = ProductId.ExecuteCreate(contract.Id);
+        Name = contract.Name;
+        Price = Money.ExecuteCreate(contract.Price);
+        Description = contract.Description;
+        Amount = Quantity.ExecuteCreate(contract.Amount);
     }
 }

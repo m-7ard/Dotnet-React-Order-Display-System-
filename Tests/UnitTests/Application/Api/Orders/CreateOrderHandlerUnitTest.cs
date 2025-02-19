@@ -106,7 +106,7 @@ public class CreateOrderHandlerUnitTest
         var command = new CreateOrderCommand(
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id.Value, quantity: 1) },
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProduct001.Id.Value, quantity: 1) },
             }
         );
         
@@ -126,7 +126,28 @@ public class CreateOrderHandlerUnitTest
         var command = new CreateOrderCommand(
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
-                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProductHistory001.Id.Value, quantity: 1) },
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProduct001.Id.Value, quantity: 1) },
+            }
+        );
+
+        SetupMockServices.SetupProductExistsValidatorSuccess(_mockProductExistsValidator, _mockProduct001.Id, _mockProduct001);
+        SetupMockServices.SetupLatestProductHistoryExistsValidatorFailure(_latestProductHistoryExistsByIdValidator);
+
+        // ACT
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // ASSERT
+        Assert.True(result.IsT1);
+    }
+
+    [Fact]
+    public async Task CreateOrder_QuantityTooLarge_Failure_Failure()
+    {
+        // ARRANGE
+        var command = new CreateOrderCommand(
+            orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
+            {
+                { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProduct001.Id.Value, quantity: _mockProduct001.Amount.Value + 1) },
             }
         );
 

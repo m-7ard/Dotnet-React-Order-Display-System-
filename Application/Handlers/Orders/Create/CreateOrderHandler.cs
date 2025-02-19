@@ -3,7 +3,6 @@ using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
 using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.ProductExistsValidator;
-using Domain.Contracts.OrderItems;
 using Domain.Contracts.Orders;
 using Domain.DomainFactories;
 using Domain.Models;

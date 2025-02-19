@@ -117,7 +117,7 @@ public class Order
         var canLowerAmount = contract.Product.CanLowerAmount(contract.Quantity);
         if (canLowerAmount.TryPickT1(out error, out _))
         {
-            return error;
+            return $"Order Item quantity ({contract.Quantity}) cannot be larger than Product amount ({product.Amount})";
         }
 
         return true;
