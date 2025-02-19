@@ -62,7 +62,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
         Assert.NotNull(order);
         Assert.NotEmpty(order.OrderItems);
 
-        Assert.Equal(OrderStatus.Pending, order.Status);
+        Assert.Equal(OrderStatus.Pending, order.OrderSchedule.Status);
         Assert.StrictEqual(2, order.OrderItems.Count);
 
         Assert.True(order.OrderItems.All(item => item.Status == OrderItemStatus.Pending));

@@ -11,21 +11,19 @@ namespace Domain.Models;
 
 public class Order
 {
-    public Order(OrderId id, Money total, List<OrderItem> orderItems, OrderStatus status, int serialNumber, OrderDates orderDates)
+    public Order(OrderId id, int serialNumber, Money total, OrderSchedule orderSchedule, List<OrderItem> orderItems)
     {
         Id = id;
-        Total = total;
-        OrderItems = orderItems;
-        Status = status;
         SerialNumber = serialNumber;
-        OrderDates = orderDates;
+        Total = total;
+        OrderSchedule = orderSchedule;
+        OrderItems = orderItems;
     }
 
     public OrderId Id { get; private set; }
     public int SerialNumber { get; private set; }
     public Money Total { get; set; }
-    public OrderStatus Status { get; set; }
-    public OrderDates OrderDates { get; set; }
+    public OrderSchedule OrderSchedule { get; set; }
     public List<OrderItem> OrderItems { get; set; }
 
     public List<DomainEvent> DomainEvents { get; set; } = [];
@@ -34,43 +32,54 @@ public class Order
         DomainEvents = [];
     }
 
-    private Dictionary<string, List<OrderStatus>> ValidStatusStatusTransitions = new Dictionary<string, List<OrderStatus>>()
+    private readonly Dictionary<OrderStatus, List<OrderStatus>> _validStatusStatusTransitions = new()
     {
-        { OrderStatus.Pending.Name, [OrderStatus.Finished] },
-        { OrderStatus.Finished.Name, [] },
+        { OrderStatus.Pending, [OrderStatus.Finished] },
+        { OrderStatus.Finished, [] },
     };
-    
-    public OneOf<OrderStatus, string> CanTransitionStatus(string value)
+
+    public OneOf<bool, string> CanTransitionStatus(TransitionStatusContract contract)
     {
-        var statusCreationResult = OrderStatus.CanCreate(value);
-        if (statusCreationResult.TryPickT1(out var errors, out var _))
-        {
-            return errors;
-        }
+        // OrderStatus
+        var canCreateStatus = OrderStatus.CanCreate(contract.Status);
+        if (canCreateStatus.IsT1) return canCreateStatus.AsT1;
 
-        if (!ValidStatusStatusTransitions.TryGetValue(Status.Name, out var transitionList))
-        {
-            return $"Invalid status transition from {Status.Name} to {value}.";
-        }
+        var newStatus = OrderStatus.ExecuteCreate(contract.Status);
 
-        var newStatusObject = transitionList.Find(status => status.Name == value); 
-        if (newStatusObject is null)
-        {
-            return $"Invalid status transition from {Status.Name} to {value}.";
-        }
+        var currentStatus = OrderSchedule.Status;
+        if (!_validStatusStatusTransitions.TryGetValue(currentStatus, out var transitionList)) return $"No transitions exist for status \"{currentStatus}\".";
 
-        return newStatusObject;
+        var transitionExists = transitionList.Exists(status => status == newStatus); 
+        if (!transitionExists) return $"Invalid status transition from {currentStatus} to {newStatus}.";
+
+
+        // OrderDates
+        var canCreateDates = OrderDates.CanCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished);
+        if (canCreateDates.IsT1) return canCreateDates.AsT1;
+
+        var newOrderDates = OrderDates.ExecuteCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished); 
+
+
+        // OrderSchedule
+        var canCreateSchedule = OrderSchedule.CanCreate(newStatus, newOrderDates);
+        if (canCreateSchedule.IsT1) return canCreateSchedule.AsT1;
+
+
+        return true;
     }
 
-    public void ExecuteTransitionStatus(string value)
+    public void ExecuteTransitionStatus(TransitionStatusContract contract)
     {
-        var canTransitionStatus = CanTransitionStatus(value);
-        if (canTransitionStatus.TryPickT1(out var error, out var newStatus))
+        var canTransitionStatus = CanTransitionStatus(contract);
+        if (canTransitionStatus.IsT1)
         {
-            throw new Exception(error);
+            throw new Exception(canTransitionStatus.AsT1);
         }
 
-        Status = newStatus;
+        var newStatus = OrderStatus.ExecuteCreate(contract.Status);
+        var newOrderDates = OrderDates.ExecuteCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished); 
+        var newSchedule = OrderSchedule.ExecuteCreate(newStatus, newOrderDates);
+        OrderSchedule = newSchedule;
     }
 
     public OneOf<bool, string> CanAddOrderItem(AddOrderItemContract contract)
@@ -175,5 +184,45 @@ public class Order
         }
 
         return orderItem;
+    }
+
+    public static OneOf<bool, string> CanCreate(CreateOrderContract contract)
+    {
+        var canCreateId = OrderId.CanCreate(contract.Id);
+        if (canCreateId.IsT1) return canCreateId.AsT1;
+
+        var canCreateTotal = Money.CanCreate(contract.Total);
+        if (canCreateTotal.IsT1) return canCreateTotal.AsT1;
+        
+        var canCreateStatus = OrderStatus.CanCreate(contract.Status);
+        if (canCreateStatus.IsT1) return canCreateStatus.AsT1;
+        
+        var canCreateDates = OrderDates.CanCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished);
+        if (canCreateDates.IsT1) return canCreateDates.AsT1;
+
+        // Relationships
+        var status = OrderStatus.ExecuteCreate(contract.Status);
+        var dates = OrderDates.ExecuteCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished);
+        var canCreateSchedule = OrderSchedule.CanCreate(status: status, dates: dates);
+        if (canCreateSchedule.IsT1) return canCreateSchedule.AsT1;
+        
+        return true;
+    }
+
+    public static Order ExecuteCreate(CreateOrderContract contract)
+    {
+        var id = OrderId.ExecuteCreate(contract.Id);
+        var total = Money.ExecuteCreate(contract.Total);
+        var status = OrderStatus.ExecuteCreate(contract.Status);
+        var dates = OrderDates.ExecuteCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished);
+        var schedule = OrderSchedule.ExecuteCreate(status: status, dates: dates);
+
+        return new Order(
+            id: id,
+            serialNumber: contract.SerialNumber,
+            total: total,
+            orderSchedule: schedule,
+            orderItems: contract.OrderItems
+        );
     }
 }

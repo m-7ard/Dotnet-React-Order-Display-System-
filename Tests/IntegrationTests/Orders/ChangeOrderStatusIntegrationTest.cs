@@ -25,9 +25,8 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
         var mixins = CreateMixins();
         _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
         _product002 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
-        _order001 = await mixins.CreateOrder(
+        _order001 = await mixins.CreateNewOrder(
             products: new List<Product>() { _product001, _product002 },
-            orderStatus: OrderStatus.Pending,
             seed: 1
         );
     }
@@ -59,7 +58,7 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
         var order = await newRepo.GetByIdAsync(OrderId.ExecuteCreate(Guid.Parse(content.OrderId)));
         Assert.NotNull(order);
 
-        Assert.Equal(OrderStatus.Finished, order.Status);
+        Assert.Equal(OrderStatus.Finished, order.OrderSchedule.Status);
     }
 
     [Fact]

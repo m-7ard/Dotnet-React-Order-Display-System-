@@ -42,24 +42,8 @@ public class CreateOrderHandlerUnitTest
             productRepository: _mockProductRepository.Object
         );
     
-        _mockProduct001 = Product.ExecuteCreate(new CreateProductContract(
-            id: Guid.NewGuid(),
-            name: "Product 1",
-            price: 1,
-            description: "description",
-            dateCreated: DateTime.UtcNow,
-            amount: 1,
-            images: []
-        ));
-        _mockProduct002 = Product.ExecuteCreate(new CreateProductContract(
-            id: Guid.NewGuid(),
-            name: "Product 2",
-            price: 2,
-            description: "description",
-            dateCreated: DateTime.UtcNow,
-            amount: 2,
-            images: []
-        ));
+        _mockProduct001 = Mixins.CreateProduct(1, []);
+        _mockProduct002 = Mixins.CreateProduct(2, []);
 
         _mockProductHistory001 = ProductHistoryFactory.BuildNewProductHistoryFromProduct(_mockProduct001);
         _mockProductHistory002 = ProductHistoryFactory.BuildNewProductHistoryFromProduct(_mockProduct002);
@@ -74,7 +58,8 @@ public class CreateOrderHandlerUnitTest
             {
                 { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProduct001.Id.Value, quantity: 1) },
                 { "UID-2", new CreateOrderCommand.OrderItem(productId: _mockProduct002.Id.Value, quantity: 2) }
-            }
+            },
+            id: Guid.NewGuid()
         );
 
         var total = _mockProduct001.Price + _mockProduct002.Price * 2;
@@ -96,7 +81,7 @@ public class CreateOrderHandlerUnitTest
         _mockOrderRepository
             .Verify(repo => repo.CreateAsync(It.Is<Order>(order => order.Total == total)), Times.Once);
         _mockOrderRepository
-            .Verify(repo => repo.CreateAsync(It.Is<Order>(order => order.Status == OrderStatus.Pending)), Times.Once);
+            .Verify(repo => repo.CreateAsync(It.Is<Order>(order => order.OrderSchedule.Status == OrderStatus.Pending)), Times.Once);
     }
 
     [Fact]
@@ -107,7 +92,8 @@ public class CreateOrderHandlerUnitTest
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
                 { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProduct001.Id.Value, quantity: 1) },
-            }
+            },
+            id: Guid.NewGuid()
         );
         
         SetupMockServices.SetupProductExistsValidatorFailure(_mockProductExistsValidator);
@@ -127,7 +113,8 @@ public class CreateOrderHandlerUnitTest
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
                 { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProduct001.Id.Value, quantity: 1) },
-            }
+            },
+            id: Guid.NewGuid()
         );
 
         SetupMockServices.SetupProductExistsValidatorSuccess(_mockProductExistsValidator, _mockProduct001.Id, _mockProduct001);
@@ -148,7 +135,8 @@ public class CreateOrderHandlerUnitTest
             orderItemData: new Dictionary<string, CreateOrderCommand.OrderItem>() 
             {
                 { "UID-1", new CreateOrderCommand.OrderItem(productId: _mockProduct001.Id.Value, quantity: _mockProduct001.Amount.Value + 1) },
-            }
+            },
+            id: Guid.NewGuid()
         );
 
         SetupMockServices.SetupProductExistsValidatorSuccess(_mockProductExistsValidator, _mockProduct001.Id, _mockProduct001);

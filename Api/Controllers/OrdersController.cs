@@ -70,6 +70,7 @@ public class OrdersController : ControllerBase
             return BadRequest(errors);
         }
 
+        var id = Guid.NewGuid();
         var command = new CreateOrderCommand
         (
             orderItemData: request.OrderItemData.ToDictionary(
@@ -78,16 +79,18 @@ public class OrdersController : ControllerBase
                     productId: kvp.Value.ProductId,
                     quantity: kvp.Value.Quantity
                 )
-            )
+            ),
+            id: id
         );
 
         var result = await _mediator.Send(command);
-        if (result.TryPickT1(out var handlerErrors, out var value))
+        if (result.IsT1)
         {
+            var handlerErrors = result.AsT1;
             return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(handlerErrors));
         }
 
-        var respone = new CreateOrderResponseDTO(orderId: value.OrderId.Value.ToString());
+        var respone = new CreateOrderResponseDTO(orderId: id.ToString());
         return StatusCode(StatusCodes.Status201Created, respone);
     }
 

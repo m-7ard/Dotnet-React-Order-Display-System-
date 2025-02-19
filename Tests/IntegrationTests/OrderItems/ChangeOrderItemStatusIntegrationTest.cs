@@ -26,9 +26,8 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
         var mixins = CreateMixins();
         _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
         _product002 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
-        _order001 = await mixins.CreateOrder(
+        _order001 = await mixins.CreateNewOrder(
             products: new List<Product>() { _product001, _product002 },
-            orderStatus: OrderStatus.Pending,
             seed: 1
         );
         _orderItem001 = _order001.OrderItems.Find(orderItem => orderItem.ProductId == _product001.Id)!; 

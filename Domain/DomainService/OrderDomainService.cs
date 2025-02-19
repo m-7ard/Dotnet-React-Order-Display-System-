@@ -1,3 +1,4 @@
+using Domain.Contracts.Orders;
 using Domain.DomainEvents.Order;
 using Domain.Models;
 using Domain.ValueObjects.Order;
@@ -6,27 +7,46 @@ using OneOf;
 
 namespace Domain.DomainService;
 
-public class OrderDomainService
+public static class OrderDomainService
 {
+    public static OneOf<bool, string> CanCreateNewOrder(Guid id, int serialNumber)
+    {
+        var contract = new CreateOrderContract(
+            id: id,
+            serialNumber: serialNumber,
+            total: 0,
+            status: OrderItemStatus.Pending.Name,
+            dateCreated: DateTime.UtcNow,
+            dateFinished: null,
+            orderItems: []
+        );
+
+        return Order.CanCreate(contract);
+    }
+
+    public static Order ExecuteCreateNewOrder(Guid id, int serialNumber)
+    {
+        var contract = new CreateOrderContract(
+            id: id,
+            serialNumber: serialNumber,
+            total: 0,
+            status: OrderItemStatus.Pending.Name,
+            dateCreated: DateTime.UtcNow,
+            dateFinished: null,
+            orderItems: []
+        );
+
+        return Order.ExecuteCreate(contract);
+    }
+
     public static OneOf<bool, string> CanMarkFinished(Order order)
     {
-        var canTransitionStatusResult = order.CanTransitionStatus(OrderStatus.Finished.Name);
-        if (canTransitionStatusResult.TryPickT1(out var error, out var _))
-        {
-            return error;
-        }
-
-        var canCreateOrderDates = OrderDates.CanCreate(dateCreated: order.OrderDates.DateCreated, dateFinished: DateTime.UtcNow);
-        if (canCreateOrderDates.TryPickT1(out error, out _))
-        {
-            return error;
-        }
+        var contract = new TransitionStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: DateTime.UtcNow);
+        var canTransitionStatusResult = order.CanTransitionStatus(contract);
+        if (canTransitionStatusResult.IsT1) return canTransitionStatusResult.AsT1;
 
         var allOrderItemAreFinished = order.OrderItems.All(orderItem => orderItem.Status == OrderItemStatus.Finished);
-        if (!allOrderItemAreFinished)
-        {
-            return "All order items must be finished in order to mark the order as finished.";
-        }
+        if (!allOrderItemAreFinished) return "All order items must be finished in order to mark the order as finished.";
 
         return true;
     }
@@ -34,17 +54,12 @@ public class OrderDomainService
     public static DateTime ExecuteMarkFinished(Order order)
     {
         var canMarkFinished = CanMarkFinished(order);
-        if (canMarkFinished.TryPickT1(out var error, out var _))
-        {
-            throw new Exception(error);
-        }
+        if (canMarkFinished.IsT1) throw new Exception(canMarkFinished.AsT1);
 
-        order.ExecuteTransitionStatus(OrderStatus.Finished.Name);
-        
         var dateFinished = DateTime.UtcNow;
-        var orderDates = OrderDates.ExecuteCreate(dateCreated: order.OrderDates.DateCreated, dateFinished: dateFinished);
-        order.OrderDates = orderDates;
-
+        var contract = new TransitionStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: dateFinished);
+        order.ExecuteTransitionStatus(contract);
+        
         return dateFinished;
     }
 

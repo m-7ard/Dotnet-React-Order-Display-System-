@@ -6,11 +6,13 @@ namespace Application.Handlers.Orders.Create;
 
 public class CreateOrderCommand : IRequest<OneOf<CreateOrderResult, List<ApplicationError>>>
 {
-    public CreateOrderCommand(Dictionary<string, OrderItem> orderItemData)
+    public CreateOrderCommand(Dictionary<string, OrderItem> orderItemData, Guid id)
     {
         OrderItemData = orderItemData;
+        Id = id;
     }
 
+    public Guid Id { get; set; }
     public Dictionary<string, OrderItem> OrderItemData { get; set; }
 
     public class OrderItem
