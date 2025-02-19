@@ -5,6 +5,7 @@ using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.ProductExistsValidator;
 using Domain.Contracts.Orders;
 using Domain.DomainFactories;
+using Domain.DomainService;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
@@ -33,17 +34,20 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
 
     public async Task<OneOf<CreateOrderResult, List<ApplicationError>>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        var validationErrors = new List<ApplicationError>();
-        var order = OrderFactory.BuildNewOrder(
-            id: OrderId.ExecuteCreate(Guid.NewGuid()),
-            status: OrderStatus.Pending,
-            serialNumber: await _sequenceService.GetNextOrderValueAsync()
-        );
+        // Create New Order 
+        var serialNumber = await _sequenceService.GetNextOrderValueAsync();
+        var canCreateOrder = OrderDomainService.CanCreateNewOrder(id: request.Id, serialNumber: serialNumber);
+        if (canCreateOrder.IsT1) return new CannotCreateOrderError(message: canCreateOrder.AsT1, path: []).AsList();
 
+        var order = OrderDomainService.ExecuteCreateNewOrder(id: request.Id, serialNumber: serialNumber);
+
+        // Create Order Items
         var updatedProducts = new List<Product>();
+        var validationErrors = new List<ApplicationError>();
 
         foreach (var (uid, orderItem) in request.OrderItemData)
         {
+            // Product Exists
             var canCreateProductId = ProductId.TryCreate(orderItem.ProductId);
             if (canCreateProductId.TryPickT1(out var error, out var productId))
             {
@@ -58,6 +62,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
                 continue;
             }
 
+            // Product History Exists
             var latestProductHistoryExistsResult = await _latestProductHistoryExistsValidator.Validate(ProductId.ExecuteCreate(orderItem.ProductId));
             if (latestProductHistoryExistsResult.TryPickT1(out errors, out var productHistory))
             {
@@ -65,7 +70,8 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
                 continue;
             }
             
-            var contract = new AddOrderItemContract(
+            // Add Order Item
+            var addOrderItemContract = new AddOrderItemContract(
                 id: Guid.NewGuid(), 
                 product: product, 
                 productHistory: productHistory, 
@@ -76,7 +82,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
                 dateFinished: null
             );
 
-            var canAddOrderItem = order.CanAddOrderItem(contract);
+            var canAddOrderItem = order.CanAddOrderItem(addOrderItemContract);
             if (canAddOrderItem.TryPickT1(out error, out var _))
             {
                 var applicationError = new ApplicationError(message: error, code: GeneralApplicationErrorCodes.NOT_ALLOWED, path: [uid]);
@@ -84,7 +90,9 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
                 continue;
             }
 
-            order.ExecuteAddOrderItem(contract);
+            order.ExecuteAddOrderItem(addOrderItemContract);
+
+            // Update Later
             updatedProducts.Add(product);
         }
 
@@ -100,6 +108,6 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             await _productRepository.UpdateAsync(product);
         }
 
-        return new CreateOrderResult(orderId: order.Id);
+        return new CreateOrderResult();
     }
 }

@@ -1,6 +1,8 @@
 
 using Domain.Contracts.OrderItems;
+using Domain.Contracts.Orders;
 using Domain.Contracts.Products;
+using Domain.DomainService;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
@@ -70,5 +72,22 @@ public class Mixins
             dateCreated: new DateTime(),
             productId: ProductId.ExecuteCreate(Guid.NewGuid())
         );
+    }
+
+    public static Order CreateNewOrderWithItem(int seed, Product product, ProductHistory productHistory)
+    {
+        var order = OrderDomainService.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: 1);
+        order.ExecuteAddOrderItem(new AddOrderItemContract(
+            id: Guid.NewGuid(), 
+            product: product,
+            productHistory: productHistory,
+            quantity: 1,
+            serialNumber: seed,
+            status: OrderItemStatus.Pending.Name,
+            dateCreated: DateTime.UtcNow,
+            dateFinished: null
+        ));
+
+        return order;
     }
 }

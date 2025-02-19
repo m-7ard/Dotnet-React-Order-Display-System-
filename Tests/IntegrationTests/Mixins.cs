@@ -4,6 +4,7 @@ using Domain.Contracts.OrderItems;
 using Domain.Contracts.Orders;
 using Domain.Contracts.Products;
 using Domain.DomainFactories;
+using Domain.DomainService;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
@@ -100,12 +101,20 @@ public class Mixins
         return menuItemImage;
     }
 
-    public async Task<Order> CreateOrder(List<Product> products, int seed, OrderStatus orderStatus) {
-        var newOrder = OrderFactory.BuildNewOrder(
-            id: OrderId.ExecuteCreate(Guid.NewGuid()),
-            status: orderStatus,
-            serialNumber: await _sequenceService.GetNextOrderValueAsync()
-        );
+    public async Task<Order> CreateFinishedOrder(List<Product> products, int seed) {
+        var order = await CreateNewOrder(products: products, seed: seed);
+        foreach (var orderItem in order.OrderItems)
+        {
+            orderItem.ExecuteTransitionStatus(OrderItemStatus.Finished.Name);
+        }
+        
+        order.ExecuteTransitionStatus(new TransitionStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: DateTime.UtcNow));
+        await _orderRespository.UpdateAsync(order);
+        return order;
+    }
+
+    public async Task<Order> CreateNewOrder(List<Product> products, int seed) {
+        var order = OrderDomainService.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: await _sequenceService.GetNextOrderValueAsync());
 
         foreach (var product in products)
         {
@@ -126,11 +135,11 @@ public class Mixins
                 dateFinished: null
             );
 
-            newOrder.ExecuteAddOrderItem(contract);
+            order.ExecuteAddOrderItem(contract);
         }
 
-        await _orderRespository.CreateAsync(newOrder);
-        var insertedOrder = await _orderRespository.GetByIdAsync(newOrder.Id);
+        await _orderRespository.CreateAsync(order);
+        var insertedOrder = await _orderRespository.GetByIdAsync(order.Id);
         if (insertedOrder is null)
         {
             throw new Exception("Order was not inserted.");
