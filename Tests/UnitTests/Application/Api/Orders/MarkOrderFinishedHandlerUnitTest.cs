@@ -34,16 +34,15 @@ public class MarkOrderFinishedHandlerUnitTest
         
         var product = Mixins.CreateProduct(1, []);
         _mockOrder = OrderDomainService.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: 1);
-        var orderItemId = _mockOrder.ExecuteAddOrderItem(new AddOrderItemContract(
+        var contract = new AddNewOrderItemContract(
+            order: _mockOrder,
             id: Guid.NewGuid(), 
             product: product,
             productHistory: ProductHistoryFactory.BuildNewProductHistoryFromProduct(product),
-            quantity: 100,
-            serialNumber: 1,
-            status: OrderItemStatus.Pending.Name,
-            dateCreated: DateTime.UtcNow,
-            dateFinished: null
-         ));
+            quantity: 1,
+            serialNumber: 1
+        );
+        var orderItemId = OrderDomainService.ExecuteAddNewOrderItem(contract);
         _mockOrderItem = _mockOrder.ExecuteGetOrderItemById(orderItemId);
     }
 
@@ -51,7 +50,7 @@ public class MarkOrderFinishedHandlerUnitTest
     public async Task MarkOrderFinished_ValidData_Success()
     {
         // ARRANGE
-        _mockOrderItem.ExecuteTransitionStatus(OrderItemStatus.Finished.Name);
+        OrderDomainService.ExecuteMarkOrderItemFinished(_mockOrder, _mockOrderItem.Id);
 
         var command = new MarkOrderFinishedCommand(
             orderId: _mockOrder.Id.Value
@@ -109,7 +108,7 @@ public class MarkOrderFinishedHandlerUnitTest
         );
         _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT1([]));
 
-        _mockOrderItem.ExecuteTransitionStatus(OrderItemStatus.Finished.Name);
+        OrderDomainService.ExecuteMarkOrderItemFinished(_mockOrder, _mockOrderItem.Id);
         OrderDomainService.ExecuteMarkFinished(_mockOrder);
 
         SetupMockServices.SetupOrderExistsValidatorSuccess(_mockOrderExistsValidator, _mockOrder.Id, _mockOrder);

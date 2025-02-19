@@ -71,26 +71,24 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             }
             
             // Add Order Item
-            var addOrderItemContract = new AddOrderItemContract(
-                id: Guid.NewGuid(), 
-                product: product, 
-                productHistory: productHistory, 
-                quantity: orderItem.Quantity, 
+            var addNewOrderItemContract = new AddNewOrderItemContract(
+                order: order,
+                id: Guid.NewGuid(),
                 serialNumber: await _sequenceService.GetNextOrderItemValueAsync(),
-                status: OrderItemStatus.Pending.Name,
-                dateCreated: DateTime.UtcNow,
-                dateFinished: null
+                quantity: orderItem.Quantity,
+                product: product,
+                productHistory: productHistory
             );
-
-            var canAddOrderItem = order.CanAddOrderItem(addOrderItemContract);
-            if (canAddOrderItem.TryPickT1(out error, out var _))
+            
+            var canAddOrderItem = OrderDomainService.CanAddNewOrderItem(addNewOrderItemContract);
+            if (canAddOrderItem.IsT1)
             {
-                var applicationError = new ApplicationError(message: error, code: GeneralApplicationErrorCodes.NOT_ALLOWED, path: [uid]);
+                var applicationError = new ApplicationError(message: canAddOrderItem.AsT1, code: GeneralApplicationErrorCodes.NOT_ALLOWED, path: [uid]);
                 validationErrors.Add(applicationError);
                 continue;
             }
 
-            order.ExecuteAddOrderItem(addOrderItemContract);
+            OrderDomainService.ExecuteAddNewOrderItem(addNewOrderItemContract);
 
             // Update Later
             updatedProducts.Add(product);

@@ -30,9 +30,9 @@ public static class OrderItemMapper
         return new OrderItemDbEntity(
             id: source.Id.Value,
             quantity: source.Quantity.Value,
-            status: ToDbEntityStatus(source.Status),
-            dateCreated: source.OrderItemDates.DateCreated,
-            dateFinished: source.OrderItemDates.DateFinished,
+            status: ToDbEntityStatus(source.Schedule.Status),
+            dateCreated: source.Schedule.Dates.DateCreated,
+            dateFinished: source.Schedule.Dates.DateFinished,
             orderId: order.Id.Value,
             productHistoryId: source.ProductHistoryId.Value,
             productId: source.ProductId.Value,

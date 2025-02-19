@@ -56,9 +56,9 @@ public class ApiModelMapper
         return new OrderItemApiModel(
             id: orderItem.Id.ToString(),
             quantity: orderItem.Quantity.Value,
-            status: orderItem.Status.Name,
-            dateCreated: TimeZoneService.ConvertUtcToLocalTime(orderItem.OrderItemDates.DateCreated),
-            dateFinished: orderItem.OrderItemDates.DateFinished is null ? null : TimeZoneService.ConvertUtcToLocalTime(orderItem.OrderItemDates.DateFinished.Value),
+            status: orderItem.Schedule.Status.Name,
+            dateCreated: TimeZoneService.ConvertUtcToLocalTime(orderItem.Schedule.Dates.DateCreated),
+            dateFinished: orderItem.Schedule.Dates.DateFinished is null ? null : TimeZoneService.ConvertUtcToLocalTime(orderItem.Schedule.Dates.DateFinished.Value),
             orderId: order.Id.Value.ToString(),
             productHistory: ProductHistoryToApiModel(productHistory),
             serialNumber: orderItem.SerialNumber

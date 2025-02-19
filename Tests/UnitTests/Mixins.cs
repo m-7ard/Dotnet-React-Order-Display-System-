@@ -1,11 +1,8 @@
 
-using Domain.Contracts.OrderItems;
 using Domain.Contracts.Orders;
 using Domain.Contracts.Products;
 using Domain.DomainService;
 using Domain.Models;
-using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
 using Domain.ValueObjects.ProductImage;
@@ -15,22 +12,6 @@ namespace Tests.UnitTests;
 
 public class Mixins
 {
-    public static OrderItem CreateOrderItem(OrderId orderId, OrderItemStatus status, DateTime dateCreated, DateTime? dateFinished)
-    {
-        var contract = new CreateOrderItemContract(
-            id: Guid.NewGuid(), 
-            quantity: 1, 
-            status: status.Name, 
-            dateCreated: dateCreated, 
-            dateFinished: dateFinished,
-            productHistoryId: ProductHistoryId.ExecuteCreate(Guid.NewGuid()), 
-            productId: ProductId.ExecuteCreate(Guid.NewGuid()),
-            serialNumber: 1
-        );
-
-        return OrderItem.ExecuteCreate(contract);
-    }
-
     public static ProductHistory CreateProductHistory(int seed)
     {
         return new ProductHistory(
@@ -77,15 +58,13 @@ public class Mixins
     public static Order CreateNewOrderWithItem(int seed, Product product, ProductHistory productHistory)
     {
         var order = OrderDomainService.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: 1);
-        order.ExecuteAddOrderItem(new AddOrderItemContract(
-            id: Guid.NewGuid(), 
+        OrderDomainService.ExecuteAddNewOrderItem(new AddNewOrderItemContract(
+            order: order,
+            id: Guid.NewGuid(),
             product: product,
             productHistory: productHistory,
             quantity: 1,
-            serialNumber: seed,
-            status: OrderItemStatus.Pending.Name,
-            dateCreated: DateTime.UtcNow,
-            dateFinished: null
+            serialNumber: seed
         ));
 
         return order;
