@@ -2,13 +2,12 @@ using Domain.Contracts.OrderItems;
 using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
-using Domain.ValueObjects.Shared;
 using OneOf;
 
 namespace Domain.Models;
 public class OrderItem
 {
-    public OrderItem(OrderItemId id, Quantity quantity, OrderItemStatus status, ProductHistoryId productHistoryId, ProductId productId, int serialNumber, OrderItemDates orderItemDates)
+    public OrderItem(OrderItemId id, OrderItemQuantity quantity, OrderItemStatus status, ProductHistoryId productHistoryId, ProductId productId, int serialNumber, OrderItemDates orderItemDates)
     {
         Id = id;
         Quantity = quantity;
@@ -21,7 +20,7 @@ public class OrderItem
 
     public OrderItemId Id { get; private set; }
     public int SerialNumber { get; private set; }
-    public Quantity Quantity { get; set; }
+    public OrderItemQuantity Quantity { get; set; }
     public OrderItemStatus Status { get; set; }
     public OrderItemDates OrderItemDates { get; set; }
     public ProductId ProductId { get; set; }
@@ -74,7 +73,7 @@ public class OrderItem
             return error;
         }
 
-        var canCreateQuantity = Quantity.CanCreate(contract.Quantity);
+        var canCreateQuantity = OrderItemQuantity.CanCreate(contract.Quantity);
         if (canCreateQuantity.TryPickT1(out error, out _))
         {
             return error;
@@ -104,7 +103,7 @@ public class OrderItem
         }
 
         var id = OrderItemId.ExecuteCreate(contract.Id);
-        var quantity = Quantity.ExecuteCreate(contract.Quantity);
+        var quantity = OrderItemQuantity.ExecuteCreate(contract.Quantity);
         var status = OrderItemStatus.ExecuteCreate(contract.Status);
         var orderItemDates = OrderItemDates.ExecuteCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished);
 

@@ -1,10 +1,10 @@
 using OneOf;
 
-namespace Domain.ValueObjects.Shared;
+namespace Domain.ValueObjects.OrderItem;
 
-public class Quantity : ValueObject
+public class OrderItemQuantity : ValueObject
 {
-    private Quantity(int value)
+    private OrderItemQuantity(int value)
     {
         Value = value;
     }
@@ -13,15 +13,15 @@ public class Quantity : ValueObject
 
     public static OneOf<bool, string> CanCreate(int value)
     {
-        if (value < 0)
+        if (value < 1)
         {
-            return "Quantity must be greater than or equals 0.";
+            return "OrderItemQuantity must be greater than or equals 1.";
         }
 
         return true;
     }
 
-    public static Quantity ExecuteCreate(int value)
+    public static OrderItemQuantity ExecuteCreate(int value)
     {
         var canCreateResult = CanCreate(value);
         if (canCreateResult.TryPickT1(out var error, out _))
@@ -29,7 +29,7 @@ public class Quantity : ValueObject
             throw new Exception(error);
         }
 
-        return new Quantity(value);
+        return new OrderItemQuantity(value);
     }
 
     public override IEnumerable<object> GetEqualityComponents()

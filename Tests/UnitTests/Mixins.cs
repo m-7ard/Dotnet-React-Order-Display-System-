@@ -54,7 +54,7 @@ public class Mixins
             price: seed,
             description: $"Product #{seed} description",
             images: images,
-            amount: 1
+            amount: 1_000_000
         );
 
         return Product.ExecuteCreate(contract);

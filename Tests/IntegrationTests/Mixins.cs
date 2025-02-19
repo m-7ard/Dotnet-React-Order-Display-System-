@@ -48,7 +48,7 @@ public class Mixins
             price: number,
             description: $"Product #{number} Description",
             dateCreated: DateTime.UtcNow,
-            amount: number,
+            amount: 1_000_000,
             images: images.Select((image) => ProductImageFactory.BuildNewProductImageFromDraftImage(
                 source: image,
                 id: ProductImageId.ExecuteCreate(Guid.NewGuid()),
