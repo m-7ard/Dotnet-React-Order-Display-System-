@@ -6,9 +6,9 @@ using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using OneOf;
 
-namespace Domain.DomainService;
+namespace Domain.DomainExtension;
 
-public static class OrderDomainService
+public static class OrderDomainExtension
 {
     public static OneOf<CreateOrderContract, string> CanCreateNewOrder(Guid id, int serialNumber)
     {
@@ -43,15 +43,16 @@ public static class OrderDomainService
     {
         var addOrderItemContract = new AddOrderItemContract(
             id: contract.Id,
-            product: contract.Product,
-            productHistory: contract.ProductHistory,
-            quantity: contract.Quantity,
+            productId: contract.ProductId,
+            productHistoryId: contract.ProductHistoryId,
             status: OrderItemStatus.Pending.Name,
             serialNumber: contract.SerialNumber,
             dateCreated: DateTime.UtcNow,
-            dateFinished: null
+            dateFinished: null,
+            total: contract.Total,
+            quantity: contract.Quantity
         );
-        
+
         var order = contract.Order;
         var canAdd = order.CanAddOrderItem(addOrderItemContract);
         if (canAdd.IsT1) return canAdd.AsT1;

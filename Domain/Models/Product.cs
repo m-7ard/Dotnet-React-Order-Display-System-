@@ -89,7 +89,7 @@ public class Product
         );
 
         Images.Add(productImage);
-        DomainEvents.Add(new ProductImagePendingCreationEvent(productImage));
+        DomainEvents.Add(new ProductImageCreatedEvent(productImage));
         return productImageId;
     }
 
@@ -147,7 +147,7 @@ public class Product
 
         var productImage = ExecuteFindProductImageById(productImageId);
         Images = Images.Where(image => image.Id != productImageId).ToList();
-        DomainEvents.Add(new ProductImagePendingDeletionEvent(productImage));
+        DomainEvents.Add(new ProductImageDeletedEvent(productImage));
     }
 
     public OneOf<bool, string> CanLowerAmount(int lowerBy)

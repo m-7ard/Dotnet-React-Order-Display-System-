@@ -1,7 +1,7 @@
 
 using Domain.Contracts.Orders;
 using Domain.Contracts.Products;
-using Domain.DomainService;
+using Domain.DomainExtension;
 using Domain.Models;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
@@ -57,14 +57,15 @@ public class Mixins
 
     public static Order CreateNewOrderWithItem(int seed, Product product, ProductHistory productHistory)
     {
-        var order = OrderDomainService.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: 1);
-        OrderDomainService.ExecuteAddNewOrderItem(new AddNewOrderItemContract(
+        var order = OrderDomainExtension.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: 1);
+        OrderDomainExtension.ExecuteAddNewOrderItem(new AddNewOrderItemContract(
             order: order,
             id: Guid.NewGuid(),
-            product: product,
-            productHistory: productHistory,
-            quantity: 1,
-            serialNumber: seed
+            productId: product.Id,
+            productHistoryId: productHistory.Id,
+            serialNumber: seed,
+            total: product.Price.Value,
+            quantity: 1
         ));
 
         return order;
