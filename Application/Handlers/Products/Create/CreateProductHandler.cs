@@ -1,12 +1,10 @@
 using Application.Errors;
 using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
-using Application.Validators;
 using Application.Validators.DraftImageExistsValidator;
 using Domain.Contracts.Products;
 using Domain.DomainFactories;
 using Domain.Models;
-using Domain.ValueObjects.Product;
 using Domain.ValueObjects.Shared;
 using MediatR;
 using OneOf;

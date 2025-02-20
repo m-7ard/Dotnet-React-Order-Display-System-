@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Api.DTOs.OrderItems.MarkFinished;
 using Application.Interfaces.Persistence;
-using Domain.DomainService;
+using Domain.DomainExtension;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
@@ -71,7 +71,7 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
     {
         using var scope = _factory.Services.CreateScope();
         var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
-        OrderDomainService.ExecuteMarkOrderItemFinished(_order001, _orderItem001.Id);
+        OrderDomainExtension.ExecuteMarkOrderItemFinished(_order001, _orderItem001.Id);
         await repo.UpdateAsync(_order001);
 
         var request = new MarkOrderItemFinishedRequestDTO();

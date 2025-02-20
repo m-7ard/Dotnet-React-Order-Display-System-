@@ -3,8 +3,8 @@ using Application.Handlers.OrderItems.MarkFinished;
 using Application.Interfaces.Persistence;
 using Application.Validators.OrderExistsValidator;
 using Domain.Contracts.Orders;
+using Domain.DomainExtension;
 using Domain.DomainFactories;
-using Domain.DomainService;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
@@ -32,17 +32,18 @@ public class MarkOrderItemFinishedHandlerUnitTest
             orderExistsValidator: _mockOrderExistsValidator.Object
         );
 
-        _mockOrder = OrderDomainService.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: 1);
+        _mockOrder = OrderDomainExtension.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: 1);
         var product = Mixins.CreateProduct(1, []);
         var contract = new AddNewOrderItemContract(
             order: _mockOrder,
             id: Guid.NewGuid(), 
-            product: product,
-            productHistory: ProductHistoryFactory.BuildNewProductHistoryFromProduct(product),
+            productId: product.Id,
+            productHistoryId: ProductHistoryFactory.BuildNewProductHistoryFromProduct(product).Id,
             quantity: 1,
-            serialNumber: 1
+            serialNumber: 1,
+            total: product.Price.Value
         );
-        var orderItemId = OrderDomainService.ExecuteAddNewOrderItem(contract);
+        var orderItemId = OrderDomainExtension.ExecuteAddNewOrderItem(contract);
         _mockOrderItem = _mockOrder.ExecuteGetOrderItemById(orderItemId);
     }
 
@@ -107,7 +108,7 @@ public class MarkOrderItemFinishedHandlerUnitTest
     public async Task MarkOrderItemFinished_OrderItemAreadyFinished_Failure()
     {
         // ARRANGE
-        OrderDomainService.ExecuteMarkOrderItemFinished(_mockOrder, _mockOrderItem.Id);
+        OrderDomainExtension.ExecuteMarkOrderItemFinished(_mockOrder, _mockOrderItem.Id);
         
         var command = new MarkOrderItemFinishedCommand(
             orderId: _mockOrder.Id.Value,

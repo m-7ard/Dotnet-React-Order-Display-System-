@@ -100,8 +100,8 @@ public class Order
         // Order Item
         var createOrderItemContract = new CreateOrderItemContract(
             id: contract.Id,
-            productId: contract.Product.Id,
-            productHistoryId: contract.ProductHistory.Id,
+            productId: contract.ProductId,
+            productHistoryId: contract.ProductHistoryId,
             quantity: contract.Quantity,
             status: contract.Status,
             serialNumber: contract.SerialNumber,
@@ -115,31 +115,17 @@ public class Order
             return error;
         }
 
-        var productHistory = contract.ProductHistory;
-        var product = contract.Product;
-
-        if (!productHistory.IsValid())
-        {
-            return $"Product History for Product of Id \"{product.Id}\" is not valid.";
-        }
-
-        var existingOrderItem = OrderItems.Find(orderItem => orderItem.ProductId == product.Id);
+        var existingOrderItem = OrderItems.Find(orderItem => orderItem.ProductId == contract.ProductId);
         if (existingOrderItem is not null)
         {
             return "Product has already been added as an Order Item.";
         }
 
         // Order
-        var canCreateTotal = Money.CanCreate(contract.ProductHistory.Price.Value * contract.Quantity);
+        var canCreateTotal = Money.CanCreate(contract.Total);
         if (canCreateTotal.TryPickT1(out error, out _))
         {
             return error;
-        }
-
-        var canLowerAmount = contract.Product.CanLowerAmount(contract.Quantity);
-        if (canLowerAmount.TryPickT1(out error, out _))
-        {
-            return $"Order Item quantity ({contract.Quantity}) cannot be larger than Product amount ({product.Amount})";
         }
 
         return true;
@@ -155,8 +141,8 @@ public class Order
 
         var createOrderItemContract = new CreateOrderItemContract(
             id: contract.Id,
-            productId: contract.Product.Id,
-            productHistoryId: contract.ProductHistory.Id,
+            productId: contract.ProductId,
+            productHistoryId: contract.ProductHistoryId,
             quantity: contract.Quantity,
             status: contract.Status,
             serialNumber: contract.SerialNumber,
@@ -168,12 +154,7 @@ public class Order
         OrderItems.Add(orderItem);
         DomainEvents.Add(new OrderItemCreatedEvent(orderItem));
 
-        var productHistory = contract.ProductHistory;
-        var addAmount = Money.ExecuteCreate(productHistory.Price.Value * contract.Quantity);
-        Total += addAmount;
-
-        contract.Product.ExecuteLowerAmount(contract.Quantity);
-
+        Total += Money.ExecuteCreate(contract.Total);
         return orderItem.Id;
     }
 

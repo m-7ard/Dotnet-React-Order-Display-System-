@@ -17,9 +17,7 @@ public static class ProductMapper
             description: domain.Description,
             price: domain.Price.Value,
             amount: domain.Amount.Value
-        ) {
-            Images = domain.Images.Select(ProductImageMapper.ToDbModel).ToList()
-        };
+        );
     }
 
     public static Product FromDbEntityToDomain(ProductDbEntity dbEntity)

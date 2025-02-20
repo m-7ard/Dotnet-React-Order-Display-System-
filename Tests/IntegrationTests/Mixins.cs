@@ -3,8 +3,8 @@ using Application.Interfaces.Persistence;
 using Domain.Contracts.OrderItems;
 using Domain.Contracts.Orders;
 using Domain.Contracts.Products;
+using Domain.DomainExtension;
 using Domain.DomainFactories;
-using Domain.DomainService;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
@@ -105,7 +105,7 @@ public class Mixins
         var order = await CreateNewOrder(products: products, seed: seed);
         foreach (var orderItem in order.OrderItems)
         {
-            OrderDomainService.ExecuteMarkOrderItemFinished(order, orderItem.Id);
+            OrderDomainExtension.ExecuteMarkOrderItemFinished(order, orderItem.Id);
         }
         
         order.ExecuteTransitionStatus(new TransitionOrderStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: DateTime.UtcNow));
@@ -114,7 +114,7 @@ public class Mixins
     }
 
     public async Task<Order> CreateNewOrder(List<Product> products, int seed) {
-        var order = OrderDomainService.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: await _sequenceService.GetNextOrderValueAsync());
+        var order = OrderDomainExtension.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: await _sequenceService.GetNextOrderValueAsync());
 
         foreach (var product in products)
         {
@@ -127,13 +127,14 @@ public class Mixins
             var contract = new AddNewOrderItemContract(
                 order: order,
                 id: Guid.NewGuid(), 
-                product: product,
-                productHistory: productHistory, 
+                productId: product.Id,
+                productHistoryId: productHistory.Id, 
                 quantity: seed, 
-                serialNumber: await _sequenceService.GetNextOrderItemValueAsync()
+                serialNumber: await _sequenceService.GetNextOrderItemValueAsync(),
+                total: product.Price.Value * seed
             );
 
-            OrderDomainService.ExecuteAddNewOrderItem(contract);
+            OrderDomainExtension.ExecuteAddNewOrderItem(contract);
         }
 
         await _orderRespository.CreateAsync(order);

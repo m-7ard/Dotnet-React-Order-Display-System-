@@ -1,15 +1,10 @@
+using Application.Contracts.DomainService.OrderDomainService;
 using Application.Errors;
 using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
-using Application.Validators.LatestProductHistoryExistsValidator;
-using Application.Validators.ProductExistsValidator;
-using Domain.Contracts.Orders;
-using Domain.DomainFactories;
-using Domain.DomainService;
+using Application.Interfaces.Services;
+using Domain.DomainExtension;
 using Domain.Models;
-using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
-using Domain.ValueObjects.Product;
 using MediatR;
 using OneOf;
 
@@ -18,80 +13,36 @@ namespace Application.Handlers.Orders.Create;
 public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<CreateOrderResult, List<ApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly IProductExistsValidator<ProductId> _productExistsValidator;
     private readonly IProductRepository _productRepository;
-    private readonly ILatestProductHistoryExistsValidator<ProductId> _latestProductHistoryExistsValidator;
-    private readonly ISequenceService _sequenceService;
+    private readonly IOrderDomainService _orderDomainService;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CreateOrderHandler(IOrderRepository orderRepository, IProductExistsValidator<ProductId> productExistsValidator, ILatestProductHistoryExistsValidator<ProductId> latestProductHistoryExistsValidator, ISequenceService sequenceService, IProductRepository productRepository)
+    public CreateOrderHandler(IOrderRepository orderRepository, IProductRepository productRepository, IOrderDomainService orderDomainService, IUnitOfWork unitOfWork)
     {
         _orderRepository = orderRepository;
-        _productExistsValidator = productExistsValidator;
-        _latestProductHistoryExistsValidator = latestProductHistoryExistsValidator;
-        _sequenceService = sequenceService;
         _productRepository = productRepository;
+        _orderDomainService = orderDomainService;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<OneOf<CreateOrderResult, List<ApplicationError>>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
         // Create New Order 
-        var serialNumber = await _sequenceService.GetNextOrderValueAsync();
-        var canCreateOrder = OrderDomainService.CanCreateNewOrder(id: request.Id, serialNumber: serialNumber);
-        if (canCreateOrder.IsT1) return new CannotCreateOrderError(message: canCreateOrder.AsT1, path: []).AsList();
-
-        var order = OrderDomainService.ExecuteCreateNewOrder(id: request.Id, serialNumber: serialNumber);
+        var tryCreateOrder = await _orderDomainService.TryOrchestrateCreateNewOrder(request.Id);
+        if (tryCreateOrder.IsT1) return new CannotCreateOrderError(message: tryCreateOrder.AsT1, path: []).AsList();
+        
+        var order = tryCreateOrder.AsT0;
 
         // Create Order Items
-        var updatedProducts = new List<Product>();
         var validationErrors = new List<ApplicationError>();
 
         foreach (var (uid, orderItem) in request.OrderItemData)
         {
-            // Product Exists
-            var canCreateProductId = ProductId.TryCreate(orderItem.ProductId);
-            if (canCreateProductId.TryPickT1(out var error, out var productId))
+            var tryAddOrderItem = await _orderDomainService.TryOrchestrateAddNewOrderItem(new OrchestrateAddNewOrderItemContract(order: order, productId: orderItem.ProductId, quantity: orderItem.Quantity));
+            if (tryAddOrderItem.IsT1)
             {
-                validationErrors.Add(new NotAllowedError(message: error, path: [uid]));
-                continue;
+                validationErrors.Add(new CannotCreateOrderItemError(message: tryAddOrderItem.AsT1, path: []));
             }
-
-            var productExistsResult = await _productExistsValidator.Validate(productId);
-            if (productExistsResult.TryPickT1(out var errors, out var product))
-            {
-                validationErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [uid, ..error.Path])));
-                continue;
-            }
-
-            // Product History Exists
-            var latestProductHistoryExistsResult = await _latestProductHistoryExistsValidator.Validate(ProductId.ExecuteCreate(orderItem.ProductId));
-            if (latestProductHistoryExistsResult.TryPickT1(out errors, out var productHistory))
-            {
-                validationErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [uid, ..error.Path])));
-                continue;
-            }
-            
-            // Add Order Item
-            var addNewOrderItemContract = new AddNewOrderItemContract(
-                order: order,
-                id: Guid.NewGuid(),
-                serialNumber: await _sequenceService.GetNextOrderItemValueAsync(),
-                quantity: orderItem.Quantity,
-                product: product,
-                productHistory: productHistory
-            );
-            
-            var canAddOrderItem = OrderDomainService.CanAddNewOrderItem(addNewOrderItemContract);
-            if (canAddOrderItem.IsT1)
-            {
-                var applicationError = new ApplicationError(message: canAddOrderItem.AsT1, code: GeneralApplicationErrorCodes.NOT_ALLOWED, path: [uid]);
-                validationErrors.Add(applicationError);
-                continue;
-            }
-
-            OrderDomainService.ExecuteAddNewOrderItem(addNewOrderItemContract);
-
-            // Update Later
-            updatedProducts.Add(product);
         }
 
         if (validationErrors.Count > 0)
@@ -100,11 +51,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
         }
 
         await _orderRepository.CreateAsync(order);
-
-        foreach (var product in updatedProducts)
-        {
-            await _productRepository.UpdateAsync(product);
-        }
+        await _unitOfWork.SaveAsync();
 
         return new CreateOrderResult();
     }
