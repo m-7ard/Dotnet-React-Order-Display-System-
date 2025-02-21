@@ -25,13 +25,19 @@ public class DraftImageRepository : IDraftImageRepository
 
     public async Task DeleteByFileNameAsync(FileName fileName)
     {
+        await LazyDeleteByFileNameAsync(fileName);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task LazyDeleteByFileNameAsync(FileName fileName)
+    {
         var draftImageDbEntity = await _dbContext.DraftImage.SingleAsync(d => d.FileName == fileName.Value);
         _dbContext.Remove(draftImageDbEntity);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<DraftImage?> GetByFileNameAsync(FileName fileName)
     {
+        var draftImages = await _dbContext.DraftImage.ToListAsync();
         var draftImageDbEntity = await _dbContext.DraftImage.SingleOrDefaultAsync(d => d.FileName == fileName.Value);
         return draftImageDbEntity is null ? null : DraftImageMapper.ToDomain(draftImageDbEntity);
     }

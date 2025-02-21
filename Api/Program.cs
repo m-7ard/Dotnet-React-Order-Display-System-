@@ -144,6 +144,9 @@ builder.Services.AddScoped<IProductDomainService, ProductDomainService>();
 builder.Services.AddScoped<IProductHistoryDomainService, ProductHistoryDomainService>();
 builder.Services.AddScoped<IOrderDomainService, OrderDomainService>();
 
+builder.Services.AddScoped<IDraftImageDomainService, DraftImageDomainService>();
+builder.Services.AddScoped<IProductDomainService, ProductDomainService>();
+
 ///
 ///
 /// Fluent Validation DI / Dependency Injection

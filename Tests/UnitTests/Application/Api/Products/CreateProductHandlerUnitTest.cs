@@ -1,39 +1,40 @@
+using Application.Contracts.DomainService.ProductDomainService;
+using Application.Errors.Objects;
 using Application.Handlers.Products.Create;
 using Application.Interfaces.Persistence;
-using Application.Validators.DraftImageExistsValidator;
-using Domain.DomainFactories;
-using Domain.Models;
-using Domain.ValueObjects.Shared;
+using Application.Interfaces.Services;
 using Moq;
-using Tests.UnitTests.Utils;
+using OneOf;
 
 namespace Tests.UnitTests.Application.Api.Products;
 
 public class CreateProductHandlerUnitTest
 {
-    private readonly Mock<IProductRepository> _mockProductRepository;
-    private readonly Mock<IDraftImageRepository> _mockDraftImageRepository;
-    private readonly Mock<IProductHistoryRepository> _mockProductHistoryRepository;
-    private readonly Mock<IDraftImageExistsValidator<FileName>> _mockDraftImageExistsValidator;
+    private readonly Mock<IProductDomainService> _mockProductDomainService;
+    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly CreateProductHandler _handler;
 
     public CreateProductHandlerUnitTest()
     {
-        _mockProductRepository = new Mock<IProductRepository>();
-        _mockDraftImageRepository = new Mock<IDraftImageRepository>();
-        _mockProductHistoryRepository = new Mock<IProductHistoryRepository>();
-        _mockDraftImageExistsValidator = new Mock<IDraftImageExistsValidator<FileName>>();
+        _mockProductDomainService = new Mock<IProductDomainService>();
+        _mockUnitOfWork = new Mock<IUnitOfWork>();
+    
+        var mockProductRepository = new Mock<IProductRepository>();
+        var mockProductHistoryRepository = new Mock<IProductHistoryRepository>();
+
+        // Setup IUnitOfWork to return the mocked repositories
+        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(mockProductRepository.Object);
+        _mockUnitOfWork.Setup(uow => uow.ProductHistoryRepository).Returns(mockProductHistoryRepository.Object);
+
 
         _handler = new CreateProductHandler(
-            productRepository: _mockProductRepository.Object,
-            draftImageRepository: _mockDraftImageRepository.Object,
-            productHistoryRepository: _mockProductHistoryRepository.Object,
-            draftImageExistsValidator: _mockDraftImageExistsValidator.Object
+            productDomainService: _mockProductDomainService.Object,
+            unitOfWork: _mockUnitOfWork.Object
         );
     }
 
     [Fact]
-    public async Task CreateProduct_WitbhoutImages_Success()
+    public async Task CreateProduct_WithoutImages_Success()
     {
         // ARRANGE
         var mockProduct = Mixins.CreateProduct(
@@ -49,17 +50,13 @@ public class CreateProductHandlerUnitTest
             amount: 1
         );
 
-        _mockProductRepository
-            .Setup(repo => repo.CreateAsync(It.IsAny<Product>()))
-            .ReturnsAsync(mockProduct);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).Returns(() => mockProduct);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
         
         // ASSERT
         Assert.True(result.IsT0);
-        _mockProductRepository.Verify(repo => repo.CreateAsync(It.IsAny<Product>()), Times.Once);
-        _mockProductHistoryRepository.Verify(repo => repo.CreateAsync(It.IsAny<ProductHistory>()), Times.Once);
     }
 
     [Fact]
@@ -82,32 +79,19 @@ public class CreateProductHandlerUnitTest
             amount: 1
         );
 
-        SetupMockServices.SetupDraftImageExistsValidatorSuccess(_mockDraftImageExistsValidator, productImage1.FileName, DraftImageFactory.BuildNewDraftImage(
-            fileName: FileName.ExecuteCreate(productImage1.FileName.Value), 
-            originalFileName: FileName.ExecuteCreate($"original-{productImage1.FileName.Value}"), 
-            url: $"url/{productImage1.FileName.Value}"
-        ));
-        SetupMockServices.SetupDraftImageExistsValidatorSuccess(_mockDraftImageExistsValidator, productImage2.FileName, DraftImageFactory.BuildNewDraftImage(
-            fileName: FileName.ExecuteCreate(productImage2.FileName.Value), 
-            originalFileName: FileName.ExecuteCreate($"original-{productImage2.FileName.Value}"), 
-            url: $"url/{productImage2.FileName.Value}"
-        ));
-        _mockProductRepository.Setup(repo => repo.CreateAsync(It.Is<Product>(product => product.Images.Count == 2))).ReturnsAsync(mockProduct);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).Returns(() => mockProduct);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateAddNewProductImage(mockProduct, productImage1.FileName.Value)).ReturnsAsync(() => true);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateAddNewProductImage(mockProduct, productImage2.FileName.Value)).ReturnsAsync(() => true);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
         
         // ASSERT
         Assert.True(result.IsT0);
-        //** Check and delete draft images
-        _mockDraftImageRepository.Verify(repo => repo.DeleteByFileNameAsync(It.IsAny<FileName>()), Times.Exactly(2));
-        //** Create product and product history
-        _mockProductRepository.Verify(repo => repo.CreateAsync(It.IsAny<Product>()), Times.Once);
-        _mockProductHistoryRepository.Verify(repo => repo.CreateAsync(It.IsAny<ProductHistory>()), Times.Once);
     }
 
     [Fact]
-    public async Task CreateProduct_WithImagesAndInvalidFileExtension_Success()
+    public async Task CreateProduct_CannotCreateProduct_Failure()
     {
         // ARRANGE
         var productImage1 = Mixins.CreateProductImage(1);
@@ -116,6 +100,8 @@ public class CreateProductHandlerUnitTest
             seed: 1,
             images: []
         );
+
+        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).Returns(() => "");
 
         var command = new CreateProductCommand(
             name: mockProduct.Name,
@@ -130,6 +116,32 @@ public class CreateProductHandlerUnitTest
         
         // ASSERT
         Assert.True(result.IsT1);
-        _mockDraftImageExistsValidator.Verify(validator => validator.Validate(It.IsAny<FileName>()), Times.Never);
+        Assert.IsType<CannotCreateProductError>(result.AsT1.First());
+    }
+
+    [Fact]
+    public async Task CreateProduct_CannotAddProductImage_Failure()
+    {
+        // ARRANGE
+        var productImage1 = Mixins.CreateProductImage(1);
+        var mockProduct = Mixins.CreateProduct(seed: 1,  images: []);
+
+        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).Returns(() => mockProduct);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateAddNewProductImage(mockProduct, productImage1.FileName.Value)).ReturnsAsync(() => "");
+
+        var command = new CreateProductCommand(
+            name: mockProduct.Name,
+            price: mockProduct.Price.Value,
+            description: mockProduct.Description,
+            images: [productImage1.FileName.Value],
+            amount: 1
+        );
+
+        // ACT
+        var result = await _handler.Handle(command, CancellationToken.None);
+        
+        // ASSERT
+        Assert.True(result.IsT1);
+        Assert.IsType<CannotAddProductImageError>(result.AsT1.First());
     }
 }

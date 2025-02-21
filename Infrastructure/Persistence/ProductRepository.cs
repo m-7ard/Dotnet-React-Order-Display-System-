@@ -42,13 +42,19 @@ public class ProductRepository : IProductRepository
         _queryServiceFactory = queryServiceFactory;
     }
 
-    public async Task<Product> CreateAsync(Product product)
+    public async Task LazyCreateAsync(Product product)
+    {
+        var productDbEntity = ProductMapper.FromDomainToDbEntity(product);
+        _dbContext.Add(productDbEntity);
+        await PersistDomainEvents(product);
+    }
+
+    public async Task CreateAsync(Product product)
     {
         var productDbEntity = ProductMapper.FromDomainToDbEntity(product);
         _dbContext.Add(productDbEntity);
         await PersistDomainEvents(product);
         await _dbContext.SaveChangesAsync();
-        return ProductMapper.FromDbEntityToDomain(productDbEntity);
     }
 
     public async Task<Product?> GetByIdAsync(ProductId id)

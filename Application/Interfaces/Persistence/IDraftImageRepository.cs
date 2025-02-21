@@ -8,4 +8,5 @@ public interface IDraftImageRepository
     Task<DraftImage> CreateAsync(DraftImage draftImage);
     Task<DraftImage?> GetByFileNameAsync(FileName fileName);
     Task DeleteByFileNameAsync(FileName fileName);
+    Task LazyDeleteByFileNameAsync(FileName fileName);
 }
