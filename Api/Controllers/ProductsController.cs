@@ -3,6 +3,7 @@ using Api.DTOs.Products.Delete;
 using Api.DTOs.Products.List;
 using Api.DTOs.Products.Read;
 using Api.DTOs.Products.Update;
+using Api.DTOs.Products.UpdateAmount;
 using Api.Errors;
 using Api.Mappers;
 using Api.Services;
@@ -12,6 +13,7 @@ using Application.Handlers.Products.Delete;
 using Application.Handlers.Products.List;
 using Application.Handlers.Products.Read;
 using Application.Handlers.Products.Update;
+using Application.Handlers.Products.UpdateAmount;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -260,6 +262,27 @@ public class ProductsController : ControllerBase
         }
 
         var response = new DeleteProductResponseDTO();
+        return Ok(response);
+    }
+
+    [HttpPut("{id}/update-amount")]
+    public async Task<ActionResult<UpdateProductAmountResponseDTO>> UpdateAmount(Guid id, UpdateProductAmountRequestDTO request)
+    {
+        var command = new UpdateProductAmountCommand(id: id, amount: request.Amount);
+        var result = await _mediator.Send(command);
+
+        if (result.TryPickT1(out var errors, out _))
+        {
+            var expectedError = errors.First();
+            if (expectedError.Code is SpecificApplicationErrorCodes.PRODUCT_EXISTS_ERROR)
+            {
+                return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
+            }
+
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));
+        }
+
+        var response = new UpdateProductAmountResponseDTO(id: id.ToString());
         return Ok(response);
     }
 }
