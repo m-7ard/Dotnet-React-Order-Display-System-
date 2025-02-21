@@ -1,20 +1,17 @@
 using Application.Common;
 using Application.Interfaces.Persistence;
-using Domain.Contracts.OrderItems;
 using Domain.Contracts.Orders;
 using Domain.Contracts.Products;
 using Domain.DomainExtension;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
 using Domain.ValueObjects.ProductImage;
 using Domain.ValueObjects.Shared;
 using Infrastructure;
 using Infrastructure.Interfaces;
-using Infrastructure.Migrations;
 using Infrastructure.Persistence;
 using Infrastructure.Querying;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -50,22 +47,22 @@ public class Mixins
             description: $"Product #{number} Description",
             dateCreated: DateTime.UtcNow,
             amount: 1_000_000,
-            images: images.Select((image) => ProductImageFactory.BuildNewProductImageFromDraftImage(
-                source: image,
-                id: ProductImageId.ExecuteCreate(Guid.NewGuid()),
-                productId: ProductId.ExecuteCreate(productId)
-            )).ToList()
+            images: []
         ));
 
+        foreach (var image in images)
+        {
+            product.ExecuteAddProductImage(id: Guid.NewGuid(), fileName: image.FileName.Value, originalFileName: image.OriginalFileName.Value, url: image.Url);    
+        }
+
         await _productRepository.CreateAsync(product);
-        var upToDateProduct = await _productRepository.GetByIdAsync(product.Id);
 
         foreach (var draftImage in images)
         {
             await _draftImageRepository.DeleteByFileNameAsync(draftImage.FileName);
         }
 
-        return upToDateProduct!;
+        return product!;
     }
 
     public async Task<Product> CreateProductAndProductHistory(int number, List<DraftImage> images)
@@ -79,7 +76,8 @@ public class Mixins
             productId: product.Id,
             description: product.Description
         );
-        var productHistory = await _productHistoryRepository.CreateAsync(inputProductHistory);
+
+        await _productHistoryRepository.CreateAsync(inputProductHistory);
 
         return product;
     }
@@ -89,7 +87,7 @@ public class Mixins
         // Copy a file from [fileRoute] that is an existing file's path
         // To a destination, where it includes the fileName in the path at the end
         File.Copy(fileRoute.Value, Path.Join(DirectoryService.GetMediaDirectory(), destinationFileName), overwrite: true);
-        
+
         var menuItemImage = await _draftImageRepository.CreateAsync(
             DraftImageFactory.BuildNewDraftImage(
                 fileName: FileName.ExecuteCreate(destinationFileName), 
@@ -97,7 +95,7 @@ public class Mixins
                 url: $"Media/{destinationFileName}"
             )
         );
-        
+
         return menuItemImage;
     }
 

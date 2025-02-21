@@ -5,6 +5,7 @@ public class GeneralApplicationErrorCodes
     public const string NOT_ALLOWED = "NOT_ALLOWED";
     public const string CANNOT_CREATE_ORDER = "CANNOT_CREATE_ORDER";
     public const string CANNOT_CREATE_ORDER_ITEM = "CANNOT_CREATE_ORDER_ITEM";
+    public const string CANNOT_ADD_PRODUCT_IMAGE = "CANNOT_ADD_PRODUCT_IMAGE";
     public const string CANNOT_CREATE_PRODUCT = "CANNOT_CREATE_PRODUCT";
     public const string CANNOT_UPDATE_PRODUCT = "CANNOT_UPDATE_PRODUCT";
     public const string OPERATION_FAILED = "OPERATION_FAILED";
