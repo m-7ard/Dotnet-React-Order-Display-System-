@@ -70,4 +70,10 @@ public class Mixins
 
         return order;
     }
+
+    public static Order CreateNewOrderWithoutItem(int seed)
+    {
+        var order = OrderDomainExtension.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: seed);
+        return order;
+    }
 }
