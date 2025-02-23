@@ -167,7 +167,7 @@ public class ProductsController : ControllerBase
         if (result.TryPickT1(out var errors, out var value))
         {
             var expectedError = errors.First();
-            if (expectedError.Code is SpecificApplicationErrorCodes.PRODUCT_EXISTS_ERROR)
+            if (expectedError is ProductDoesNotExistError)
             {
                 return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }
@@ -240,18 +240,13 @@ public class ProductsController : ControllerBase
         var command = new DeleteProductCommand(id: id);
         var result = await _mediator.Send(command);
 
-        if (result.TryPickT1(out var errors, out var value))
+        if (result.IsT1)
         {
+            var errors = result.AsT1;
             var expectedError = errors.First();
-            if (expectedError.Code is SpecificApplicationErrorCodes.PRODUCT_EXISTS_ERROR)
+            if (expectedError is ProductDoesNotExistError)
             {
                 return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
-            }
-
-            if (expectedError.Code is SpecificApplicationErrorCodes.LATEST_PRODUCT_HISTORY_EXISTS_ERROR)
-            {
-                return Conflict(PlainApiErrorHandlingService.MapApplicationErrors(errors));
-            
             }
 
             return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors));

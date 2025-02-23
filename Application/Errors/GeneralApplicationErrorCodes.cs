@@ -9,6 +9,7 @@ public class GeneralApplicationErrorCodes
     public const string CANNOT_ADD_PRODUCT_IMAGE = "CANNOT_ADD_PRODUCT_IMAGE";
     public const string CANNOT_CREATE_PRODUCT = "CANNOT_CREATE_PRODUCT";
     public const string CANNOT_UPDATE_PRODUCT = "CANNOT_UPDATE_PRODUCT";
+    public const string CANNOT_DELETE_PRODUCT = "CANNOT_DELETE_PRODUCT";
     public const string OPERATION_FAILED = "OPERATION_FAILED";
     public const string PRODUCT_DOES_NOT_EXIST = "PRODUCT_DOES_NOT_EXIST";
     public const string CANNOT_UPDATE_PRODUCT_IMAGES = "CANNOT_UPDATE_PRODUCT_IMAGES";
