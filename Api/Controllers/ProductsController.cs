@@ -8,6 +8,7 @@ using Api.Errors;
 using Api.Mappers;
 using Api.Services;
 using Application.Errors;
+using Application.Errors.Objects;
 using Application.Handlers.Products.Create;
 using Application.Handlers.Products.Delete;
 using Application.Handlers.Products.List;
@@ -73,14 +74,15 @@ public class ProductsController : ControllerBase
 
         if (result.TryPickT1(out var errors, out var value))
         {
-            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(
-                errors: errors, 
-                codeDictionary: new Dictionary<string, List<string>>()
-                {
-                    { SpecificApplicationErrorCodes.DRAFT_IMAGE_EXISTS_ERROR, ["images"] },
-                    { SpecificApplicationErrorCodes.CAN_ADD_PRODUCT_IMAGE, ["images"] },
-                }
-            ));
+            var expectedError = errors.First();
+
+            List<string>? prefix = null;
+            if (expectedError is CannotAddProductImageError)
+            {
+                prefix = ["images"];
+            }
+
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors: errors, pathPrefix: prefix ));
         }
         
         return StatusCode(StatusCodes.Status201Created, new CreateProductResponseDTO(id: value.Id.ToString()));
@@ -215,27 +217,21 @@ public class ProductsController : ControllerBase
         if (result.TryPickT1(out var errors, out var value))
         {
             var expectedError = errors.First();
-            if (expectedError.Code is SpecificApplicationErrorCodes.PRODUCT_EXISTS_ERROR)
+            if (expectedError is ProductDoesNotExistError)
             {
                 return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }
 
-            if (expectedError.Code is SpecificApplicationErrorCodes.LATEST_PRODUCT_HISTORY_EXISTS_ERROR)
+            List<string>? prefix = null;
+            if (expectedError is CannotAddProductImageError)
             {
-                return Conflict(PlainApiErrorHandlingService.MapApplicationErrors(errors));
+                prefix = ["images"];
             }
 
-            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(
-                errors: errors, 
-                codeDictionary: new Dictionary<string, List<string>>()
-                {
-                    { SpecificApplicationErrorCodes.DRAFT_IMAGE_EXISTS_ERROR, ["images"] },
-                    { SpecificApplicationErrorCodes.CAN_ADD_PRODUCT_IMAGE, ["images"] },
-                }
-            ));
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(errors: errors, pathPrefix: prefix));
         }
 
-        return Ok(new UpdateProductResponseDTO(id: value.Id.ToString()));
+        return Ok(new UpdateProductResponseDTO(id: id.ToString()));
     }
 
     [HttpPost("{id}/delete")]

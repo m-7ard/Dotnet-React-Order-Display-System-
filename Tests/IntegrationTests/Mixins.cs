@@ -1,5 +1,6 @@
 using Application.Common;
 using Application.Interfaces.Persistence;
+using Domain.Contracts.DraftImages;
 using Domain.Contracts.Orders;
 using Domain.Contracts.Products;
 using Domain.DomainExtension;
@@ -88,15 +89,12 @@ public class Mixins
         // To a destination, where it includes the fileName in the path at the end
         File.Copy(fileRoute.Value, Path.Join(DirectoryService.GetMediaDirectory(), destinationFileName), overwrite: true);
 
-        var menuItemImage = await _draftImageRepository.CreateAsync(
-            DraftImageFactory.BuildNewDraftImage(
-                fileName: FileName.ExecuteCreate(destinationFileName), 
-                originalFileName: FileName.ExecuteCreate("originalFileName.png"), 
-                url: $"Media/{destinationFileName}"
-            )
-        );
+        var contract = new CreateNewDraftImageContract(fileName: destinationFileName, originalFileName: "originalFileName.png", url: $"Media/{destinationFileName}");
+        var draftImage = DraftImage.ExecuteCreateNew(contract);
 
-        return menuItemImage;
+        await _draftImageRepository.CreateAsync(draftImage);
+
+        return draftImage;
     }
 
     public async Task<Order> CreateFinishedOrder(List<Product> products, int seed) {

@@ -34,6 +34,9 @@ public class OrderDomainServiceUnitTest
         );
     }
 
+    // -------------------------------
+    // Create New Order
+
     [Fact]
     public async Task TryOrchestrateCreateNewOrder_ValidData_Success()
     {
@@ -46,6 +49,9 @@ public class OrderDomainServiceUnitTest
         // ASSERT
         Assert.True(result.IsT0);
     }
+
+    // -------------------------------
+    // Add New Order Item
 
     [Fact]
     public async Task TryOrchestrateAddNewOrderItem_ValidData_Success()

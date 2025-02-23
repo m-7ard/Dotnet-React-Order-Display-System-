@@ -107,16 +107,14 @@ public class ProductHistoryRespository : IProductHistoryRepository
 
     public async Task UpdateAsync(ProductHistory productHistory)
     {
-        var currentEntity = await _dbContext.ProductHistory.SingleAsync(prodHist => prodHist.Id == productHistory.Id.Value);
-
-        var updatedEntity = ProductHistoryMapper.ToDbModel(productHistory);
-        _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
-
+        await LazyUpdateAsync(productHistory);
         await _dbContext.SaveChangesAsync();
     }
 
-    Task IProductHistoryRepository.CreateAsync(ProductHistory productHistory)
+    public async Task LazyUpdateAsync(ProductHistory productHistory)
     {
-        return CreateAsync(productHistory);
+        var currentEntity = await _dbContext.ProductHistory.SingleAsync(prodHist => prodHist.Id == productHistory.Id.Value);
+        var updatedEntity = ProductHistoryMapper.ToDbModel(productHistory);
+        _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
     }
 }
