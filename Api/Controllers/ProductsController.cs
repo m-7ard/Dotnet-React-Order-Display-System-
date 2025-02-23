@@ -270,7 +270,7 @@ public class ProductsController : ControllerBase
         if (result.TryPickT1(out var errors, out _))
         {
             var expectedError = errors.First();
-            if (expectedError.Code is SpecificApplicationErrorCodes.PRODUCT_EXISTS_ERROR)
+            if (expectedError is ProductDoesNotExistError)
             {
                 return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }
