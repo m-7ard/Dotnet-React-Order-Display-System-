@@ -1,6 +1,8 @@
+using Application.Contracts.DomainService.ProductDomainService;
 using Application.Errors;
 using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
+using Application.Interfaces.Services;
 using Application.Validators.ProductExistsValidator;
 using Domain.Contracts.Products;
 using Domain.ValueObjects.Product;
@@ -11,29 +13,21 @@ namespace Application.Handlers.Products.UpdateAmount;
 
 public class UpdateProductAmountHandler : IRequestHandler<UpdateProductAmountCommand, OneOf<UpdateProductAmountResult, List<ApplicationError>>>
 {
-    private readonly IProductRepository _productRepository;
-    private readonly IProductExistsValidator<ProductId> _productExistsValidator;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IProductDomainService _productDomainService;
 
-    public UpdateProductAmountHandler(IProductRepository productRepository, IProductExistsValidator<ProductId> productExistsValidator)
+    public UpdateProductAmountHandler(IUnitOfWork unitOfWork, IProductDomainService productDomainService)
     {
-        _productRepository = productRepository;
-        _productExistsValidator = productExistsValidator;
+        _unitOfWork = unitOfWork;
+        _productDomainService = productDomainService;
     }
 
     public async Task<OneOf<UpdateProductAmountResult, List<ApplicationError>>> Handle(UpdateProductAmountCommand request, CancellationToken cancellationToken)
     {
-        var canCreateProductId = ProductId.CanCreate(request.Id);
-        if (canCreateProductId.TryPickT1(out var error, out var _))
-        {
-            return new OperationFailedError(message: error, path: []).AsList();
-        }
+        var productExists = await _productDomainService.GetProductById(request.Id);
+        if (productExists.IsT1) return new ProductDoesNotExistError(message: productExists.AsT1, path: []).AsList();
 
-        var productId = ProductId.ExecuteCreate(request.Id);
-        var productExistsResult = await _productExistsValidator.Validate(productId);
-        if (productExistsResult.TryPickT1(out var errors, out var product))
-        {
-            return errors;
-        }
+        var product = productExists.AsT0;
 
         // Update properties
         var contract = new UpdateProductContract(
@@ -45,13 +39,11 @@ public class UpdateProductAmountHandler : IRequestHandler<UpdateProductAmountCom
         );
 
         var canUpdate = product.CanUpdate(contract);
-        if (canUpdate.TryPickT1(out error, out _))
-        {
-            return new CannotUpdateProductError(message: error, path: []).AsList();
-        }
+        if (canUpdate.IsT1) return new CannotUpdateProductError(message: canUpdate.AsT1, path: []).AsList();
 
         product.ExecuteUpdate(contract);
-        await _productRepository.UpdateAsync(product);
+        await _unitOfWork.ProductRepository.LazyUpdateAsync(product);
+        await _unitOfWork.SaveAsync();
 
         return new UpdateProductAmountResult();
     }
