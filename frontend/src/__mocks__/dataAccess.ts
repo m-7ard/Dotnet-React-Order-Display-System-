@@ -9,6 +9,7 @@ export const mockProductDataAccess: jest.Mocked<IProductDataAccess> = {
     readProduct: jest.fn(),
     updateProduct: jest.fn(),
     deleteProduct: jest.fn(),
+    updateProductAmount: jest.fn(),
 };
 
 export const mockOrderDataAccess: jest.Mocked<IOrderDataAccess> = {

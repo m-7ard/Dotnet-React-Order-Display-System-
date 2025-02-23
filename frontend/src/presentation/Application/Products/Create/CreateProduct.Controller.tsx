@@ -26,6 +26,10 @@ const validatorSchema = Type.Object({
         maximum: 10 ** 6,
     }),
     images: Type.Array(Type.String({ customPath: "/images/_" }), { maxItems: 8, suffixPath: "/_" }),
+    amount: Type.Number({
+        minimum: 0,
+        maximum: 10 ** 6,
+    }),
 });
 
 export interface ValueState {
@@ -33,6 +37,7 @@ export interface ValueState {
     description: string;
     price: string;
     images: Record<GeneratedFileName, RequiredImageFormData>;
+    amount: string;
 }
 
 export type ErrorState = IPresentationError<{
@@ -40,6 +45,7 @@ export type ErrorState = IPresentationError<{
     images: Record<GeneratedFileName, string[]>;
     price: string[];
     description: string[];
+    amount: string[];
 }>;
 
 const initialValueState: ValueState = {
@@ -47,6 +53,7 @@ const initialValueState: ValueState = {
     description: "",
     price: "",
     images: {},
+    amount: ""
 };
 
 const initialErrorState: ErrorState = {};
@@ -89,6 +96,7 @@ export default function CreateProductController() {
                 description: values.description,
                 price: parseFloat(values.price),
                 images: Object.keys(values.images),
+                amount: parseFloat(values.amount)
             });
 
             if (validation.isErr()) {
@@ -97,13 +105,16 @@ export default function CreateProductController() {
                 return;
             }
 
+            const data = validation.value;
+
             await responseHandler({
                 requestFn: () =>
                     productDataAccess.createProduct({
-                        name: values.name,
-                        description: values.description,
-                        price: parseFloat(values.price),
-                        images: Object.keys(values.images),
+                        name: data.name,
+                        description: data.description,
+                        price: data.price,
+                        images: Object.keys(data.images),
+                        amount: data.amount
                     }),
                 onResponseFn: async (response) => {
                     if (response.ok) {

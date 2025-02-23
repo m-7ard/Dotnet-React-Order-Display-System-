@@ -6,6 +6,7 @@ import IUpdateProductRequestDTO from "../contracts/products/update/IUpdateProduc
 import IDeleteProductRequestDTO from "../contracts/products/delete/IDeleteProductRequestDTO";
 import { getApiUrl } from "../../viteUtils";
 import getUrlParams from "../../presentation/utils/getUrlParams";
+import IUpdateProductAmountRequestDTO from "../contracts/products/updateAmount/IUpdateProductAmountRequestDTO";
 
 export default class ProductDataAccess implements IProductDataAccess {
     private readonly _apiRoute = `${getApiUrl()}/api/products`;
@@ -44,6 +45,18 @@ export default class ProductDataAccess implements IProductDataAccess {
 
     async updateProduct(request: IUpdateProductRequestDTO): Promise<Response> {
         const response = await fetch(`${this._apiRoute}/${request.id}/update`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(request),
+        });
+
+        return response;
+    }
+
+    async updateProductAmount(id: string, request: IUpdateProductAmountRequestDTO): Promise<Response> {
+        const response = await fetch(`${this._apiRoute}/${id}/update-amount`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

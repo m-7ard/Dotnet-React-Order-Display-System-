@@ -8,6 +8,7 @@ using Api.Errors;
 using Api.Interfaces;
 using Api.Services;
 using Application.Errors;
+using Application.Errors.Objects;
 using Application.Handlers.OrderItems.MarkFinished;
 using Application.Handlers.Orders.Create;
 using Application.Handlers.Orders.List;
@@ -87,7 +88,15 @@ public class OrdersController : ControllerBase
         if (result.IsT1)
         {
             var handlerErrors = result.AsT1;
-            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(handlerErrors));
+            var firstError = handlerErrors.First();
+
+            List<string>? pathPrefix = null;
+            if (firstError is CannotCreateOrderItemError)
+            {
+                pathPrefix = ["orderItemData"];
+            }
+
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(handlerErrors, pathPrefix: pathPrefix));
         }
 
         var respone = new CreateOrderResponseDTO(orderId: id.ToString());

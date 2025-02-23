@@ -36,9 +36,6 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
             description: request.Description
         );
 
-        var tryOrchestrateUpdatePRoduct = await _productDomainService.TryOrchestrateUpdateProduct(product, contract);
-        if (tryOrchestrateUpdatePRoduct.IsT1) return new CannotUpdateProductError(message: tryOrchestrateUpdatePRoduct.AsT1, path: []).AsList();
-
         var tryOrchestrateUpdateImages = await _productDomainService.TryOrchestrateUpdateImages(product: product, fileNames: request.Images);
         if (tryOrchestrateUpdateImages.IsT1)
         {
@@ -47,6 +44,9 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
                 .Cast<ApplicationError>()
                 .ToList();
         }
+
+        var tryOrchestrateUpdatePRoduct = await _productDomainService.TryOrchestrateUpdateProduct(product, contract);
+        if (tryOrchestrateUpdatePRoduct.IsT1) return new CannotUpdateProductError(message: tryOrchestrateUpdatePRoduct.AsT1, path: []).AsList();
 
         await _unitOfWork.SaveAsync();
 
