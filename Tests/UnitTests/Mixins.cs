@@ -1,4 +1,5 @@
 
+using Domain.Contracts.DraftImages;
 using Domain.Contracts.Orders;
 using Domain.Contracts.Products;
 using Domain.DomainExtension;
@@ -75,5 +76,11 @@ public class Mixins
     {
         var order = OrderDomainExtension.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: seed);
         return order;
+    }
+
+    public static DraftImage CreateDraftImage(int seed)
+    {
+        var contract = new CreateDraftImageContract(id: seed, fileName: $"filename_{seed}.png", originalFileName:  $"original_filename_{seed}.png", url:  $"url/filename_{seed}.png", dateCreated: DateTime.UtcNow);
+        return DraftImage.ExecuteCreate(contract);
     }
 }

@@ -141,9 +141,9 @@ builder.Services.AddTransient<IDraftImageExistsValidator<FileName>, DraftImageEx
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductDomainService, ProductDomainService>();
+
 builder.Services.AddScoped<IProductHistoryDomainService, ProductHistoryDomainService>();
 builder.Services.AddScoped<IOrderDomainService, OrderDomainService>();
-
 builder.Services.AddScoped<IDraftImageDomainService, DraftImageDomainService>();
 builder.Services.AddScoped<IProductDomainService, ProductDomainService>();
 

@@ -13,4 +13,5 @@ public interface IProductHistoryRepository
     Task<ProductHistory?> GetByIdAsync(ProductHistoryId id);
     Task<List<ProductHistory>> FindAllAsync(FilterProductHistoriesCriteria criteria);
     Task UpdateAsync(ProductHistory productHistory);
+    Task LazyUpdateAsync(ProductHistory productHistory);
 }

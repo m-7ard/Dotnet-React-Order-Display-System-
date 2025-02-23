@@ -115,11 +115,7 @@ public class ProductRepository : IProductRepository
 
     public async Task UpdateAsync(Product product)
     {
-        var currentEntity = await _dbContext.Product.SingleAsync(d => d.Id == product.Id.Value);
-        var updatedEntity = ProductMapper.FromDomainToDbEntity(product);
-        _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
-       
-        await PersistDomainEvents(product);
+        await LazyUpdateAsync(product);
         await _dbContext.SaveChangesAsync();
     }
 
@@ -143,5 +139,6 @@ public class ProductRepository : IProductRepository
         var currentEntity = await _dbContext.Product.SingleAsync(d => d.Id == product.Id.Value);
         var updatedEntity = ProductMapper.FromDomainToDbEntity(product);
         _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
+        await PersistDomainEvents(product);
     }
 }

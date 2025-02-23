@@ -41,7 +41,7 @@ public class PlainApiErrorHandlingService
         }).ToList();
     }
 
-    public static List<ApiError> MapApplicationErrors(List<ApplicationError> errors, Dictionary<string, List<string>>? codeDictionary = null, List<string>? defaultPath = null)
+    public static List<ApiError> MapApplicationErrors(List<ApplicationError> errors, List<string>? pathPrefix = null)
     {
         var result = new List<ApiError>();
 
@@ -49,13 +49,13 @@ public class PlainApiErrorHandlingService
         {
             List<string> finalPath = [..error.Path];
 
-            if (codeDictionary is not null && codeDictionary.TryGetValue(error.Code, out var pathPrefix))
+            if (finalPath.Count == 0)
+            {
+                finalPath = pathPrefix ?? ["_"];        
+            }
+            else if (pathPrefix is not null)
             {
                 finalPath.InsertRange(0, pathPrefix);
-            }
-            else
-            {
-                finalPath = defaultPath ?? ["_"];
             }
 
             var apiError = CreateError(
@@ -63,6 +63,7 @@ public class PlainApiErrorHandlingService
                 path: finalPath,
                 code: ApiErrorCodes.APPLICATION_ERROR
             );
+            
             result.Add(apiError);
         });
 
