@@ -157,4 +157,21 @@ public class ProductDomainService : IProductDomainService
 
         return true;
     }
+
+    public async Task<OneOf<bool, string>> TryOrchestrateDeleteProduct(Product product)
+    {
+        var productHistoryExists = await _productHistoryDomainService.GetLatestProductHistoryForProduct(product);
+        if (productHistoryExists.IsT1) return productHistoryExists.AsT1;
+
+        var productHistory = productHistoryExists.AsT0;
+
+        // Invalidate old history
+        productHistory.Invalidate();
+        await _unitOfWork.ProductHistoryRepository.LazyUpdateAsync(productHistory);
+
+        // Delete product
+        await _unitOfWork.ProductRepository.LazyDeleteByIdAsync(product.Id);
+    
+        return true;
+    }
 }

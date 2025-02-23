@@ -11,4 +11,5 @@ public interface IProductDomainService
     Task<OneOf<bool, string>> TryOrchestrateAddNewProductImage(Product product, string fileName);
     Task<OneOf<bool, List<string>>> TryOrchestrateUpdateImages(Product product, List<string> fileNames);
     Task<OneOf<bool, string>> TryOrchestrateUpdateProduct(Product product, OrchestrateUpdateProductContract contract);
+    Task<OneOf<bool, string>> TryOrchestrateDeleteProduct(Product product);
 }

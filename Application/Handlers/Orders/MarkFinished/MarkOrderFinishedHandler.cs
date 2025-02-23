@@ -1,10 +1,8 @@
 using Application.Errors;
 using Application.Interfaces.Persistence;
-using Application.Validators;
 using Application.Validators.OrderExistsValidator;
 using Domain.DomainExtension;
 using Domain.ValueObjects.Order;
-using Domain.ValueObjects.Product;
 using MediatR;
 using OneOf;
 
