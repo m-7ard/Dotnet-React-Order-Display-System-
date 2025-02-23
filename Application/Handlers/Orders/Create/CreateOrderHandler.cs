@@ -3,8 +3,6 @@ using Application.Errors;
 using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
-using Domain.DomainExtension;
-using Domain.Models;
 using MediatR;
 using OneOf;
 
