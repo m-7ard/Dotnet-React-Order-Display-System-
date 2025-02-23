@@ -9,6 +9,7 @@ import {
     TAnyGenericRoute,
     TExtractGenericRouteLoaderData,
     TExtractGenericRouteParams,
+    IUpdateProductAmountParams,
 } from "../routeTypes";
 import { IRouterModule } from "../RouterModule/RouterModule";
 import { tanstackConfigs } from "./tanstackConfig";
@@ -72,6 +73,13 @@ const updateProduct: ICommonRoute<IRouteConfig<IUpdateProductParams>, never> = {
     isLayout: false,
 };
 
+const updateProductAmount: ICommonRoute<IRouteConfig<IUpdateProductAmountParams>, never> = {
+    parent: listProducts,
+    config: tanstackConfigs.UPDATE_PRODUCT_AMOUNT,
+    label: "Update Amount",
+    isLayout: false,
+};
+
 // Product histories
 const listProductHistories: ICommonRoute<IRouteConfig<TEmptyParams>, never> = {
     parent: frontpage,
@@ -128,6 +136,7 @@ const genericRoutes: ICommonRouteMapping = {
     LIST_PRODUCTS: listProducts,
     CREATE_PRODUCT: createProduct,
     UPDATE_PRODUCT: updateProduct,
+    UPDATE_PRODUCT_AMOUNT: updateProductAmount,
 
     LIST_PRODUCT_HISTORIES: listProductHistories,
 
@@ -135,7 +144,7 @@ const genericRoutes: ICommonRouteMapping = {
     UNKNOWN_ERROR: unknownError,
     NOT_FOUND_ERROR: notFoundError,
     INTERNAL_SERVER_ERROR: internalServerError,
-    CLIENT_SIDE_ERROR: clientSideError,
+    CLIENT_SIDE_ERROR: clientSideError
 };
 
 function useRouterLoaderData<T extends TAnyGenericRoute>(exp: (keys: ICommonRouteMapping) => T): TExtractGenericRouteLoaderData<T> {

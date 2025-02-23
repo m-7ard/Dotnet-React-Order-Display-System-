@@ -41,7 +41,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             var tryAddOrderItem = await _orderDomainService.TryOrchestrateAddNewOrderItem(new OrchestrateAddNewOrderItemContract(order: order, productId: orderItem.ProductId, quantity: orderItem.Quantity));
             if (tryAddOrderItem.IsT1)
             {
-                validationErrors.Add(new CannotCreateOrderItemError(message: tryAddOrderItem.AsT1, path: []));
+                validationErrors.Add(new CannotCreateOrderItemError(message: tryAddOrderItem.AsT1, path: [uid]));
             }
         }
 

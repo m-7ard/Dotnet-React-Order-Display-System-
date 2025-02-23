@@ -1,7 +1,5 @@
 using Domain.Contracts.Products;
 using Domain.Models;
-using Domain.ValueObjects.Product;
-using Domain.ValueObjects.Shared;
 using Infrastructure.DbEntities;
 
 namespace Infrastructure.Mappers;

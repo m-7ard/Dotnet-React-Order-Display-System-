@@ -18,6 +18,7 @@ type ValueSchema = {
 
 export default function OrderItemDataField(props: { onChange: (value: ValueSchema) => void; errors?: ErrorSchema; value: ValueSchema }) {
     const { errors, value, onChange } = props;
+    console.log(errors)
 
     const deleteOrderItem = useCallback(
         (productId: number | string) => {
@@ -97,7 +98,9 @@ export default function OrderItemDataField(props: { onChange: (value: ValueSchem
                     {Object.entries(value).map(([productId, oiData]) => (
                         <OrderItemDataFieldItem
                             product={oiData.product}
-                            errors={errors?.[productId]}
+                            errors={{
+                                _: errors?.[productId]
+                            }}
                             value={value[productId]}
                             onUpdate={updateOrderItem}
                             onDelete={() => deleteOrderItem(productId)}

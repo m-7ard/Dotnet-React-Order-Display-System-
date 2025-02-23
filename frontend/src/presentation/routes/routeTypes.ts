@@ -16,6 +16,9 @@ export interface IManageOrderParams extends TRouteParams {
 export interface IUpdateProductParams extends TRouteParams {
     id: string;
 }
+export interface IUpdateProductAmountParams extends TRouteParams {
+    id: string;
+}
 export type TEmptyParams = TRouteParams;
 
 type TEmptyLoaderData = never;
@@ -26,6 +29,7 @@ export type TManageOrderLoaderData = { order: Order };
 
 export type TListProductsLoaderData = { products: IProduct[] };
 export type TUpdateProductLoaderData = { product: IProduct };
+export type TUpdateProductAmountLoaderData = { product: IProduct };
 
 export type TListProductHistoriesLoaderData = { productHistories: ProductHistory[] };
 
@@ -39,6 +43,7 @@ export interface IRouteConfigMapping {
     LIST_PRODUCTS: IRouteConfig<TEmptyParams>;
     CREATE_PRODUCT: IRouteConfig<TEmptyParams>;
     UPDATE_PRODUCT: IRouteConfig<IUpdateProductParams>;
+    UPDATE_PRODUCT_AMOUNT: IRouteConfig<IUpdateProductAmountParams>;
 
     LIST_PRODUCT_HISTORIES: IRouteConfig<TEmptyParams>;
 
@@ -76,6 +81,7 @@ export interface ICommonRouteMapping {
     LIST_PRODUCTS: ICommonRoute<IRouteConfig<TEmptyParams>, { products: IProduct[] }>;
     CREATE_PRODUCT: ICommonRoute<IRouteConfig<TEmptyParams>, TEmptyLoaderData>;
     UPDATE_PRODUCT: ICommonRoute<IRouteConfig<IUpdateProductParams>, { product: IProduct }>;
+    UPDATE_PRODUCT_AMOUNT: ICommonRoute<IRouteConfig<IUpdateProductAmountParams>, { product: IProduct }>;
 
     LIST_PRODUCT_HISTORIES: ICommonRoute<IRouteConfig<TEmptyParams>, { productHistories: ProductHistory[] }>;
 
