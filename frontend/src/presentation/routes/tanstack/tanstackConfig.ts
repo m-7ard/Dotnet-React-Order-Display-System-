@@ -31,6 +31,10 @@ export const tanstackConfigs: IRouteConfigMapping = {
         pattern: "/products/$id/update",
         build: ({ id }) => `/products/${id}/update`,
     },
+    UPDATE_PRODUCT_AMOUNT: {
+        pattern: "/products/$id/update-amount",
+        build: ({ id }) => `/products/${id}/update-amount`,
+    },
 
     LIST_PRODUCT_HISTORIES: {
         pattern: "/product_histories",

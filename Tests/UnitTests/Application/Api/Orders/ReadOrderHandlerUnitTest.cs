@@ -1,10 +1,8 @@
-using Application.Errors;
 using Application.Handlers.Orders.Read;
 using Application.Validators.OrderExistsValidator;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
-using Domain.ValueObjects.Shared;
 using Moq;
 using OneOf;
 using Tests.UnitTests.Utils;
@@ -25,16 +23,11 @@ public class ReadOrderHandlerUnitTest
             orderExistsValidator: _mockOrderExistsValidator.Object
         );
 
-        _mockOrder = OrderFactory.BuildExistingOrder(
-            id: OrderId.ExecuteCreate(new Guid()),
-            total: Money.ExecuteCreate(100),
-            orderDates: OrderDates.ExecuteCreate(
-                dateCreated: DateTime.UtcNow,
-                dateFinished: null
-            ),
-            orderItems: [],
-            status: OrderStatus.Pending,
-            serialNumber: 1
+        var product = Mixins.CreateProduct(1, []);
+        _mockOrder = Mixins.CreateNewOrderWithItem(
+            seed: 1,
+            product: product,
+            productHistory: ProductHistoryFactory.BuildNewProductHistoryFromProduct(product)
         );
     }
 

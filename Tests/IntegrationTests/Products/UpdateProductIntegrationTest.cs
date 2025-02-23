@@ -4,8 +4,6 @@ using Api.DTOs.Products.Update;
 using Application.Interfaces.Persistence;
 using Domain.Models;
 using Infrastructure.DbEntities;
-using Infrastructure.Mappers;
-using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

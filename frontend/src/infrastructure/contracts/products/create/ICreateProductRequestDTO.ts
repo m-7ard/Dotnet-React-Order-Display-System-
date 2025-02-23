@@ -3,4 +3,5 @@ export default interface ICreateProductRequestDTO {
     price: number;
     description: string;
     images: string[];
+    amount: number;
 }

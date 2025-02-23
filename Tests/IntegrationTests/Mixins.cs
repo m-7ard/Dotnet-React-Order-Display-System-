@@ -1,5 +1,9 @@
 using Application.Common;
 using Application.Interfaces.Persistence;
+using Domain.Contracts.DraftImages;
+using Domain.Contracts.Orders;
+using Domain.Contracts.Products;
+using Domain.DomainExtension;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
@@ -37,27 +41,29 @@ public class Mixins
     public async Task<Product> CreateProduct(int number, List<DraftImage> images)
     {
         var productId = Guid.NewGuid();
-        var product = ProductFactory.BuildNewProduct(
-            id: ProductId.ExecuteCreate(productId),
+        var product = Product.ExecuteCreate(new CreateProductContract(
+            id: productId,
             name: $"Product #{number}",
-            price: Money.ExecuteCreate(number),
+            price: number,
             description: $"Product #{number} Description",
-            images: images.Select((image) => ProductImageFactory.BuildNewProductImageFromDraftImage(
-                source: image,
-                id: ProductImageId.ExecuteCreate(Guid.NewGuid()),
-                productId: ProductId.ExecuteCreate(productId)
-            )).ToList()
-        );
+            dateCreated: DateTime.UtcNow,
+            amount: 1_000_000,
+            images: []
+        ));
+
+        foreach (var image in images)
+        {
+            product.ExecuteAddProductImage(id: Guid.NewGuid(), fileName: image.FileName.Value, originalFileName: image.OriginalFileName.Value, url: image.Url);    
+        }
 
         await _productRepository.CreateAsync(product);
-        var upToDateProduct = await _productRepository.GetByIdAsync(product.Id);
 
         foreach (var draftImage in images)
         {
             await _draftImageRepository.DeleteByFileNameAsync(draftImage.FileName);
         }
 
-        return upToDateProduct!;
+        return product!;
     }
 
     public async Task<Product> CreateProductAndProductHistory(int number, List<DraftImage> images)
@@ -71,7 +77,8 @@ public class Mixins
             productId: product.Id,
             description: product.Description
         );
-        var productHistory = await _productHistoryRepository.CreateAsync(inputProductHistory);
+
+        await _productHistoryRepository.CreateAsync(inputProductHistory);
 
         return product;
     }
@@ -81,24 +88,29 @@ public class Mixins
         // Copy a file from [fileRoute] that is an existing file's path
         // To a destination, where it includes the fileName in the path at the end
         File.Copy(fileRoute.Value, Path.Join(DirectoryService.GetMediaDirectory(), destinationFileName), overwrite: true);
-        
-        var menuItemImage = await _draftImageRepository.CreateAsync(
-            DraftImageFactory.BuildNewDraftImage(
-                fileName: FileName.ExecuteCreate(destinationFileName), 
-                originalFileName: FileName.ExecuteCreate("originalFileName.png"), 
-                url: $"Media/{destinationFileName}"
-            )
-        );
-        
-        return menuItemImage;
+
+        var contract = new CreateNewDraftImageContract(fileName: destinationFileName, originalFileName: "originalFileName.png", url: $"Media/{destinationFileName}");
+        var draftImage = DraftImage.ExecuteCreateNew(contract);
+
+        await _draftImageRepository.CreateAsync(draftImage);
+
+        return draftImage;
     }
 
-    public async Task<Order> CreateOrder(List<Product> products, int seed, OrderStatus orderStatus) {
-        var newOrder = OrderFactory.BuildNewOrder(
-            id: OrderId.ExecuteCreate(Guid.NewGuid()),
-            status: orderStatus,
-            serialNumber: await _sequenceService.GetNextOrderValueAsync()
-        );
+    public async Task<Order> CreateFinishedOrder(List<Product> products, int seed) {
+        var order = await CreateNewOrder(products: products, seed: seed);
+        foreach (var orderItem in order.OrderItems)
+        {
+            OrderDomainExtension.ExecuteMarkOrderItemFinished(order, orderItem.Id);
+        }
+        
+        order.ExecuteTransitionStatus(new TransitionOrderStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: DateTime.UtcNow));
+        await _orderRespository.UpdateAsync(order);
+        return order;
+    }
+
+    public async Task<Order> CreateNewOrder(List<Product> products, int seed) {
+        var order = OrderDomainExtension.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: await _sequenceService.GetNextOrderValueAsync());
 
         foreach (var product in products)
         {
@@ -108,11 +120,21 @@ public class Mixins
                 throw new Exception("A Product's ProductHistory cannot be null when creating an Order because an Order's OrderItems need a non-null ProductHistoryId.");
             }
             
-            newOrder.ExecuteAddOrderItem(id: Guid.NewGuid(), product: product, productHistory: productHistory, quantity: seed, serialNumber: await _sequenceService.GetNextOrderItemValueAsync());
+            var contract = new AddNewOrderItemContract(
+                order: order,
+                id: Guid.NewGuid(), 
+                productId: product.Id,
+                productHistoryId: productHistory.Id, 
+                quantity: seed, 
+                serialNumber: await _sequenceService.GetNextOrderItemValueAsync(),
+                total: product.Price.Value * seed
+            );
+
+            OrderDomainExtension.ExecuteAddNewOrderItem(contract);
         }
 
-        await _orderRespository.CreateAsync(newOrder);
-        var insertedOrder = await _orderRespository.GetByIdAsync(newOrder.Id);
+        await _orderRespository.CreateAsync(order);
+        var insertedOrder = await _orderRespository.GetByIdAsync(order.Id);
         if (insertedOrder is null)
         {
             throw new Exception("Order was not inserted.");

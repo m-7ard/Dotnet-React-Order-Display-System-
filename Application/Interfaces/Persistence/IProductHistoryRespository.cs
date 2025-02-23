@@ -7,9 +7,11 @@ namespace Application.Interfaces.Persistence;
 
 public interface IProductHistoryRepository
 {
-    Task<ProductHistory> CreateAsync(ProductHistory productHistory);
+    Task CreateAsync(ProductHistory productHistory);
+    Task LazyCreateAsync(ProductHistory productHistory);
     Task<ProductHistory?> GetLatestByProductIdAsync(ProductId id);
     Task<ProductHistory?> GetByIdAsync(ProductHistoryId id);
     Task<List<ProductHistory>> FindAllAsync(FilterProductHistoriesCriteria criteria);
     Task UpdateAsync(ProductHistory productHistory);
+    Task LazyUpdateAsync(ProductHistory productHistory);
 }

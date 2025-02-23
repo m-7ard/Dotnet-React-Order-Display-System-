@@ -1,11 +1,8 @@
+using Application.Contracts.DomainService.OrderDomainService;
 using Application.Errors;
+using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
-using Application.Validators;
-using Application.Validators.LatestProductHistoryExistsValidator;
-using Application.Validators.ProductExistsValidator;
-using Domain.DomainFactories;
-using Domain.ValueObjects.Order;
-using Domain.ValueObjects.Product;
+using Application.Interfaces.Services;
 using MediatR;
 using OneOf;
 
@@ -14,54 +11,36 @@ namespace Application.Handlers.Orders.Create;
 public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<CreateOrderResult, List<ApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly IProductExistsValidator<ProductId> _productExistsValidator;
-    private readonly ILatestProductHistoryExistsValidator<ProductId> _latestProductHistoryExistsValidator;
-    private readonly ISequenceService _sequenceService;
+    private readonly IProductRepository _productRepository;
+    private readonly IOrderDomainService _orderDomainService;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CreateOrderHandler(IOrderRepository orderRepository, IProductExistsValidator<ProductId> productExistsValidator, ILatestProductHistoryExistsValidator<ProductId> latestProductHistoryExistsValidator, ISequenceService sequenceService)
+    public CreateOrderHandler(IOrderRepository orderRepository, IProductRepository productRepository, IOrderDomainService orderDomainService, IUnitOfWork unitOfWork)
     {
         _orderRepository = orderRepository;
-        _productExistsValidator = productExistsValidator;
-        _latestProductHistoryExistsValidator = latestProductHistoryExistsValidator;
-        _sequenceService = sequenceService;
+        _productRepository = productRepository;
+        _orderDomainService = orderDomainService;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<OneOf<CreateOrderResult, List<ApplicationError>>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
+        // Create New Order 
+        var tryCreateOrder = await _orderDomainService.TryOrchestrateCreateNewOrder(request.Id);
+        if (tryCreateOrder.IsT1) return new CannotCreateOrderError(message: tryCreateOrder.AsT1, path: []).AsList();
+        
+        var order = tryCreateOrder.AsT0;
+
+        // Create Order Items
         var validationErrors = new List<ApplicationError>();
-        var order = OrderFactory.BuildNewOrder(
-            id: OrderId.ExecuteCreate(Guid.NewGuid()),
-            status: OrderStatus.Pending,
-            serialNumber: await _sequenceService.GetNextOrderValueAsync()
-        );
 
         foreach (var (uid, orderItem) in request.OrderItemData)
         {
-            var productId = ProductId.ExecuteCreate(orderItem.ProductId);
-            var productExistsResult = await _productExistsValidator.Validate(productId);
-            if (productExistsResult.TryPickT1(out var errors, out var product))
+            var tryAddOrderItem = await _orderDomainService.TryOrchestrateAddNewOrderItem(new OrchestrateAddNewOrderItemContract(order: order, productId: orderItem.ProductId, quantity: orderItem.Quantity));
+            if (tryAddOrderItem.IsT1)
             {
-                validationErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [uid, ..error.Path])));
-                continue;
+                validationErrors.Add(new CannotCreateOrderItemError(message: tryAddOrderItem.AsT1, path: [uid]));
             }
-
-            var latestProductHistoryExistsResult = await _latestProductHistoryExistsValidator.Validate(ProductId.ExecuteCreate(orderItem.ProductId));
-            if (latestProductHistoryExistsResult.TryPickT1(out errors, out var productHistory))
-            {
-                validationErrors.AddRange(errors.Select(error => new ApplicationError(message: error.Message, code: error.Code, path: [uid, ..error.Path])));
-                continue;
-            }
-            
-            var orderItemId = Guid.NewGuid();
-            var canAddOrderItem = order.CanAddOrderItem(id: orderItemId, product: product, productHistory: productHistory, quantity: orderItem.Quantity);
-            if (canAddOrderItem.TryPickT1(out var error, out var _))
-            {
-                var applicationError = new ApplicationError(message: error, code: GeneralApplicationErrorCodes.NOT_ALLOWED, path: [uid]);
-                validationErrors.Add(applicationError);
-                continue;
-            }
-
-            order.ExecuteAddOrderItem(id: orderItemId, product: product, productHistory: productHistory, quantity: orderItem.Quantity, serialNumber: await _sequenceService.GetNextOrderItemValueAsync());
         }
 
         if (validationErrors.Count > 0)
@@ -70,6 +49,8 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
         }
 
         await _orderRepository.CreateAsync(order);
-        return new CreateOrderResult(orderId: order.Id);
+        await _unitOfWork.SaveAsync();
+
+        return new CreateOrderResult();
     }
 }

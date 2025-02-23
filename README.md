@@ -9,7 +9,7 @@
 6. [Sample Code](#code-samples)
     - [Domain Models](#domain-models)
     - [Value Objects](#value-objects)
-    - [Resusable Application Layer Validators](#resusable-application-layer-validators)
+    - [Domain Services](#domain-services)
     - [CQRS Application Layer Architecture](#CQRS-application-layer-architecture)
     - [Database Cross Compatability](#database-cross-compatibility)
     - [API Model Service](#api-model-service)
@@ -156,21 +156,19 @@ This Order domain features methods to manage its OrderItems. These methods will 
 ```csharp
 public class Order
 {
-    public Order(OrderId id, Money total, List<OrderItem> orderItems, OrderStatus status, int serialNumber, OrderDates orderDates)
+    public Order(OrderId id, int serialNumber, Money total, OrderSchedule orderSchedule, List<OrderItem> orderItems)
     {
         Id = id;
-        Total = total;
-        OrderItems = orderItems;
-        Status = status;
         SerialNumber = serialNumber;
-        OrderDates = orderDates;
+        Total = total;
+        OrderSchedule = orderSchedule;
+        OrderItems = orderItems;
     }
 
     public OrderId Id { get; private set; }
     public int SerialNumber { get; private set; }
     public Money Total { get; set; }
-    public OrderStatus Status { get; set; }
-    public OrderDates OrderDates { get; set; }
+    public OrderSchedule OrderSchedule { get; set; }
     public List<OrderItem> OrderItems { get; set; }
 
     public List<DomainEvent> DomainEvents { get; set; } = [];
@@ -179,108 +177,129 @@ public class Order
         DomainEvents = [];
     }
 
-    private Dictionary<string, List<OrderStatus>> ValidStatusStatusTransitions = new Dictionary<string, List<OrderStatus>>()
+    private readonly Dictionary<OrderStatus, List<OrderStatus>> _validStatusStatusTransitions = new()
     {
-        { OrderStatus.Pending.Name, [OrderStatus.Finished] },
-        { OrderStatus.Finished.Name, [] },
+        { OrderStatus.Pending, [OrderStatus.Finished] },
+        { OrderStatus.Finished, [] },
     };
-    
-    public OneOf<OrderStatus, string> CanTransitionStatus(string value)
+
+    public OneOf<bool, string> CanTransitionStatus(TransitionOrderStatusContract contract)
     {
-        var statusCreationResult = OrderStatus.CanCreate(value);
-        if (statusCreationResult.TryPickT1(out var errors, out var _))
-        {
-            return errors;
-        }
+        // OrderStatus
+        var canCreateStatus = OrderStatus.CanCreate(contract.Status);
+        if (canCreateStatus.IsT1) return canCreateStatus.AsT1;
 
-        if (!ValidStatusStatusTransitions.TryGetValue(Status.Name, out var transitionList))
-        {
-            return $"Invalid status transition from {Status.Name} to {value}.";
-        }
+        var newStatus = OrderStatus.ExecuteCreate(contract.Status);
 
-        var newStatusObject = transitionList.Find(status => status.Name == value); 
-        if (newStatusObject is null)
-        {
-            return $"Invalid status transition from {Status.Name} to {value}.";
-        }
+        var currentStatus = OrderSchedule.Status;
+        if (!_validStatusStatusTransitions.TryGetValue(currentStatus, out var transitionList)) return $"No transitions exist for status \"{currentStatus}\".";
 
-        return newStatusObject;
+        var transitionExists = transitionList.Exists(status => status == newStatus); 
+        if (!transitionExists) return $"Invalid status transition from {currentStatus} to {newStatus}.";
+
+
+        // OrderDates
+        var canCreateDates = OrderDates.CanCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished);
+        if (canCreateDates.IsT1) return canCreateDates.AsT1;
+
+        var newOrderDates = OrderDates.ExecuteCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished); 
+
+
+        // OrderSchedule
+        var canCreateSchedule = OrderSchedule.CanCreate(newStatus, newOrderDates);
+        if (canCreateSchedule.IsT1) return canCreateSchedule.AsT1;
+
+
+        return true;
     }
 
-    public void ExecuteTransitionStatus(string value)
+    public void ExecuteTransitionStatus(TransitionOrderStatusContract contract)
     {
-        var canTransitionStatus = CanTransitionStatus(value);
-        if (canTransitionStatus.TryPickT1(out var error, out var newStatus))
+        var canTransitionStatus = CanTransitionStatus(contract);
+        if (canTransitionStatus.IsT1)
         {
-            throw new Exception(error);
+            throw new Exception(canTransitionStatus.AsT1);
         }
 
-        Status = newStatus;
+        var newStatus = OrderStatus.ExecuteCreate(contract.Status);
+        var newOrderDates = OrderDates.ExecuteCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished); 
+        var newSchedule = OrderSchedule.ExecuteCreate(newStatus, newOrderDates);
+        OrderSchedule = newSchedule;
     }
 
-    public OneOf<bool, string> CanAddOrderItem(Guid id, Product product, ProductHistory productHistory, int quantity)
+    public OneOf<bool, string> CanTransitionOrderItem(OrderItemId id, TransitionOrderItemStatusContract contract)
     {
-        var canCreateOrderItemId = OrderItemId.CanCreate(id);
-        if (canCreateOrderItemId.TryPickT1(out var error, out _))
+        var tryGetResult = TryGetOrderItemById(id);
+        if (tryGetResult.IsT1) return tryGetResult.AsT1;
+
+        var orderItem = tryGetResult.AsT0;
+
+        var canTransitionStatusResult = orderItem.CanTransitionStatus(contract);
+        if (canTransitionStatusResult.IsT1) return canTransitionStatusResult.AsT1;
+
+        return true;
+    }
+
+    public OneOf<bool, string> CanAddOrderItem(AddOrderItemContract contract)
+    {
+        // Order Item
+        var createOrderItemContract = new CreateOrderItemContract(
+            id: contract.Id,
+            productId: contract.ProductId,
+            productHistoryId: contract.ProductHistoryId,
+            quantity: contract.Quantity,
+            status: contract.Status,
+            serialNumber: contract.SerialNumber,
+            dateCreated: contract.DateCreated,
+            dateFinished: contract.DateFinished
+        );
+
+        var canCreateOrderItem = OrderItem.CanCreate(createOrderItemContract);
+        if (canCreateOrderItem.TryPickT1(out var error, out _))
         {
             return error;
         }
 
-        var canCreateQuantity = Quantity.CanCreate(quantity);
-        if (canCreateQuantity.TryPickT1(out error, out _))
-        {
-            return error;
-        }
-
-        var canCreateTotal = Money.CanCreate(productHistory.Price.Value * quantity);
-        if (canCreateOrderItemId.TryPickT1(out error, out _))
-        {
-            return error;
-        }
-
-
-        if (product.Id != productHistory.ProductId)
-        {
-            return "Product History's Product Id does not match Product Id.";
-        }
-
-        if (!productHistory.IsValid())
-        {
-            return $"Product History for Product of Id \"{product.Id}\" is not valid.";
-        }
-
-        var existingOrderItem = OrderItems.Find(orderItem => orderItem.ProductId == product.Id);
+        var existingOrderItem = OrderItems.Find(orderItem => orderItem.ProductId == contract.ProductId);
         if (existingOrderItem is not null)
         {
             return "Product has already been added as an Order Item.";
         }
 
+        // Order
+        var canCreateTotal = Money.CanCreate(contract.Total);
+        if (canCreateTotal.TryPickT1(out error, out _))
+        {
+            return error;
+        }
+
         return true;
     }
 
-    public OrderItemId ExecuteAddOrderItem(Guid id, Product product, ProductHistory productHistory, int quantity, int serialNumber) 
+    public OrderItemId ExecuteAddOrderItem(AddOrderItemContract contract) 
     {
-        var canAddOrderItemResult = CanAddOrderItem(id: id, product: product, productHistory: productHistory, quantity: quantity);
+        var canAddOrderItemResult = CanAddOrderItem(contract);
         if (canAddOrderItemResult.TryPickT1(out var error, out var _))
         {
             throw new Exception(error);
         }
 
-        var orderItem = OrderItemFactory.BuildNewOrderItem(
-            id: OrderItemId.ExecuteCreate(id),
-            orderId: Id,
-            quantity: Quantity.ExecuteCreate(quantity),
-            status: OrderItemStatus.Pending,
-            productHistoryId: productHistory.Id,
-            productId: productHistory.ProductId,
-            serialNumber: serialNumber
+        var createOrderItemContract = new CreateOrderItemContract(
+            id: contract.Id,
+            productId: contract.ProductId,
+            productHistoryId: contract.ProductHistoryId,
+            quantity: contract.Quantity,
+            status: contract.Status,
+            serialNumber: contract.SerialNumber,
+            dateCreated: contract.DateCreated,
+            dateFinished: contract.DateFinished
         );
 
-        var addAmount = Money.ExecuteCreate(productHistory.Price.Value * quantity);
-
-        Total += addAmount;
+        var orderItem = OrderItem.ExecuteCreate(createOrderItemContract);
         OrderItems.Add(orderItem);
+        DomainEvents.Add(new OrderItemCreatedEvent(orderItem));
 
+        Total += Money.ExecuteCreate(contract.Total);
         return orderItem.Id;
     }
 
@@ -305,6 +324,46 @@ public class Order
 
         return orderItem;
     }
+
+    public static OneOf<bool, string> CanCreate(CreateOrderContract contract)
+    {
+        var canCreateId = OrderId.CanCreate(contract.Id);
+        if (canCreateId.IsT1) return canCreateId.AsT1;
+
+        var canCreateTotal = Money.CanCreate(contract.Total);
+        if (canCreateTotal.IsT1) return canCreateTotal.AsT1;
+        
+        var canCreateStatus = OrderStatus.CanCreate(contract.Status);
+        if (canCreateStatus.IsT1) return canCreateStatus.AsT1;
+        
+        var canCreateDates = OrderDates.CanCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished);
+        if (canCreateDates.IsT1) return canCreateDates.AsT1;
+
+        // Relationships
+        var status = OrderStatus.ExecuteCreate(contract.Status);
+        var dates = OrderDates.ExecuteCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished);
+        var canCreateSchedule = OrderSchedule.CanCreate(status: status, dates: dates);
+        if (canCreateSchedule.IsT1) return canCreateSchedule.AsT1;
+        
+        return true;
+    }
+
+    public static Order ExecuteCreate(CreateOrderContract contract)
+    {
+        var id = OrderId.ExecuteCreate(contract.Id);
+        var total = Money.ExecuteCreate(contract.Total);
+        var status = OrderStatus.ExecuteCreate(contract.Status);
+        var dates = OrderDates.ExecuteCreate(dateCreated: contract.DateCreated, dateFinished: contract.DateFinished);
+        var schedule = OrderSchedule.ExecuteCreate(status: status, dates: dates);
+
+        return new Order(
+            id: id,
+            serialNumber: contract.SerialNumber,
+            total: total,
+            orderSchedule: schedule,
+            orderItems: contract.OrderItems
+        );
+    }
 }
 ```
 
@@ -314,123 +373,206 @@ Example of value objects to enforce constraints between related fields:
 This value object enforces the logical values of the dates
 
 ```csharp
-public class OrderDates
+public class OrderSchedule : ValueObject
 {
-    public OrderDates(DateTime dateCreated, DateTime? dateFinished)
+    public OrderStatus Status { get; }
+    public OrderDates Dates { get; }
+
+    private OrderSchedule(OrderStatus status, OrderDates dates)
     {
-        DateCreated = dateCreated;
-        DateFinished = dateFinished;
+        Status = status;
+        Dates = dates;
     }
 
-    public DateTime DateCreated { get; }
-    public DateTime? DateFinished { get; }
-
-    public static OneOf<bool, string> CanCreate(DateTime dateCreated, DateTime? dateFinished)
+    private static readonly Dictionary<OrderStatus, Func<OrderDates, List<DateTime?>>> _orderStatusRequirements = new()
     {
-        var currentDate = DateTime.UtcNow;
-        if (dateCreated > DateTime.UtcNow)
+        { OrderStatus.Pending, orderDates => [orderDates.DateCreated] },
+        { OrderStatus.Finished, orderDates => [orderDates.DateCreated, orderDates.DateFinished] }
+    };
+
+    private static OneOf<bool, string> ValidateOrderSchedule(OrderStatus orderStatus, OrderDates orderDates)
+    {
+        var dates = _orderStatusRequirements[orderStatus].Invoke(orderDates);
+        if (dates.Any(date => date is null))
         {
-            return $"Date created ({ dateCreated }) cannot be larger than current date ({ currentDate }).";
+            return $"Invalid OrderSchedule; OrderDate requirement for status \"{orderStatus}\" was failed to be met.";
         }
 
-        if (dateFinished is not null && dateFinished < dateCreated)
+        return true;
+    } 
+
+    public static OrderSchedule ExecuteCreate(OrderStatus status, OrderDates dates)
+    {
+        var validationResult = CanCreate(status, dates);
+
+        if (validationResult.TryPickT1(out var error, out _))
         {
-            return $"Date finished ({ dateFinished }) cannot be smaller than date created ({ dateCreated })";
+            throw new Exception(error);
+        }
+
+        return new OrderSchedule(status, dates);
+    }
+
+    public static OneOf<bool, string> CanCreate(OrderStatus status, OrderDates dates)
+    {
+        var validateOrderScheduleResult = ValidateOrderSchedule(status, dates);
+        if (validateOrderScheduleResult.TryPickT1(out var error, out _))
+        {
+            return error;
         }
 
         return true;
     }
 
-    public static OrderDates ExecuteCreate(DateTime dateCreated, DateTime? dateFinished)
+    public static OneOf<OrderSchedule, string> TryCreate(OrderStatus status, OrderDates dates)
     {
-        var canCreateResult = CanCreate(dateCreated, dateFinished);
-        if (canCreateResult.TryPickT1(out var error, out var _))
+        var canCreateResult = CanCreate(status, dates);
+        if (canCreateResult.TryPickT1(out var error, out _))
         {
-            throw new Exception(error);
+            return error;
         }
 
-        return new OrderDates(dateCreated: dateCreated, dateFinished: dateFinished);
+        return ExecuteCreate(status, dates);
+    }
+
+
+    public override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Status;
+        yield return Dates;
     }
 }
 ```
 
-### Resusable Application Layer Validators
+### Domain Services
 
-The following demonstrates a Validator, that takes an OrderId value object as argument to differentiate it from other values and then uses the repository to retrieve the order, or otherwise return a specific error code associated with the validator.
+The following demonstrates a Order Domain Service that will encapsulate the bounded context of the order and orchestrate complex logic for us
 
 ```csharp
-public interface IOrderExistsValidator<InputType> 
+public class OrderDomainService : IOrderDomainService
 {
-    public Task<OneOf<Order, List<ApplicationError>>> Validate(InputType input);
-}
+    private readonly IProductDomainService _productDomainService;
+    private readonly IProductHistoryDomainService _productHistoryDomainService;
+    private readonly ISequenceService _sequenceService;
+    private readonly IProductRepository _productRepository;
 
-public class OrderExistsByIdValidator : IOrderExistsValidator<OrderId>
-{
-    private readonly IOrderRepository _orderRepository;
-
-    public OrderExistsByIdValidator(IOrderRepository orderRepository)
+    public OrderDomainService(IProductDomainService productDomainService, IProductHistoryDomainService productHistoryDomainService, ISequenceService sequenceService, IProductRepository productRepository)
     {
-        _orderRepository = orderRepository;
+        _productDomainService = productDomainService;
+        _productHistoryDomainService = productHistoryDomainService;
+        _sequenceService = sequenceService;
+        _productRepository = productRepository;
     }
 
-    public async Task<OneOf<Order, List<ApplicationError>>> Validate(OrderId id)
+    public async Task<OneOf<Order, string>> TryOrchestrateCreateNewOrder(Guid id)
     {
-        var order = await _orderRepository.GetByIdAsync(id);
+        var serialNumber = await _sequenceService.GetNextOrderValueAsync();
+        var canCreateOrder = OrderDomainExtension.CanCreateNewOrder(id: id, serialNumber: serialNumber);
+        if (canCreateOrder.IsT1) return canCreateOrder.AsT1;
+        
+        return OrderDomainExtension.ExecuteCreateNewOrder(id: id, serialNumber: serialNumber);
+    }
 
-        if (order is null)
-        {
-            return ApplicationErrorFactory.CreateSingleListError(
-                message: $"Order of Id \"{id}\" does not exist.",
-                code: SpecificApplicationErrorCodes.ORDER_EXISTS_ERROR,
-                path: []
-            );
-        }
+    public async Task<OneOf<bool, string>> TryOrchestrateAddNewOrderItem(OrchestrateAddNewOrderItemContract contract)
+    {
+        var order = contract.Order;
+        var productId = contract.ProductId;
+        var quantity = contract.Quantity;
 
-        return order;
+        // Product Exists
+        var productExistsResult = await _productDomainService.GetProductById(productId);
+        if (productExistsResult.IsT1) return productExistsResult.AsT1;
+        
+        var product = productExistsResult.AsT0;
+
+        // Product History Exists
+        var latestProductHistoryExistsResult = await _productHistoryDomainService.GetLatestProductHistoryForProduct(product);
+        if (latestProductHistoryExistsResult.IsT1) return latestProductHistoryExistsResult.AsT1;
+
+        var productHistory = latestProductHistoryExistsResult.AsT0;
+
+        // Lower Product Amount
+        var canLowerAmount = product.CanLowerAmount(quantity);
+        if (canLowerAmount.IsT1) return $"Order Item quantity ({quantity}) cannot be larger than Product amount ({product.Amount})";
+
+        product.ExecuteLowerAmount(quantity);
+
+        // Check if Product History is valid
+        if (!productHistory.IsValid()) return $"Product History for Product of Id \"{product.Id}\" is not valid.";
+
+        // Add Order Item
+        var addNewOrderItemContract = new AddNewOrderItemContract(
+            order: order,
+            id: Guid.NewGuid(),
+            serialNumber: await _sequenceService.GetNextOrderItemValueAsync(),
+            quantity: quantity,
+            productId: product.Id,
+            productHistoryId: productHistory.Id,
+            total: product.Price.Value * quantity
+        );
+        
+        var canAddOrderItem = OrderDomainExtension.CanAddNewOrderItem(addNewOrderItemContract);
+        if (canAddOrderItem.IsT1) return canAddOrderItem.AsT1;
+
+        OrderDomainExtension.ExecuteAddNewOrderItem(addNewOrderItemContract);
+
+        // Update Product
+        await _productRepository.LazyUpdateAsync(product);
+        
+        return true;
     }
 }
 ```
 
 ### CQRS Application Layer Architecture
 
-This handler demonstrated the implementation of a command handler that marks and order item as finished by utilising the common interface provided by the order
+This handler demonstrated the implementation of a command handler create an order making use of its Domain Service
 
 ```csharp
-public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishedCommand, OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>>
+public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<CreateOrderResult, List<ApplicationError>>>
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly IOrderExistsValidator<OrderId> _orderExistsValidator;
+    private readonly IProductRepository _productRepository;
+    private readonly IOrderDomainService _orderDomainService;
+    private readonly IUnitOfWork _unitOfWork;
 
-
-    public MarkOrderItemFinishedHandler(IOrderRepository orderRepository, IOrderExistsValidator<OrderId> orderExistsValidator)
+    public CreateOrderHandler(IOrderRepository orderRepository, IProductRepository productRepository, IOrderDomainService orderDomainService, IUnitOfWork unitOfWork)
     {
         _orderRepository = orderRepository;
-        _orderExistsValidator = orderExistsValidator;
+        _productRepository = productRepository;
+        _orderDomainService = orderDomainService;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>> Handle(MarkOrderItemFinishedCommand request, CancellationToken cancellationToken)
+    public async Task<OneOf<CreateOrderResult, List<ApplicationError>>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        var orderId = OrderId.ExecuteCreate(request.OrderId);
-        var orderExistsResult = await _orderExistsValidator.Validate(orderId);
-        if (orderExistsResult.TryPickT1(out var errors, out var order))
+        // Create New Order 
+        var tryCreateOrder = await _orderDomainService.TryOrchestrateCreateNewOrder(request.Id);
+        if (tryCreateOrder.IsT1) return new CannotCreateOrderError(message: tryCreateOrder.AsT1, path: []).AsList();
+        
+        var order = tryCreateOrder.AsT0;
+
+        // Create Order Items
+        var validationErrors = new List<ApplicationError>();
+
+        foreach (var (uid, orderItem) in request.OrderItemData)
         {
-            return errors;
+            var tryAddOrderItem = await _orderDomainService.TryOrchestrateAddNewOrderItem(new OrchestrateAddNewOrderItemContract(order: order, productId: orderItem.ProductId, quantity: orderItem.Quantity));
+            if (tryAddOrderItem.IsT1)
+            {
+                validationErrors.Add(new CannotCreateOrderItemError(message: tryAddOrderItem.AsT1, path: [uid]));
+            }
         }
 
-        var orderItemId = OrderItemId.ExecuteCreate(request.OrderItemId);
-        var canMarkOrderItemFinishedResult = OrderDomainService.CanMarkOrderItemFinished(order, orderItemId);
-        if (canMarkOrderItemFinishedResult.TryPickT1(out var error, out var _))
+        if (validationErrors.Count > 0)
         {
-            return ApplicationErrorFactory.CreateSingleListError(
-                message: error,
-                path: [],
-                code: GeneralApplicationErrorCodes.NOT_ALLOWED
-            );
+            return validationErrors;
         }
 
-        var dateFinished = OrderDomainService.ExecuteMarkOrderItemFinished(order, orderItemId);
-        await _orderRepository.UpdateAsync(order);
-        return new MarkOrderItemFinishedResult(orderId: request.OrderId, orderItemId: request.OrderItemId, dateFinished: dateFinished);
+        await _orderRepository.CreateAsync(order);
+        await _unitOfWork.SaveAsync();
+
+        return new CreateOrderResult();
     }
 }
 ```
@@ -926,6 +1068,10 @@ The project moved from a single router implementation to a common interface arch
 - Allows easily switching between router
 - Avoiding hardcoding loader logic
 - Allows easier testing and mocking
+
+### The Value of Bounded Contextx
+
+The project refactored much of its strong domain creation logic into domain services to allow for a easier interface and rapid mocking for unit tests
 
 ## API Reference
 

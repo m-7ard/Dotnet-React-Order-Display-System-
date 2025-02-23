@@ -6,8 +6,10 @@ namespace Application.Interfaces.Persistence;
 
 public interface IProductRepository
 {
-    Task<Product> CreateAsync(Product product);
+    Task CreateAsync(Product product);
+    Task LazyCreateAsync(Product product);
     Task UpdateAsync(Product product);
+    Task LazyUpdateAsync(Product product);
     Task DeleteByIdAsync(ProductId id);
     Task<Product?> GetByIdAsync(ProductId id);
     Task<List<Product>> FilterAllAsync(FilterProductsCriteria criteria);

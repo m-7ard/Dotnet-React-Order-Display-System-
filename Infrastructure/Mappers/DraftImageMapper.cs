@@ -1,3 +1,4 @@
+using Domain.Contracts.DraftImages;
 using Domain.Models;
 using Domain.ValueObjects.Shared;
 using Infrastructure.DbEntities;
@@ -7,14 +8,16 @@ namespace Infrastructure.Mappers;
 public static class DraftImageMapper
 {
     public static DraftImage ToDomain(DraftImageDbEntity source)
-    {
-        return new DraftImage(
+    {   
+        var contract = new CreateDraftImageContract(
             id: source.Id,
-            fileName: FileName.ExecuteCreate(source.FileName),
-            originalFileName: FileName.ExecuteCreate(source.OriginalFileName),
-            dateCreated: source.DateCreated,
-            url: source.Url
+            fileName: source.FileName,
+            originalFileName: source.OriginalFileName,
+            url: source.Url,
+            dateCreated: source.DateCreated
         );
+
+        return DraftImage.ExecuteCreate(contract);
     }
 
     public static DraftImageDbEntity ToDbModel(DraftImage source)

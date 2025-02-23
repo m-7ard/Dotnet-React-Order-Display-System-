@@ -6,5 +6,6 @@ export default interface IProduct {
     price: number,
     description: string,
     dateCreated: Date,
-    images: IImageData[]
+    images: IImageData[],
+    amount: number
 }

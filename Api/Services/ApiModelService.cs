@@ -42,7 +42,7 @@ public class ApiModelService : IApiModelService
                 throw new Exception($"ProductHistory of Id \"{orderItem.ProductHistoryId}\" from OrderItem of Id \"${orderItem.Id}\"");
             }
 
-            orderItems.Add(ApiModelMapper.OrderItemToApiModel(orderItem, productHistory));
+            orderItems.Add(ApiModelMapper.OrderItemToApiModel(order, orderItem, productHistory));
         }
         
         return ApiModelMapper.OrderToApiModel(order, orderItems);

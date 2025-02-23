@@ -7,8 +7,7 @@ class PresentationErrorFactory {
         const result: IPresentationError<T> = {};
 
         errors.forEach((error) => {
-        console.log(error)
-        const existingValue = JSONPointer.get(result, error.path);
+            const existingValue = JSONPointer.get(result, error.path);
             if (existingValue == null) {
                 JSONPointer.set(result, error.path, [error.message]);
             } else if (Array.isArray(existingValue)) {
@@ -16,7 +15,6 @@ class PresentationErrorFactory {
             }
         });
     
-        console.log(result)
         return result;
     }
 }

@@ -1,37 +1,49 @@
 using Application.Common;
+using Application.Contracts.DomainService.DraftImageDomainService;
 using Application.Errors;
+using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
-using Domain.DomainFactories;
 using Domain.Models;
-using Domain.ValueObjects.Shared;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using OneOf;
 
 namespace Application.Handlers.DraftImages.UploadImages;
 
 public class UploadDraftImagesHandler : IRequestHandler<UploadDraftImagesCommand, OneOf<UploadDraftImagesResult, List<ApplicationError>>>
 {
-    private readonly IDraftImageRepository _draftImageRepository;
+    private readonly IDraftImageDomainService _draftImageDomainService;
     private readonly IFileStorage _fileStorage;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UploadDraftImagesHandler(IDraftImageRepository draftImageRepository, IFileStorage fileStorage)
+    public UploadDraftImagesHandler(IDraftImageDomainService draftImageDomainService, IFileStorage fileStorage, IUnitOfWork unitOfWork)
     {
-        _draftImageRepository = draftImageRepository;
+        _draftImageDomainService = draftImageDomainService;
         _fileStorage = fileStorage;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<OneOf<UploadDraftImagesResult, List<ApplicationError>>> Handle(UploadDraftImagesCommand request, CancellationToken cancellationToken)
     {
-        var images = new List<DraftImage>();
         var errors = new List<ApplicationError>();
+        var draftImages = new List<Tuple<IFormFile, DraftImage>>();
 
         foreach (var file in request.Files)
         {
-            var canCreateFileName = FileName.CanCreate(file.FileName);
-            if (canCreateFileName.TryPickT1(out var error, out _))
+            var fileExtension = Path.GetExtension(file.FileName);
+            var uniqueFileName = Guid.NewGuid().ToString();
+            var generatedFileName = $"{uniqueFileName}{fileExtension}";
+            
+            var contract = new OrchestrateCreateNewDraftImageContract(fileName: generatedFileName, originalFileName: file.FileName, url: $"Media/{generatedFileName}");
+            var tryOrchestrateCreate = await _draftImageDomainService.TryOrchestrateCreateNewDraftImage(contract);
+            if (tryOrchestrateCreate.IsT1)
             {
-                errors.Add(new ApplicationError(message: error, code: GeneralApplicationErrorCodes.NOT_ALLOWED, path: [file.FileName]));
+                errors.Add(new CannotCreateDraftImageError(message: tryOrchestrateCreate.AsT1, path: [file.FileName]));
+            }
+            else
+            {
+                draftImages.Add(new Tuple<IFormFile, DraftImage>(file, tryOrchestrateCreate.AsT0));
             }
         }
 
@@ -40,27 +52,14 @@ public class UploadDraftImagesHandler : IRequestHandler<UploadDraftImagesCommand
             return errors;
         }
 
-        foreach (var file in request.Files)
+        foreach (var (file, draftImage) in draftImages)
         {
-            using (Stream stream = file.OpenReadStream())
-            {
-                var fileExtension = Path.GetExtension(file.FileName);
-                var uniqueFileName = Guid.NewGuid().ToString();
-                var generatedFileName = $"{uniqueFileName}{fileExtension}";
-                var filePath = Path.Combine(DirectoryService.GetMediaDirectory(), generatedFileName);
-
-                await _fileStorage.SaveFile(file, filePath, cancellationToken);
-
-                var draftImage = DraftImageFactory.BuildNewDraftImage(
-                    fileName: FileName.ExecuteCreate(generatedFileName),
-                    originalFileName: FileName.ExecuteCreate(file.FileName),
-                    url: $"Media/{generatedFileName}"
-                );
-                var newImage = await _draftImageRepository.CreateAsync(draftImage);
-                images.Add(newImage);
-            }
+            var filePath = Path.Combine(DirectoryService.GetMediaDirectory(), draftImage.FileName.Value);
+            await _fileStorage.SaveFile(file, filePath, cancellationToken);
         }
 
-        return new UploadDraftImagesResult(draftImages: images);
+        await _unitOfWork.SaveAsync();
+
+        return new UploadDraftImagesResult(draftImages: draftImages.Select(tuple => tuple.Item2).ToList());
     }
 }

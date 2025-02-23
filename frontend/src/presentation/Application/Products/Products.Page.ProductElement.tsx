@@ -35,6 +35,10 @@ export default function ProductElement(props: { product: IProduct }) {
                     <div className="token-default-list__label">Date Created</div>
                     <div className="token-default-list__value truncate">{product.dateCreated.toLocaleString("en-us")}</div>
                 </div>
+                <div className="token-default-list">
+                    <div className="token-default-list__label">Amount</div>
+                    <div className="token-default-list__value truncate">{product.amount}</div>
+                </div>
             </MixinPrototypeCardSection>
             <MixinPrototypeCardSection className="flex flex-col gap-1">
                 <a

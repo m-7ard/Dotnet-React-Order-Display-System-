@@ -21,12 +21,12 @@ public class OrderRepository : IOrderRepository
         {
             if (domainEvent is OrderItemCreatedEvent createEvent)
             {
-                var writeEntity =  OrderItemMapper.ToDbModel(createEvent.Payload);
+                var writeEntity = OrderItemMapper.ToDbModel(order, createEvent.Payload);
                 _dbContext.Add(writeEntity);
             }
             else if (domainEvent is OrderItemUpdated updateEvent)
             {
-                var writeEntity = OrderItemMapper.ToDbModel(updateEvent.Payload);
+                var writeEntity = OrderItemMapper.ToDbModel(order, updateEvent.Payload);
                 var trackedEntity = await _dbContext.OrderItem.SingleAsync(orderItem => orderItem.Id == writeEntity.Id);
                 _dbContext.Entry(trackedEntity).CurrentValues.SetValues(writeEntity);
             }

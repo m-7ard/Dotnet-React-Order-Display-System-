@@ -25,20 +25,17 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
         _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
         _product002 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
         _product003 = await mixins.CreateProductAndProductHistory(number: 3, images: []);
-        _order001 = await mixins.CreateOrder(
+        _order001 = await mixins.CreateNewOrder(
             products: new List<Product>() { _product001, _product002 },
-            seed: 1,
-            orderStatus: OrderStatus.Pending
+            seed: 1
         );
-        _order002 = await mixins.CreateOrder(
+        _order002 = await mixins.CreateFinishedOrder(
             products: new List<Product>() { _product001, _product002 },
-            seed: 10,
-            orderStatus: OrderStatus.Finished
+            seed: 10
         );
-        _order003 = await mixins.CreateOrder(
+        _order003 = await mixins.CreateNewOrder(
             products: new List<Product>() { _product003 },
-            seed: 100,
-            orderStatus: OrderStatus.Pending
+            seed: 100
         );
         _baseRequest = new ListOrdersRequestDTO(
             minTotal: null,
@@ -91,7 +88,7 @@ public class ListOrdersIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task ListAllOrders_CreatedBefore_Success()
     {
-        _baseRequest.CreatedBefore = _order001.OrderDates.DateCreated;
+        _baseRequest.CreatedBefore = _order001.OrderSchedule.Dates.DateCreated;
 
         var queryString = ObjToQueryString.Convert(_baseRequest);
         var response = await _client.GetAsync($"{_route}/list?{queryString}");

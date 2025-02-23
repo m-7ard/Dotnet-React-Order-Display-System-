@@ -7,4 +7,5 @@ export default interface IProductApiModel {
     description: string;
     dateCreated: string;
     images: IImageApiModel[];
+    amount: number;
 }

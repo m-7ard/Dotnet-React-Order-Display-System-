@@ -8,6 +8,7 @@ using Api.Errors;
 using Api.Interfaces;
 using Api.Services;
 using Application.Errors;
+using Application.Errors.Objects;
 using Application.Handlers.OrderItems.MarkFinished;
 using Application.Handlers.Orders.Create;
 using Application.Handlers.Orders.List;
@@ -70,6 +71,7 @@ public class OrdersController : ControllerBase
             return BadRequest(errors);
         }
 
+        var id = Guid.NewGuid();
         var command = new CreateOrderCommand
         (
             orderItemData: request.OrderItemData.ToDictionary(
@@ -78,16 +80,26 @@ public class OrdersController : ControllerBase
                     productId: kvp.Value.ProductId,
                     quantity: kvp.Value.Quantity
                 )
-            )
+            ),
+            id: id
         );
 
         var result = await _mediator.Send(command);
-        if (result.TryPickT1(out var handlerErrors, out var value))
+        if (result.IsT1)
         {
-            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(handlerErrors));
+            var handlerErrors = result.AsT1;
+            var firstError = handlerErrors.First();
+
+            List<string>? pathPrefix = null;
+            if (firstError is CannotCreateOrderItemError)
+            {
+                pathPrefix = ["orderItemData"];
+            }
+
+            return BadRequest(PlainApiErrorHandlingService.MapApplicationErrors(handlerErrors, pathPrefix: pathPrefix));
         }
 
-        var respone = new CreateOrderResponseDTO(orderId: value.OrderId.Value.ToString());
+        var respone = new CreateOrderResponseDTO(orderId: id.ToString());
         return StatusCode(StatusCodes.Status201Created, respone);
     }
 

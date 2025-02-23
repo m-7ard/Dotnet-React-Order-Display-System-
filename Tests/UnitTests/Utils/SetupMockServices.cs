@@ -1,4 +1,6 @@
+using Application.Contracts.DomainService.OrderDomainService;
 using Application.Errors;
+using Application.Interfaces.Services;
 using Application.Validators.DraftImageExistsValidator;
 using Application.Validators.LatestProductHistoryExistsValidator;
 using Application.Validators.OrderExistsValidator;
@@ -65,5 +67,33 @@ public static class SetupMockServices
         mockValidator
             .Setup(validator => validator.Validate(It.IsAny<T>()))
             .ReturnsAsync(OneOf<DraftImage, List<ApplicationError>>.FromT1([EmptyApplicationError.Instance]));
+    }
+
+    public static void SetupOrderDomainService_TryCreateNewOrder_Success(Mock<IOrderDomainService> mockValidator, Order output)
+    {
+        mockValidator
+            .Setup(service => service.TryOrchestrateCreateNewOrder(It.IsAny<Guid>()))
+            .ReturnsAsync(OneOf<Order, string>.FromT0(output));
+    }
+
+    public static void SetupOrderDomainService_TryCreateNewOrder_Failure(Mock<IOrderDomainService> mockValidator)
+    {
+        mockValidator
+            .Setup(validator => validator.TryOrchestrateCreateNewOrder(It.IsAny<Guid>()))
+            .ReturnsAsync(OneOf<Order, string>.FromT1(""));
+    }
+
+    public static void SetupOrderDomainService_TryOrchestrateAddNewOrderItem_Success(Mock<IOrderDomainService> mockValidator)
+    {
+        mockValidator
+            .Setup(service => service.TryOrchestrateAddNewOrderItem(It.IsAny<OrchestrateAddNewOrderItemContract>()))
+            .ReturnsAsync(OneOf<bool, string>.FromT0(true));
+    }
+
+    public static void SetupOrderDomainService_TryOrchestrateAddNewOrderItem_Failure(Mock<IOrderDomainService> mockValidator)
+    {
+        mockValidator
+            .Setup(validator => validator.TryOrchestrateAddNewOrderItem(It.IsAny<OrchestrateAddNewOrderItemContract>()))
+            .ReturnsAsync(OneOf<bool, string>.FromT1(""));
     }
 }

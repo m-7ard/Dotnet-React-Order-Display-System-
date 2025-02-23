@@ -1,4 +1,5 @@
 using Application.Common;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.IntegrationTests;
 
@@ -58,5 +59,12 @@ public class BaseIntegrationTest : IAsyncLifetime
         var dbProvider = _factory.GetDatabaseProviderSingleton();
         var mixins = new Mixins(db, dbProvider);
         return mixins;
+    }
+
+    public T GetService<T>() where T : notnull
+    {
+        using var scope = _factory.Services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<T>();
+        return service;
     }
 }

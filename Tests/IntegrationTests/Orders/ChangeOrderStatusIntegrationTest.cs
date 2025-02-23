@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Api.DTOs.Orders.MarkFinished;
 using Application.Interfaces.Persistence;
-using Domain.DomainService;
+using Domain.DomainExtension;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Infrastructure.DbEntities;
@@ -25,9 +25,8 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
         var mixins = CreateMixins();
         _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
         _product002 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
-        _order001 = await mixins.CreateOrder(
+        _order001 = await mixins.CreateNewOrder(
             products: new List<Product>() { _product001, _product002 },
-            orderStatus: OrderStatus.Pending,
             seed: 1
         );
     }
@@ -37,7 +36,7 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
     {
         foreach (var orderItem in _order001.OrderItems)
         {
-            OrderDomainService.ExecuteMarkOrderItemFinished(_order001, orderItem.Id);
+            OrderDomainExtension.ExecuteMarkOrderItemFinished(_order001, orderItem.Id);
         }
         using var scope = _factory.Services.CreateScope();
         var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
@@ -59,7 +58,7 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
         var order = await newRepo.GetByIdAsync(OrderId.ExecuteCreate(Guid.Parse(content.OrderId)));
         Assert.NotNull(order);
 
-        Assert.Equal(OrderStatus.Finished, order.Status);
+        Assert.Equal(OrderStatus.Finished, order.OrderSchedule.Status);
     }
 
     [Fact]
@@ -77,8 +76,8 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
     {
         using var scope = _factory.Services.CreateScope();
         var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
-        _order001.OrderItems.ForEach(orderItem => OrderDomainService.ExecuteMarkOrderItemFinished(_order001, orderItem.Id));
-        OrderDomainService.ExecuteMarkFinished(_order001);
+        _order001.OrderItems.ForEach(orderItem => OrderDomainExtension.ExecuteMarkOrderItemFinished(_order001, orderItem.Id));
+        OrderDomainExtension.ExecuteMarkFinished(_order001);
         await repo.UpdateAsync(_order001);
 
         var request = new MarkOrderFinishedRequestDTO();
