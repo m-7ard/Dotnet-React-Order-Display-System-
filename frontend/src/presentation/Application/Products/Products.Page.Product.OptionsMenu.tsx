@@ -44,6 +44,17 @@ export default function ProductOptionMenu(props: { product: IProduct }) {
                             Update Product
                         </MixinButton>
                     </a>
+                    <a
+                        className="w-full"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            navigate({ exp: (routes) => routes.UPDATE_PRODUCT_AMOUNT, params: { id: product.id } });
+                        }}
+                    >
+                        <MixinButton className="justify-center truncate w-full" type="button" options={{ size: "mixin-button-base", theme: "theme-button-generic-white" }}>
+                            Update Amount
+                        </MixinButton>
+                    </a>
                     <GlobalDialog
                         zIndex={20}
                         Trigger={({ onToggle }) => (

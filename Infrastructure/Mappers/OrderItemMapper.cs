@@ -1,9 +1,8 @@
+using Domain.Contracts.OrderItems;
 using Domain.Models;
-using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
-using Domain.ValueObjects.Shared;
 using Infrastructure.DbEntities;
 
 namespace Infrastructure.Mappers;
@@ -12,30 +11,29 @@ public static class OrderItemMapper
 {
     public static OrderItem ToDomain(OrderItemDbEntity source)
     {
-        return new OrderItem(
-            id: OrderItemId.ExecuteCreate(source.Id),
-            quantity: Quantity.ExecuteCreate(source.Quantity),
-            status: new OrderItemStatus(source.Status.ToString()),
-            orderItemDates: OrderItemDates.ExecuteCreate(
-                dateCreated: source.DateCreated,
-                dateFinished: source.DateFinished
-            ),
-            orderId: OrderId.ExecuteCreate(source.OrderId),
+        var contract = new CreateOrderItemContract(
+            id: source.Id,
+            quantity: source.Quantity,
+            status: source.Status.ToString(),
+            dateCreated: source.DateCreated,
+            dateFinished: source.DateFinished,
             productHistoryId: ProductHistoryId.ExecuteCreate(source.ProductHistoryId),
             productId: ProductId.ExecuteCreate(source.ProductId),
             serialNumber: source.SerialNumber
         );
+
+        return OrderItem.ExecuteCreate(contract);
     }
 
-    public static OrderItemDbEntity ToDbModel(OrderItem source)
+    public static OrderItemDbEntity ToDbModel(Order order, OrderItem source)
     {
         return new OrderItemDbEntity(
             id: source.Id.Value,
             quantity: source.Quantity.Value,
-            status: ToDbEntityStatus(source.Status),
-            dateCreated: source.OrderItemDates.DateCreated,
-            dateFinished: source.OrderItemDates.DateFinished,
-            orderId: source.OrderId.Value,
+            status: ToDbEntityStatus(source.Schedule.Status),
+            dateCreated: source.Schedule.Dates.DateCreated,
+            dateFinished: source.Schedule.Dates.DateFinished,
+            orderId: order.Id.Value,
             productHistoryId: source.ProductHistoryId.Value,
             productId: source.ProductId.Value,
             serialNumber: source.SerialNumber

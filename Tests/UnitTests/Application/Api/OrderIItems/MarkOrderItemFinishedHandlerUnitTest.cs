@@ -2,11 +2,12 @@ using Application.Errors;
 using Application.Handlers.OrderItems.MarkFinished;
 using Application.Interfaces.Persistence;
 using Application.Validators.OrderExistsValidator;
+using Domain.Contracts.Orders;
+using Domain.DomainExtension;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
-using Domain.ValueObjects.Shared;
 using Moq;
 using OneOf;
 using Tests.UnitTests.Utils;
@@ -18,6 +19,7 @@ public class MarkOrderItemFinishedHandlerUnitTest
     private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly Mock<IOrderExistsValidator<OrderId>> _mockOrderExistsValidator;
     private readonly Order _mockOrder;
+    private readonly OrderItem _mockOrderItem;
     private readonly MarkOrderItemFinishedHandler _handler;
 
     public MarkOrderItemFinishedHandlerUnitTest()
@@ -30,34 +32,28 @@ public class MarkOrderItemFinishedHandlerUnitTest
             orderExistsValidator: _mockOrderExistsValidator.Object
         );
 
-        _mockOrder = OrderFactory.BuildExistingOrder(
-            id: OrderId.ExecuteCreate(new Guid()),
-            total: Money.ExecuteCreate(100),
-            orderDates: OrderDates.ExecuteCreate(
-                dateCreated: DateTime.UtcNow,
-                dateFinished: null
-            ),
-            orderItems: [],
-            status: OrderStatus.Pending,
-            serialNumber: 1
+        _mockOrder = OrderDomainExtension.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: 1);
+        var product = Mixins.CreateProduct(1, []);
+        var contract = new AddNewOrderItemContract(
+            order: _mockOrder,
+            id: Guid.NewGuid(), 
+            productId: product.Id,
+            productHistoryId: ProductHistoryFactory.BuildNewProductHistoryFromProduct(product).Id,
+            quantity: 1,
+            serialNumber: 1,
+            total: product.Price.Value
         );
+        var orderItemId = OrderDomainExtension.ExecuteAddNewOrderItem(contract);
+        _mockOrderItem = _mockOrder.ExecuteGetOrderItemById(orderItemId);
     }
 
     [Fact]
     public async Task MarkOrderItemFinished_ValidData_Success()
     {
         // ARRANGE
-        var mockOrderItem = Mixins.CreateOrderItem(
-            orderId: _mockOrder.Id,
-            status: OrderItemStatus.Pending,
-            dateCreated: _mockOrder.OrderDates.DateCreated,
-            dateFinished: null
-        );
-        _mockOrder.OrderItems.Add(mockOrderItem);
-
         var command = new MarkOrderItemFinishedCommand(
             orderId: _mockOrder.Id.Value,
-            orderItemId: mockOrderItem.Id.Value
+            orderItemId: _mockOrderItem.Id.Value
         );
 
         SetupMockServices.SetupOrderExistsValidatorSuccess(_mockOrderExistsValidator, _mockOrder.Id, _mockOrder);
@@ -67,7 +63,7 @@ public class MarkOrderItemFinishedHandlerUnitTest
 
         // ASSERT
         Assert.True(result.IsT0);
-        _mockOrderRepository.Verify(repo => repo.UpdateAsync(It.Is<Order>(d => d.OrderItems[0].Status == OrderItemStatus.Finished)), Times.Once);
+        _mockOrderRepository.Verify(repo => repo.UpdateAsync(It.Is<Order>(d => d.OrderItems[0].Schedule.Status == OrderItemStatus.Finished)), Times.Once);
     }
 
     [Fact]
@@ -112,17 +108,11 @@ public class MarkOrderItemFinishedHandlerUnitTest
     public async Task MarkOrderItemFinished_OrderItemAreadyFinished_Failure()
     {
         // ARRANGE
-        var mockOrderItem = Mixins.CreateOrderItem(
-            orderId: _mockOrder.Id,
-            status: OrderItemStatus.Finished,
-            dateCreated: _mockOrder.OrderDates.DateCreated,
-            dateFinished: null
-        );
-        _mockOrder.OrderItems.Add(mockOrderItem);
+        OrderDomainExtension.ExecuteMarkOrderItemFinished(_mockOrder, _mockOrderItem.Id);
         
         var command = new MarkOrderItemFinishedCommand(
             orderId: _mockOrder.Id.Value,
-            orderItemId: mockOrderItem.Id.Value
+            orderItemId: _mockOrderItem.Id.Value
         );
 
         _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));

@@ -87,6 +87,16 @@ export default function CreateProductPage(props: {
                             maxLength={1028}
                         />
                     </FormField>
+                    <FormField name="amount" errors={errors.amount}>
+                        <StatelessCharField
+                            onChange={(value) => updateField("amount", value)}
+                            value={value.amount}
+                            options={{
+                                size: "mixin-char-input-base",
+                                theme: "theme-input-generic-white",
+                            }}
+                        />
+                    </FormField>
                 </div>
             </MixinPageSection>
             <Divider />

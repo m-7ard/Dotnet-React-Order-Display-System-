@@ -3,6 +3,7 @@ using Api.Interfaces;
 using Api.Services;
 using Api.Validators;
 using Application.Common;
+using Application.DomainService;
 using Application.Handlers.Products.Create;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
@@ -137,6 +138,14 @@ builder.Services.AddTransient<IOrderItemExistsValidatorFactory<OrderItemId>, Ord
 
 builder.Services.AddTransient<IProductHistoryExistsValidator<ProductHistoryId>, ProductHistoryExistsByIdValidator>();
 builder.Services.AddTransient<IDraftImageExistsValidator<FileName>, DraftImageExistsByFileNameValidator>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IProductDomainService, ProductDomainService>();
+
+builder.Services.AddScoped<IProductHistoryDomainService, ProductHistoryDomainService>();
+builder.Services.AddScoped<IOrderDomainService, OrderDomainService>();
+builder.Services.AddScoped<IDraftImageDomainService, DraftImageDomainService>();
+builder.Services.AddScoped<IProductDomainService, ProductDomainService>();
 
 ///
 ///

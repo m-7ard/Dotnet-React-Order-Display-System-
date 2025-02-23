@@ -13,9 +13,9 @@ public class Quantity : ValueObject
 
     public static OneOf<bool, string> CanCreate(int value)
     {
-        if (value < 1)
+        if (value < 0)
         {
-            return "Quantity must be greater than 0.";
+            return "Quantity must be greater than or equals 0.";
         }
 
         return true;

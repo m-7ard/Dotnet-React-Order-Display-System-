@@ -26,6 +26,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task CreateOrder_ValidData_Success()
     {
+        // Setup
         var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
         orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
             productId: _PRODUCT_001.Id.Value,
@@ -39,8 +40,11 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
         var request = new CreateOrderRequestDTO(
             orderItemData: orderItemData
         );
-        var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
 
+        // Act
+        var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
+        
+        // Assert 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
@@ -51,7 +55,6 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
         var isValidGuid = Guid.TryParse(content.OrderId, out var parsedId);
         Assert.True(isValidGuid);
 
-
         using var scope = _factory.Services.CreateScope();
         var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
 
@@ -59,22 +62,25 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
         Assert.NotNull(order);
         Assert.NotEmpty(order.OrderItems);
 
-        Assert.Equal(OrderStatus.Pending, order.Status);
+        Assert.Equal(OrderStatus.Pending, order.OrderSchedule.Status);
         Assert.StrictEqual(2, order.OrderItems.Count);
 
-        Assert.True(order.OrderItems.All(item => item.Status == OrderItemStatus.Pending));
+        Assert.True(order.OrderItems.All(item => item.Schedule.Status == OrderItemStatus.Pending));
     }
 
     [Fact]
     public async Task CreateOrder_EmptyOrderItemData_Falure()
     {
+        // Setup
         var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
 
         var request = new CreateOrderRequestDTO(
             orderItemData: orderItemData
         );
+        // Act
         var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
 
+        // Assert 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -82,6 +88,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task CreateOrder_NonExistingProduct_Falure()
     {
+        // Setup
         var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
         orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
             productId: Guid.Empty,
@@ -91,8 +98,10 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
         var request = new CreateOrderRequestDTO(
             orderItemData: orderItemData
         );
+        // Act
         var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
 
+        // Assert 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -100,6 +109,7 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
     [Fact]
     public async Task CreateOrder_InvalidOrderItemData_Falure()
     {
+        // Setup
         var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
         orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
             productId: Guid.NewGuid(),
@@ -109,8 +119,34 @@ public class CreateOrderIntegrationTest : OrdersIntegrationTest
         var request = new CreateOrderRequestDTO(
             orderItemData: orderItemData
         );
+
+        // Act
         var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
 
+        // Assert 
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+
+    [Fact]
+    public async Task CreateOrder_QuantityTooLarge_Falure()
+    {
+        // Setup
+        var orderItemData = new Dictionary<string, CreateOrderRequestDTO.OrderItem>();
+        orderItemData["product_1"] = new CreateOrderRequestDTO.OrderItem(
+            productId:  _PRODUCT_001.Id.Value,
+            quantity:  _PRODUCT_001.Amount.Value + 1
+        );
+
+        var request = new CreateOrderRequestDTO(
+            orderItemData: orderItemData
+        );
+
+        // Act
+        var response = await _client.PostAsync($"{_route}/create", JsonContent.Create(request));
+
+        // Assert 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }

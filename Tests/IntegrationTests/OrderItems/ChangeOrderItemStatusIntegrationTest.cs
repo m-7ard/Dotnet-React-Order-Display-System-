@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Api.DTOs.OrderItems.MarkFinished;
 using Application.Interfaces.Persistence;
-using Domain.DomainService;
+using Domain.DomainExtension;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
@@ -26,9 +26,8 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
         var mixins = CreateMixins();
         _product001 = await mixins.CreateProductAndProductHistory(number: 1, images: []);
         _product002 = await mixins.CreateProductAndProductHistory(number: 2, images: []);
-        _order001 = await mixins.CreateOrder(
+        _order001 = await mixins.CreateNewOrder(
             products: new List<Product>() { _product001, _product002 },
-            orderStatus: OrderStatus.Pending,
             seed: 1
         );
         _orderItem001 = _order001.OrderItems.Find(orderItem => orderItem.ProductId == _product001.Id)!; 
@@ -54,7 +53,7 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
         Assert.NotNull(order);        
         var orderItem = order.ExecuteGetOrderItemById(OrderItemId.ExecuteCreate(Guid.Parse(content.OrderItemId)));
         Assert.NotNull(orderItem);        
-        Assert.Equal(OrderItemStatus.Finished, orderItem.Status);
+        Assert.Equal(OrderItemStatus.Finished, orderItem.Schedule.Status);
     }
 
     [Fact]
@@ -72,7 +71,7 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
     {
         using var scope = _factory.Services.CreateScope();
         var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
-        OrderDomainService.ExecuteMarkOrderItemFinished(_order001, _orderItem001.Id);
+        OrderDomainExtension.ExecuteMarkOrderItemFinished(_order001, _orderItem001.Id);
         await repo.UpdateAsync(_order001);
 
         var request = new MarkOrderItemFinishedRequestDTO();

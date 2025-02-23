@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Application.Contracts.Criteria;
 using Application.Interfaces.Persistence;
 using Domain.DomainEvents.Product;
@@ -16,18 +15,46 @@ public class ProductRepository : IProductRepository
     private readonly SimpleProductOrderServiceDbContext _dbContext;
     private readonly IProductDbEntityQueryServiceFactory _queryServiceFactory;
 
+    private async Task PersistDomainEvents(Product product)
+    {
+        foreach (var domainEvent in product.DomainEvents)
+        {
+            if (domainEvent is ProductImageCreatedEvent productImagePendingCreationEvent)
+            {
+                var payload = productImagePendingCreationEvent.Payload;
+                var imageEntity = ProductImageMapper.ToDbModel(payload);
+                _dbContext.Add(imageEntity);
+            }
+            else if (domainEvent is ProductImageDeletedEvent productImagePendingDeletionEvent)
+            {
+                var payload = productImagePendingDeletionEvent.Payload;
+                var imageEntity = await _dbContext.ProductImage.SingleAsync(image => image.Id == payload.Id.Value);
+                _dbContext.Remove(imageEntity);
+            }
+        }
+
+        product.ClearEvents();
+    }
+
     public ProductRepository(SimpleProductOrderServiceDbContext productApiDbContext, IProductDbEntityQueryServiceFactory queryServiceFactory)
     {
         _dbContext = productApiDbContext;
         _queryServiceFactory = queryServiceFactory;
     }
 
-    public async Task<Product> CreateAsync(Product product)
+    public async Task LazyCreateAsync(Product product)
     {
         var productDbEntity = ProductMapper.FromDomainToDbEntity(product);
         _dbContext.Add(productDbEntity);
+        await PersistDomainEvents(product);
+    }
+
+    public async Task CreateAsync(Product product)
+    {
+        var productDbEntity = ProductMapper.FromDomainToDbEntity(product);
+        _dbContext.Add(productDbEntity);
+        await PersistDomainEvents(product);
         await _dbContext.SaveChangesAsync();
-        return ProductMapper.FromDbEntityToDomain(productDbEntity);
     }
 
     public async Task<Product?> GetByIdAsync(ProductId id)
@@ -88,30 +115,8 @@ public class ProductRepository : IProductRepository
 
     public async Task UpdateAsync(Product product)
     {
-        var currentEntity = await _dbContext.Product
-            .Include(d => d.Images)
-            .SingleAsync(d => d.Id == product.Id.Value);
-        var updatedEntity = ProductMapper.FromDomainToDbEntity(product);
-        _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
-
-        foreach (var domainEvent in product.DomainEvents)
-        {
-            if (domainEvent is ProductImagePendingCreationEvent productImagePendingCreationEvent)
-            {
-                var payload = productImagePendingCreationEvent.Payload;
-                var imageEntity = ProductImageMapper.ToDbModel(payload);
-                _dbContext.Add(imageEntity);
-            }
-            else if (domainEvent is ProductImagePendingDeletionEvent productImagePendingDeletionEvent)
-            {
-                var payload = productImagePendingDeletionEvent.Payload;
-                var imageEntity = await _dbContext.ProductImage.SingleAsync(image => image.Id == payload.Id.Value);
-                _dbContext.Remove(imageEntity);
-            }
-        }
-
+        await LazyUpdateAsync(product);
         await _dbContext.SaveChangesAsync();
-        product.ClearEvents();
     }
 
     public async Task DeleteByIdAsync(ProductId id)
@@ -127,5 +132,13 @@ public class ProductRepository : IProductRepository
 
         _dbContext.Remove(entity);
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task LazyUpdateAsync(Product product)
+    {
+        var currentEntity = await _dbContext.Product.SingleAsync(d => d.Id == product.Id.Value);
+        var updatedEntity = ProductMapper.FromDomainToDbEntity(product);
+        _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
+        await PersistDomainEvents(product);
     }
 }

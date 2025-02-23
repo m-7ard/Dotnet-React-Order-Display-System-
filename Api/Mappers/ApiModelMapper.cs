@@ -32,7 +32,8 @@ public class ApiModelMapper
             price: product.Price.Value,
             description: product.Description,
             dateCreated: TimeZoneService.ConvertUtcToLocalTime(product.DateCreated),
-            images: product.Images.Select(ProductImageToImageData).ToList()
+            images: product.Images.Select(ProductImageToImageData).ToList(),
+            amount: product.Amount.Value
         );
     }
 
@@ -50,15 +51,15 @@ public class ApiModelMapper
         );
     }
 
-    public static OrderItemApiModel OrderItemToApiModel(OrderItem orderItem, ProductHistory productHistory)
+    public static OrderItemApiModel OrderItemToApiModel(Order order, OrderItem orderItem, ProductHistory productHistory)
     {
         return new OrderItemApiModel(
             id: orderItem.Id.ToString(),
             quantity: orderItem.Quantity.Value,
-            status: orderItem.Status.Name,
-            dateCreated: TimeZoneService.ConvertUtcToLocalTime(orderItem.OrderItemDates.DateCreated),
-            dateFinished: orderItem.OrderItemDates.DateFinished is null ? null : TimeZoneService.ConvertUtcToLocalTime(orderItem.OrderItemDates.DateFinished.Value),
-            orderId: orderItem.OrderId.Value.ToString(),
+            status: orderItem.Schedule.Status.Name,
+            dateCreated: TimeZoneService.ConvertUtcToLocalTime(orderItem.Schedule.Dates.DateCreated),
+            dateFinished: orderItem.Schedule.Dates.DateFinished is null ? null : TimeZoneService.ConvertUtcToLocalTime(orderItem.Schedule.Dates.DateFinished.Value),
+            orderId: order.Id.Value.ToString(),
             productHistory: ProductHistoryToApiModel(productHistory),
             serialNumber: orderItem.SerialNumber
         );
@@ -69,10 +70,10 @@ public class ApiModelMapper
         return new OrderApiModel(
             id: order.Id.Value.ToString(),
             total: order.Total.Value,
-            dateCreated: TimeZoneService.ConvertUtcToLocalTime(order.OrderDates.DateCreated),
-            dateFinished: order.OrderDates.DateFinished is null ? null : TimeZoneService.ConvertUtcToLocalTime(order.OrderDates.DateFinished.Value),
+            dateCreated: TimeZoneService.ConvertUtcToLocalTime(order.OrderSchedule.Dates.DateCreated),
+            dateFinished: order.OrderSchedule.Dates.DateFinished is null ? null : TimeZoneService.ConvertUtcToLocalTime(order.OrderSchedule.Dates.DateFinished.Value),
             orderItems: orderItems,
-            status: order.Status.Name,
+            status: order.OrderSchedule.Status.Name,
             serialNumber: order.SerialNumber
         );
     }

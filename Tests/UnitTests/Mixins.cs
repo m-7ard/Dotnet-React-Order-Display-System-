@@ -1,7 +1,9 @@
 
+using Domain.Contracts.DraftImages;
+using Domain.Contracts.Orders;
+using Domain.Contracts.Products;
+using Domain.DomainExtension;
 using Domain.Models;
-using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
 using Domain.ValueObjects.ProductImage;
@@ -11,23 +13,6 @@ namespace Tests.UnitTests;
 
 public class Mixins
 {
-    public static OrderItem CreateOrderItem(OrderId orderId, OrderItemStatus status, DateTime dateCreated, DateTime? dateFinished)
-    {
-        return new OrderItem(
-            id: OrderItemId.ExecuteCreate(Guid.NewGuid()), 
-            quantity: Quantity.ExecuteCreate(1), 
-            status: status, 
-            orderItemDates: OrderItemDates.ExecuteCreate(
-                dateCreated: dateCreated, 
-                dateFinished: dateFinished
-            ),
-            orderId: orderId,
-            productHistoryId: ProductHistoryId.ExecuteCreate(Guid.NewGuid()), 
-            productId: ProductId.ExecuteCreate(Guid.NewGuid()),
-            serialNumber: 1
-        );
-    }
-
     public static ProductHistory CreateProductHistory(int seed)
     {
         return new ProductHistory(
@@ -46,14 +31,17 @@ public class Mixins
 
     public static Product CreateProduct(int seed, List<ProductImage> images)
     {
-        return new Product(
-            id: ProductId.ExecuteCreate(Guid.NewGuid()),
+        var contract = new CreateProductContract(
+            id: Guid.NewGuid(),
             dateCreated: new DateTime(),
             name: $"Product #{seed}",
-            price: Money.ExecuteCreate(seed),
+            price: seed,
             description: $"Product #{seed} description",
-            images: images
+            images: images,
+            amount: 1_000_000
         );
+
+        return Product.ExecuteCreate(contract);
     }
 
     public static ProductImage CreateProductImage(int seed)
@@ -66,5 +54,33 @@ public class Mixins
             dateCreated: new DateTime(),
             productId: ProductId.ExecuteCreate(Guid.NewGuid())
         );
+    }
+
+    public static Order CreateNewOrderWithItem(int seed, Product product, ProductHistory productHistory)
+    {
+        var order = OrderDomainExtension.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: 1);
+        OrderDomainExtension.ExecuteAddNewOrderItem(new AddNewOrderItemContract(
+            order: order,
+            id: Guid.NewGuid(),
+            productId: product.Id,
+            productHistoryId: productHistory.Id,
+            serialNumber: seed,
+            total: product.Price.Value,
+            quantity: 1
+        ));
+
+        return order;
+    }
+
+    public static Order CreateNewOrderWithoutItem(int seed)
+    {
+        var order = OrderDomainExtension.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: seed);
+        return order;
+    }
+
+    public static DraftImage CreateDraftImage(int seed)
+    {
+        var contract = new CreateDraftImageContract(id: seed, fileName: $"filename_{seed}.png", originalFileName:  $"original_filename_{seed}.png", url:  $"url/filename_{seed}.png", dateCreated: DateTime.UtcNow);
+        return DraftImage.ExecuteCreate(contract);
     }
 }

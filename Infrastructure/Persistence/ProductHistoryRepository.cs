@@ -21,12 +21,18 @@ public class ProductHistoryRespository : IProductHistoryRepository
         _queryServiceFactory = queryService;
     }
 
-    public async Task<ProductHistory> CreateAsync(ProductHistory productHistory)
+    public Task LazyCreateAsync(ProductHistory productHistory)
+    {
+        var productHistoryDbEntity = ProductHistoryMapper.ToDbModel(productHistory);
+        _dbContext.ProductHistory.Add(productHistoryDbEntity);
+        return Task.CompletedTask;
+    }
+
+    public async Task CreateAsync(ProductHistory productHistory)
     {
         var productHistoryDbEntity = ProductHistoryMapper.ToDbModel(productHistory);
         _dbContext.ProductHistory.Add(productHistoryDbEntity);
         await _dbContext.SaveChangesAsync();
-        return ProductHistoryMapper.ToDomain(productHistoryDbEntity);
     }
 
     public async Task<ProductHistory?> GetLatestByProductIdAsync(ProductId id)
@@ -101,11 +107,14 @@ public class ProductHistoryRespository : IProductHistoryRepository
 
     public async Task UpdateAsync(ProductHistory productHistory)
     {
-        var currentEntity = await _dbContext.ProductHistory.SingleAsync(prodHist => prodHist.Id == productHistory.Id.Value);
+        await LazyUpdateAsync(productHistory);
+        await _dbContext.SaveChangesAsync();
+    }
 
+    public async Task LazyUpdateAsync(ProductHistory productHistory)
+    {
+        var currentEntity = await _dbContext.ProductHistory.SingleAsync(prodHist => prodHist.Id == productHistory.Id.Value);
         var updatedEntity = ProductHistoryMapper.ToDbModel(productHistory);
         _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
-
-        await _dbContext.SaveChangesAsync();
     }
 }

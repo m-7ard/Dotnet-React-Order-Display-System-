@@ -11,6 +11,7 @@ const productMapper = {
             description: source.description,
             dateCreated: new Date(source.dateCreated),
             images: source.images.map(ImageDataMapper.apiToDomain),
+            amount: source.amount
         };
     },
 };

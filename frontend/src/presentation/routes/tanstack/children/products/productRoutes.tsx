@@ -8,9 +8,10 @@ import IReadProductResponseDTO from "../../../../../infrastructure/contracts/pro
 import productMapper from "../../../../../infrastructure/mappers/productMapper";
 import IListProductsResponseDTO from "../../../../../infrastructure/contracts/products/list/IListProductsResponseDTO";
 import parseListProductsRequestDTO from "../../../../../infrastructure/parsers/parseListProductsRequestDTO";
-import { IUpdateProductParams, TListProductsLoaderData, TUpdateProductLoaderData } from "../../../routeTypes";
+import { IUpdateProductAmountParams, IUpdateProductParams, TListProductsLoaderData, TUpdateProductAmountLoaderData, TUpdateProductLoaderData } from "../../../routeTypes";
 import { tanstackConfigs } from "../../tanstackConfig";
 import diContainer, { DI_TOKENS } from "../../../../deps/diContainer";
+import UpdateProductAmountController from "../../../../Application/Products/UpdateAmount/UpdateProductAmount.Controller";
 
 const listProductsRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -61,4 +62,26 @@ const updateProductRoute = createRoute({
     },
 });
 
-export default [listProductsRoute, createProductRoute, updateProductRoute];
+const updateProductAmountRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: tanstackConfigs.UPDATE_PRODUCT_AMOUNT.pattern,
+    component: UpdateProductAmountController,
+    loader: async ({ params }: { params: IUpdateProductAmountParams }): Promise<TUpdateProductAmountLoaderData> => {
+        const id = params.id;
+        const { requestHandler } = diContainer.resolve(DI_TOKENS.ROUTER_CONTEXT);
+
+        const response = await requestHandler.handleRequest(productDataAccess.readProduct({ id: id }));
+        if (!response.ok) {
+            await requestHandler.handleInvalidResponse(response);
+        }
+
+        const dto: IReadProductResponseDTO = await response.json();
+        const product = productMapper.apiToDomain(dto.product);
+
+        return {
+            product: product,
+        };
+    },
+});
+
+export default [listProductsRoute, createProductRoute, updateProductRoute, updateProductAmountRoute];
