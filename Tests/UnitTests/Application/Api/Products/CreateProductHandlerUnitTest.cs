@@ -50,7 +50,7 @@ public class CreateProductHandlerUnitTest
             amount: 1
         );
 
-        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).Returns(() => mockProduct);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).ReturnsAsync(mockProduct);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -79,9 +79,9 @@ public class CreateProductHandlerUnitTest
             amount: 1
         );
 
-        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).Returns(() => mockProduct);
-        _mockProductDomainService.Setup(service => service.TryOrchestrateAddNewProductImage(mockProduct, productImage1.FileName.Value)).ReturnsAsync(() => true);
-        _mockProductDomainService.Setup(service => service.TryOrchestrateAddNewProductImage(mockProduct, productImage2.FileName.Value)).ReturnsAsync(() => true);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).ReturnsAsync(mockProduct);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateAddNewProductImage(mockProduct, productImage1.FileName.Value)).ReturnsAsync(true);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateAddNewProductImage(mockProduct, productImage2.FileName.Value)).ReturnsAsync(true);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -101,7 +101,7 @@ public class CreateProductHandlerUnitTest
             images: []
         );
 
-        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).Returns(() => "");
+        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).ReturnsAsync("");
 
         var command = new CreateProductCommand(
             name: mockProduct.Name,
@@ -126,8 +126,8 @@ public class CreateProductHandlerUnitTest
         var productImage1 = Mixins.CreateProductImage(1);
         var mockProduct = Mixins.CreateProduct(seed: 1,  images: []);
 
-        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).Returns(() => mockProduct);
-        _mockProductDomainService.Setup(service => service.TryOrchestrateAddNewProductImage(mockProduct, productImage1.FileName.Value)).ReturnsAsync(() => "");
+        _mockProductDomainService.Setup(service => service.TryOrchestrateCreateProduct(It.IsAny<OrchestrateCreateNewProductContract>())).ReturnsAsync(mockProduct);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateAddNewProductImage(mockProduct, productImage1.FileName.Value)).ReturnsAsync("");
 
         var command = new CreateProductCommand(
             name: mockProduct.Name,

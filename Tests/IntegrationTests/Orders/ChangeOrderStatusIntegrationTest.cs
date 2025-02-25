@@ -5,9 +5,6 @@ using Application.Interfaces.Persistence;
 using Domain.DomainExtension;
 using Domain.Models;
 using Domain.ValueObjects.Order;
-using Infrastructure.DbEntities;
-using Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Tests.IntegrationTests.OrderItems;
 
@@ -36,7 +33,7 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
     {
         foreach (var orderItem in _order001.OrderItems)
         {
-            OrderDomainExtension.ExecuteMarkOrderItemFinished(_order001, orderItem.Id);
+            OrderDomainExtension.ExecuteMarkOrderItemFinished(_order001, orderItem.Id.Value, DateTime.UtcNow);
         }
         using var scope = _factory.Services.CreateScope();
         var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
@@ -76,8 +73,8 @@ public class ChangeOrderStatusIntegrationTest : OrderItemsIntegrationTest
     {
         using var scope = _factory.Services.CreateScope();
         var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
-        _order001.OrderItems.ForEach(orderItem => OrderDomainExtension.ExecuteMarkOrderItemFinished(_order001, orderItem.Id));
-        OrderDomainExtension.ExecuteMarkFinished(_order001);
+        _order001.OrderItems.ForEach(orderItem => OrderDomainExtension.ExecuteMarkOrderItemFinished(_order001, orderItem.Id.Value, DateTime.UtcNow));
+        OrderDomainExtension.ExecuteMarkFinished(_order001, DateTime.UtcNow);
         await repo.UpdateAsync(_order001);
 
         var request = new MarkOrderFinishedRequestDTO();

@@ -1,11 +1,8 @@
-using Application.Contracts.DomainService.ProductDomainService;
 using Application.Errors;
 using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
-using Application.Validators.ProductExistsValidator;
 using Domain.Contracts.Products;
-using Domain.ValueObjects.Product;
 using MediatR;
 using OneOf;
 

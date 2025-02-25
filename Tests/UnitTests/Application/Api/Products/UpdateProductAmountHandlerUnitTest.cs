@@ -2,12 +2,9 @@ using Application.Errors.Objects;
 using Application.Handlers.Products.UpdateAmount;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
-using Application.Validators.ProductExistsValidator;
 using Domain.Models;
-using Domain.ValueObjects.Product;
 using Domain.ValueObjects.Shared;
 using Moq;
-using Tests.UnitTests.Utils;
 
 namespace Tests.UnitTests.Application.Api.Products;
 

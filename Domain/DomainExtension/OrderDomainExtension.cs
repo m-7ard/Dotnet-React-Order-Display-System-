@@ -71,9 +71,9 @@ public static class OrderDomainExtension
         return orderItemId;
     }
 
-    public static OneOf<bool, string> CanMarkFinished(Order order)
+    public static OneOf<bool, string> CanMarkFinished(Order order, DateTime dateOccured)
     {
-        var contract = new TransitionOrderStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: DateTime.UtcNow);
+        var contract = new TransitionOrderStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: dateOccured);
         var canTransitionStatusResult = order.CanTransitionStatus(contract);
         if (canTransitionStatusResult.IsT1) return canTransitionStatusResult.AsT1;
 
@@ -83,45 +83,40 @@ public static class OrderDomainExtension
         return true;
     }
 
-    public static DateTime ExecuteMarkFinished(Order order)
+    public static void ExecuteMarkFinished(Order order, DateTime dateOccured)
     {
-        var canMarkFinished = CanMarkFinished(order);
+        var canMarkFinished = CanMarkFinished(order, dateOccured);
         if (canMarkFinished.IsT1) throw new Exception(canMarkFinished.AsT1);
 
-        var dateFinished = DateTime.UtcNow;
-        var contract = new TransitionOrderStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: dateFinished);
+        var contract = new TransitionOrderStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: dateOccured);
         order.ExecuteTransitionStatus(contract);
-        
-        return dateFinished;
     }
 
-    public static OneOf<OrderItem, string> CanMarkOrderItemFinished(Order order, OrderItemId orderItemId)
+    public static OneOf<OrderItem, string> CanMarkOrderItemFinished(Order order, Guid orderItemId, DateTime dateOccured)
     {
         var canGetOrderItemResult = order.TryGetOrderItemById(orderItemId);
         if (canGetOrderItemResult.IsT1) return canGetOrderItemResult.AsT1;
 
         var orderItem = canGetOrderItemResult.AsT0;
 
-        var contract = new TransitionOrderItemStatusContract(status: OrderItemStatus.Finished.Name, dateCreated: orderItem.Schedule.Dates.DateCreated, dateFinished: DateTime.UtcNow);
+        var contract = new TransitionOrderItemStatusContract(status: OrderItemStatus.Finished.Name, dateCreated: orderItem.Schedule.Dates.DateCreated, dateFinished: dateOccured);
         var canTransitionStatusResult = orderItem.CanTransitionStatus(contract);
         if (canTransitionStatusResult.IsT1) return canTransitionStatusResult.AsT1;
 
         return orderItem;
     }
 
-    public static DateTime ExecuteMarkOrderItemFinished(Order order, OrderItemId orderItemId)
+    public static void ExecuteMarkOrderItemFinished(Order order, Guid orderItemId, DateTime dateOccured)
     {
-        var canMarkOrderItemFinished = CanMarkOrderItemFinished(order, orderItemId);
+        var canMarkOrderItemFinished = CanMarkOrderItemFinished(order, orderItemId, dateOccured);
         if (canMarkOrderItemFinished.TryPickT1(out var error, out var orderItem))
         {
             throw new Exception(error);
         }
 
-        var dateFinished = DateTime.UtcNow;
-        var contract = new TransitionOrderItemStatusContract(status: OrderItemStatus.Finished.Name, dateCreated: orderItem.Schedule.Dates.DateCreated, dateFinished: dateFinished);
+        var contract = new TransitionOrderItemStatusContract(status: OrderItemStatus.Finished.Name, dateCreated: orderItem.Schedule.Dates.DateCreated, dateFinished: dateOccured);
         orderItem.ExecuteTransitionStatus(contract);
 
         order.DomainEvents.Add(new OrderItemUpdated(orderItem));
-        return dateFinished;
     }
 }

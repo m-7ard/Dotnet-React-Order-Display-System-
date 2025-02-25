@@ -1,9 +1,6 @@
 using Application.Errors;
-using Application.Interfaces.Persistence;
-using Application.Validators;
-using Application.Validators.OrderExistsValidator;
-using Domain.ValueObjects.Order;
-using Domain.ValueObjects.Product;
+using Application.Errors.Objects;
+using Application.Interfaces.Services;
 using MediatR;
 using OneOf;
 
@@ -11,21 +8,19 @@ namespace Application.Handlers.Orders.Read;
 
 public class ReadOrderHandler : IRequestHandler<ReadOrderQuery, OneOf<ReadOrderResult, List<ApplicationError>>>
 {
-    private readonly IOrderExistsValidator<OrderId> _orderExistsValidator;
+    private readonly IOrderDomainService _orderDomainService;
 
-    public ReadOrderHandler(IOrderExistsValidator<OrderId> orderExistsValidator)
+    public ReadOrderHandler(IOrderDomainService orderDomainService)
     {
-        _orderExistsValidator = orderExistsValidator;
+        _orderDomainService = orderDomainService;
     }
 
     public async Task<OneOf<ReadOrderResult, List<ApplicationError>>> Handle(ReadOrderQuery request, CancellationToken cancellationToken)
     {
-        var orderId = OrderId.ExecuteCreate(request.Id);
-        var orderExistsResult = await _orderExistsValidator.Validate(orderId);
-        if (orderExistsResult.TryPickT1(out var errors, out var order))
-        {
-            return errors;
-        }
+        var orderExists = await _orderDomainService.GetOrderById(request.Id);
+        if (orderExists.IsT1) return new OrderDoesNotExistError(message: orderExists.AsT1, path: []).AsList();
+
+        var order = orderExists.AsT0;
 
         var result = new ReadOrderResult(order: order);
         return result;

@@ -7,10 +7,7 @@ using Domain.DomainExtension;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
-using Domain.ValueObjects.Product;
 using Domain.ValueObjects.ProductHistory;
-using Domain.ValueObjects.ProductImage;
-using Domain.ValueObjects.Shared;
 using Infrastructure;
 using Infrastructure.Interfaces;
 using Infrastructure.Persistence;
@@ -101,7 +98,7 @@ public class Mixins
         var order = await CreateNewOrder(products: products, seed: seed);
         foreach (var orderItem in order.OrderItems)
         {
-            OrderDomainExtension.ExecuteMarkOrderItemFinished(order, orderItem.Id);
+            OrderDomainExtension.ExecuteMarkOrderItemFinished(order, orderItem.Id.Value, DateTime.UtcNow);
         }
         
         order.ExecuteTransitionStatus(new TransitionOrderStatusContract(status: OrderStatus.Finished.Name, dateCreated: order.OrderSchedule.Dates.DateCreated, dateFinished: DateTime.UtcNow));
