@@ -43,10 +43,15 @@ public class OrderRepository : IOrderRepository
 
     public async Task CreateAsync(Order order)
     {
+        await LazyCreateAsync(order);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task LazyCreateAsync(Order order)
+    {
         var orderDbEntity = OrderMapper.ToDbModel(order);
         _dbContext.Add(orderDbEntity);
         await PersistDomainEvents(order);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<Order?> GetByIdAsync(OrderId id)
@@ -124,13 +129,17 @@ public class OrderRepository : IOrderRepository
         return dbOrders.Select(OrderMapper.ToDomain).ToList();
     }
 
-    public async Task UpdateAsync(Order updatedOrder) 
+    public async Task UpdateAsync(Order order) 
     {
-        var updatedOrderEntity = OrderMapper.ToDbModel(updatedOrder);
-        var currentOrderEntity = await _dbContext.Order.SingleAsync(d => d.Id == updatedOrder.Id.Value);
-        _dbContext.Entry(currentOrderEntity).CurrentValues.SetValues(updatedOrderEntity);
-
-        await PersistDomainEvents(updatedOrder);
+        await LazyUpdateAsync(order);
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task LazyUpdateAsync(Order order)
+    {
+        var updatedOrderEntity = OrderMapper.ToDbModel(order);
+        var currentOrderEntity = await _dbContext.Order.SingleAsync(d => d.Id == updatedOrderEntity.Id);
+        _dbContext.Entry(currentOrderEntity).CurrentValues.SetValues(updatedOrderEntity);
+        await PersistDomainEvents(order);    
     }
 }

@@ -82,7 +82,7 @@ public class Order
         OrderSchedule = newSchedule;
     }
 
-    public OneOf<bool, string> CanTransitionOrderItem(OrderItemId id, TransitionOrderItemStatusContract contract)
+    public OneOf<bool, string> CanTransitionOrderItem(Guid id, TransitionOrderItemStatusContract contract)
     {
         var tryGetResult = TryGetOrderItemById(id);
         if (tryGetResult.IsT1) return tryGetResult.AsT1;
@@ -158,9 +158,14 @@ public class Order
         return orderItem.Id;
     }
 
-    public OneOf<OrderItem, string> TryGetOrderItemById(OrderItemId orderItemId)
+    public OneOf<OrderItem, string> TryGetOrderItemById(Guid orderItemId)
     {
-        var orderItem =  OrderItems.Find(orderItem => orderItem.Id == orderItemId);
+        var canCreateOrderItemId = OrderItemId.CanCreate(orderItemId);
+        if (canCreateOrderItemId.IsT1) return canCreateOrderItemId.AsT1;
+        
+        var orderItemIdObj = OrderItemId.ExecuteCreate(orderItemId);
+
+        var orderItem =  OrderItems.Find(orderItem => orderItem.Id == orderItemIdObj);
         if (orderItem == null)
         {
             return $"Order Item of Id \"{orderItemId}\" does not exist on Order of Id \"{Id}\"";
@@ -169,7 +174,7 @@ public class Order
         return orderItem;
     }
 
-    public OrderItem ExecuteGetOrderItemById(OrderItemId orderItemId)
+    public OrderItem ExecuteGetOrderItemById(Guid orderItemId)
     {
         var canGetOrderItemResult = TryGetOrderItemById(orderItemId);
         if (canGetOrderItemResult.TryPickT1(out var error, out var orderItem))

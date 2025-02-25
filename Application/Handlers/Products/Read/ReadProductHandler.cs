@@ -1,8 +1,6 @@
 using Application.Errors;
 using Application.Errors.Objects;
 using Application.Interfaces.Services;
-using Application.Validators.ProductExistsValidator;
-using Domain.ValueObjects.Product;
 using MediatR;
 using OneOf;
 

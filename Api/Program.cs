@@ -7,12 +7,6 @@ using Application.DomainService;
 using Application.Handlers.Products.Create;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
-using Application.Validators.DraftImageExistsValidator;
-using Application.Validators.LatestProductHistoryExistsValidator;
-using Application.Validators.OrderExistsValidator;
-using Application.Validators.OrderItemExistsValidator;
-using Application.Validators.ProductExistsValidator;
-using Application.Validators.ProductHistoryExistsValidator;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
 using Domain.ValueObjects.Product;
@@ -130,14 +124,6 @@ builder.Services.AddScoped<IProductHistoryDbEntityQueryServiceFactory, ProductHi
 
 builder.Services.AddScoped<IApiModelService, ApiModelService>();
 builder.Services.AddSingleton<IFileStorage, FileStorage>();
-
-builder.Services.AddTransient<IOrderExistsValidator<OrderId>, OrderExistsByIdValidator>();
-builder.Services.AddTransient<IProductExistsValidator<ProductId>, ProductExistsByIdValidator>();
-builder.Services.AddTransient<ILatestProductHistoryExistsValidator<ProductId>, LatestProductHistoryExistsByProductIdValidator>();
-builder.Services.AddTransient<IOrderItemExistsValidatorFactory<OrderItemId>, OrderItemExistsByIdValidatorFactory>();
-
-builder.Services.AddTransient<IProductHistoryExistsValidator<ProductHistoryId>, ProductHistoryExistsByIdValidator>();
-builder.Services.AddTransient<IDraftImageExistsValidator<FileName>, DraftImageExistsByFileNameValidator>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductDomainService, ProductDomainService>();

@@ -3,7 +3,6 @@ using Application.Errors;
 using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
-using Domain.DomainFactories;
 using MediatR;
 using OneOf;
 
@@ -30,7 +29,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
             amount: request.Amount
         );
 
-        var tryOrchestrateCreateProduct = _productDomainService.TryOrchestrateCreateProduct(contract);
+        var tryOrchestrateCreateProduct = await _productDomainService.TryOrchestrateCreateProduct(contract);
 
         if (tryOrchestrateCreateProduct.IsT1)
         {
@@ -55,8 +54,6 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
             return imageErrors;
         }
 
-        await _unitOfWork.ProductRepository.LazyCreateAsync(product);
-        await _unitOfWork.ProductHistoryRepository.LazyCreateAsync(ProductHistoryFactory.BuildNewProductHistoryFromProduct(product));
         await _unitOfWork.SaveAsync();
 
         return new CreateProductResult(id: product.Id);

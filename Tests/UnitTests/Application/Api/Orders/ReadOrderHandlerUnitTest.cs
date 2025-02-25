@@ -1,5 +1,6 @@
+using Application.Errors.Objects;
 using Application.Handlers.Orders.Read;
-using Application.Validators.OrderExistsValidator;
+using Application.Interfaces.Services;
 using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Order;
@@ -13,14 +14,14 @@ public class ReadOrderHandlerUnitTest
 {
     private readonly Order _mockOrder;
     private readonly ReadOrderHandler _handler;
-    private readonly Mock<IOrderExistsValidator<OrderId>> _mockOrderExistsValidator;
+    private readonly Mock<IOrderDomainService> _mockOrderDomainService;
 
     public ReadOrderHandlerUnitTest()
     {
-        _mockOrderExistsValidator = new Mock<IOrderExistsValidator<OrderId>>();
+        _mockOrderDomainService = new Mock<IOrderDomainService>();
 
         _handler = new ReadOrderHandler(
-            orderExistsValidator: _mockOrderExistsValidator.Object
+            orderDomainService: _mockOrderDomainService.Object
         );
 
         var product = Mixins.CreateProduct(1, []);
@@ -39,7 +40,7 @@ public class ReadOrderHandlerUnitTest
             id: _mockOrder.Id.Value
         );
 
-        SetupMockServices.SetupOrderExistsValidatorSuccess(_mockOrderExistsValidator, _mockOrder.Id, _mockOrder);
+        _mockOrderDomainService.Setup(service => service.GetOrderById(_mockOrder.Id.Value)).ReturnsAsync(_mockOrder);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -57,12 +58,13 @@ public class ReadOrderHandlerUnitTest
             id: _mockOrder.Id.Value
         );
 
-        SetupMockServices.SetupOrderExistsValidatorFailure(_mockOrderExistsValidator);
+        _mockOrderDomainService.Setup(service => service.GetOrderById(_mockOrder.Id.Value)).ReturnsAsync("");
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // ASSERT
         Assert.True(result.IsT1);
+        Assert.IsType<OrderDoesNotExistError>(result.AsT1.First());
     }
 }

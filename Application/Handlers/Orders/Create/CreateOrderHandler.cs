@@ -10,15 +10,11 @@ namespace Application.Handlers.Orders.Create;
 
 public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<CreateOrderResult, List<ApplicationError>>>
 {
-    private readonly IOrderRepository _orderRepository;
-    private readonly IProductRepository _productRepository;
     private readonly IOrderDomainService _orderDomainService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateOrderHandler(IOrderRepository orderRepository, IProductRepository productRepository, IOrderDomainService orderDomainService, IUnitOfWork unitOfWork)
+    public CreateOrderHandler(IOrderDomainService orderDomainService, IUnitOfWork unitOfWork)
     {
-        _orderRepository = orderRepository;
-        _productRepository = productRepository;
         _orderDomainService = orderDomainService;
         _unitOfWork = unitOfWork;
     }
@@ -48,7 +44,6 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
             return validationErrors;
         }
 
-        await _orderRepository.CreateAsync(order);
         await _unitOfWork.SaveAsync();
 
         return new CreateOrderResult();

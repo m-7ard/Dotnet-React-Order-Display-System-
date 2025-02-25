@@ -40,13 +40,13 @@ public class ProductDomainServiceUnitTest
     // Create New Order
 
     [Fact]
-    public void TryOrchestrateCreateProduct_ValidData_Success()
+    public async Task TryOrchestrateCreateProduct_ValidData_Success()
     {
         // ARRANGE
 
 
         // ACT
-        var result =_productDomainService.TryOrchestrateCreateProduct(new OrchestrateCreateNewProductContract(
+        var result = await _productDomainService.TryOrchestrateCreateProduct(new OrchestrateCreateNewProductContract(
             id: Guid.NewGuid(),
             name: "name",
             price: 100,

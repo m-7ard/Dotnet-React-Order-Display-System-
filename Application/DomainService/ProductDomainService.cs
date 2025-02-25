@@ -36,7 +36,7 @@ public class ProductDomainService : IProductDomainService
         return product;
     }
 
-    public OneOf<Product, string> TryOrchestrateCreateProduct(OrchestrateCreateNewProductContract contract)
+    public async Task<OneOf<Product, string>> TryOrchestrateCreateProduct(OrchestrateCreateNewProductContract contract)
     {
         var createProductcontract = new CreateProductContract(
             id: contract.Id,
@@ -52,6 +52,8 @@ public class ProductDomainService : IProductDomainService
         if (canCreateProduct.TryPickT1(out var error, out _)) return error;
 
         var product = Product.ExecuteCreate(createProductcontract);
+        await _unitOfWork.ProductRepository.LazyCreateAsync(product);
+        await _unitOfWork.ProductHistoryRepository.LazyCreateAsync(ProductHistoryFactory.BuildNewProductHistoryFromProduct(product));
         return product;
     }
 

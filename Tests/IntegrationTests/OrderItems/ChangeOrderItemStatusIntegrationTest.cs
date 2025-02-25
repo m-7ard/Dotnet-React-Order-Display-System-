@@ -6,9 +6,6 @@ using Domain.DomainExtension;
 using Domain.Models;
 using Domain.ValueObjects.Order;
 using Domain.ValueObjects.OrderItem;
-using Infrastructure.DbEntities;
-using Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.IntegrationTests.OrderItems;
@@ -51,7 +48,8 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
         var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
         var order = await repo.GetByIdAsync(OrderId.ExecuteCreate(Guid.Parse(content.OrderId)));
         Assert.NotNull(order);        
-        var orderItem = order.ExecuteGetOrderItemById(OrderItemId.ExecuteCreate(Guid.Parse(content.OrderItemId)));
+
+        var orderItem = order.ExecuteGetOrderItemById(Guid.Parse(content.OrderItemId));
         Assert.NotNull(orderItem);        
         Assert.Equal(OrderItemStatus.Finished, orderItem.Schedule.Status);
     }
@@ -71,7 +69,7 @@ public class ChangeOrderItemStatusIntegrationTest : OrderItemsIntegrationTest
     {
         using var scope = _factory.Services.CreateScope();
         var repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
-        OrderDomainExtension.ExecuteMarkOrderItemFinished(_order001, _orderItem001.Id);
+        OrderDomainExtension.ExecuteMarkOrderItemFinished(_order001, _orderItem001.Id.Value, DateTime.UtcNow);
         await repo.UpdateAsync(_order001);
 
         var request = new MarkOrderItemFinishedRequestDTO();
