@@ -1,8 +1,8 @@
+using Application.Contracts.DomainService.OrderDomainService;
 using Application.Errors.Objects;
 using Application.Handlers.Orders.Create;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
-using Domain.DomainFactories;
 using Domain.Models;
 using Moq;
 using Tests.UnitTests.Utils;
@@ -11,8 +11,6 @@ namespace Tests.UnitTests.Application.Api.Orders;
 
 public class CreateOrderHandlerUnitTest
 {
-    private readonly Mock<IProductRepository> _mockProductRepository;
-    private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly Mock<IOrderDomainService> _mockOrderDomainService;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
@@ -22,15 +20,10 @@ public class CreateOrderHandlerUnitTest
 
     public CreateOrderHandlerUnitTest()
     {
-        _mockOrderRepository = new Mock<IOrderRepository>();
-        _mockProductRepository = new Mock<IProductRepository>();
-        
         _mockOrderDomainService = new Mock<IOrderDomainService>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
         _handler = new CreateOrderHandler(
-            orderRepository: _mockOrderRepository.Object,
-            productRepository: _mockProductRepository.Object,
             orderDomainService: _mockOrderDomainService.Object,
             unitOfWork: _mockUnitOfWork.Object
         );
@@ -52,8 +45,10 @@ public class CreateOrderHandlerUnitTest
             id: Guid.NewGuid()
         );
 
-        SetupMockServices.SetupOrderDomainService_TryCreateNewOrder_Success(_mockOrderDomainService, BlankOrder.Instance);
-        SetupMockServices.SetupOrderDomainService_TryOrchestrateAddNewOrderItem_Success(_mockOrderDomainService);
+        var mockOrder = Mixins.CreateNewOrderWithoutItem(1);
+
+        _mockOrderDomainService.Setup(service => service.TryOrchestrateCreateNewOrder(Guid.NewGuid())).ReturnsAsync(mockOrder);
+        _mockOrderDomainService.Setup(service => service.TryOrchestrateTransitionOrderItemStatus(It.IsAny<OrchestrateTransitionOrderItemStatusContract>())).ReturnsAsync(true);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -74,8 +69,8 @@ public class CreateOrderHandlerUnitTest
             id: Guid.NewGuid()
         );
         
-        SetupMockServices.SetupOrderDomainService_TryCreateNewOrder_Failure(_mockOrderDomainService);
-
+        _mockOrderDomainService.Setup(service => service.TryOrchestrateCreateNewOrder(It.IsAny<Guid>())).ReturnsAsync("");
+        
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -96,8 +91,10 @@ public class CreateOrderHandlerUnitTest
             id: Guid.NewGuid()
         );
 
-        SetupMockServices.SetupOrderDomainService_TryCreateNewOrder_Success(_mockOrderDomainService, BlankOrder.Instance);
-        SetupMockServices.SetupOrderDomainService_TryOrchestrateAddNewOrderItem_Failure(_mockOrderDomainService);
+        var mockOrder = Mixins.CreateNewOrderWithoutItem(1);
+
+        _mockOrderDomainService.Setup(service => service.TryOrchestrateCreateNewOrder(It.IsAny<Guid>())).ReturnsAsync(mockOrder);
+        _mockOrderDomainService.Setup(service => service.TryOrchestrateAddNewOrderItem(It.IsAny<OrchestrateAddNewOrderItemContract>())).ReturnsAsync("");
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);

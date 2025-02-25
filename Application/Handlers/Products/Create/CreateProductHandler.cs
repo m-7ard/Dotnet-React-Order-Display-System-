@@ -3,7 +3,6 @@ using Application.Errors;
 using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
-using Domain.DomainFactories;
 using MediatR;
 using OneOf;
 
@@ -12,12 +11,14 @@ namespace Application.Handlers.Products.Create;
 public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<CreateProductResult, List<ApplicationError>>>
 {
     private readonly IProductDomainService _productDomainService;
+    private readonly IProductHistoryDomainService _productHistoryDomainService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateProductHandler(IProductDomainService productDomainService, IUnitOfWork unitOfWork)
+    public CreateProductHandler(IProductDomainService productDomainService, IUnitOfWork unitOfWork, IProductHistoryDomainService productHistoryDomainService)
     {
         _productDomainService = productDomainService;
         _unitOfWork = unitOfWork;
+        _productHistoryDomainService = productHistoryDomainService;
     }
 
     public async Task<OneOf<CreateProductResult, List<ApplicationError>>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
@@ -30,7 +31,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
             amount: request.Amount
         );
 
-        var tryOrchestrateCreateProduct = _productDomainService.TryOrchestrateCreateProduct(contract);
+        var tryOrchestrateCreateProduct = await _productDomainService.TryOrchestrateCreateProduct(contract);
 
         if (tryOrchestrateCreateProduct.IsT1)
         {
@@ -38,6 +39,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
         }
 
         var product = tryOrchestrateCreateProduct.AsT0;
+        await _unitOfWork.SaveAsync();
         
         var imageErrors = new List<ApplicationError>();
 
@@ -55,8 +57,9 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
             return imageErrors;
         }
 
-        await _unitOfWork.ProductRepository.LazyCreateAsync(product);
-        await _unitOfWork.ProductHistoryRepository.LazyCreateAsync(ProductHistoryFactory.BuildNewProductHistoryFromProduct(product));
+        var canCreate = await _productHistoryDomainService.CreateInitialHistoryForProduct(product);
+        if (canCreate.IsT1) return new CannotCreateInitialProductHistoryError(message: canCreate.AsT1, path: []).AsList();
+
         await _unitOfWork.SaveAsync();
 
         return new CreateProductResult(id: product.Id);

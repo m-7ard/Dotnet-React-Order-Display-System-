@@ -1,8 +1,8 @@
+using Application.Contracts.DomainService.OrderDomainService;
 using Application.Errors;
+using Application.Errors.Objects;
 using Application.Interfaces.Persistence;
-using Application.Validators.OrderExistsValidator;
-using Domain.DomainExtension;
-using Domain.ValueObjects.Order;
+using Application.Interfaces.Services;
 using Domain.ValueObjects.OrderItem;
 using MediatR;
 using OneOf;
@@ -11,38 +11,27 @@ namespace Application.Handlers.OrderItems.MarkFinished;
 
 public class MarkOrderItemFinishedHandler : IRequestHandler<MarkOrderItemFinishedCommand, OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>>
 {
-    private readonly IOrderRepository _orderRepository;
-    private readonly IOrderExistsValidator<OrderId> _orderExistsValidator;
+    private readonly IOrderDomainService _orderDomainService;
+    private readonly IUnitOfWork _unitOfWork;
 
-
-    public MarkOrderItemFinishedHandler(IOrderRepository orderRepository, IOrderExistsValidator<OrderId> orderExistsValidator)
+    public MarkOrderItemFinishedHandler(IOrderDomainService orderDomainService, IUnitOfWork unitOfWork)
     {
-        _orderRepository = orderRepository;
-        _orderExistsValidator = orderExistsValidator;
+        _orderDomainService = orderDomainService;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<OneOf<MarkOrderItemFinishedResult, List<ApplicationError>>> Handle(MarkOrderItemFinishedCommand request, CancellationToken cancellationToken)
     {
-        var orderId = OrderId.ExecuteCreate(request.OrderId);
-        var orderExistsResult = await _orderExistsValidator.Validate(orderId);
-        if (orderExistsResult.TryPickT1(out var errors, out var order))
-        {
-            return errors;
-        }
+        var orderExists = await _orderDomainService.GetOrderById(request.OrderId);
+        if (orderExists.IsT1) return new OrderDoesNotExistError(message: orderExists.AsT1, path: []).AsList();
 
-        var orderItemId = OrderItemId.ExecuteCreate(request.OrderItemId);
-        var canMarkOrderItemFinishedResult = OrderDomainExtension.CanMarkOrderItemFinished(order, orderItemId);
-        if (canMarkOrderItemFinishedResult.TryPickT1(out var error, out var _))
-        {
-            return ApplicationErrorFactory.CreateSingleListError(
-                message: error,
-                path: [],
-                code: GeneralApplicationErrorCodes.NOT_ALLOWED
-            );
-        }
+        var order = orderExists.AsT0;
 
-        var dateFinished = OrderDomainExtension.ExecuteMarkOrderItemFinished(order, orderItemId);
-        await _orderRepository.UpdateAsync(order);
-        return new MarkOrderItemFinishedResult(orderId: request.OrderId, orderItemId: request.OrderItemId, dateFinished: dateFinished);
+        var contract = new OrchestrateTransitionOrderItemStatusContract(order: order, orderItemId: request.OrderItemId, status: OrderItemStatus.Finished.Name, dateOccured: DateTime.UtcNow);
+        var tryTransition = await _orderDomainService.TryOrchestrateTransitionOrderItemStatus(contract);
+        if (tryTransition.IsT1) return new CannotTransitionOrderItemStatusError(message: tryTransition.AsT1, path: []).AsList();
+
+        await _unitOfWork.SaveAsync();
+        return new MarkOrderItemFinishedResult(orderId: request.OrderId, orderItemId: request.OrderItemId, dateFinished: contract.DateOccured);
     }
 }

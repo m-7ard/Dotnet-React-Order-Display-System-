@@ -91,11 +91,13 @@ export default function CreateProductController() {
         mutationFn: async () => {
             const values = itemManager.items;
 
+            const imageFileNames = Object.values(values.images).map((value) => value.generatedFileName);
+
             const validation = validateTypeboxSchema(validatorSchema, {
                 name: values.name,
                 description: values.description,
                 price: parseFloat(values.price),
-                images: Object.keys(values.images),
+                images: imageFileNames,
                 amount: parseFloat(values.amount)
             });
 
@@ -113,7 +115,7 @@ export default function CreateProductController() {
                         name: data.name,
                         description: data.description,
                         price: data.price,
-                        images: Object.keys(data.images),
+                        images: imageFileNames,
                         amount: data.amount
                     }),
                 onResponseFn: async (response) => {
@@ -123,6 +125,7 @@ export default function CreateProductController() {
                     } else if (response.status === 400) {
                         const apiErrors = await response.json();
                         const errors = PresentationErrorFactory.ApiErrorsToPresentationErrors(apiErrors);
+                        console.log(errors)
                         errorManager.setAll(errors);
                         return ok(undefined);
                     }

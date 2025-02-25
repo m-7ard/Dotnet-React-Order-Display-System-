@@ -14,12 +14,14 @@ public class OrderDomainServiceUnitTest
     private readonly Mock<IProductHistoryDomainService> _mockProductHistoryDomainService;
     private readonly Mock<ISequenceService> _mockSequenceService;
     private readonly Mock<IProductRepository> _mockProductRepository;
+    private readonly Mock<IOrderRepository> _mockOrderRepository;
 
     public OrderDomainServiceUnitTest()
     {
         _mockProductDomainService = new Mock<IProductDomainService>();
         _mockProductHistoryDomainService = new Mock<IProductHistoryDomainService>();
         _mockSequenceService = new Mock<ISequenceService>();
+        _mockOrderRepository = new Mock<IOrderRepository>();
 
         _mockSequenceService.Setup(service => service.GetNextOrderItemValueAsync()).ReturnsAsync(1);
         _mockSequenceService.Setup(service => service.GetNextOrderItemValueAsync()).ReturnsAsync(1);
@@ -30,7 +32,8 @@ public class OrderDomainServiceUnitTest
             productDomainService: _mockProductDomainService.Object,
             productHistoryDomainService: _mockProductHistoryDomainService.Object,
             sequenceService: _mockSequenceService.Object,
-            productRepository: _mockProductRepository.Object
+            productRepository: _mockProductRepository.Object,
+            orderRepository: _mockOrderRepository.Object
         );
     }
 
@@ -74,7 +77,6 @@ public class OrderDomainServiceUnitTest
         // ASSERT
         Assert.True(result.IsT0);
     }
-
 
     [Fact]
     public async Task TryOrchestrateAddNewOrderItem_QuantityLargerThanProductAmount_Failure()

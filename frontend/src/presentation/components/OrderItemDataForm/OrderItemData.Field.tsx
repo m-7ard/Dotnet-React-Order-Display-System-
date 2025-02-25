@@ -1,6 +1,6 @@
 import IPresentationError from "../../interfaces/IPresentationError";
 import MixinButton from "../Resuables/MixinButton";
-import OrderItemDataFieldItem, { ErrorSchema as OrderItemDataFieldErrorSchema, ValueSchema as OrderItemDataValueSchema } from "./OrderItemData.Field.Item";
+import OrderItemDataFieldItem, { ValueSchema as OrderItemDataValueSchema } from "./OrderItemData.Field.Item";
 import GlobalDialog from "../Dialog/GlobalDialog";
 import IProduct from "../../../domain/models/IProduct";
 import { useCallback } from "react";
@@ -9,7 +9,7 @@ import CountTrackerProduct from "../FilterProductResults/FilterProductResults.Pa
 import FilterProductResultsControllerV2 from "../FilterProductResults/FilterProductResults.Controller.V2";
 
 type ErrorSchema = IPresentationError<{
-    [productId: number | string]: OrderItemDataFieldErrorSchema;
+    [productId: number | string]: string[];
 }>;
 
 type ValueSchema = {

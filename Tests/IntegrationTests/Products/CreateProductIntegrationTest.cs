@@ -1,7 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using Api.DTOs.Products.Create;
+using Application.Interfaces.Persistence;
 using Domain.Models;
+using Domain.ValueObjects.Product;
 using Microsoft.EntityFrameworkCore;
 
 namespace Tests.IntegrationTests.Products;
@@ -66,6 +68,14 @@ public class CreateProductIntegrationTest : ProductsIntegrationTest
         var responseContent = await response.Content.ReadFromJsonAsync<CreateProductResponseDTO>();
         Assert.NotNull(responseContent);
         Assert.NotNull(responseContent.Id);
+        
+        var db = _factory.CreateDbContext();
+        var histories = await db.ProductHistory.ToListAsync();
+        var productHistory = await db.ProductHistory.SingleAsync(d => d.ProductId == Guid.Parse(responseContent.Id));
+        foreach (var image in images)
+        {
+            Assert.Contains(productHistory!.Images, (el) => el == image);
+        }
     }
 
     [Fact]
