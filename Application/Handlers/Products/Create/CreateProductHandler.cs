@@ -11,12 +11,14 @@ namespace Application.Handlers.Products.Create;
 public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<CreateProductResult, List<ApplicationError>>>
 {
     private readonly IProductDomainService _productDomainService;
+    private readonly IProductHistoryDomainService _productHistoryDomainService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateProductHandler(IProductDomainService productDomainService, IUnitOfWork unitOfWork)
+    public CreateProductHandler(IProductDomainService productDomainService, IUnitOfWork unitOfWork, IProductHistoryDomainService productHistoryDomainService)
     {
         _productDomainService = productDomainService;
         _unitOfWork = unitOfWork;
+        _productHistoryDomainService = productHistoryDomainService;
     }
 
     public async Task<OneOf<CreateProductResult, List<ApplicationError>>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
@@ -37,6 +39,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
         }
 
         var product = tryOrchestrateCreateProduct.AsT0;
+        await _unitOfWork.SaveAsync();
         
         var imageErrors = new List<ApplicationError>();
 
@@ -53,6 +56,9 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
         {
             return imageErrors;
         }
+
+        var canCreate = await _productHistoryDomainService.CreateInitialHistoryForProduct(product);
+        if (canCreate.IsT1) return new CannotCreateInitialProductHistoryError(message: canCreate.AsT1, path: []).AsList();
 
         await _unitOfWork.SaveAsync();
 

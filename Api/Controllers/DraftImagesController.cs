@@ -1,7 +1,5 @@
-using Api.ApiModels;
 using Api.DTOs.DraftImages.UploadImages;
 using Api.Errors;
-using Api.Interfaces;
 using Api.Mappers;
 using Api.Services;
 using Application.Handlers.DraftImages.UploadImages;
