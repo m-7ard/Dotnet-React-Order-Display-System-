@@ -53,8 +53,14 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
         var productHistories = await db.ProductHistory.ToListAsync();
         Assert.StrictEqual(2, productHistories.Count);
 
-        var updatedProductHistory = await db.ProductHistory.SingleAsync(d => d.Id == _product001History.Id);
-        Assert.True(updatedProductHistory.ValidTo > updatedProductHistory.ValidFrom);        
+        var oldProductHistory = await db.ProductHistory.SingleAsync(d => d.Id == _product001History.Id && d.ValidTo != null);
+        Assert.True(oldProductHistory.ValidTo > oldProductHistory.ValidFrom);      
+
+        var newProductHistory = await db.ProductHistory.SingleAsync(d => d.ProductId == _product001.Id.Value && d.ValidTo == null);
+        foreach (var image in request.Images)
+        {
+            Assert.Contains(newProductHistory!.Images, (el) => el == image);
+        }  
     }
 
     [Fact]
@@ -80,6 +86,14 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
         Assert.NotNull(updatedProduct);
 
         Assert.Equal(2, updatedProduct.Images.Count);
+    
+        var db = _factory.CreateDbContext();
+        var newProductHistory = await db.ProductHistory.SingleAsync(d => d.ProductId == _product001.Id.Value && d.ValidTo == null);
+
+        foreach (var image in request.Images)
+        {
+            Assert.Contains(newProductHistory!.Images, (el) => el == image);
+        }  
     }
 
     [Fact]
@@ -106,6 +120,14 @@ public class UpdateProductIntegrationTest : ProductsIntegrationTest
 
         Assert.StrictEqual(1, updatedProduct.Images.Count);
         Assert.Equal(updatedProduct.Images[0].FileName.Value, newValidImage.FileName.Value);
+
+        var db = _factory.CreateDbContext();
+        var newProductHistory = await db.ProductHistory.SingleAsync(d => d.ProductId == _product001.Id.Value && d.ValidTo == null);
+
+        foreach (var image in request.Images)
+        {
+            Assert.Contains(newProductHistory!.Images, (el) => el == image);
+        }  
     }
 
     [Fact]

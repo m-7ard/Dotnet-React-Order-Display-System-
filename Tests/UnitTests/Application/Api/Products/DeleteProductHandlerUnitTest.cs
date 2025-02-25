@@ -1,111 +1,120 @@
+using Application.Errors.Objects;
 using Application.Handlers.Products.Delete;
 using Application.Interfaces.Persistence;
-using Application.Validators.LatestProductHistoryExistsValidator;
-using Application.Validators.ProductExistsValidator;
-using Domain.Models;
-using Domain.ValueObjects.Product;
+using Application.Interfaces.Services;
+using Domain.DomainFactories;
 using Moq;
-using Tests.UnitTests.Utils;
 
 namespace Tests.UnitTests.Application.Api.Products;
 
 public class DeleteProductHandlerUnitTest
 {
-    private readonly Mock<IProductRepository> _mockProductRepository;
-    private readonly Mock<IProductHistoryRepository> _mockProductHistoryRepository;
-    private readonly Mock<ILatestProductHistoryExistsValidator<ProductId>> _latestProductHistoryExistsByIdValidator;
+    private readonly Mock<IProductDomainService> _mockProductDomainService;
+    private readonly Mock<IProductHistoryDomainService> _mockProductHistoryDomainService;
+    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly DeleteProductHandler _handler;
-    private readonly Mock<IProductExistsValidator<ProductId>> _mockProductExistsValidator;
 
     public DeleteProductHandlerUnitTest()
     {
-        _mockProductRepository = new Mock<IProductRepository>();
-        _mockProductHistoryRepository = new Mock<IProductHistoryRepository>();
-        _mockProductExistsValidator = new Mock<IProductExistsValidator<ProductId>>(); 
-        _latestProductHistoryExistsByIdValidator = new Mock<ILatestProductHistoryExistsValidator<ProductId>>();
+        _mockProductDomainService = new Mock<IProductDomainService>();
+        _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _mockProductHistoryDomainService = new Mock<IProductHistoryDomainService>();
+
+        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(new Mock<IProductRepository>().Object);
+        _mockUnitOfWork.Setup(uow => uow.ProductHistoryRepository).Returns(new Mock<IProductHistoryRepository>().Object);
 
         _handler = new DeleteProductHandler(
-            productRepository: _mockProductRepository.Object,
-            productHistoryRepository: _mockProductHistoryRepository.Object,
-            productExistsValidator: _mockProductExistsValidator.Object,
-            latestProductHistoryExistsValidator: _latestProductHistoryExistsByIdValidator.Object
+            productDomainService: _mockProductDomainService.Object,
+            unitOfWork: _mockUnitOfWork.Object,
+            productHistoryDomainService: _mockProductHistoryDomainService.Object
         );
     }
 
     [Fact]
-    public async Task DeleteProduct_ValidProductAndValidProductHistory_Success()
+    public async Task DeleteProduct_ValidData_Success()
     {
         // ARRANGE
-        var mockProduct = Mixins.CreateProduct(
-            seed: 1,
-            images: []
-        );
-
-        var mockProductHistory = Mixins.CreateProductHistory(1);
+        var mockProduct = Mixins.CreateProduct(seed: 1, images: []);
+        var mockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(mockProduct);
 
         var command = new DeleteProductCommand(
             id: mockProduct.Id.Value
         );
 
-        // Product Exists
-        SetupMockServices.SetupProductExistsValidatorSuccess(_mockProductExistsValidator, mockProduct.Id, mockProduct);
-
-        // ProductHistory Exists
-        SetupMockServices.SetupLatestProductHistoryExistsValidatorSuccess(_latestProductHistoryExistsByIdValidator, mockProduct.Id, mockProductHistory);
+        _mockProductDomainService.Setup(service => service.GetProductById(mockProduct.Id.Value)).ReturnsAsync(mockProduct);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateDeleteProduct(mockProduct)).ReturnsAsync(true);
+        _mockProductHistoryDomainService.Setup(service => service.InvalidateHistoryForProduct(mockProduct)).ReturnsAsync(true);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
         
         // ASSERT
         Assert.True(result.IsT0);
-        _mockProductRepository.Verify(repo => repo.DeleteByIdAsync(mockProduct.Id));
     }
 
     [Fact]
     public async Task DeleteProduct_ProductDoesNotExist_Failure()
     {
         // ARRANGE
-        var mockProduct = Mixins.CreateProduct(
-            seed: 1,
-            images: []
-        );
+        var mockProduct = Mixins.CreateProduct(seed: 1, images: []);
+        var mockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(mockProduct);
 
         var command = new DeleteProductCommand(
             id: mockProduct.Id.Value
         );
 
-        SetupMockServices.SetupProductExistsValidatorFailure(_mockProductExistsValidator);
-       
+        _mockProductDomainService.Setup(service => service.GetProductById(mockProduct.Id.Value)).ReturnsAsync("");
+
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
         
         // ASSERT
         Assert.True(result.IsT1);
-        _mockProductExistsValidator.Verify(repo => repo.Validate(It.Is<ProductId>(id => id == mockProduct.Id)), Times.Once);
+        Assert.IsType<ProductDoesNotExistError>(result.AsT1.First());
     }
     
     [Fact]
-    public async Task DeleteProduct_ProductHistoryDoesNotExist_Failure()
+    public async Task DeleteProduct_CannotDelete_Failure()
     {
         // ARRANGE
-        var mockProduct = Mixins.CreateProduct(
-            seed: 1,
-            images: []
-        );
+        var mockProduct = Mixins.CreateProduct(seed: 1, images: []);
+        var mockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(mockProduct);
 
         var command = new DeleteProductCommand(
             id: mockProduct.Id.Value
         );
 
-        SetupMockServices.SetupProductExistsValidatorSuccess(_mockProductExistsValidator, mockProduct.Id, mockProduct);
-        SetupMockServices.SetupLatestProductHistoryExistsValidatorFailure(_latestProductHistoryExistsByIdValidator);
+        _mockProductDomainService.Setup(service => service.GetProductById(mockProduct.Id.Value)).ReturnsAsync(mockProduct);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateDeleteProduct(mockProduct)).ReturnsAsync("");
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
         
         // ASSERT
         Assert.True(result.IsT1);
-        _mockProductExistsValidator.Verify(validator => validator.Validate(It.Is<ProductId>(id => id == mockProduct.Id)), Times.Once);
-        _latestProductHistoryExistsByIdValidator.Verify(validator => validator.Validate(mockProduct.Id), Times.Once);
+        Assert.IsType<CannotDeleteProductError>(result.AsT1.First());
+    }
+
+    [Fact]
+    public async Task DeleteProduct_CannotInvalidProductHistory_Failure()
+    {
+        // ARRANGE
+        var mockProduct = Mixins.CreateProduct(seed: 1, images: []);
+        var mockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(mockProduct);
+
+        var command = new DeleteProductCommand(
+            id: mockProduct.Id.Value
+        );
+
+        _mockProductDomainService.Setup(service => service.GetProductById(mockProduct.Id.Value)).ReturnsAsync(mockProduct);
+        _mockProductDomainService.Setup(service => service.TryOrchestrateDeleteProduct(mockProduct)).ReturnsAsync(true);
+        _mockProductHistoryDomainService.Setup(service => service.InvalidateHistoryForProduct(mockProduct)).ReturnsAsync("");
+
+        // ACT
+        var result = await _handler.Handle(command, CancellationToken.None);
+        
+        // ASSERT
+        Assert.True(result.IsT1);
+        Assert.IsType<CannotInvalidateProductHistoryError>(result.AsT1.First());
     }
 }

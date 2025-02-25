@@ -4,6 +4,8 @@ using Application.Interfaces.Services;
 using Domain.Contracts.Orders;
 using Domain.DomainExtension;
 using Domain.Models;
+using Domain.ValueObjects.Order;
+using Domain.ValueObjects.OrderItem;
 using OneOf;
 
 namespace Application.DomainService;
@@ -11,16 +13,18 @@ namespace Application.DomainService;
 public class OrderDomainService : IOrderDomainService
 {
     private readonly IProductDomainService _productDomainService;
+    private readonly IOrderRepository _orderRepository;
     private readonly IProductHistoryDomainService _productHistoryDomainService;
     private readonly ISequenceService _sequenceService;
     private readonly IProductRepository _productRepository;
 
-    public OrderDomainService(IProductDomainService productDomainService, IProductHistoryDomainService productHistoryDomainService, ISequenceService sequenceService, IProductRepository productRepository)
+    public OrderDomainService(IProductDomainService productDomainService, IProductHistoryDomainService productHistoryDomainService, ISequenceService sequenceService, IProductRepository productRepository, IOrderRepository orderRepository)
     {
         _productDomainService = productDomainService;
         _productHistoryDomainService = productHistoryDomainService;
         _sequenceService = sequenceService;
         _productRepository = productRepository;
+        _orderRepository = orderRepository;
     }
 
     public async Task<OneOf<Order, string>> TryOrchestrateCreateNewOrder(Guid id)
@@ -28,8 +32,12 @@ public class OrderDomainService : IOrderDomainService
         var serialNumber = await _sequenceService.GetNextOrderValueAsync();
         var canCreateOrder = OrderDomainExtension.CanCreateNewOrder(id: id, serialNumber: serialNumber);
         if (canCreateOrder.IsT1) return canCreateOrder.AsT1;
+
+        var order = OrderDomainExtension.ExecuteCreateNewOrder(id: id, serialNumber: serialNumber);
+
+        await _orderRepository.LazyCreateAsync(order);
         
-        return OrderDomainExtension.ExecuteCreateNewOrder(id: id, serialNumber: serialNumber);
+        return order;
     }
 
     public async Task<OneOf<bool, string>> TryOrchestrateAddNewOrderItem(OrchestrateAddNewOrderItemContract contract)
@@ -74,10 +82,77 @@ public class OrderDomainService : IOrderDomainService
         if (canAddOrderItem.IsT1) return canAddOrderItem.AsT1;
 
         OrderDomainExtension.ExecuteAddNewOrderItem(addNewOrderItemContract);
+        
+        // Update Order
+        await _orderRepository.UpdateAsync(order);
 
         // Update Product
         await _productRepository.LazyUpdateAsync(product);
         
+        return true;
+    }
+
+    public async Task<OneOf<Order, string>> GetOrderById(Guid id)
+    {
+        var orderId = OrderId.ExecuteCreate(id);
+        var order = await _orderRepository.GetByIdAsync(orderId);
+        if (order is null) return $"Order of Id \"{orderId}\" does not exist.";
+
+        return order;
+    }
+
+    public async Task<OneOf<bool, string>> TryOrchestrateTransitionOrderStatus(OrchestrateTransitionOrderStatusContract contract)
+    {
+        var order = contract.Order;
+        var status = contract.Status;
+        var dateOccured = contract.DateOccured;
+
+        var canCreateStatus = OrderStatus.CanCreate(status);
+        if (canCreateStatus.IsT1) return canCreateStatus.AsT1;
+
+        var orderStatus = OrderStatus.ExecuteCreate(status);
+
+        if (orderStatus == OrderStatus.Finished)
+        {
+            var canMarkFinished = OrderDomainExtension.CanMarkFinished(order, dateOccured);
+            if (canMarkFinished.IsT1) return canMarkFinished.AsT1;
+
+            OrderDomainExtension.ExecuteMarkFinished(order, dateOccured);
+        }
+        else
+        {
+            throw new Exception($"No transition for OrderStatus of value \"{orderStatus}\" has been provided.");
+        }
+
+        await _orderRepository.LazyUpdateAsync(order);
+        return true;
+    }
+
+    public async Task<OneOf<bool, string>> TryOrchestrateTransitionOrderItemStatus(OrchestrateTransitionOrderItemStatusContract contract)
+    {
+        var status = contract.Status;
+        var order = contract.Order;
+        var orderItemId = contract.OrderItemId;
+        var dateOccured = contract.DateOccured;
+
+        var canCreateStatus = OrderItemStatus.CanCreate(status);
+        if (canCreateStatus.IsT1) return canCreateStatus.AsT1;
+
+        var orderItemStatus = OrderItemStatus.ExecuteCreate(status);
+
+        if (orderItemStatus == OrderItemStatus.Finished)
+        {
+            var canMarkFinished = OrderDomainExtension.CanMarkOrderItemFinished(order, orderItemId, dateOccured);
+            if (canMarkFinished.IsT1) return canMarkFinished.AsT1;
+
+            OrderDomainExtension.ExecuteMarkOrderItemFinished(order, orderItemId, dateOccured);
+        }
+        else
+        {
+            throw new Exception($"No transition for OrderItemStatus of value \"{orderItemStatus}\" has been provided.");
+        }
+
+        await _orderRepository.LazyUpdateAsync(order);
         return true;
     }
 }

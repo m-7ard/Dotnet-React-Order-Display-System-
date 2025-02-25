@@ -222,7 +222,7 @@ public class OrdersController : ControllerBase
         if (result.TryPickT1(out var errors, out var value))
         {
             var expectedError = errors.First();
-            if (expectedError.Code is SpecificApplicationErrorCodes.ORDER_EXISTS_ERROR)
+            if (expectedError is OrderDoesNotExistError)
             {
                 return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }
@@ -247,7 +247,7 @@ public class OrdersController : ControllerBase
         if (result.TryPickT1(out var errors, out var value))
         {
             var expectedError = errors.First();
-            if (expectedError.Code is SpecificApplicationErrorCodes.ORDER_EXISTS_ERROR)
+            if (expectedError is OrderDoesNotExistError)
             {
                 return NotFound(PlainApiErrorHandlingService.MapApplicationErrors(errors));
             }

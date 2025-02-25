@@ -121,6 +121,12 @@ public class ProductRepository : IProductRepository
 
     public async Task DeleteByIdAsync(ProductId id)
     {
+        await LazyDeleteByIdAsync(id);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task LazyDeleteByIdAsync(ProductId id)
+    {
         var entity = await _dbContext.Product
             .Include(d => d.Images)
             .SingleAsync(d => d.Id == id.Value);
@@ -131,7 +137,6 @@ public class ProductRepository : IProductRepository
         }
 
         _dbContext.Remove(entity);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task LazyUpdateAsync(Product product)

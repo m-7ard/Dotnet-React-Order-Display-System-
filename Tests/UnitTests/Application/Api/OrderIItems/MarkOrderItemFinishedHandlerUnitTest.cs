@@ -1,50 +1,35 @@
-using Application.Errors;
+using Application.Contracts.DomainService.OrderDomainService;
+using Application.Errors.Objects;
 using Application.Handlers.OrderItems.MarkFinished;
 using Application.Interfaces.Persistence;
-using Application.Validators.OrderExistsValidator;
-using Domain.Contracts.Orders;
-using Domain.DomainExtension;
+using Application.Interfaces.Services;
 using Domain.DomainFactories;
 using Domain.Models;
-using Domain.ValueObjects.Order;
-using Domain.ValueObjects.OrderItem;
 using Moq;
-using OneOf;
-using Tests.UnitTests.Utils;
 
 namespace Tests.UnitTests.Application.Api.OrderIItems;
 
 public class MarkOrderItemFinishedHandlerUnitTest
 {
-    private readonly Mock<IOrderRepository> _mockOrderRepository;
-    private readonly Mock<IOrderExistsValidator<OrderId>> _mockOrderExistsValidator;
+    private readonly Mock<IOrderDomainService> _mockOrderDomainService;
+    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Order _mockOrder;
     private readonly OrderItem _mockOrderItem;
     private readonly MarkOrderItemFinishedHandler _handler;
 
     public MarkOrderItemFinishedHandlerUnitTest()
     {
-        _mockOrderRepository = new Mock<IOrderRepository>();
-        _mockOrderExistsValidator = new Mock<IOrderExistsValidator<OrderId>>();
+        _mockOrderDomainService = new Mock<IOrderDomainService>();
+        _mockUnitOfWork = new Mock<IUnitOfWork>();
 
         _handler = new MarkOrderItemFinishedHandler(
-            orderRepository: _mockOrderRepository.Object,
-            orderExistsValidator: _mockOrderExistsValidator.Object
+            orderDomainService: _mockOrderDomainService.Object,
+            unitOfWork: _mockUnitOfWork.Object
         );
 
-        _mockOrder = OrderDomainExtension.ExecuteCreateNewOrder(id: Guid.NewGuid(), serialNumber: 1);
         var product = Mixins.CreateProduct(1, []);
-        var contract = new AddNewOrderItemContract(
-            order: _mockOrder,
-            id: Guid.NewGuid(), 
-            productId: product.Id,
-            productHistoryId: ProductHistoryFactory.BuildNewProductHistoryFromProduct(product).Id,
-            quantity: 1,
-            serialNumber: 1,
-            total: product.Price.Value
-        );
-        var orderItemId = OrderDomainExtension.ExecuteAddNewOrderItem(contract);
-        _mockOrderItem = _mockOrder.ExecuteGetOrderItemById(orderItemId);
+        _mockOrder = Mixins.CreateNewOrderWithItem(seed: 1, product: product, productHistory: ProductHistoryFactory.BuildNewProductHistoryFromProduct(product));
+        _mockOrderItem = _mockOrder.OrderItems[0];
     }
 
     [Fact]
@@ -56,14 +41,14 @@ public class MarkOrderItemFinishedHandlerUnitTest
             orderItemId: _mockOrderItem.Id.Value
         );
 
-        SetupMockServices.SetupOrderExistsValidatorSuccess(_mockOrderExistsValidator, _mockOrder.Id, _mockOrder);
+        _mockOrderDomainService.Setup(service => service.GetOrderById(_mockOrder.Id.Value)).ReturnsAsync(_mockOrder);
+        _mockOrderDomainService.Setup(service => service.TryOrchestrateTransitionOrderItemStatus(It.IsAny<OrchestrateTransitionOrderItemStatusContract>())).ReturnsAsync(true);
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // ASSERT
         Assert.True(result.IsT0);
-        _mockOrderRepository.Verify(repo => repo.UpdateAsync(It.Is<Order>(d => d.OrderItems[0].Schedule.Status == OrderItemStatus.Finished)), Times.Once);
     }
 
     [Fact]
@@ -75,17 +60,18 @@ public class MarkOrderItemFinishedHandlerUnitTest
             orderItemId: Guid.Empty
         );
         
-        SetupMockServices.SetupOrderExistsValidatorFailure(_mockOrderExistsValidator);
+        _mockOrderDomainService.Setup(service => service.GetOrderById(It.IsAny<Guid>())).ReturnsAsync("");
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // ASSERT
         Assert.True(result.IsT1);
+        Assert.IsType<OrderDoesNotExistError>(result.AsT1.First());
     }
 
     [Fact]
-    public async Task MarkOrderItemFinished_OrderItemDoesNotExist_Failure()
+    public async Task MarkOrderItemFinished_CannotTransition_Failure()
     {
         // ARRANGE
         _mockOrder.OrderItems = [];
@@ -95,32 +81,14 @@ public class MarkOrderItemFinishedHandlerUnitTest
             orderItemId: Guid.Empty
         );
 
-        SetupMockServices.SetupOrderExistsValidatorSuccess(_mockOrderExistsValidator,_mockOrder.Id ,_mockOrder);
+        _mockOrderDomainService.Setup(service => service.GetOrderById(_mockOrder.Id.Value)).ReturnsAsync(_mockOrder);
+        _mockOrderDomainService.Setup(service => service.TryOrchestrateTransitionOrderItemStatus(It.IsAny<OrchestrateTransitionOrderItemStatusContract>())).ReturnsAsync("");
 
         // ACT
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // ASSERT
         Assert.True(result.IsT1);
-    }
-
-    [Fact]
-    public async Task MarkOrderItemFinished_OrderItemAreadyFinished_Failure()
-    {
-        // ARRANGE
-        OrderDomainExtension.ExecuteMarkOrderItemFinished(_mockOrder, _mockOrderItem.Id);
-        
-        var command = new MarkOrderItemFinishedCommand(
-            orderId: _mockOrder.Id.Value,
-            orderItemId: _mockOrderItem.Id.Value
-        );
-
-        _mockOrderExistsValidator.Setup(validator => validator.Validate(It.Is<OrderId>(id => id == _mockOrder.Id))).ReturnsAsync(OneOf<Order, List<ApplicationError>>.FromT0(_mockOrder));
-
-        // ACT
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        // ASSERT
-        Assert.True(result.IsT1);
+        Assert.IsType<CannotTransitionOrderItemStatusError>(result.AsT1.First());
     }
 }

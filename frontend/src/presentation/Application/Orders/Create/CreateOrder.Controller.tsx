@@ -36,10 +36,7 @@ export interface ValueSchema {
 
 export type ErrorState = IPresentationError<{
     orderItemData: {
-        [productId: number | string]: {
-            productId: string[];
-            quantity: string[];
-        };
+        [productId: number | string]: string[];
     };
 }>;
 

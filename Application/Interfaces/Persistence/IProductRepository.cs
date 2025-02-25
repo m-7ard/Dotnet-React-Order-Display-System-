@@ -11,6 +11,7 @@ public interface IProductRepository
     Task UpdateAsync(Product product);
     Task LazyUpdateAsync(Product product);
     Task DeleteByIdAsync(ProductId id);
+    Task LazyDeleteByIdAsync(ProductId id);
     Task<Product?> GetByIdAsync(ProductId id);
     Task<List<Product>> FilterAllAsync(FilterProductsCriteria criteria);
 }
