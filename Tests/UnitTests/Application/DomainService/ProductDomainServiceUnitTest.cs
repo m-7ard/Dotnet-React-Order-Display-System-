@@ -12,7 +12,6 @@ public class ProductDomainServiceUnitTest
     private readonly ProductDomainService _productDomainService;
     private readonly Mock<IDraftImageDomainService> _mockDraftImageDomainService;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IProductHistoryDomainService> _productHistoryDomainService;
 
     public ProductDomainServiceUnitTest()
     {
@@ -27,12 +26,9 @@ public class ProductDomainServiceUnitTest
         _mockUnitOfWork.Setup(uow => uow.ProductHistoryRepository).Returns(mockProductHistoryRepository.Object);
         _mockUnitOfWork.Setup(uow => uow.DraftImageRepository).Returns(mockDraftImageRepository.Object);
 
-        _productHistoryDomainService = new Mock<IProductHistoryDomainService>();
-
         _productDomainService = new ProductDomainService(
             draftImageDomainService: _mockDraftImageDomainService.Object,
-            unitOfWork: _mockUnitOfWork.Object,
-            productHistoryDomainService: _productHistoryDomainService.Object
+            unitOfWork: _mockUnitOfWork.Object
         );
     }
 
@@ -146,33 +142,11 @@ public class ProductDomainServiceUnitTest
         var mockProduct = Mixins.CreateProduct(seed: 1, images: []);
         var mockProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(mockProduct);
         var contract = new OrchestrateUpdateProductContract(id: mockProduct.Id.Value, name: mockProduct.Name, price: mockProduct.Price.Value, description: mockProduct.Description);
-
-        _productHistoryDomainService
-            .Setup(service => service.GetLatestProductHistoryForProduct(mockProduct))
-            .ReturnsAsync(() => mockProductHistory);
         
         // ACT
         var result = await _productDomainService.TryOrchestrateUpdateProduct(product: mockProduct, contract: contract);
         
         // ASSERT
         Assert.True(result.IsT0);
-    }
-
-    [Fact]
-    public async Task TryOrchestrateUpdateProduct_LatestProductHistoryDoesNotExist_Failure()
-    {
-        // ARRANGE
-        var mockProduct = Mixins.CreateProduct(seed: 1, images: []);
-        var contract = new OrchestrateUpdateProductContract(id: mockProduct.Id.Value, name: mockProduct.Name, price: mockProduct.Price.Value, description: mockProduct.Description);
-
-        _productHistoryDomainService
-            .Setup(service => service.GetLatestProductHistoryForProduct(mockProduct))
-            .ReturnsAsync(() => "");
-        
-        // ACT
-        var result = await _productDomainService.TryOrchestrateUpdateProduct(product: mockProduct, contract: contract);
-        
-        // ASSERT
-        Assert.True(result.IsT1);
     }
 }

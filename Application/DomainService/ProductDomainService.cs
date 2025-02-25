@@ -13,14 +13,12 @@ namespace Application.DomainService;
 public class ProductDomainService : IProductDomainService
 {
     private readonly IDraftImageDomainService _draftImageDomainService;
-    private readonly IProductHistoryDomainService _productHistoryDomainService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ProductDomainService(IDraftImageDomainService draftImageDomainService, IUnitOfWork unitOfWork, IProductHistoryDomainService productHistoryDomainService)
+    public ProductDomainService(IDraftImageDomainService draftImageDomainService, IUnitOfWork unitOfWork)
     {
         _draftImageDomainService = draftImageDomainService;
         _unitOfWork = unitOfWork;
-        _productHistoryDomainService = productHistoryDomainService;
     }
 
     public async Task<OneOf<Product, string>> GetProductById(Guid id)
@@ -53,7 +51,7 @@ public class ProductDomainService : IProductDomainService
 
         var product = Product.ExecuteCreate(createProductcontract);
         await _unitOfWork.ProductRepository.LazyCreateAsync(product);
-        await _unitOfWork.ProductHistoryRepository.LazyCreateAsync(ProductHistoryFactory.BuildNewProductHistoryFromProduct(product));
+
         return product;
     }
 
@@ -75,6 +73,8 @@ public class ProductDomainService : IProductDomainService
         }
 
         product.ExecuteAddProductImage(id: productImageIdGuid, fileName: draftImage.FileName.Value, originalFileName: draftImage.OriginalFileName.Value, url: draftImage.Url);
+        
+        await _unitOfWork.ProductRepository.LazyUpdateAsync(product);
         await _unitOfWork.DraftImageRepository.LazyDeleteByFileNameAsync(draftImage.FileName);
         return true;
     }
@@ -141,36 +141,14 @@ public class ProductDomainService : IProductDomainService
             return canUpdate.AsT1;
         }
 
-        var latestProductHistoryExists = await _productHistoryDomainService.GetLatestProductHistoryForProduct(product);
-        if (latestProductHistoryExists.IsT1) return latestProductHistoryExists.AsT1;
-
-        var productHistory = latestProductHistoryExists.AsT0;
-
         product.ExecuteUpdate(updateProductContract);
         await _unitOfWork.ProductRepository.LazyUpdateAsync(product);
-
-        // Invalidate old history
-        productHistory.Invalidate();
-        await _unitOfWork.ProductHistoryRepository.LazyUpdateAsync(productHistory);
-        
-        // Create new Product History
-        var newProductHistory = ProductHistoryFactory.BuildNewProductHistoryFromProduct(product: product);
-        await _unitOfWork.ProductHistoryRepository.LazyCreateAsync(newProductHistory);
 
         return true;
     }
 
     public async Task<OneOf<bool, string>> TryOrchestrateDeleteProduct(Product product)
     {
-        var productHistoryExists = await _productHistoryDomainService.GetLatestProductHistoryForProduct(product);
-        if (productHistoryExists.IsT1) return productHistoryExists.AsT1;
-
-        var productHistory = productHistoryExists.AsT0;
-
-        // Invalidate old history
-        productHistory.Invalidate();
-        await _unitOfWork.ProductHistoryRepository.LazyUpdateAsync(productHistory);
-
         // Delete product
         await _unitOfWork.ProductRepository.LazyDeleteByIdAsync(product.Id);
     

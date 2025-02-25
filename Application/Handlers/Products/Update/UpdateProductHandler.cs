@@ -12,11 +12,13 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductDomainService _productDomainService;
+    private readonly IProductHistoryDomainService _productHistoryDomainService;
 
-    public UpdateProductHandler(IUnitOfWork unitOfWork, IProductDomainService productDomainService)
+    public UpdateProductHandler(IUnitOfWork unitOfWork, IProductDomainService productDomainService, IProductHistoryDomainService productHistoryDomainService)
     {
         _unitOfWork = unitOfWork;
         _productDomainService = productDomainService;
+        _productHistoryDomainService = productHistoryDomainService;
     }
 
     public async Task<OneOf<UpdateProductResult, List<ApplicationError>>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
@@ -45,8 +47,11 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<
                 .ToList();
         }
 
-        var tryOrchestrateUpdatePRoduct = await _productDomainService.TryOrchestrateUpdateProduct(product, contract);
-        if (tryOrchestrateUpdatePRoduct.IsT1) return new CannotUpdateProductError(message: tryOrchestrateUpdatePRoduct.AsT1, path: []).AsList();
+        var tryOrchestrateUpdateProduct = await _productDomainService.TryOrchestrateUpdateProduct(product, contract);
+        if (tryOrchestrateUpdateProduct.IsT1) return new CannotUpdateProductError(message: tryOrchestrateUpdateProduct.AsT1, path: []).AsList();
+
+        var canToggle = await _productHistoryDomainService.ToggleNewHistoryForProduct(product);
+        if (canToggle.IsT1) return new CannotToggleNewProductHistoryError(message: canToggle.AsT1, path: []).AsList();
 
         await _unitOfWork.SaveAsync();
 
