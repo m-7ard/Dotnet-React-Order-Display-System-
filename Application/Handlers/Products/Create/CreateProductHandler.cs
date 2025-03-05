@@ -39,7 +39,6 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, OneOf<
         }
 
         var product = tryOrchestrateCreateProduct.AsT0;
-        await _unitOfWork.SaveAsync();
         
         var imageErrors = new List<ApplicationError>();
 
