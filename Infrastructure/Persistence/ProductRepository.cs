@@ -7,6 +7,7 @@ using Infrastructure.DbEntities;
 using Infrastructure.Interfaces;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
+using OneOf.Types;
 
 namespace Infrastructure.Persistence;
 
@@ -140,9 +141,11 @@ public class ProductRepository : IProductRepository
     }
 
     public async Task LazyUpdateAsync(Product product)
-    {
-        var currentEntity = await _dbContext.Product.SingleAsync(d => d.Id == product.Id.Value);
+    {   
         var updatedEntity = ProductMapper.FromDomainToDbEntity(product);
+        var currentEntity = await _dbContext.Product.FindAsync(updatedEntity.Id);
+        if (currentEntity is null) throw new Exception($"No Product of Id \"{updatedEntity.Id}\" was found in the cache or the database.");
+
         _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
         await PersistDomainEvents(product);
     }

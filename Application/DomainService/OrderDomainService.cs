@@ -84,7 +84,7 @@ public class OrderDomainService : IOrderDomainService
         OrderDomainExtension.ExecuteAddNewOrderItem(addNewOrderItemContract);
         
         // Update Order
-        await _orderRepository.UpdateAsync(order);
+        await _orderRepository.LazyUpdateAsync(order);
 
         // Update Product
         await _productRepository.LazyUpdateAsync(product);

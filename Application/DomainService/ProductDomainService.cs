@@ -2,7 +2,6 @@ using Application.Contracts.DomainService.ProductDomainService;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
 using Domain.Contracts.Products;
-using Domain.DomainFactories;
 using Domain.Models;
 using Domain.ValueObjects.Product;
 using Domain.ValueObjects.Shared;
@@ -13,12 +12,14 @@ namespace Application.DomainService;
 public class ProductDomainService : IProductDomainService
 {
     private readonly IDraftImageDomainService _draftImageDomainService;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IProductRepository _productRepository;
+    private readonly IDraftImageRepository _draftImageRepository;
 
-    public ProductDomainService(IDraftImageDomainService draftImageDomainService, IUnitOfWork unitOfWork)
+    public ProductDomainService(IDraftImageDomainService draftImageDomainService, IProductRepository productRepository, IDraftImageRepository draftImageRepository)
     {
         _draftImageDomainService = draftImageDomainService;
-        _unitOfWork = unitOfWork;
+        _productRepository = productRepository;
+        _draftImageRepository = draftImageRepository;
     }
 
     public async Task<OneOf<Product, string>> GetProductById(Guid id)
@@ -28,7 +29,7 @@ public class ProductDomainService : IProductDomainService
         
         var productId = canCreateProductId.AsT0;
 
-        var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
+        var product = await _productRepository.GetByIdAsync(productId);
         if (product is null) return $"Product of Id \"{productId}\" does not exist.";
 
         return product;
@@ -50,7 +51,7 @@ public class ProductDomainService : IProductDomainService
         if (canCreateProduct.TryPickT1(out var error, out _)) return error;
 
         var product = Product.ExecuteCreate(createProductcontract);
-        await _unitOfWork.ProductRepository.LazyCreateAsync(product);
+        await _productRepository.LazyCreateAsync(product);
 
         return product;
     }
@@ -74,8 +75,8 @@ public class ProductDomainService : IProductDomainService
 
         product.ExecuteAddProductImage(id: productImageIdGuid, fileName: draftImage.FileName.Value, originalFileName: draftImage.OriginalFileName.Value, url: draftImage.Url);
         
-        await _unitOfWork.ProductRepository.LazyUpdateAsync(product);
-        await _unitOfWork.DraftImageRepository.LazyDeleteByFileNameAsync(draftImage.FileName);
+        await _productRepository.LazyUpdateAsync(product);
+        await _draftImageRepository.LazyDeleteByFileNameAsync(draftImage.FileName);
         return true;
     }
 
@@ -121,7 +122,7 @@ public class ProductDomainService : IProductDomainService
             product.ExecuteDeleteProductImage(productImage.Id);
         }
 
-        await _unitOfWork.ProductRepository.LazyUpdateAsync(product);
+        await _productRepository.LazyUpdateAsync(product);
         return true;
     }
 
@@ -142,7 +143,7 @@ public class ProductDomainService : IProductDomainService
         }
 
         product.ExecuteUpdate(updateProductContract);
-        await _unitOfWork.ProductRepository.LazyUpdateAsync(product);
+        await _productRepository.LazyUpdateAsync(product);
 
         return true;
     }
@@ -150,7 +151,7 @@ public class ProductDomainService : IProductDomainService
     public async Task<OneOf<bool, string>> TryOrchestrateDeleteProduct(Product product)
     {
         // Delete product
-        await _unitOfWork.ProductRepository.LazyDeleteByIdAsync(product.Id);
+        await _productRepository.LazyDeleteByIdAsync(product.Id);
     
         return true;
     }
