@@ -137,9 +137,11 @@ public class OrderRepository : IOrderRepository
 
     public async Task LazyUpdateAsync(Order order)
     {
-        var updatedOrderEntity = OrderMapper.ToDbModel(order);
-        var currentOrderEntity = await _dbContext.Order.SingleAsync(d => d.Id == updatedOrderEntity.Id);
-        _dbContext.Entry(currentOrderEntity).CurrentValues.SetValues(updatedOrderEntity);
+        var updatedEntity = OrderMapper.ToDbModel(order);
+        var currentEntity = await _dbContext.Order.FindAsync(updatedEntity.Id);
+        if (currentEntity is null) throw new Exception($"No Product of Id \"{updatedEntity.Id}\" was found in the cache or the database.");
+        
+        _dbContext.Entry(currentEntity).CurrentValues.SetValues(updatedEntity);
         await PersistDomainEvents(order);    
     }
 }

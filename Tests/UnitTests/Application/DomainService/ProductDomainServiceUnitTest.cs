@@ -11,24 +11,19 @@ public class ProductDomainServiceUnitTest
 {
     private readonly ProductDomainService _productDomainService;
     private readonly Mock<IDraftImageDomainService> _mockDraftImageDomainService;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     public ProductDomainServiceUnitTest()
     {
         _mockDraftImageDomainService = new Mock<IDraftImageDomainService>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
     
         var mockProductRepository = new Mock<IProductRepository>();
         var mockProductHistoryRepository = new Mock<IProductHistoryRepository>();
         var mockDraftImageRepository = new Mock<IDraftImageRepository>();
 
-        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(mockProductRepository.Object);
-        _mockUnitOfWork.Setup(uow => uow.ProductHistoryRepository).Returns(mockProductHistoryRepository.Object);
-        _mockUnitOfWork.Setup(uow => uow.DraftImageRepository).Returns(mockDraftImageRepository.Object);
-
         _productDomainService = new ProductDomainService(
             draftImageDomainService: _mockDraftImageDomainService.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            productRepository: mockProductRepository.Object,
+            draftImageRepository: mockDraftImageRepository.Object
         );
     }
 
