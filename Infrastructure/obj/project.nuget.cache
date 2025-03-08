@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "yaiPL+5oOew=",
+  "dgSpecHash": "oP4Ujj9pGis=",
   "success": true,
-  "projectFilePath": "C:\\Users\\maxim\\OneDrive\\Escritorio\\dot_net_work\\SimpleProductOrderingService\\Infrastructure\\Infrastructure.csproj",
+  "projectFilePath": "C:\\Users\\maxim\\OneDrive\\Documents\\testfolder\\Dotnet-React-Order-Display-System-\\Infrastructure\\Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\maxim\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
     "C:\\Users\\maxim\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.2\\fluentvalidation.dependencyinjectionextensions.11.9.2.nupkg.sha512",

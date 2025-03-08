@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZkIPC8mvsH8=",
+  "dgSpecHash": "k5BS6e+gCoA=",
   "success": true,
-  "projectFilePath": "C:\\Users\\maxim\\OneDrive\\Escritorio\\dot_net_work\\SimpleProductOrderingService\\Domain\\Domain.csproj",
+  "projectFilePath": "C:\\Users\\maxim\\OneDrive\\Documents\\testfolder\\Dotnet-React-Order-Display-System-\\Domain\\Domain.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\maxim\\.nuget\\packages\\oneof\\3.0.271\\oneof.3.0.271.nupkg.sha512"
   ],
