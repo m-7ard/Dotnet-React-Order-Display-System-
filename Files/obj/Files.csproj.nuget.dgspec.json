@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\maxim\\OneDrive\\Escritorio\\dot_net_work\\SimpleProductOrderingService\\Files\\Files.csproj": {}
+    "C:\\Users\\maxim\\OneDrive\\Documents\\testfolder\\Dotnet-React-Order-Display-System-\\Files\\Files.csproj": {}
   },
   "projects": {
-    "C:\\Users\\maxim\\OneDrive\\Escritorio\\dot_net_work\\SimpleProductOrderingService\\Files\\Files.csproj": {
+    "C:\\Users\\maxim\\OneDrive\\Documents\\testfolder\\Dotnet-React-Order-Display-System-\\Files\\Files.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\maxim\\OneDrive\\Escritorio\\dot_net_work\\SimpleProductOrderingService\\Files\\Files.csproj",
+        "projectUniqueName": "C:\\Users\\maxim\\OneDrive\\Documents\\testfolder\\Dotnet-React-Order-Display-System-\\Files\\Files.csproj",
         "projectName": "Files",
-        "projectPath": "C:\\Users\\maxim\\OneDrive\\Escritorio\\dot_net_work\\SimpleProductOrderingService\\Files\\Files.csproj",
+        "projectPath": "C:\\Users\\maxim\\OneDrive\\Documents\\testfolder\\Dotnet-React-Order-Display-System-\\Files\\Files.csproj",
         "packagesPath": "C:\\Users\\maxim\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\maxim\\OneDrive\\Escritorio\\dot_net_work\\SimpleProductOrderingService\\Files\\obj\\",
+        "outputPath": "C:\\Users\\maxim\\OneDrive\\Documents\\testfolder\\Dotnet-React-Order-Display-System-\\Files\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\maxim\\AppData\\Roaming\\NuGet\\NuGet.Config"
