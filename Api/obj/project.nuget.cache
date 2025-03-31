@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fSXwW4QPy3s=",
+  "dgSpecHash": "+47jR/Fu1N0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\maxim\\OneDrive\\Documents\\testfolder\\Dotnet-React-Order-Display-System-\\Api\\Api.csproj",
+  "projectFilePath": "C:\\Users\\maxim\\OneDrive\\Escritorio\\dot_net_work\\SimpleProductOrderingService\\Api\\Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\maxim\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\maxim\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
