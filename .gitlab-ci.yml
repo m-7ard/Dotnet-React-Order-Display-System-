@@ -19,4 +19,4 @@ deploy:
             docker-compose up
           "
     only:
-        - main
+        - master
