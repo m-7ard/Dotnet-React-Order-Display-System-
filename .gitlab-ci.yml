@@ -5,7 +5,9 @@ deploy:
     stage: deploy
     script:
         - mkdir -p ~/.ssh
-        
+
+        - ssh-keyscan -H $HETZNER_IPV4 >> ~/.ssh/known_hosts
+
         - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_gitlab
         - chmod 600 ~/.ssh/id_rsa_gitlab
 
