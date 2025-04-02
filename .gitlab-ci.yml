@@ -4,6 +4,8 @@ stages:
 deploy:
     stage: deploy
     script:
+        - mkdir -p ~/.ssh
+        
         - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_gitlab
         - chmod 600 ~/.ssh/id_rsa_gitlab
 
