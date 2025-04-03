@@ -4,13 +4,13 @@ stages:
 deploy:
     stage: deploy
     script:
+        # Create .ssh directory and set the key
         - mkdir -p ~/.ssh
-
         - ssh-keyscan -H $HETZNER_IPV4 >> ~/.ssh/known_hosts
-
         - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_gitlab
         - chmod 600 ~/.ssh/id_rsa_gitlab
-
+        
+        # Run the SSH command with corrected syntax
         - ssh -i ~/.ssh/id_rsa_gitlab root@$HETZNER_IPV4 "
             cd /root/Dotnet-React-Order-Display-System || mkdir -p /root/Dotnet-React-Order-Display-System && cd /root/Dotnet-React-Order-Display-System;
             if [ ! -d .git ]; then
@@ -19,8 +19,7 @@ deploy:
               git reset --hard;
               git pull origin master;
             fi
-            echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > frontend/.env.production;
-            docker-compose up
+            echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > frontend/.env.production && docker-compose up
           "
     only:
         - master
