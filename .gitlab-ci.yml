@@ -24,8 +24,8 @@ deploy:
           git pull origin master;
         fi;
 
-        echo 'Folders after clone or pull:';
-        ls -l;
+        echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > frontend/.env.production;
+        docker-compose up
       "
   only:
     - master
