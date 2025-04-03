@@ -13,13 +13,18 @@ deploy:
     # SSH command to interact with the server
     - ssh -i ~/.ssh/id_rsa_gitlab root@$HETZNER_IPV4 "
         mkdir -p /root/Dotnet-React-Order-Display-System;
-
-        echo 'Folder structure after mkdir:';
-        ls -l;
-
         cd /root/Dotnet-React-Order-Display-System;
 
-        echo 'Folders after cd:';
+        if [ ! -d .git ]; then
+          echo 'Cloning repository...';
+          git clone git@gitlab.com:m-7ard/Dotnet-React-Order-Display-System.git .;
+        else
+          echo 'Repository exists, pulling latest changes...';
+          git reset --hard;
+          git pull origin master;
+        fi;
+
+        echo 'Folders after clone or pull:';
         ls -l;
       "
   only:
