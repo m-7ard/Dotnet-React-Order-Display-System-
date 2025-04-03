@@ -23,7 +23,9 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OneOf<Crea
     {
         // Create New Order 
         var tryCreateOrder = await _orderDomainService.TryOrchestrateCreateNewOrder(request.Id);
-        if (tryCreateOrder.IsT1) return new CannotCreateOrderError(message: tryCreateOrder.AsT1, path: []).AsList();
+        if (tryCreateOrder.IsT1) {
+            return new CannotCreateOrderError(message: tryCreateOrder.AsT1, path: []).AsList();
+        }
         
         var order = tryCreateOrder.AsT0;
 

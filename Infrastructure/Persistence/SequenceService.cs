@@ -16,15 +16,15 @@ public class SequenceService : ISequenceService
 
     public async Task<int> GetNextOrderValueAsync()
     {
-        return await GetNextValueAsync("OrderNumber");
+        return await LazyGetNextValueAsync("OrderNumber");
     }
 
     public async Task<int> GetNextOrderItemValueAsync()
     {
-        return await GetNextValueAsync("OrderItemNumber");
+        return await LazyGetNextValueAsync("OrderItemNumber");
     }
 
-    public async Task<int> GetNextValueAsync(string sequenceId)
+    public async Task<int> LazyGetNextValueAsync(string sequenceId)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
         
@@ -37,7 +37,6 @@ public class SequenceService : ISequenceService
             }
 
             sequence.CurrentValue += 1;
-            await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
             return sequence.CurrentValue;
