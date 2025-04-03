@@ -25,6 +25,9 @@ deploy:
         fi;
 
         echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > frontend/.env.production;
+  
+        docker compose down || true
+        docker system prune -af
         docker compose up --build -d
       "
   only:
