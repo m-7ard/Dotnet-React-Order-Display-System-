@@ -11,11 +11,9 @@ deploy:
     
     # Ensure the directory exists, and then execute the SSH commands
     - ssh -i ~/.ssh/id_rsa_gitlab root@$HETZNER_IPV4 "
-        # Ensure the directory exists or create it
         mkdir -p /root/Dotnet-React-Order-Display-System;
         cd /root/Dotnet-React-Order-Display-System;
         
-        # If the directory is empty or doesn't exist, clone the repository
         if [ ! -d .git ]; then
           git clone git@gitlab.com:username/repository.git .;
         else
@@ -23,11 +21,9 @@ deploy:
           git pull origin master;
         fi;
         
-        # Ensure the frontend directory exists and create the .env.production file
         mkdir -p /root/Dotnet-React-Order-Display-System/frontend;
         echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > /root/Dotnet-React-Order-Display-System/frontend/.env.production;
         
-        # Navigate to the directory containing docker-compose.yml and run docker-compose
         cd /root/Dotnet-React-Order-Display-System;
         docker-compose up
       "
