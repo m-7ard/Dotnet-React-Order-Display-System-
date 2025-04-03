@@ -11,7 +11,7 @@ deploy:
     
     # Run the SSH command with corrected syntax
     - ssh -i ~/.ssh/id_rsa_gitlab root@$HETZNER_IPV4 "
-        cd /root/Dotnet-React-Order-Display-System || mkdir -p /root/Dotnet-React-Order-Display-System && cd /root/Dotnet-React-Order-Display-System;
+        cd Dotnet-React-Order-Display-System || mkdir -p Dotnet-React-Order-Display-System && cd Dotnet-React-Order-Display-System;
         if [ ! -d .git ]; then
           git clone git@gitlab.com:username/repository.git .;
         else
