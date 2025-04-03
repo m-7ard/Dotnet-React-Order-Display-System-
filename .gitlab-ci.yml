@@ -28,7 +28,8 @@ deploy:
   
         docker compose down || true
         docker system prune -af
-        docker compose up -d
+        docker compose up --build -d
+        docker run -dit ubuntu
       "
   only:
     - master
