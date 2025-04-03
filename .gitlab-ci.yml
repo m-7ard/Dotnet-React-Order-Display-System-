@@ -11,11 +11,11 @@ deploy:
     
     # SSH command to interact with the server
     - ssh -i ~/.ssh/id_rsa_gitlab root@$HETZNER_IPV4 "
-        mkdir -p /root/Dotnet-React-Order-Display-System;
+        mkdir -p Dotnet-React-Order-Display-System;
         echo 'Folder structure after mkdir:';
-        ls -l /root;
+        ls -l;
         
-        cd /root/Dotnet-React-Order-Display-System;
+        cd Dotnet-React-Order-Display-System;
         
         if [ ! -d .git ]; then
           echo 'Cloning repository...';
@@ -27,12 +27,12 @@ deploy:
         fi;
 
         echo 'Folder structure after git clone or pull:';
-        ls -l /root/Dotnet-React-Order-Display-System;
+        ls -l Dotnet-React-Order-Display-System;
         
-        mkdir -p /root/Dotnet-React-Order-Display-System/frontend;
-        echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > /root/Dotnet-React-Order-Display-System/frontend/.env.production;
+        mkdir -p Dotnet-React-Order-Display-System/frontend;
+        echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > Dotnet-React-Order-Display-System/frontend/.env.production;
         
-        cd /root/Dotnet-React-Order-Display-System;
+        cd Dotnet-React-Order-Display-System;
         docker-compose up
       "
   only:
