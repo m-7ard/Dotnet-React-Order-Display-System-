@@ -9,17 +9,25 @@ deploy:
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_gitlab
     - chmod 600 ~/.ssh/id_rsa_gitlab
     
-    # Ensure the directory exists, and then execute the SSH commands
+    # SSH command to interact with the server
     - ssh -i ~/.ssh/id_rsa_gitlab root@$HETZNER_IPV4 "
         mkdir -p /root/Dotnet-React-Order-Display-System;
+        echo 'Folder structure after mkdir:';
+        ls -l /root;
+        
         cd /root/Dotnet-React-Order-Display-System;
         
         if [ ! -d .git ]; then
+          echo 'Cloning repository...';
           git clone git@gitlab.com:username/repository.git .;
         else
+          echo 'Repository exists, pulling latest changes...';
           git reset --hard;
           git pull origin master;
         fi;
+
+        echo 'Folder structure after git clone or pull:';
+        ls -l /root/Dotnet-React-Order-Display-System;
         
         mkdir -p /root/Dotnet-React-Order-Display-System/frontend;
         echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > /root/Dotnet-React-Order-Display-System/frontend/.env.production;
