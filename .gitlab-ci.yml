@@ -9,16 +9,26 @@ deploy:
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_gitlab
     - chmod 600 ~/.ssh/id_rsa_gitlab
     
-    # Run the SSH command with corrected syntax
+    # Ensure the directory exists, and then execute the SSH commands
     - ssh -i ~/.ssh/id_rsa_gitlab root@$HETZNER_IPV4 "
-        cd Dotnet-React-Order-Display-System || mkdir -p Dotnet-React-Order-Display-System && cd Dotnet-React-Order-Display-System;
+        # Ensure the directory exists or create it
+        mkdir -p /root/Dotnet-React-Order-Display-System;
+        cd /root/Dotnet-React-Order-Display-System;
+        
+        # If the directory is empty or doesn't exist, clone the repository
         if [ ! -d .git ]; then
           git clone git@gitlab.com:username/repository.git .;
         else
           git reset --hard;
           git pull origin master;
         fi;
-        echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > frontend/.env.production;
+        
+        # Ensure the frontend directory exists and create the .env.production file
+        mkdir -p /root/Dotnet-React-Order-Display-System/frontend;
+        echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > /root/Dotnet-React-Order-Display-System/frontend/.env.production;
+        
+        # Navigate to the directory containing docker-compose.yml and run docker-compose
+        cd /root/Dotnet-React-Order-Display-System;
         docker-compose up
       "
   only:
