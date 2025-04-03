@@ -3,6 +3,7 @@ stages:
 
 deploy:
   stage: deploy
+  image: ruby:3.1
   script:
     - mkdir -p ~/.ssh
     - ssh-keyscan -H $HETZNER_IPV4 >> ~/.ssh/known_hosts
@@ -11,15 +12,12 @@ deploy:
     
     # SSH command to interact with the server
     - ssh -i ~/.ssh/id_rsa_gitlab root@$HETZNER_IPV4 "
-        mkdir -p Dotnet-React-Order-Display-System;
-        echo 'Folder structure after mkdir:';
-        ls -l;
-        
-        cd Dotnet-React-Order-Display-System;
+        mkdir -p /root/Dotnet-React-Order-Display-System;
+        cd /root/Dotnet-React-Order-Display-System;
         
         if [ ! -d .git ]; then
           echo 'Cloning repository...';
-          git clone git@gitlab.com:username/repository.git .;
+          git clone git@gitlab.com:m-7ard/Dotnet-React-Order-Display-System.git .;
         else
           echo 'Repository exists, pulling latest changes...';
           git reset --hard;
@@ -27,13 +25,12 @@ deploy:
         fi;
 
         echo 'Folder structure after git clone or pull:';
-        ls -l Dotnet-React-Order-Display-System;
+        ls -l;
         
-        mkdir -p Dotnet-React-Order-Display-System/frontend;
-        echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > Dotnet-React-Order-Display-System/frontend/.env.production;
+        mkdir -p frontend;
+        echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > frontend/.env.production;
         
-        cd Dotnet-React-Order-Display-System;
-        docker-compose up
+        docker-compose up -d;
       "
   only:
     - master
