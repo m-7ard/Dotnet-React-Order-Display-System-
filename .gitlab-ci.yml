@@ -28,7 +28,7 @@ deploy:
   
         docker compose down || true
         docker system prune -af
-        docker compose up
+        docker compose build
       "
   only:
     - master
