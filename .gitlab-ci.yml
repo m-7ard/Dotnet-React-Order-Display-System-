@@ -12,26 +12,15 @@ deploy:
     
     # SSH command to interact with the server
     - ssh -i ~/.ssh/id_rsa_gitlab root@$HETZNER_IPV4 "
-        mkdir -p /root/app;
-        cd /root/app;
-        
-        if [ -d .git ]; then
-          echo 'Repository exists, pulling latest changes...';
-          git fetch origin;
-          git reset --hard origin/master;
-        else
-          echo 'Cloning repository...';
-          rm -rf * .[^.]*;
-          git clone git@gitlab.com:m-7ard/Dotnet-React-Order-Display-System.git .;
-        fi;
-        
-        echo 'Folder structure after update:';
-        ls -la;
-        
-        mkdir -p frontend;
-        echo 'VITE_API_URL=http://${HETZNER_IPV4}:5000' > frontend/.env.production;
-        
-        docker-compose up -d;
+        mkdir -p /root/Dotnet-React-Order-Display-System;
+
+        echo 'Folder structure after mkdir:';
+        ls -l;
+
+        cd /root/Dotnet-React-Order-Display-System;
+
+        echo 'Folders after cd:';
+        ls -l;
       "
   only:
     - master
