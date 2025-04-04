@@ -23,6 +23,14 @@ export default function FrontpagePage() {
                         { label: "Create", href: "/products/create" },
                     ]}
                 />
+                    <Navigator
+                    title="Updated Thing"
+                    imageUrl={productsImageUrl}
+                    buttons={[
+                        { label: "Hello", href: "/products" },
+                        { label: "This", href: "/products/create" },
+                    ]}
+                />
                 <Navigator
                     title="Orders"
                     imageUrl={ordersImageUrl}
